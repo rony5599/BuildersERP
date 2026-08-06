@@ -1,0 +1,44 @@
+@model BuilderERP.Application.DTOs.CreatePurchaseReturnDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Purchase Return";
+}
+
+<h1 class="h3 mb-4">New Purchase Return</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ReturnNumber" class="form-label"></label>
+        <input asp-for="ReturnNumber" class="form-control" />
+        <span asp-validation-for="ReturnNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="GoodsReceiveId" class="form-label"></label>
+        <select asp-for="GoodsReceiveId" asp-items="ViewBag.GoodsReceives" class="form-select">
+            <option value="">-- Select Goods Receive --</option>
+        </select>
+        <span asp-validation-for="GoodsReceiveId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReturnDate" class="form-label"></label>
+        <input asp-for="ReturnDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReturnAmount" class="form-label"></label>
+        <input asp-for="ReturnAmount" class="form-control" />
+        <span asp-validation-for="ReturnAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Reason" class="form-label"></label>
+        <textarea asp-for="Reason" class="form-control"></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<PurchaseReturnStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

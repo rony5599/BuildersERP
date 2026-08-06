@@ -152,6 +152,46 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">Procurement</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierView))
+                        {
+                            <li class="nav-item"><a asp-controller="Suppliers" asp-action="Index" class="nav-link text-white">Suppliers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView))
+                        {
+                            <li class="nav-item"><a asp-controller="PurchaseRequisitions" asp-action="Index" class="nav-link text-white">Purchase Requisitions</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView))
+                        {
+                            <li class="nav-item"><a asp-controller="Rfqs" asp-action="Index" class="nav-link text-white">RFQs</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationView))
+                        {
+                            <li class="nav-item"><a asp-controller="VendorQuotations" asp-action="Index" class="nav-link text-white">Vendor Quotations</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView))
+                        {
+                            <li class="nav-item"><a asp-controller="PurchaseOrders" asp-action="Index" class="nav-link text-white">Purchase Orders</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveView))
+                        {
+                            <li class="nav-item"><a asp-controller="GoodsReceives" asp-action="Index" class="nav-link text-white">Goods Receives</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
+                        {
+                            <li class="nav-item"><a asp-controller="PurchaseReturns" asp-action="Index" class="nav-link text-white">Purchase Returns</a></li>
+                        }
+                    </ul>
+                }
             </nav>
             <div class="flex-grow-1">
                 <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">

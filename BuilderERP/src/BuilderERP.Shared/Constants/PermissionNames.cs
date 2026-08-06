@@ -65,6 +65,27 @@ public static class PermissionNames
     public const string ReceiptView = "Receipt.View";
     public const string ReceiptManage = "Receipt.Manage";
 
+    public const string SupplierView = "Supplier.View";
+    public const string SupplierManage = "Supplier.Manage";
+
+    public const string PurchaseRequisitionView = "PurchaseRequisition.View";
+    public const string PurchaseRequisitionManage = "PurchaseRequisition.Manage";
+
+    public const string RfqView = "Rfq.View";
+    public const string RfqManage = "Rfq.Manage";
+
+    public const string VendorQuotationView = "VendorQuotation.View";
+    public const string VendorQuotationManage = "VendorQuotation.Manage";
+
+    public const string PurchaseOrderView = "PurchaseOrder.View";
+    public const string PurchaseOrderManage = "PurchaseOrder.Manage";
+
+    public const string GoodsReceiveView = "GoodsReceive.View";
+    public const string GoodsReceiveManage = "GoodsReceive.Manage";
+
+    public const string PurchaseReturnView = "PurchaseReturn.View";
+    public const string PurchaseReturnManage = "PurchaseReturn.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -88,6 +109,13 @@ public static class PermissionNames
         (InstallmentPlanView, "InstallmentPlan"), (InstallmentPlanManage, "InstallmentPlan"),
         (InstallmentView, "Installment"), (InstallmentManage, "Installment"),
         (ReceiptView, "Receipt"), (ReceiptManage, "Receipt"),
+        (SupplierView, "Supplier"), (SupplierManage, "Supplier"),
+        (PurchaseRequisitionView, "PurchaseRequisition"), (PurchaseRequisitionManage, "PurchaseRequisition"),
+        (RfqView, "Rfq"), (RfqManage, "Rfq"),
+        (VendorQuotationView, "VendorQuotation"), (VendorQuotationManage, "VendorQuotation"),
+        (PurchaseOrderView, "PurchaseOrder"), (PurchaseOrderManage, "PurchaseOrder"),
+        (GoodsReceiveView, "GoodsReceive"), (GoodsReceiveManage, "GoodsReceive"),
+        (PurchaseReturnView, "PurchaseReturn"), (PurchaseReturnManage, "PurchaseReturn"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -113,5 +141,12 @@ public static class PermissionNames
         InstallmentPlanView, InstallmentPlanManage,
         InstallmentView, InstallmentManage,
         ReceiptView, ReceiptManage,
+        SupplierView, SupplierManage,
+        PurchaseRequisitionView, PurchaseRequisitionManage,
+        RfqView, RfqManage,
+        VendorQuotationView, VendorQuotationManage,
+        PurchaseOrderView, PurchaseOrderManage,
+        GoodsReceiveView, GoodsReceiveManage,
+        PurchaseReturnView, PurchaseReturnManage,
     };
 }

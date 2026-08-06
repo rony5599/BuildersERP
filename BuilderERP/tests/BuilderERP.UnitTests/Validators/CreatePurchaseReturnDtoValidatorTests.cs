@@ -1,0 +1,43 @@
+using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Validators;
+using FluentValidation.TestHelper;
+using Xunit;
+
+namespace BuilderERP.UnitTests.Validators;
+
+public class CreatePurchaseReturnDtoValidatorTests
+{
+    private readonly CreatePurchaseReturnDtoValidator _validator = new();
+
+    [Fact]
+    public void Should_have_error_when_return_number_is_empty()
+    {
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "", ReturnAmount = 200, Reason = "Damaged", GoodsReceiveId = Guid.NewGuid() };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.ReturnNumber);
+    }
+
+    [Fact]
+    public void Should_have_error_when_reason_is_empty()
+    {
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", ReturnAmount = 200, Reason = "", GoodsReceiveId = Guid.NewGuid() };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Reason);
+    }
+
+    [Fact]
+    public void Should_have_error_when_goods_receive_id_is_empty()
+    {
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", ReturnAmount = 200, Reason = "Damaged", GoodsReceiveId = Guid.Empty };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.GoodsReceiveId);
+    }
+
+    [Fact]
+    public void Should_not_have_error_for_valid_model()
+    {
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", ReturnAmount = 200, Reason = "Damaged", GoodsReceiveId = Guid.NewGuid() };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+}

@@ -1,0 +1,17 @@
+using BuilderERP.Application.DTOs;
+using FluentValidation;
+
+namespace BuilderERP.Application.Validators;
+
+public class UpdateRfqDtoValidator : AbstractValidator<UpdateRfqDto>
+{
+    public UpdateRfqDtoValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x.RfqNumber).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.ClosingDate).NotEmpty();
+        RuleFor(x => x.PurchaseRequisitionId).NotEmpty();
+        RuleFor(x => x.SupplierId).NotEmpty();
+        RuleFor(x => x.Status).IsInEnum();
+    }
+}

@@ -1,0 +1,45 @@
+@model BuilderERP.Application.DTOs.UpdatePurchaseOrderDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Purchase Order";
+}
+
+<h1 class="h3 mb-4">Edit Purchase Order</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="PONumber" class="form-label"></label>
+        <input asp-for="PONumber" class="form-control" />
+        <span asp-validation-for="PONumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="VendorQuotationId" class="form-label"></label>
+        <select asp-for="VendorQuotationId" asp-items="ViewBag.VendorQuotations" class="form-select">
+            <option value="">-- Select Vendor Quotation --</option>
+        </select>
+        <span asp-validation-for="VendorQuotationId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="OrderDate" class="form-label"></label>
+        <input asp-for="OrderDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="TotalAmount" class="form-label"></label>
+        <input asp-for="TotalAmount" class="form-control" />
+        <span asp-validation-for="TotalAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DeliveryDate" class="form-label"></label>
+        <input asp-for="DeliveryDate" type="date" class="form-control" />
+        <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<PurchaseOrderStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

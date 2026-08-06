@@ -31,6 +31,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<InstallmentPlan> InstallmentPlans => Set<InstallmentPlan>();
     public DbSet<Installment> Installments => Set<Installment>();
     public DbSet<Receipt> Receipts => Set<Receipt>();
+    public DbSet<Supplier> Suppliers => Set<Supplier>();
+    public DbSet<PurchaseRequisition> PurchaseRequisitions => Set<PurchaseRequisition>();
+    public DbSet<Rfq> Rfqs => Set<Rfq>();
+    public DbSet<VendorQuotation> VendorQuotations => Set<VendorQuotation>();
+    public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
+    public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
+    public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -207,6 +214,59 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         builder.Entity<Receipt>().Property(r => r.AmountPaid).HasPrecision(18, 2);
 
+        builder.Entity<PurchaseRequisition>()
+            .HasOne(r => r.Department)
+            .WithMany()
+            .HasForeignKey(r => r.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
+
+        builder.Entity<Rfq>()
+            .HasOne(q => q.PurchaseRequisition)
+            .WithMany()
+            .HasForeignKey(q => q.PurchaseRequisitionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Rfq>()
+            .HasOne(q => q.Supplier)
+            .WithMany()
+            .HasForeignKey(q => q.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<VendorQuotation>()
+            .HasOne(v => v.Rfq)
+            .WithMany(q => q.VendorQuotations)
+            .HasForeignKey(v => v.RfqId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<VendorQuotation>().Property(v => v.QuotedAmount).HasPrecision(18, 2);
+
+        builder.Entity<PurchaseOrder>()
+            .HasOne(o => o.VendorQuotation)
+            .WithMany()
+            .HasForeignKey(o => o.VendorQuotationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseOrder>().Property(o => o.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseOrder>().Property(o => o.ReceivedAmount).HasPrecision(18, 2);
+
+        builder.Entity<GoodsReceive>()
+            .HasOne(g => g.PurchaseOrder)
+            .WithMany(o => o.GoodsReceives)
+            .HasForeignKey(g => g.PurchaseOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceive>().Property(g => g.ReceivedAmount).HasPrecision(18, 2);
+
+        builder.Entity<PurchaseReturn>()
+            .HasOne(r => r.GoodsReceive)
+            .WithMany()
+            .HasForeignKey(r => r.GoodsReceiveId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseReturn>().Property(r => r.ReturnAmount).HasPrecision(18, 2);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -228,7 +288,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit),
             typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer),
             typeof(Quotation), typeof(Booking), typeof(SaleAgreement),
-            typeof(InstallmentPlan), typeof(Installment), typeof(Receipt)
+            typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
+            typeof(Supplier), typeof(PurchaseRequisition), typeof(Rfq), typeof(VendorQuotation),
+            typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

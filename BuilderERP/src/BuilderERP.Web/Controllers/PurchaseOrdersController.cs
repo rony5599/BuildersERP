@@ -1,0 +1,118 @@
+using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.PurchaseOrders;
+using BuilderERP.Application.Features.VendorQuotations;
+using BuilderERP.Shared.Authorization;
+using BuilderERP.Shared.Constants;
+using BuilderERP.Web.Extensions;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace BuilderERP.Web.Controllers;
+
+[PermissionAuthorize(PermissionNames.PurchaseOrderView)]
+public class PurchaseOrdersController : Controller
+{
+    private readonly IMediator _mediator;
+    private readonly IValidator<CreatePurchaseOrderDto> _createValidator;
+    private readonly IValidator<UpdatePurchaseOrderDto> _updateValidator;
+
+    public PurchaseOrdersController(IMediator mediator, IValidator<CreatePurchaseOrderDto> createValidator, IValidator<UpdatePurchaseOrderDto> updateValidator)
+    {
+        _mediator = mediator;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var orders = await _mediator.Send(new GetAllPurchaseOrdersQuery());
+        return View(orders);
+    }
+
+    [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
+    public async Task<IActionResult> Create()
+    {
+        await PopulateDropdownsAsync();
+        return View(new CreatePurchaseOrderDto());
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreatePurchaseOrderDto dto)
+    {
+        var validationResult = await _createValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            await PopulateDropdownsAsync();
+            return View(dto);
+        }
+
+        await _mediator.Send(new CreatePurchaseOrderCommand(dto));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var order = await _mediator.Send(new GetPurchaseOrderByIdQuery(id));
+        if (order is null)
+        {
+            return NotFound();
+        }
+
+        var dto = new UpdatePurchaseOrderDto
+        {
+            Id = order.Id,
+            PONumber = order.PONumber,
+            OrderDate = order.OrderDate,
+            TotalAmount = order.TotalAmount,
+            DeliveryDate = order.DeliveryDate,
+            Status = order.Status,
+            VendorQuotationId = order.VendorQuotationId
+        };
+
+        await PopulateDropdownsAsync();
+        return View(dto);
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(UpdatePurchaseOrderDto dto)
+    {
+        var validationResult = await _updateValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            await PopulateDropdownsAsync();
+            return View(dto);
+        }
+
+        var success = await _mediator.Send(new UpdatePurchaseOrderCommand(dto));
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    {
+        await _mediator.Send(new SetPurchaseOrderActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task PopulateDropdownsAsync()
+    {
+        var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery());
+        ViewBag.VendorQuotations = new SelectList(quotations, "Id", "QuotationNumber");
+    }
+}
