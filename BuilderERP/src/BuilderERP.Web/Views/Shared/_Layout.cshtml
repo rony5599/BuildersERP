@@ -112,6 +112,26 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QuotationView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BookingView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SaleAgreementView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">Sales</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QuotationView))
+                        {
+                            <li class="nav-item"><a asp-controller="Quotations" asp-action="Index" class="nav-link text-white">Quotations</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BookingView))
+                        {
+                            <li class="nav-item"><a asp-controller="Bookings" asp-action="Index" class="nav-link text-white">Bookings</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SaleAgreementView))
+                        {
+                            <li class="nav-item"><a asp-controller="SaleAgreements" asp-action="Index" class="nav-link text-white">Sale Agreements</a></li>
+                        }
+                    </ul>
+                }
             </nav>
             <div class="flex-grow-1">
                 <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">

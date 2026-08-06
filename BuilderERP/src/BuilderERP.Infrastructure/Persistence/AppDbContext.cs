@@ -25,6 +25,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Inquiry> Inquiries => Set<Inquiry>();
     public DbSet<FollowUp> FollowUps => Set<FollowUp>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Quotation> Quotations => Set<Quotation>();
+    public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<SaleAgreement> SaleAgreements => Set<SaleAgreement>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -138,6 +141,42 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(l => l.AssignedToUserId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.Entity<Quotation>()
+            .HasOne(q => q.Customer)
+            .WithMany()
+            .HasForeignKey(q => q.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Quotation>()
+            .HasOne(q => q.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(q => q.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Quotation>().Property(q => q.QuotedPrice).HasPrecision(18, 2);
+
+        builder.Entity<Booking>()
+            .HasOne(b => b.Customer)
+            .WithMany()
+            .HasForeignKey(b => b.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Booking>()
+            .HasOne(b => b.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(b => b.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Booking>().Property(b => b.BookingAmount).HasPrecision(18, 2);
+
+        builder.Entity<SaleAgreement>()
+            .HasOne(a => a.Booking)
+            .WithMany()
+            .HasForeignKey(a => a.BookingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SaleAgreement>().Property(a => a.TotalSalePrice).HasPrecision(18, 2);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -157,7 +196,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         {
             typeof(Company), typeof(Branch), typeof(Project), typeof(Department), typeof(CostCenter),
             typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit),
-            typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer)
+            typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer),
+            typeof(Quotation), typeof(Booking), typeof(SaleAgreement)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

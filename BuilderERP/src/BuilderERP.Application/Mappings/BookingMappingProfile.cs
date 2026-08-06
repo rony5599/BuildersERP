@@ -1,0 +1,17 @@
+using AutoMapper;
+using BuilderERP.Application.DTOs;
+using BuilderERP.Domain.Entities;
+
+namespace BuilderERP.Application.Mappings;
+
+public class BookingMappingProfile : Profile
+{
+    public BookingMappingProfile()
+    {
+        CreateMap<Booking, BookingDto>()
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.FullName : string.Empty))
+            .ForMember(dest => dest.PropertyUnitNumber, opt => opt.MapFrom(src => src.PropertyUnit != null ? src.PropertyUnit.UnitNumber : string.Empty));
+        CreateMap<CreateBookingDto, Booking>();
+        CreateMap<UpdateBookingDto, Booking>();
+    }
+}

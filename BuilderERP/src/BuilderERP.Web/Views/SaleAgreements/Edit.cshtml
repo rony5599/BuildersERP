@@ -1,0 +1,40 @@
+@model BuilderERP.Application.DTOs.UpdateSaleAgreementDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Sale Agreement";
+}
+
+<h1 class="h3 mb-4">Edit Sale Agreement</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="AgreementNumber" class="form-label"></label>
+        <input asp-for="AgreementNumber" class="form-control" />
+        <span asp-validation-for="AgreementNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="BookingId" class="form-label"></label>
+        <select asp-for="BookingId" asp-items="ViewBag.Bookings" class="form-select">
+            <option value="">-- Select Booking --</option>
+        </select>
+        <span asp-validation-for="BookingId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AgreementDate" class="form-label"></label>
+        <input asp-for="AgreementDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="TotalSalePrice" class="form-label"></label>
+        <input asp-for="TotalSalePrice" class="form-control" />
+        <span asp-validation-for="TotalSalePrice" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<AgreementStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
