@@ -1,0 +1,46 @@
+@model BuilderERP.Application.DTOs.UpdatePropertyUnitDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Property Unit";
+}
+
+<h1 class="h3 mb-4">Edit Property Unit</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="FloorId" class="form-label"></label>
+        <select asp-for="FloorId" asp-items="ViewBag.Floors" class="form-select">
+            <option value="">-- Select Floor --</option>
+        </select>
+        <span asp-validation-for="FloorId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="UnitNumber" class="form-label"></label>
+        <input asp-for="UnitNumber" class="form-control" />
+        <span asp-validation-for="UnitNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="UnitType" class="form-label"></label>
+        <select asp-for="UnitType" asp-items="Html.GetEnumSelectList<UnitType>()" class="form-select"></select>
+        <span asp-validation-for="UnitType" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Area" class="form-label"></label>
+        <input asp-for="Area" class="form-control" />
+        <span asp-validation-for="Area" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="BookingStatus" class="form-label"></label>
+        <select asp-for="BookingStatus" asp-items="Html.GetEnumSelectList<BookingStatus>()" class="form-select"></select>
+        <span asp-validation-for="BookingStatus" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

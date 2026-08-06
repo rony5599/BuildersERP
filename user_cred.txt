@@ -1,0 +1,2 @@
+  --data-urlencode "Email=admin@builderERP.local" \
+  --data-urlencode "Password=Admin@12345" \

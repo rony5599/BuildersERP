@@ -17,6 +17,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<CostCenter> CostCenters => Set<CostCenter>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<Building> Buildings => Set<Building>();
+    public DbSet<Tower> Towers => Set<Tower>();
+    public DbSet<Floor> Floors => Set<Floor>();
+    public DbSet<PropertyUnit> PropertyUnits => Set<PropertyUnit>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -67,6 +71,33 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(cc => cc.ProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<Building>()
+            .HasOne(b => b.Project)
+            .WithMany()
+            .HasForeignKey(b => b.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Tower>()
+            .HasOne(t => t.Building)
+            .WithMany(b => b.Towers)
+            .HasForeignKey(t => t.BuildingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Floor>()
+            .HasOne(f => f.Tower)
+            .WithMany(t => t.Floors)
+            .HasForeignKey(f => f.TowerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PropertyUnit>()
+            .HasOne(u => u.Floor)
+            .WithMany(f => f.Units)
+            .HasForeignKey(u => u.FloorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PropertyUnit>().Property(u => u.Area).HasPrecision(18, 2);
+        builder.Entity<PropertyUnit>().Property(u => u.Price).HasPrecision(18, 2);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -82,7 +113,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         // Permission is reference/lookup data referenced as a required end of RolePermission;
         // it is excluded from the soft-delete filter so EF doesn't warn about filtering out
         // a required navigation (permissions are hard-deleted, not soft-deleted).
-        var softDeleteEntities = new[] { typeof(Company), typeof(Branch), typeof(Project), typeof(Department), typeof(CostCenter) };
+        var softDeleteEntities = new[]
+        {
+            typeof(Company), typeof(Branch), typeof(Project), typeof(Department), typeof(CostCenter),
+            typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit)
+        };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             if (softDeleteEntities.Contains(entityType.ClrType))

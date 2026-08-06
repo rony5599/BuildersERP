@@ -62,6 +62,31 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BuildingView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.TowerView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FloorView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PropertyUnitView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">Property Management</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BuildingView))
+                        {
+                            <li class="nav-item"><a asp-controller="Buildings" asp-action="Index" class="nav-link text-white">Buildings</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.TowerView))
+                        {
+                            <li class="nav-item"><a asp-controller="Towers" asp-action="Index" class="nav-link text-white">Towers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FloorView))
+                        {
+                            <li class="nav-item"><a asp-controller="Floors" asp-action="Index" class="nav-link text-white">Floors</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PropertyUnitView))
+                        {
+                            <li class="nav-item"><a asp-controller="PropertyUnits" asp-action="Index" class="nav-link text-white">Property Units</a></li>
+                        }
+                    </ul>
+                }
             </nav>
             <div class="flex-grow-1">
                 <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">
