@@ -1,0 +1,18 @@
+@using Microsoft.AspNetCore.Identity
+@using BuilderERP.Domain.Entities
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <span class="text-dark">Hello, @User.Identity?.Name!</span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+            </form>
+        </li>
+    }
+</ul>

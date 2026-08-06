@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BuilderERP</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="d-flex" id="app-shell">
+            <nav class="sidebar bg-dark text-white p-3">
+                <a class="d-flex align-items-center mb-4 text-white text-decoration-none" asp-controller="Home" asp-action="Index">
+                    <span class="fs-5 fw-semibold">BuilderERP</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link text-white">Dashboard</a>
+                    </li>
+                </ul>
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CompanyView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BranchView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DepartmentView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ProjectView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CostCenterView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">Administration</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CompanyView))
+                        {
+                            <li class="nav-item"><a asp-controller="Companies" asp-action="Index" class="nav-link text-white">Companies</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BranchView))
+                        {
+                            <li class="nav-item"><a asp-controller="Branches" asp-action="Index" class="nav-link text-white">Branches</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DepartmentView))
+                        {
+                            <li class="nav-item"><a asp-controller="Departments" asp-action="Index" class="nav-link text-white">Departments</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ProjectView))
+                        {
+                            <li class="nav-item"><a asp-controller="Projects" asp-action="Index" class="nav-link text-white">Projects</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CostCenterView))
+                        {
+                            <li class="nav-item"><a asp-controller="CostCenters" asp-action="Index" class="nav-link text-white">Cost Centers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserView))
+                        {
+                            <li class="nav-item"><a asp-controller="Users" asp-action="Index" class="nav-link text-white">Users</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))
+                        {
+                            <li class="nav-item"><a asp-controller="Roles" asp-action="Index" class="nav-link text-white">Roles</a></li>
+                        }
+                    </ul>
+                }
+            </nav>
+            <div class="flex-grow-1">
+                <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">
+                    <partial name="_LoginPartial" />
+                </header>
+                <main role="main" class="p-4">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    }
+    else
+    {
+        <main role="main">
+            @RenderBody()
+        </main>
+    }
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

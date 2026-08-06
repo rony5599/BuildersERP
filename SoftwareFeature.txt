@@ -1,0 +1,867 @@
+# Enterprise Developer ERP Prompt (.NET 8 MVC)
+
+## Objective
+
+Build a production-ready, enterprise-grade **Developer ERP** (Construction & Real Estate Management System) using modern software architecture, clean coding principles, and scalable design. The application must support both on-premise and cloud deployment and be suitable for large real estate development companies.
+
+---
+
+# Technology Stack
+
+Backend
+
+* ASP.NET Core 8 MVC
+* ASP.NET Core Web API
+* C#
+* Entity Framework Core 8
+* SQL Server 2022
+* Redis Cache
+* SignalR
+* JWT Authentication
+* ASP.NET Identity
+* Swagger / OpenAPI
+* Minimal APIs where appropriate
+* AutoMapper
+* FluentValidation
+* Serilog
+* Hangfire
+* MediatR (CQRS where beneficial)
+
+Frontend
+
+* Razor Views
+* Bootstrap 5
+* jQuery
+* AJAX
+* DataTables
+* Chart.js
+* Select2
+* SweetAlert2
+* Font Awesome
+
+Database
+
+* SQL Server
+* Stored Procedures (only for heavy reporting)
+* EF Core Code First Migration
+
+Documentation
+
+* Swagger
+* XML Documentation
+* API Versioning
+
+Testing
+
+* xUnit
+* Moq
+* Integration Tests
+
+Deployment
+
+* IIS
+* Docker Support
+* Azure Ready
+
+---
+
+# Architecture
+
+Use Clean Architecture with strict separation of concerns.
+
+```
+Presentation
+│
+├── MVC
+├── Web API
+├── Minimal APIs
+│
+Application
+│
+├── Services
+├── DTOs
+├── CQRS
+├── Validators
+│
+Domain
+│
+├── Entities
+├── Interfaces
+├── Enums
+├── Events
+│
+Infrastructure
+│
+├── Repository
+├── Database
+├── Redis
+├── Identity
+├── Messaging
+├── File Storage
+│
+Shared
+│
+├── Helpers
+├── Constants
+├── Extensions
+├── Middleware
+```
+
+Use:
+
+* Dependency Injection
+* Repository Pattern
+* Unit of Work
+* Generic Repository
+* SOLID Principles
+* Clean Code
+* DRY
+* KISS
+
+---
+
+# Authentication
+
+Implement
+
+* JWT Authentication
+* Refresh Token
+* ASP.NET Identity
+* Email Verification
+* Password Reset
+* Two-Factor Authentication (optional)
+* Account Lockout
+* Remember Me
+
+---
+
+# Authorization
+
+Implement enterprise RBAC.
+
+Examples
+
+```
+Super Admin
+
+Admin
+
+Managing Director
+
+CEO
+
+Project Manager
+
+Sales Manager
+
+Sales Executive
+
+Finance Manager
+
+Accounts
+
+Purchase Officer
+
+Inventory Manager
+
+Site Engineer
+
+HR Manager
+
+HR Executive
+
+Customer
+
+Vendor
+
+Contractor
+
+Auditor
+```
+
+Support
+
+* Role Management
+* Permission Management
+* Dynamic Permissions
+* Page Permissions
+* Menu Permissions
+* API Permissions
+* Button-level Permissions
+* Data-level Security
+
+---
+
+# Multi Company
+
+Support
+
+* Company
+* Branch
+* Project
+* Department
+* Cost Center
+
+---
+
+# Core ERP Modules
+
+## Dashboard
+
+KPIs
+
+Revenue
+
+Expenses
+
+Profit
+
+Project Progress
+
+Cash Flow
+
+Installment Due
+
+Sales Funnel
+
+Inventory Value
+
+Material Consumption
+
+Pending Approvals
+
+Notifications
+
+Charts
+
+---
+
+## Customer CRM
+
+Lead
+
+Inquiry
+
+Follow-up
+
+Customer Onboarding
+
+KYC
+
+NID Upload
+
+Document Management
+
+Communication History
+
+Customer Portal
+
+---
+
+## Property Management
+
+Project
+
+Building
+
+Tower
+
+Floor
+
+Flat
+
+Parking
+
+Shop
+
+Storage
+
+Availability
+
+Price
+
+Booking Status
+
+---
+
+## Sales
+
+Quotation
+
+Booking
+
+Reservation
+
+Agreement
+
+Sale
+
+Ownership Transfer
+
+Cancellation
+
+Refund
+
+Commission
+
+Agent Management
+
+---
+
+## Installment Management
+
+Auto Schedule
+
+EMI
+
+Interest
+
+Penalty
+
+Due
+
+Collection
+
+Receipt
+
+Customer Statement
+
+SMS Reminder
+
+Email Reminder
+
+---
+
+## Procurement
+
+Purchase Requisition
+
+RFQ
+
+Quotation Comparison
+
+Purchase Order
+
+Goods Receive
+
+Supplier
+
+Purchase Return
+
+Vendor Ledger
+
+---
+
+## Inventory
+
+Warehouse
+
+Material
+
+Batch
+
+Serial
+
+Stock
+
+Transfer
+
+Issue
+
+Return
+
+Adjustment
+
+Barcode
+
+Reorder Level
+
+---
+
+## Construction Management
+
+BOQ
+
+Project Planning
+
+Milestones
+
+Task Management
+
+Gantt Chart
+
+Daily Progress
+
+Material Consumption
+
+Budget vs Actual
+
+Site Photos
+
+Delay Tracking
+
+---
+
+## Contractor
+
+Registration
+
+Work Order
+
+Running Bill
+
+Retention
+
+Security Deposit
+
+Payments
+
+---
+
+## Engineering
+
+Drawing Management
+
+Revision
+
+Document Approval
+
+Technical Documents
+
+---
+
+## Accounts
+
+Chart of Accounts
+
+Voucher
+
+Journal
+
+Cash
+
+Bank
+
+AP
+
+AR
+
+Budget
+
+Financial Statement
+
+General Ledger
+
+Trial Balance
+
+Balance Sheet
+
+Income Statement
+
+Cash Flow
+
+---
+
+## HRMS
+
+Employee
+
+Attendance
+
+Leave
+
+Payroll
+
+Recruitment
+
+Performance
+
+Training
+
+Asset Assignment
+
+Loan
+
+Expense Claim
+
+---
+
+## Asset Management
+
+Asset Registration
+
+Depreciation
+
+Maintenance
+
+Warranty
+
+Transfer
+
+Disposal
+
+---
+
+## Facility Management
+
+Maintenance Request
+
+Complaint
+
+Visitor
+
+Parking
+
+Security
+
+Utility Bill
+
+---
+
+## Reports
+
+Export
+
+Excel
+
+PDF
+
+CSV
+
+Print
+
+Interactive Dashboard
+
+---
+
+# Messaging
+
+Implement a complete messaging system.
+
+Support
+
+Internal Messaging
+
+Email
+
+SMS
+
+Push Notifications
+
+WhatsApp Integration (Future)
+
+SignalR Real-Time Chat
+
+Group Chat
+
+Broadcast Message
+
+Notification Center
+
+Read Status
+
+Attachments
+
+Conversation History
+
+---
+
+# Monitoring
+
+Implement enterprise monitoring.
+
+Use
+
+Serilog
+
+Health Checks
+
+Performance Monitoring
+
+Audit Trail
+
+User Activity Log
+
+Login History
+
+API Request Logging
+
+Redis Monitoring
+
+Database Monitoring
+
+Background Job Monitoring
+
+Error Dashboard
+
+Application Metrics
+
+Slow Query Detection
+
+Memory Usage
+
+CPU Usage
+
+Request Time
+
+---
+
+# Background Jobs
+
+Use Hangfire.
+
+Examples
+
+Email Queue
+
+SMS Queue
+
+Invoice Generation
+
+Daily Reports
+
+Reminder Notifications
+
+Database Cleanup
+
+Log Cleanup
+
+Scheduled Backup
+
+---
+
+# Redis
+
+Use Redis for
+
+Session
+
+Distributed Cache
+
+Response Cache
+
+Permission Cache
+
+Dashboard Cache
+
+Lookup Cache
+
+OTP Cache
+
+Rate Limiting
+
+---
+
+# API
+
+Create REST APIs.
+
+Support
+
+Versioning
+
+Swagger
+
+OAuth Ready
+
+JWT
+
+Pagination
+
+Filtering
+
+Sorting
+
+Searching
+
+Rate Limiting
+
+Problem Details
+
+Global Exception Handling
+
+---
+
+# Security
+
+HTTPS
+
+JWT
+
+RBAC
+
+XSS Protection
+
+CSRF Protection
+
+SQL Injection Prevention
+
+Rate Limiting
+
+Secure Cookies
+
+CORS
+
+Input Validation
+
+Password Policy
+
+Encryption
+
+Audit Log
+
+Security Headers
+
+---
+
+# File Management
+
+Upload
+
+Download
+
+Preview
+
+Image Resize
+
+Document Versioning
+
+Virus Scan Hook
+
+Cloud Storage Ready
+
+---
+
+# Workflow Engine
+
+Approval Levels
+
+Purchase Approval
+
+Sales Approval
+
+Payment Approval
+
+Leave Approval
+
+Expense Approval
+
+Configurable Workflow
+
+Email Notification
+
+---
+
+# Dashboard
+
+Role-based dashboards.
+
+Sales Dashboard
+
+Finance Dashboard
+
+CEO Dashboard
+
+Project Dashboard
+
+Inventory Dashboard
+
+HR Dashboard
+
+Customer Dashboard
+
+---
+
+# UI Requirements
+
+Responsive
+
+Modern
+
+Bootstrap 5
+
+Dark Mode
+
+Light Mode
+
+Sidebar Menu
+
+Breadcrumb
+
+Global Search
+
+Notification Center
+
+Profile Menu
+
+Theme Support
+
+Accessibility
+
+---
+
+# Coding Standards
+
+Use
+
+Async/Await
+
+Nullable Reference Types
+
+Global Exception Middleware
+
+Configuration by appsettings
+
+Strongly Typed Configuration
+
+Repository Pattern
+
+Unit of Work
+
+DTOs
+
+Dependency Injection
+
+Extension Methods
+
+Logging
+
+Validation
+
+No duplicated code
+
+Follow Microsoft Coding Guidelines
+
+---
+
+# Deliverables
+
+Generate:
+
+* Complete Solution Structure
+* Database Schema
+* Entity Models
+* EF Core Migrations
+* Repository Layer
+* Service Layer
+* MVC Controllers
+* API Controllers
+* Razor Views
+* Authentication Module
+* Authorization Module
+* JWT Implementation
+* Redis Configuration
+* Swagger Configuration
+* Serilog Configuration
+* Hangfire Configuration
+* SQL Scripts
+* Seed Data
+* Unit Tests
+* Integration Tests
+* Docker Configuration
+* CI/CD Pipeline (GitHub Actions)
+* Complete Documentation
+* Sample Data
+* Deployment Guide
+
+The final solution must be modular, maintainable, scalable, secure, production-ready, and follow enterprise software engineering best practices suitable for organizations with thousands of concurrent users.
