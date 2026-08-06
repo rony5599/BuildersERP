@@ -21,6 +21,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Tower> Towers => Set<Tower>();
     public DbSet<Floor> Floors => Set<Floor>();
     public DbSet<PropertyUnit> PropertyUnits => Set<PropertyUnit>();
+    public DbSet<Lead> Leads => Set<Lead>();
+    public DbSet<Inquiry> Inquiries => Set<Inquiry>();
+    public DbSet<FollowUp> FollowUps => Set<FollowUp>();
+    public DbSet<Customer> Customers => Set<Customer>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -98,6 +102,42 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<PropertyUnit>().Property(u => u.Area).HasPrecision(18, 2);
         builder.Entity<PropertyUnit>().Property(u => u.Price).HasPrecision(18, 2);
 
+        builder.Entity<Inquiry>()
+            .HasOne(i => i.Lead)
+            .WithMany()
+            .HasForeignKey(i => i.LeadId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Inquiry>()
+            .HasOne(i => i.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(i => i.PropertyUnitId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<FollowUp>()
+            .HasOne(f => f.Lead)
+            .WithMany()
+            .HasForeignKey(f => f.LeadId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Customer>()
+            .HasOne(c => c.Company)
+            .WithMany()
+            .HasForeignKey(c => c.CompanyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Customer>()
+            .HasOne(c => c.Lead)
+            .WithMany()
+            .HasForeignKey(c => c.LeadId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Lead>()
+            .HasOne(l => l.AssignedToUser)
+            .WithMany()
+            .HasForeignKey(l => l.AssignedToUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -116,7 +156,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         var softDeleteEntities = new[]
         {
             typeof(Company), typeof(Branch), typeof(Project), typeof(Department), typeof(CostCenter),
-            typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit)
+            typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit),
+            typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

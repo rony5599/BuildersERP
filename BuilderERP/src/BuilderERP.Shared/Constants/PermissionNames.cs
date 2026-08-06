@@ -35,6 +35,18 @@ public static class PermissionNames
     public const string PropertyUnitView = "PropertyUnit.View";
     public const string PropertyUnitManage = "PropertyUnit.Manage";
 
+    public const string LeadView = "Lead.View";
+    public const string LeadManage = "Lead.Manage";
+
+    public const string InquiryView = "Inquiry.View";
+    public const string InquiryManage = "Inquiry.Manage";
+
+    public const string FollowUpView = "FollowUp.View";
+    public const string FollowUpManage = "FollowUp.Manage";
+
+    public const string CustomerView = "Customer.View";
+    public const string CustomerManage = "Customer.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -48,6 +60,10 @@ public static class PermissionNames
         (TowerView, "Tower"), (TowerManage, "Tower"),
         (FloorView, "Floor"), (FloorManage, "Floor"),
         (PropertyUnitView, "PropertyUnit"), (PropertyUnitManage, "PropertyUnit"),
+        (LeadView, "Lead"), (LeadManage, "Lead"),
+        (InquiryView, "Inquiry"), (InquiryManage, "Inquiry"),
+        (FollowUpView, "FollowUp"), (FollowUpManage, "FollowUp"),
+        (CustomerView, "Customer"), (CustomerManage, "Customer"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -63,5 +79,9 @@ public static class PermissionNames
         TowerView, TowerManage,
         FloorView, FloorManage,
         PropertyUnitView, PropertyUnitManage,
+        LeadView, LeadManage,
+        InquiryView, InquiryManage,
+        FollowUpView, FollowUpManage,
+        CustomerView, CustomerManage,
     };
 }

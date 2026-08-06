@@ -1,0 +1,34 @@
+@model BuilderERP.Application.DTOs.CreateInquiryDto
+@{
+    ViewData["Title"] = "New Inquiry";
+}
+
+<h1 class="h3 mb-4">New Inquiry</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="LeadId" class="form-label"></label>
+        <select asp-for="LeadId" asp-items="ViewBag.Leads" class="form-select">
+            <option value="">-- Select Lead --</option>
+        </select>
+        <span asp-validation-for="LeadId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PropertyUnitId" class="form-label">Property Unit (optional)</label>
+        <select asp-for="PropertyUnitId" asp-items="ViewBag.PropertyUnits" class="form-select">
+            <option value="">-- None --</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="InquiryDate" class="form-label"></label>
+        <input asp-for="InquiryDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Message" class="form-label"></label>
+        <textarea asp-for="Message" class="form-control"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

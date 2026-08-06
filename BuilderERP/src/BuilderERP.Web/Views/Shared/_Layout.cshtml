@@ -87,6 +87,31 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InquiryView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FollowUpView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">CRM</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadView))
+                        {
+                            <li class="nav-item"><a asp-controller="Leads" asp-action="Index" class="nav-link text-white">Leads</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InquiryView))
+                        {
+                            <li class="nav-item"><a asp-controller="Inquiries" asp-action="Index" class="nav-link text-white">Inquiries</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FollowUpView))
+                        {
+                            <li class="nav-item"><a asp-controller="FollowUps" asp-action="Index" class="nav-link text-white">Follow-ups</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerView))
+                        {
+                            <li class="nav-item"><a asp-controller="Customers" asp-action="Index" class="nav-link text-white">Customers</a></li>
+                        }
+                    </ul>
+                }
             </nav>
             <div class="flex-grow-1">
                 <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">
