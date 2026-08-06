@@ -38,6 +38,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
     public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
+    public DbSet<Warehouse> Warehouses => Set<Warehouse>();
+    public DbSet<Material> Materials => Set<Material>();
+    public DbSet<Stock> Stocks => Set<Stock>();
+    public DbSet<StockTransfer> StockTransfers => Set<StockTransfer>();
+    public DbSet<StockIssue> StockIssues => Set<StockIssue>();
+    public DbSet<StockReturn> StockReturns => Set<StockReturn>();
+    public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -267,6 +274,94 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         builder.Entity<PurchaseReturn>().Property(r => r.ReturnAmount).HasPrecision(18, 2);
 
+        builder.Entity<Warehouse>().HasIndex(w => w.WarehouseCode).IsUnique();
+
+        builder.Entity<Warehouse>()
+            .HasOne(w => w.Branch)
+            .WithMany()
+            .HasForeignKey(w => w.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Material>().HasIndex(m => m.MaterialCode).IsUnique();
+        builder.Entity<Material>().Property(m => m.ReorderLevel).HasPrecision(18, 3);
+
+        builder.Entity<Stock>().HasIndex(s => new { s.MaterialId, s.WarehouseId }).IsUnique();
+        builder.Entity<Stock>().Property(s => s.QuantityOnHand).HasPrecision(18, 3);
+
+        builder.Entity<Stock>()
+            .HasOne(s => s.Material)
+            .WithMany()
+            .HasForeignKey(s => s.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Stock>()
+            .HasOne(s => s.Warehouse)
+            .WithMany()
+            .HasForeignKey(s => s.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockTransfer>().Property(t => t.Quantity).HasPrecision(18, 3);
+
+        builder.Entity<StockTransfer>()
+            .HasOne(t => t.Material)
+            .WithMany()
+            .HasForeignKey(t => t.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockTransfer>()
+            .HasOne(t => t.FromWarehouse)
+            .WithMany()
+            .HasForeignKey(t => t.FromWarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockTransfer>()
+            .HasOne(t => t.ToWarehouse)
+            .WithMany()
+            .HasForeignKey(t => t.ToWarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockIssue>().Property(i => i.Quantity).HasPrecision(18, 3);
+
+        builder.Entity<StockIssue>()
+            .HasOne(i => i.Material)
+            .WithMany()
+            .HasForeignKey(i => i.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockIssue>()
+            .HasOne(i => i.Warehouse)
+            .WithMany()
+            .HasForeignKey(i => i.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockReturn>().Property(r => r.Quantity).HasPrecision(18, 3);
+
+        builder.Entity<StockReturn>()
+            .HasOne(r => r.Material)
+            .WithMany()
+            .HasForeignKey(r => r.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockReturn>()
+            .HasOne(r => r.Warehouse)
+            .WithMany()
+            .HasForeignKey(r => r.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockAdjustment>().Property(a => a.QuantityDelta).HasPrecision(18, 3);
+
+        builder.Entity<StockAdjustment>()
+            .HasOne(a => a.Material)
+            .WithMany()
+            .HasForeignKey(a => a.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockAdjustment>()
+            .HasOne(a => a.Warehouse)
+            .WithMany()
+            .HasForeignKey(a => a.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -290,7 +385,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Quotation), typeof(Booking), typeof(SaleAgreement),
             typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
             typeof(Supplier), typeof(PurchaseRequisition), typeof(Rfq), typeof(VendorQuotation),
-            typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn)
+            typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),
+            typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
+            typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

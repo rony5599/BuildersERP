@@ -192,6 +192,46 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockTransferView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockIssueView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockReturnView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockAdjustmentView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">Inventory</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView))
+                        {
+                            <li class="nav-item"><a asp-controller="Warehouses" asp-action="Index" class="nav-link text-white">Warehouses</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView))
+                        {
+                            <li class="nav-item"><a asp-controller="Materials" asp-action="Index" class="nav-link text-white">Materials</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView))
+                        {
+                            <li class="nav-item"><a asp-controller="Stocks" asp-action="Index" class="nav-link text-white">Stock</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockTransferView))
+                        {
+                            <li class="nav-item"><a asp-controller="StockTransfers" asp-action="Index" class="nav-link text-white">Stock Transfers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockIssueView))
+                        {
+                            <li class="nav-item"><a asp-controller="StockIssues" asp-action="Index" class="nav-link text-white">Stock Issues</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockReturnView))
+                        {
+                            <li class="nav-item"><a asp-controller="StockReturns" asp-action="Index" class="nav-link text-white">Stock Returns</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockAdjustmentView))
+                        {
+                            <li class="nav-item"><a asp-controller="StockAdjustments" asp-action="Index" class="nav-link text-white">Stock Adjustments</a></li>
+                        }
+                    </ul>
+                }
             </nav>
             <div class="flex-grow-1">
                 <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">

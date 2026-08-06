@@ -1,0 +1,46 @@
+@model BuilderERP.Application.DTOs.CreateStockAdjustmentDto
+@{
+    ViewData["Title"] = "New Stock Adjustment";
+}
+
+<h1 class="h3 mb-4">New Stock Adjustment</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="AdjustmentNumber" class="form-label"></label>
+        <input asp-for="AdjustmentNumber" class="form-control" />
+        <span asp-validation-for="AdjustmentNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MaterialId" class="form-label"></label>
+        <select asp-for="MaterialId" asp-items="ViewBag.Materials" class="form-select">
+            <option value="">-- Select Material --</option>
+        </select>
+        <span asp-validation-for="MaterialId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="WarehouseId" class="form-label"></label>
+        <select asp-for="WarehouseId" asp-items="ViewBag.Warehouses" class="form-select">
+            <option value="">-- Select Warehouse --</option>
+        </select>
+        <span asp-validation-for="WarehouseId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AdjustmentDate" class="form-label"></label>
+        <input asp-for="AdjustmentDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="QuantityDelta" class="form-label"></label>
+        <input asp-for="QuantityDelta" class="form-control" />
+        <div class="form-text">Positive to add stock (e.g. opening balance), negative to remove (e.g. write-off).</div>
+        <span asp-validation-for="QuantityDelta" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Reason" class="form-label"></label>
+        <textarea asp-for="Reason" class="form-control"></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

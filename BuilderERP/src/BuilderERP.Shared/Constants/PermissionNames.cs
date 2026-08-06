@@ -86,6 +86,27 @@ public static class PermissionNames
     public const string PurchaseReturnView = "PurchaseReturn.View";
     public const string PurchaseReturnManage = "PurchaseReturn.Manage";
 
+    public const string WarehouseView = "Warehouse.View";
+    public const string WarehouseManage = "Warehouse.Manage";
+
+    public const string MaterialView = "Material.View";
+    public const string MaterialManage = "Material.Manage";
+
+    public const string StockView = "Stock.View";
+    public const string StockManage = "Stock.Manage";
+
+    public const string StockTransferView = "StockTransfer.View";
+    public const string StockTransferManage = "StockTransfer.Manage";
+
+    public const string StockIssueView = "StockIssue.View";
+    public const string StockIssueManage = "StockIssue.Manage";
+
+    public const string StockReturnView = "StockReturn.View";
+    public const string StockReturnManage = "StockReturn.Manage";
+
+    public const string StockAdjustmentView = "StockAdjustment.View";
+    public const string StockAdjustmentManage = "StockAdjustment.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -116,6 +137,13 @@ public static class PermissionNames
         (PurchaseOrderView, "PurchaseOrder"), (PurchaseOrderManage, "PurchaseOrder"),
         (GoodsReceiveView, "GoodsReceive"), (GoodsReceiveManage, "GoodsReceive"),
         (PurchaseReturnView, "PurchaseReturn"), (PurchaseReturnManage, "PurchaseReturn"),
+        (WarehouseView, "Warehouse"), (WarehouseManage, "Warehouse"),
+        (MaterialView, "Material"), (MaterialManage, "Material"),
+        (StockView, "Stock"), (StockManage, "Stock"),
+        (StockTransferView, "StockTransfer"), (StockTransferManage, "StockTransfer"),
+        (StockIssueView, "StockIssue"), (StockIssueManage, "StockIssue"),
+        (StockReturnView, "StockReturn"), (StockReturnManage, "StockReturn"),
+        (StockAdjustmentView, "StockAdjustment"), (StockAdjustmentManage, "StockAdjustment"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -148,5 +176,12 @@ public static class PermissionNames
         PurchaseOrderView, PurchaseOrderManage,
         GoodsReceiveView, GoodsReceiveManage,
         PurchaseReturnView, PurchaseReturnManage,
+        WarehouseView, WarehouseManage,
+        MaterialView, MaterialManage,
+        StockView, StockManage,
+        StockTransferView, StockTransferManage,
+        StockIssueView, StockIssueManage,
+        StockReturnView, StockReturnManage,
+        StockAdjustmentView, StockAdjustmentManage,
     };
 }
