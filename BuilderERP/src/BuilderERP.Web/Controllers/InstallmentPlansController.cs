@@ -1,0 +1,118 @@
+using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.InstallmentPlans;
+using BuilderERP.Application.Features.SaleAgreements;
+using BuilderERP.Shared.Authorization;
+using BuilderERP.Shared.Constants;
+using BuilderERP.Web.Extensions;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace BuilderERP.Web.Controllers;
+
+[PermissionAuthorize(PermissionNames.InstallmentPlanView)]
+public class InstallmentPlansController : Controller
+{
+    private readonly IMediator _mediator;
+    private readonly IValidator<CreateInstallmentPlanDto> _createValidator;
+    private readonly IValidator<UpdateInstallmentPlanDto> _updateValidator;
+
+    public InstallmentPlansController(IMediator mediator, IValidator<CreateInstallmentPlanDto> createValidator, IValidator<UpdateInstallmentPlanDto> updateValidator)
+    {
+        _mediator = mediator;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var plans = await _mediator.Send(new GetAllInstallmentPlansQuery());
+        return View(plans);
+    }
+
+    [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
+    public async Task<IActionResult> Create()
+    {
+        await PopulateDropdownsAsync();
+        return View(new CreateInstallmentPlanDto());
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateInstallmentPlanDto dto)
+    {
+        var validationResult = await _createValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            await PopulateDropdownsAsync();
+            return View(dto);
+        }
+
+        await _mediator.Send(new CreateInstallmentPlanCommand(dto));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var plan = await _mediator.Send(new GetInstallmentPlanByIdQuery(id));
+        if (plan is null)
+        {
+            return NotFound();
+        }
+
+        var dto = new UpdateInstallmentPlanDto
+        {
+            Id = plan.Id,
+            TotalAmount = plan.TotalAmount,
+            NumberOfInstallments = plan.NumberOfInstallments,
+            StartDate = plan.StartDate,
+            InterestRatePercent = plan.InterestRatePercent,
+            Status = plan.Status,
+            SaleAgreementId = plan.SaleAgreementId
+        };
+
+        await PopulateDropdownsAsync();
+        return View(dto);
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(UpdateInstallmentPlanDto dto)
+    {
+        var validationResult = await _updateValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            await PopulateDropdownsAsync();
+            return View(dto);
+        }
+
+        var success = await _mediator.Send(new UpdateInstallmentPlanCommand(dto));
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    {
+        await _mediator.Send(new SetInstallmentPlanActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task PopulateDropdownsAsync()
+    {
+        var agreements = await _mediator.Send(new GetAllSaleAgreementsQuery());
+        ViewBag.SaleAgreements = new SelectList(agreements, "Id", "AgreementNumber");
+    }
+}

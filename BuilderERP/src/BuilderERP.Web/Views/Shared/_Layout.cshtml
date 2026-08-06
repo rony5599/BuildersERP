@@ -132,6 +132,26 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentPlanView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReceiptView))
+                {
+                    <div class="text-uppercase small text-white-50 mt-4 mb-2 px-2">Installments</div>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentPlanView))
+                        {
+                            <li class="nav-item"><a asp-controller="InstallmentPlans" asp-action="Index" class="nav-link text-white">Installment Plans</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentView))
+                        {
+                            <li class="nav-item"><a asp-controller="Installments" asp-action="Index" class="nav-link text-white">Installments</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReceiptView))
+                        {
+                            <li class="nav-item"><a asp-controller="Receipts" asp-action="Index" class="nav-link text-white">Receipts</a></li>
+                        }
+                    </ul>
+                }
             </nav>
             <div class="flex-grow-1">
                 <header class="topbar d-flex justify-content-end align-items-center border-bottom bg-white px-3 py-2">

@@ -1,0 +1,44 @@
+@model BuilderERP.Application.DTOs.UpdateReceiptDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Receipt";
+}
+
+<h1 class="h3 mb-4">Edit Receipt</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="InstallmentId" class="form-label"></label>
+        <select asp-for="InstallmentId" asp-items="ViewBag.Installments" class="form-select">
+            <option value="">-- Select Installment --</option>
+        </select>
+        <span asp-validation-for="InstallmentId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReceiptNumber" class="form-label"></label>
+        <input asp-for="ReceiptNumber" class="form-control" />
+        <span asp-validation-for="ReceiptNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PaymentDate" class="form-label"></label>
+        <input asp-for="PaymentDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="AmountPaid" class="form-label"></label>
+        <input asp-for="AmountPaid" class="form-control" />
+        <span asp-validation-for="AmountPaid" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PaymentMethod" class="form-label"></label>
+        <select asp-for="PaymentMethod" asp-items="Html.GetEnumSelectList<PaymentMethod>()" class="form-select"></select>
+        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

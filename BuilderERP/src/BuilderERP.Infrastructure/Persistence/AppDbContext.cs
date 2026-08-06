@@ -28,6 +28,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Quotation> Quotations => Set<Quotation>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<SaleAgreement> SaleAgreements => Set<SaleAgreement>();
+    public DbSet<InstallmentPlan> InstallmentPlans => Set<InstallmentPlan>();
+    public DbSet<Installment> Installments => Set<Installment>();
+    public DbSet<Receipt> Receipts => Set<Receipt>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -177,6 +180,33 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         builder.Entity<SaleAgreement>().Property(a => a.TotalSalePrice).HasPrecision(18, 2);
 
+        builder.Entity<InstallmentPlan>()
+            .HasOne(p => p.SaleAgreement)
+            .WithMany()
+            .HasForeignKey(p => p.SaleAgreementId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<InstallmentPlan>().Property(p => p.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<InstallmentPlan>().Property(p => p.InterestRatePercent).HasPrecision(5, 2);
+
+        builder.Entity<Installment>()
+            .HasOne(i => i.InstallmentPlan)
+            .WithMany(p => p.Installments)
+            .HasForeignKey(i => i.InstallmentPlanId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Installment>().Property(i => i.DueAmount).HasPrecision(18, 2);
+        builder.Entity<Installment>().Property(i => i.PenaltyAmount).HasPrecision(18, 2);
+        builder.Entity<Installment>().Property(i => i.PaidAmount).HasPrecision(18, 2);
+
+        builder.Entity<Receipt>()
+            .HasOne(r => r.Installment)
+            .WithMany()
+            .HasForeignKey(r => r.InstallmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Receipt>().Property(r => r.AmountPaid).HasPrecision(18, 2);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -197,7 +227,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Company), typeof(Branch), typeof(Project), typeof(Department), typeof(CostCenter),
             typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit),
             typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer),
-            typeof(Quotation), typeof(Booking), typeof(SaleAgreement)
+            typeof(Quotation), typeof(Booking), typeof(SaleAgreement),
+            typeof(InstallmentPlan), typeof(Installment), typeof(Receipt)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

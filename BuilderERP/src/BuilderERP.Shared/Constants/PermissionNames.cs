@@ -56,6 +56,15 @@ public static class PermissionNames
     public const string SaleAgreementView = "SaleAgreement.View";
     public const string SaleAgreementManage = "SaleAgreement.Manage";
 
+    public const string InstallmentPlanView = "InstallmentPlan.View";
+    public const string InstallmentPlanManage = "InstallmentPlan.Manage";
+
+    public const string InstallmentView = "Installment.View";
+    public const string InstallmentManage = "Installment.Manage";
+
+    public const string ReceiptView = "Receipt.View";
+    public const string ReceiptManage = "Receipt.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -76,6 +85,9 @@ public static class PermissionNames
         (QuotationView, "Quotation"), (QuotationManage, "Quotation"),
         (BookingView, "Booking"), (BookingManage, "Booking"),
         (SaleAgreementView, "SaleAgreement"), (SaleAgreementManage, "SaleAgreement"),
+        (InstallmentPlanView, "InstallmentPlan"), (InstallmentPlanManage, "InstallmentPlan"),
+        (InstallmentView, "Installment"), (InstallmentManage, "Installment"),
+        (ReceiptView, "Receipt"), (ReceiptManage, "Receipt"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -98,5 +110,8 @@ public static class PermissionNames
         QuotationView, QuotationManage,
         BookingView, BookingManage,
         SaleAgreementView, SaleAgreementManage,
+        InstallmentPlanView, InstallmentPlanManage,
+        InstallmentView, InstallmentManage,
+        ReceiptView, ReceiptManage,
     };
 }
