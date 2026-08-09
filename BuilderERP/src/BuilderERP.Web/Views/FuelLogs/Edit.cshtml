@@ -1,0 +1,45 @@
+@model BuilderERP.Application.DTOs.UpdateFuelLogDto
+@{
+    ViewData["Title"] = "Edit Fuel Log";
+}
+
+<h1 class="h3 mb-4">Edit Fuel Log</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="EquipmentId" class="form-label"></label>
+        <select asp-for="EquipmentId" asp-items="ViewBag.Equipment" class="form-select">
+            <option value="">-- Select Equipment --</option>
+        </select>
+        <span asp-validation-for="EquipmentId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LogDate" class="form-label"></label>
+        <input asp-for="LogDate" type="date" class="form-control" />
+        <span asp-validation-for="LogDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FuelQuantity" class="form-label"></label>
+        <input asp-for="FuelQuantity" class="form-control" />
+        <span asp-validation-for="FuelQuantity" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FuelCost" class="form-label"></label>
+        <input asp-for="FuelCost" class="form-control" />
+        <span asp-validation-for="FuelCost" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MeterReading" class="form-label"></label>
+        <input asp-for="MeterReading" class="form-control" />
+        <span asp-validation-for="MeterReading" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

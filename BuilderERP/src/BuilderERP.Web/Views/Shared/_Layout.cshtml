@@ -354,6 +354,36 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentRentalView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FuelLogView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaintenanceRecordView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.OperatorAssignmentView))
+                {
+                    <div class="nav-section-title">Equipment Management</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentView))
+                        {
+                            <li class="nav-item"><a asp-controller="Equipment" asp-action="Index" class="@NavClass("Equipment")"><i class="bi bi-truck-front"></i> Equipment</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentRentalView))
+                        {
+                            <li class="nav-item"><a asp-controller="EquipmentRentals" asp-action="Index" class="@NavClass("EquipmentRentals")"><i class="bi bi-arrow-left-right"></i> Rentals</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FuelLogView))
+                        {
+                            <li class="nav-item"><a asp-controller="FuelLogs" asp-action="Index" class="@NavClass("FuelLogs")"><i class="bi bi-fuel-pump"></i> Fuel Logs</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaintenanceRecordView))
+                        {
+                            <li class="nav-item"><a asp-controller="MaintenanceRecords" asp-action="Index" class="@NavClass("MaintenanceRecords")"><i class="bi bi-tools"></i> Maintenance</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.OperatorAssignmentView))
+                        {
+                            <li class="nav-item"><a asp-controller="OperatorAssignments" asp-action="Index" class="@NavClass("OperatorAssignments")"><i class="bi bi-person-gear"></i> Operator Assignment</a></li>
+                        }
+                    </ul>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView)

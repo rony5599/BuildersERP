@@ -67,6 +67,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<SafetyTraining> SafetyTrainings => Set<SafetyTraining>();
     public DbSet<Overtime> Overtimes => Set<Overtime>();
     public DbSet<Salary> Salaries => Set<Salary>();
+    public DbSet<Equipment> Equipment => Set<Equipment>();
+    public DbSet<EquipmentRental> EquipmentRentals => Set<EquipmentRental>();
+    public DbSet<FuelLog> FuelLogs => Set<FuelLog>();
+    public DbSet<MaintenanceRecord> MaintenanceRecords => Set<MaintenanceRecord>();
+    public DbSet<OperatorAssignment> OperatorAssignments => Set<OperatorAssignment>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -616,6 +621,64 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(s => s.WorkerId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Equipment Management
+        builder.Entity<EquipmentRental>().Property(r => r.RatePerDay).HasPrecision(18, 2);
+        builder.Entity<EquipmentRental>().Property(r => r.TotalAmount).HasPrecision(18, 2);
+
+        builder.Entity<EquipmentRental>()
+            .HasOne(r => r.Equipment)
+            .WithMany()
+            .HasForeignKey(r => r.EquipmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EquipmentRental>()
+            .HasOne(r => r.Supplier)
+            .WithMany()
+            .HasForeignKey(r => r.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EquipmentRental>()
+            .HasOne(r => r.Project)
+            .WithMany()
+            .HasForeignKey(r => r.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<FuelLog>().Property(f => f.FuelQuantity).HasPrecision(18, 3);
+        builder.Entity<FuelLog>().Property(f => f.FuelCost).HasPrecision(18, 2);
+        builder.Entity<FuelLog>().Property(f => f.MeterReading).HasPrecision(18, 2);
+
+        builder.Entity<FuelLog>()
+            .HasOne(f => f.Equipment)
+            .WithMany()
+            .HasForeignKey(f => f.EquipmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<MaintenanceRecord>().Property(m => m.Cost).HasPrecision(18, 2);
+
+        builder.Entity<MaintenanceRecord>()
+            .HasOne(m => m.Equipment)
+            .WithMany()
+            .HasForeignKey(m => m.EquipmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<OperatorAssignment>()
+            .HasOne(o => o.Equipment)
+            .WithMany()
+            .HasForeignKey(o => o.EquipmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<OperatorAssignment>()
+            .HasOne(o => o.Worker)
+            .WithMany()
+            .HasForeignKey(o => o.WorkerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<OperatorAssignment>()
+            .HasOne(o => o.Project)
+            .WithMany()
+            .HasForeignKey(o => o.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -647,7 +710,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),
             typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),
             typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger),
-            typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary)
+            typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary),
+            typeof(Equipment), typeof(EquipmentRental), typeof(FuelLog), typeof(MaintenanceRecord), typeof(OperatorAssignment)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

@@ -1,0 +1,43 @@
+@model BuilderERP.Application.DTOs.CreateOperatorAssignmentDto
+@{
+    ViewData["Title"] = "New Operator Assignment";
+}
+
+<h1 class="h3 mb-4">New Operator Assignment</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="EquipmentId" class="form-label"></label>
+        <select asp-for="EquipmentId" asp-items="ViewBag.Equipment" class="form-select">
+            <option value="">-- Select Equipment --</option>
+        </select>
+        <span asp-validation-for="EquipmentId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="WorkerId" class="form-label">Operator</label>
+        <select asp-for="WorkerId" asp-items="ViewBag.Workers" class="form-select">
+            <option value="">-- Select Operator --</option>
+        </select>
+        <span asp-validation-for="WorkerId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AssignmentStartDate" class="form-label"></label>
+        <input asp-for="AssignmentStartDate" type="date" class="form-control" />
+        <span asp-validation-for="AssignmentStartDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AssignmentEndDate" class="form-label"></label>
+        <input asp-for="AssignmentEndDate" type="date" class="form-control" />
+        <span asp-validation-for="AssignmentEndDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

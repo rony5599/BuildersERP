@@ -1,0 +1,51 @@
+@model BuilderERP.Application.DTOs.UpdateMaintenanceRecordDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Maintenance Record";
+}
+
+<h1 class="h3 mb-4">Edit Maintenance Record</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="EquipmentId" class="form-label"></label>
+        <select asp-for="EquipmentId" asp-items="ViewBag.Equipment" class="form-select">
+            <option value="">-- Select Equipment --</option>
+        </select>
+        <span asp-validation-for="EquipmentId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MaintenanceType" class="form-label"></label>
+        <select asp-for="MaintenanceType" asp-items="Html.GetEnumSelectList<MaintenanceType>()" class="form-select"></select>
+        <span asp-validation-for="MaintenanceType" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MaintenanceDate" class="form-label"></label>
+        <input asp-for="MaintenanceDate" type="date" class="form-control" />
+        <span asp-validation-for="MaintenanceDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Cost" class="form-label"></label>
+        <input asp-for="Cost" class="form-control" />
+        <span asp-validation-for="Cost" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<MaintenanceStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NextServiceDate" class="form-label"></label>
+        <input asp-for="NextServiceDate" type="date" class="form-control" />
+        <span asp-validation-for="NextServiceDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

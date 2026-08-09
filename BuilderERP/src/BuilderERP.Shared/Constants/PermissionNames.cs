@@ -173,6 +173,21 @@ public static class PermissionNames
     public const string SalaryView = "Salary.View";
     public const string SalaryManage = "Salary.Manage";
 
+    public const string EquipmentView = "Equipment.View";
+    public const string EquipmentManage = "Equipment.Manage";
+
+    public const string EquipmentRentalView = "EquipmentRental.View";
+    public const string EquipmentRentalManage = "EquipmentRental.Manage";
+
+    public const string FuelLogView = "FuelLog.View";
+    public const string FuelLogManage = "FuelLog.Manage";
+
+    public const string MaintenanceRecordView = "MaintenanceRecord.View";
+    public const string MaintenanceRecordManage = "MaintenanceRecord.Manage";
+
+    public const string OperatorAssignmentView = "OperatorAssignment.View";
+    public const string OperatorAssignmentManage = "OperatorAssignment.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -232,6 +247,11 @@ public static class PermissionNames
         (SafetyTrainingView, "SafetyTraining"), (SafetyTrainingManage, "SafetyTraining"),
         (OvertimeView, "Overtime"), (OvertimeManage, "Overtime"),
         (SalaryView, "Salary"), (SalaryManage, "Salary"),
+        (EquipmentView, "Equipment"), (EquipmentManage, "Equipment"),
+        (EquipmentRentalView, "EquipmentRental"), (EquipmentRentalManage, "EquipmentRental"),
+        (FuelLogView, "FuelLog"), (FuelLogManage, "FuelLog"),
+        (MaintenanceRecordView, "MaintenanceRecord"), (MaintenanceRecordManage, "MaintenanceRecord"),
+        (OperatorAssignmentView, "OperatorAssignment"), (OperatorAssignmentManage, "OperatorAssignment"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -293,5 +313,10 @@ public static class PermissionNames
         SafetyTrainingView, SafetyTrainingManage,
         OvertimeView, OvertimeManage,
         SalaryView, SalaryManage,
+        EquipmentView, EquipmentManage,
+        EquipmentRentalView, EquipmentRentalManage,
+        FuelLogView, FuelLogManage,
+        MaintenanceRecordView, MaintenanceRecordManage,
+        OperatorAssignmentView, OperatorAssignmentManage,
     };
 }
