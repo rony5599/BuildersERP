@@ -137,6 +137,27 @@ public static class PermissionNames
     public const string DrawingApprovalView = "DrawingApproval.View";
     public const string DrawingApprovalManage = "DrawingApproval.Manage";
 
+    public const string ContractorView = "Contractor.View";
+    public const string ContractorManage = "Contractor.Manage";
+
+    public const string WorkOrderView = "WorkOrder.View";
+    public const string WorkOrderManage = "WorkOrder.Manage";
+
+    public const string RateContractView = "RateContract.View";
+    public const string RateContractManage = "RateContract.Manage";
+
+    public const string RunningBillView = "RunningBill.View";
+    public const string RunningBillManage = "RunningBill.Manage";
+
+    public const string SecurityDepositView = "SecurityDeposit.View";
+    public const string SecurityDepositManage = "SecurityDeposit.Manage";
+
+    public const string PerformanceEvaluationView = "PerformanceEvaluation.View";
+    public const string PerformanceEvaluationManage = "PerformanceEvaluation.Manage";
+
+    public const string ContractorLedgerView = "ContractorLedger.View";
+    public const string ContractorLedgerManage = "ContractorLedger.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -184,6 +205,13 @@ public static class PermissionNames
         (DrawingView, "Drawing"), (DrawingManage, "Drawing"),
         (DrawingRevisionView, "DrawingRevision"), (DrawingRevisionManage, "DrawingRevision"),
         (DrawingApprovalView, "DrawingApproval"), (DrawingApprovalManage, "DrawingApproval"),
+        (ContractorView, "Contractor"), (ContractorManage, "Contractor"),
+        (WorkOrderView, "WorkOrder"), (WorkOrderManage, "WorkOrder"),
+        (RateContractView, "RateContract"), (RateContractManage, "RateContract"),
+        (RunningBillView, "RunningBill"), (RunningBillManage, "RunningBill"),
+        (SecurityDepositView, "SecurityDeposit"), (SecurityDepositManage, "SecurityDeposit"),
+        (PerformanceEvaluationView, "PerformanceEvaluation"), (PerformanceEvaluationManage, "PerformanceEvaluation"),
+        (ContractorLedgerView, "ContractorLedger"), (ContractorLedgerManage, "ContractorLedger"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -233,5 +261,12 @@ public static class PermissionNames
         DrawingView, DrawingManage,
         DrawingRevisionView, DrawingRevisionManage,
         DrawingApprovalView, DrawingApprovalManage,
+        ContractorView, ContractorManage,
+        WorkOrderView, WorkOrderManage,
+        RateContractView, RateContractManage,
+        RunningBillView, RunningBillManage,
+        SecurityDepositView, SecurityDepositManage,
+        PerformanceEvaluationView, PerformanceEvaluationManage,
+        ContractorLedgerView, ContractorLedgerManage,
     };
 }

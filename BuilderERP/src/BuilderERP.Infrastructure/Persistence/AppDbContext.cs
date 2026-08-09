@@ -55,6 +55,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Drawing> Drawings => Set<Drawing>();
     public DbSet<DrawingRevision> DrawingRevisions => Set<DrawingRevision>();
     public DbSet<DrawingApproval> DrawingApprovals => Set<DrawingApproval>();
+    public DbSet<Contractor> Contractors => Set<Contractor>();
+    public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
+    public DbSet<RateContract> RateContracts => Set<RateContract>();
+    public DbSet<RunningBill> RunningBills => Set<RunningBill>();
+    public DbSet<SecurityDeposit> SecurityDeposits => Set<SecurityDeposit>();
+    public DbSet<PerformanceEvaluation> PerformanceEvaluations => Set<PerformanceEvaluation>();
+    public DbSet<ContractorLedger> ContractorLedgers => Set<ContractorLedger>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -469,6 +476,82 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(a => a.DrawingRevisionId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Contractor Management
+        builder.Entity<WorkOrder>().Property(w => w.Amount).HasPrecision(18, 2);
+
+        builder.Entity<WorkOrder>()
+            .HasOne(w => w.Contractor)
+            .WithMany()
+            .HasForeignKey(w => w.ContractorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<WorkOrder>()
+            .HasOne(w => w.Project)
+            .WithMany()
+            .HasForeignKey(w => w.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<RateContract>().Property(r => r.Rate).HasPrecision(18, 2);
+
+        builder.Entity<RateContract>()
+            .HasOne(r => r.Contractor)
+            .WithMany()
+            .HasForeignKey(r => r.ContractorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<RateContract>()
+            .HasOne(r => r.Project)
+            .WithMany()
+            .HasForeignKey(r => r.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<RunningBill>().Property(b => b.WorkDoneAmount).HasPrecision(18, 2);
+        builder.Entity<RunningBill>().Property(b => b.PreviousBillAmount).HasPrecision(18, 2);
+        builder.Entity<RunningBill>().Property(b => b.DeductionAmount).HasPrecision(18, 2);
+        builder.Entity<RunningBill>().Property(b => b.NetPayableAmount).HasPrecision(18, 2);
+
+        builder.Entity<RunningBill>()
+            .HasOne(b => b.WorkOrder)
+            .WithMany()
+            .HasForeignKey(b => b.WorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SecurityDeposit>().Property(s => s.DepositAmount).HasPrecision(18, 2);
+
+        builder.Entity<SecurityDeposit>()
+            .HasOne(s => s.Contractor)
+            .WithMany()
+            .HasForeignKey(s => s.ContractorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SecurityDeposit>()
+            .HasOne(s => s.WorkOrder)
+            .WithMany()
+            .HasForeignKey(s => s.WorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PerformanceEvaluation>()
+            .HasOne(p => p.Contractor)
+            .WithMany()
+            .HasForeignKey(p => p.ContractorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PerformanceEvaluation>()
+            .HasOne(p => p.Project)
+            .WithMany()
+            .HasForeignKey(p => p.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ContractorLedger>().Property(l => l.DebitAmount).HasPrecision(18, 2);
+        builder.Entity<ContractorLedger>().Property(l => l.CreditAmount).HasPrecision(18, 2);
+        builder.Entity<ContractorLedger>().Property(l => l.Balance).HasPrecision(18, 2);
+
+        builder.Entity<ContractorLedger>()
+            .HasOne(l => l.Contractor)
+            .WithMany()
+            .HasForeignKey(l => l.ContractorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -497,7 +580,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
             typeof(WbsTask), typeof(Milestone), typeof(BoqItem), typeof(DailyProgress),
             typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),
-            typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval)
+            typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),
+            typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),
+            typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

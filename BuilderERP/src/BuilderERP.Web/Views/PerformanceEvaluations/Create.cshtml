@@ -1,0 +1,51 @@
+@model BuilderERP.Application.DTOs.CreatePerformanceEvaluationDto
+@{
+    ViewData["Title"] = "New Performance Evaluation";
+}
+
+<h1 class="h3 mb-4">New Performance Evaluation</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ContractorId" class="form-label"></label>
+        <select asp-for="ContractorId" asp-items="ViewBag.Contractors" class="form-select">
+            <option value="">-- Select Contractor --</option>
+        </select>
+        <span asp-validation-for="ContractorId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- None --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EvaluationDate" class="form-label"></label>
+        <input asp-for="EvaluationDate" type="date" class="form-control" />
+        <span asp-validation-for="EvaluationDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="QualityScore" class="form-label"></label>
+        <input asp-for="QualityScore" class="form-control" />
+        <span asp-validation-for="QualityScore" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TimelinessScore" class="form-label"></label>
+        <input asp-for="TimelinessScore" class="form-control" />
+        <span asp-validation-for="TimelinessScore" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SafetyScore" class="form-label"></label>
+        <input asp-for="SafetyScore" class="form-control" />
+        <span asp-validation-for="SafetyScore" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

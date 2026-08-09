@@ -1,0 +1,51 @@
+@model BuilderERP.Application.DTOs.UpdateRunningBillDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Running Bill";
+}
+
+<h1 class="h3 mb-4">Edit Running Bill</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="BillNumber" class="form-label"></label>
+        <input asp-for="BillNumber" class="form-control" />
+        <span asp-validation-for="BillNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="WorkOrderId" class="form-label"></label>
+        <select asp-for="WorkOrderId" asp-items="ViewBag.WorkOrders" class="form-select">
+            <option value="">-- Select Work Order --</option>
+        </select>
+        <span asp-validation-for="WorkOrderId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="BillDate" class="form-label"></label>
+        <input asp-for="BillDate" type="date" class="form-control" />
+        <span asp-validation-for="BillDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="WorkDoneAmount" class="form-label"></label>
+        <input asp-for="WorkDoneAmount" class="form-control" />
+        <span asp-validation-for="WorkDoneAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PreviousBillAmount" class="form-label"></label>
+        <input asp-for="PreviousBillAmount" class="form-control" />
+        <span asp-validation-for="PreviousBillAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DeductionAmount" class="form-label"></label>
+        <input asp-for="DeductionAmount" class="form-control" />
+        <span asp-validation-for="DeductionAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<RunningBillStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
