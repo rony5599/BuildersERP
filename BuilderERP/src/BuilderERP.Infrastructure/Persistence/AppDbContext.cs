@@ -72,6 +72,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<FuelLog> FuelLogs => Set<FuelLog>();
     public DbSet<MaintenanceRecord> MaintenanceRecords => Set<MaintenanceRecord>();
     public DbSet<OperatorAssignment> OperatorAssignments => Set<OperatorAssignment>();
+    public DbSet<MaterialInspection> MaterialInspections => Set<MaterialInspection>();
+    public DbSet<SiteInspection> SiteInspections => Set<SiteInspection>();
+    public DbSet<QualityChecklist> QualityChecklists => Set<QualityChecklist>();
+    public DbSet<TestReport> TestReports => Set<TestReport>();
+    public DbSet<Ncr> Ncrs => Set<Ncr>();
+    public DbSet<PunchList> PunchLists => Set<PunchList>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -679,6 +685,57 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(o => o.ProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Quality Control
+        builder.Entity<MaterialInspection>().Property(m => m.Quantity).HasPrecision(18, 3);
+
+        builder.Entity<MaterialInspection>()
+            .HasOne(m => m.Project)
+            .WithMany()
+            .HasForeignKey(m => m.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<MaterialInspection>()
+            .HasOne(m => m.Material)
+            .WithMany()
+            .HasForeignKey(m => m.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SiteInspection>()
+            .HasOne(s => s.Project)
+            .WithMany()
+            .HasForeignKey(s => s.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<QualityChecklist>()
+            .HasOne(q => q.Project)
+            .WithMany()
+            .HasForeignKey(q => q.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<TestReport>()
+            .HasOne(t => t.Project)
+            .WithMany()
+            .HasForeignKey(t => t.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<TestReport>()
+            .HasOne(t => t.Material)
+            .WithMany()
+            .HasForeignKey(t => t.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Ncr>()
+            .HasOne(n => n.Project)
+            .WithMany()
+            .HasForeignKey(n => n.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PunchList>()
+            .HasOne(p => p.Project)
+            .WithMany()
+            .HasForeignKey(p => p.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -711,7 +768,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),
             typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger),
             typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary),
-            typeof(Equipment), typeof(EquipmentRental), typeof(FuelLog), typeof(MaintenanceRecord), typeof(OperatorAssignment)
+            typeof(Equipment), typeof(EquipmentRental), typeof(FuelLog), typeof(MaintenanceRecord), typeof(OperatorAssignment),
+            typeof(MaterialInspection), typeof(SiteInspection), typeof(QualityChecklist),
+            typeof(TestReport), typeof(Ncr), typeof(PunchList)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

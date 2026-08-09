@@ -188,6 +188,24 @@ public static class PermissionNames
     public const string OperatorAssignmentView = "OperatorAssignment.View";
     public const string OperatorAssignmentManage = "OperatorAssignment.Manage";
 
+    public const string MaterialInspectionView = "MaterialInspection.View";
+    public const string MaterialInspectionManage = "MaterialInspection.Manage";
+
+    public const string SiteInspectionView = "SiteInspection.View";
+    public const string SiteInspectionManage = "SiteInspection.Manage";
+
+    public const string QualityChecklistView = "QualityChecklist.View";
+    public const string QualityChecklistManage = "QualityChecklist.Manage";
+
+    public const string TestReportView = "TestReport.View";
+    public const string TestReportManage = "TestReport.Manage";
+
+    public const string NcrView = "Ncr.View";
+    public const string NcrManage = "Ncr.Manage";
+
+    public const string PunchListView = "PunchList.View";
+    public const string PunchListManage = "PunchList.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -252,6 +270,12 @@ public static class PermissionNames
         (FuelLogView, "FuelLog"), (FuelLogManage, "FuelLog"),
         (MaintenanceRecordView, "MaintenanceRecord"), (MaintenanceRecordManage, "MaintenanceRecord"),
         (OperatorAssignmentView, "OperatorAssignment"), (OperatorAssignmentManage, "OperatorAssignment"),
+        (MaterialInspectionView, "MaterialInspection"), (MaterialInspectionManage, "MaterialInspection"),
+        (SiteInspectionView, "SiteInspection"), (SiteInspectionManage, "SiteInspection"),
+        (QualityChecklistView, "QualityChecklist"), (QualityChecklistManage, "QualityChecklist"),
+        (TestReportView, "TestReport"), (TestReportManage, "TestReport"),
+        (NcrView, "Ncr"), (NcrManage, "Ncr"),
+        (PunchListView, "PunchList"), (PunchListManage, "PunchList"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -318,5 +342,11 @@ public static class PermissionNames
         FuelLogView, FuelLogManage,
         MaintenanceRecordView, MaintenanceRecordManage,
         OperatorAssignmentView, OperatorAssignmentManage,
+        MaterialInspectionView, MaterialInspectionManage,
+        SiteInspectionView, SiteInspectionManage,
+        QualityChecklistView, QualityChecklistManage,
+        TestReportView, TestReportManage,
+        NcrView, NcrManage,
+        PunchListView, PunchListManage,
     };
 }

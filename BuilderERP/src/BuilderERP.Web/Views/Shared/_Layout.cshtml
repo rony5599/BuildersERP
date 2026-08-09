@@ -384,6 +384,41 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialInspectionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SiteInspectionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QualityChecklistView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.TestReportView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.NcrView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PunchListView))
+                {
+                    <div class="nav-section-title">Quality Control</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialInspectionView))
+                        {
+                            <li class="nav-item"><a asp-controller="MaterialInspections" asp-action="Index" class="@NavClass("MaterialInspections")"><i class="bi bi-search"></i> Material Inspection</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SiteInspectionView))
+                        {
+                            <li class="nav-item"><a asp-controller="SiteInspections" asp-action="Index" class="@NavClass("SiteInspections")"><i class="bi bi-geo-alt"></i> Site Inspection</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.TestReportView))
+                        {
+                            <li class="nav-item"><a asp-controller="TestReports" asp-action="Index" class="@NavClass("TestReports")"><i class="bi bi-file-earmark-medical"></i> Test Reports</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.NcrView))
+                        {
+                            <li class="nav-item"><a asp-controller="Ncrs" asp-action="Index" class="@NavClass("Ncrs")"><i class="bi bi-exclamation-octagon"></i> NCR</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PunchListView))
+                        {
+                            <li class="nav-item"><a asp-controller="PunchLists" asp-action="Index" class="@NavClass("PunchLists")"><i class="bi bi-list-check"></i> Punch List</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QualityChecklistView))
+                        {
+                            <li class="nav-item"><a asp-controller="QualityChecklists" asp-action="Index" class="@NavClass("QualityChecklists")"><i class="bi bi-clipboard2-check"></i> Quality Checklist</a></li>
+                        }
+                    </ul>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView)

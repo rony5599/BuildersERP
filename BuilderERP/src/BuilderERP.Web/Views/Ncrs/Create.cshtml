@@ -1,0 +1,55 @@
+@model BuilderERP.Application.DTOs.CreateNcrDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New NCR";
+}
+
+<h1 class="h3 mb-4">New NCR</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NcrNumber" class="form-label"></label>
+        <input asp-for="NcrNumber" class="form-control" />
+        <span asp-validation-for="NcrNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="RaisedDate" class="form-label"></label>
+        <input asp-for="RaisedDate" type="date" class="form-control" />
+        <span asp-validation-for="RaisedDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Severity" class="form-label"></label>
+        <select asp-for="Severity" asp-items="Html.GetEnumSelectList<NcrSeverity>()" class="form-select"></select>
+        <span asp-validation-for="Severity" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<NcrStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ResolutionDescription" class="form-label"></label>
+        <textarea asp-for="ResolutionDescription" class="form-control"></textarea>
+        <span asp-validation-for="ResolutionDescription" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ClosedDate" class="form-label"></label>
+        <input asp-for="ClosedDate" type="date" class="form-control" />
+        <span asp-validation-for="ClosedDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

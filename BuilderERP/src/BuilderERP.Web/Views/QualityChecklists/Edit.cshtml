@@ -1,0 +1,50 @@
+@model BuilderERP.Application.DTOs.UpdateQualityChecklistDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Quality Checklist";
+}
+
+<h1 class="h3 mb-4">Edit Quality Checklist</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ChecklistName" class="form-label"></label>
+        <input asp-for="ChecklistName" class="form-control" />
+        <span asp-validation-for="ChecklistName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Category" class="form-label"></label>
+        <input asp-for="Category" class="form-control" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ChecklistDate" class="form-label"></label>
+        <input asp-for="ChecklistDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="CheckedBy" class="form-label"></label>
+        <input asp-for="CheckedBy" class="form-control" />
+        <span asp-validation-for="CheckedBy" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Result" class="form-label"></label>
+        <select asp-for="Result" asp-items="Html.GetEnumSelectList<QcResult>()" class="form-select"></select>
+        <span asp-validation-for="Result" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
