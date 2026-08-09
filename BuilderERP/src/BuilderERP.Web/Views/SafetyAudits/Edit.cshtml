@@ -1,0 +1,45 @@
+@model BuilderERP.Application.DTOs.UpdateSafetyAuditDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Safety Audit";
+}
+
+<h1 class="h3 mb-4">Edit Safety Audit</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AuditDate" class="form-label"></label>
+        <input asp-for="AuditDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="AuditedBy" class="form-label"></label>
+        <input asp-for="AuditedBy" class="form-control" />
+        <span asp-validation-for="AuditedBy" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Score" class="form-label"></label>
+        <input asp-for="Score" class="form-control" />
+        <span asp-validation-for="Score" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Findings" class="form-label"></label>
+        <textarea asp-for="Findings" class="form-control"></textarea>
+        <span asp-validation-for="Findings" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<SafetyAuditStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

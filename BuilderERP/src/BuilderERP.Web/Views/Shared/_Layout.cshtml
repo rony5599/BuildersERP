@@ -419,6 +419,51 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PpeTrackingView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyInspectionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyAuditView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.IncidentReportView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RiskAssessmentView))
+                {
+                    <div class="nav-section-title">Safety (HSE)</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PpeTrackingView))
+                        {
+                            <li class="nav-item"><a asp-controller="PpeTrackings" asp-action="Index" class="@NavClass("PpeTrackings")"><i class="bi bi-shield-plus"></i> PPE Tracking</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyInspectionView))
+                        {
+                            <li class="nav-item"><a asp-controller="SafetyInspections" asp-action="Index" class="@NavClass("SafetyInspections")"><i class="bi bi-clipboard-check"></i> Safety Inspection</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.IncidentReportView))
+                        {
+                            <li class="nav-item"><a asp-controller="IncidentReports" asp-action="Index" class="@NavClass("IncidentReports")"><i class="bi bi-exclamation-triangle-fill"></i> Incident Reporting</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RiskAssessmentView))
+                        {
+                            <li class="nav-item"><a asp-controller="RiskAssessments" asp-action="Index" class="@NavClass("RiskAssessments")"><i class="bi bi-clipboard2-x"></i> Risk Assessment</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyAuditView))
+                        {
+                            <li class="nav-item"><a asp-controller="SafetyAudits" asp-action="Index" class="@NavClass("SafetyAudits")"><i class="bi bi-clipboard-data"></i> Safety Audit</a></li>
+                        }
+                    </ul>
+                }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentVersionView))
+                {
+                    <div class="nav-section-title">Document Management</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentView))
+                        {
+                            <li class="nav-item"><a asp-controller="Documents" asp-action="Index" class="@NavClass("Documents")"><i class="bi bi-file-earmark-text"></i> Documents</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentVersionView))
+                        {
+                            <li class="nav-item"><a asp-controller="DocumentVersions" asp-action="Index" class="@NavClass("DocumentVersions")"><i class="bi bi-clock-history"></i> Versions</a></li>
+                        }
+                    </ul>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView)

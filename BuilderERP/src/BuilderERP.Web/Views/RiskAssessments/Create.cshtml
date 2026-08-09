@@ -1,0 +1,49 @@
+@model BuilderERP.Application.DTOs.CreateRiskAssessmentDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Risk Assessment";
+}
+
+<h1 class="h3 mb-4">New Risk Assessment</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AssessmentDate" class="form-label"></label>
+        <input asp-for="AssessmentDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="AssessedBy" class="form-label"></label>
+        <input asp-for="AssessedBy" class="form-control" />
+        <span asp-validation-for="AssessedBy" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="HazardDescription" class="form-label"></label>
+        <textarea asp-for="HazardDescription" class="form-control"></textarea>
+        <span asp-validation-for="HazardDescription" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="RiskLevel" class="form-label"></label>
+        <select asp-for="RiskLevel" asp-items="Html.GetEnumSelectList<RiskLevel>()" class="form-select"></select>
+        <span asp-validation-for="RiskLevel" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MitigationMeasures" class="form-label"></label>
+        <textarea asp-for="MitigationMeasures" class="form-control"></textarea>
+        <span asp-validation-for="MitigationMeasures" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReviewDate" class="form-label"></label>
+        <input asp-for="ReviewDate" type="date" class="form-control" />
+        <span asp-validation-for="ReviewDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

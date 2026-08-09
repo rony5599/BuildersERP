@@ -206,6 +206,27 @@ public static class PermissionNames
     public const string PunchListView = "PunchList.View";
     public const string PunchListManage = "PunchList.Manage";
 
+    public const string PpeTrackingView = "PpeTracking.View";
+    public const string PpeTrackingManage = "PpeTracking.Manage";
+
+    public const string SafetyInspectionView = "SafetyInspection.View";
+    public const string SafetyInspectionManage = "SafetyInspection.Manage";
+
+    public const string SafetyAuditView = "SafetyAudit.View";
+    public const string SafetyAuditManage = "SafetyAudit.Manage";
+
+    public const string IncidentReportView = "IncidentReport.View";
+    public const string IncidentReportManage = "IncidentReport.Manage";
+
+    public const string RiskAssessmentView = "RiskAssessment.View";
+    public const string RiskAssessmentManage = "RiskAssessment.Manage";
+
+    public const string DocumentView = "Document.View";
+    public const string DocumentManage = "Document.Manage";
+
+    public const string DocumentVersionView = "DocumentVersion.View";
+    public const string DocumentVersionManage = "DocumentVersion.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -276,6 +297,13 @@ public static class PermissionNames
         (TestReportView, "TestReport"), (TestReportManage, "TestReport"),
         (NcrView, "Ncr"), (NcrManage, "Ncr"),
         (PunchListView, "PunchList"), (PunchListManage, "PunchList"),
+        (PpeTrackingView, "PpeTracking"), (PpeTrackingManage, "PpeTracking"),
+        (SafetyInspectionView, "SafetyInspection"), (SafetyInspectionManage, "SafetyInspection"),
+        (SafetyAuditView, "SafetyAudit"), (SafetyAuditManage, "SafetyAudit"),
+        (IncidentReportView, "IncidentReport"), (IncidentReportManage, "IncidentReport"),
+        (RiskAssessmentView, "RiskAssessment"), (RiskAssessmentManage, "RiskAssessment"),
+        (DocumentView, "Document"), (DocumentManage, "Document"),
+        (DocumentVersionView, "DocumentVersion"), (DocumentVersionManage, "DocumentVersion"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -348,5 +376,12 @@ public static class PermissionNames
         TestReportView, TestReportManage,
         NcrView, NcrManage,
         PunchListView, PunchListManage,
+        PpeTrackingView, PpeTrackingManage,
+        SafetyInspectionView, SafetyInspectionManage,
+        SafetyAuditView, SafetyAuditManage,
+        IncidentReportView, IncidentReportManage,
+        RiskAssessmentView, RiskAssessmentManage,
+        DocumentView, DocumentManage,
+        DocumentVersionView, DocumentVersionManage,
     };
 }

@@ -78,6 +78,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<TestReport> TestReports => Set<TestReport>();
     public DbSet<Ncr> Ncrs => Set<Ncr>();
     public DbSet<PunchList> PunchLists => Set<PunchList>();
+    public DbSet<PpeTracking> PpeTrackings => Set<PpeTracking>();
+    public DbSet<SafetyInspection> SafetyInspections => Set<SafetyInspection>();
+    public DbSet<SafetyAudit> SafetyAudits => Set<SafetyAudit>();
+    public DbSet<IncidentReport> IncidentReports => Set<IncidentReport>();
+    public DbSet<RiskAssessment> RiskAssessments => Set<RiskAssessment>();
+    public DbSet<Document> Documents => Set<Document>();
+    public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -736,6 +743,58 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(p => p.ProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Safety (HSE)
+        builder.Entity<PpeTracking>()
+            .HasOne(p => p.Worker)
+            .WithMany()
+            .HasForeignKey(p => p.WorkerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SafetyInspection>()
+            .HasOne(s => s.Project)
+            .WithMany()
+            .HasForeignKey(s => s.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SafetyAudit>().Property(a => a.Score).HasPrecision(5, 2);
+
+        builder.Entity<SafetyAudit>()
+            .HasOne(a => a.Project)
+            .WithMany()
+            .HasForeignKey(a => a.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<IncidentReport>()
+            .HasOne(i => i.Project)
+            .WithMany()
+            .HasForeignKey(i => i.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<RiskAssessment>()
+            .HasOne(r => r.Project)
+            .WithMany()
+            .HasForeignKey(r => r.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Document Management
+        builder.Entity<Document>()
+            .HasOne(d => d.Customer)
+            .WithMany()
+            .HasForeignKey(d => d.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Document>()
+            .HasOne(d => d.Project)
+            .WithMany()
+            .HasForeignKey(d => d.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DocumentVersion>()
+            .HasOne(v => v.Document)
+            .WithMany()
+            .HasForeignKey(v => v.DocumentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -770,7 +829,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary),
             typeof(Equipment), typeof(EquipmentRental), typeof(FuelLog), typeof(MaintenanceRecord), typeof(OperatorAssignment),
             typeof(MaterialInspection), typeof(SiteInspection), typeof(QualityChecklist),
-            typeof(TestReport), typeof(Ncr), typeof(PunchList)
+            typeof(TestReport), typeof(Ncr), typeof(PunchList),
+            typeof(PpeTracking), typeof(SafetyInspection), typeof(SafetyAudit),
+            typeof(IncidentReport), typeof(RiskAssessment),
+            typeof(Document), typeof(DocumentVersion)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

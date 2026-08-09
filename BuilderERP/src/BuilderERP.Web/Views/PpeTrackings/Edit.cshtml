@@ -1,0 +1,45 @@
+@model BuilderERP.Application.DTOs.UpdatePpeTrackingDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit PPE Record";
+}
+
+<h1 class="h3 mb-4">Edit PPE Record</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="WorkerId" class="form-label"></label>
+        <select asp-for="WorkerId" asp-items="ViewBag.Workers" class="form-select">
+            <option value="">-- Select Worker --</option>
+        </select>
+        <span asp-validation-for="WorkerId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PpeType" class="form-label"></label>
+        <select asp-for="PpeType" asp-items="Html.GetEnumSelectList<PpeType>()" class="form-select"></select>
+        <span asp-validation-for="PpeType" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="IssueDate" class="form-label"></label>
+        <input asp-for="IssueDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ExpiryDate" class="form-label"></label>
+        <input asp-for="ExpiryDate" type="date" class="form-control" />
+        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<PpeStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
