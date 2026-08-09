@@ -1,0 +1,47 @@
+@model BuilderERP.Application.DTOs.UpdateDocumentVersionDto
+@{
+    ViewData["Title"] = "Edit Document Version";
+}
+
+<h1 class="h3 mb-4">Edit Document Version</h1>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="FilePath" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <a href="@Model.FilePath" target="_blank">View current file</a>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DocumentId" class="form-label"></label>
+        <select asp-for="DocumentId" asp-items="ViewBag.Documents" class="form-select">
+            <option value="">-- Select Document --</option>
+        </select>
+        <span asp-validation-for="DocumentId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="VersionNumber" class="form-label"></label>
+        <input asp-for="VersionNumber" class="form-control" />
+        <span asp-validation-for="VersionNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Replace File</label>
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="UploadedDate" class="form-label"></label>
+        <input asp-for="UploadedDate" class="form-control" />
+        <span asp-validation-for="UploadedDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ChangeNotes" class="form-label"></label>
+        <textarea asp-for="ChangeNotes" class="form-control"></textarea>
+        <span asp-validation-for="ChangeNotes" class="text-danger"></span>
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="IsCurrent" class="form-check-input" />
+        <label asp-for="IsCurrent" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
