@@ -1,0 +1,44 @@
+@model BuilderERP.Application.DTOs.CreateBudgetLineDto
+@{
+    ViewData["Title"] = "New Budget Line";
+}
+
+<h1 class="h3 mb-4">New Budget Line</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Category" class="form-label"></label>
+        <input asp-for="Category" class="form-control" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PeriodStart" class="form-label"></label>
+        <input asp-for="PeriodStart" type="date" class="form-control" />
+        <span asp-validation-for="PeriodStart" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="BudgetedAmount" class="form-label"></label>
+        <input asp-for="BudgetedAmount" class="form-control" />
+        <span asp-validation-for="BudgetedAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ActualAmount" class="form-label"></label>
+        <input asp-for="ActualAmount" class="form-control" />
+        <span asp-validation-for="ActualAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

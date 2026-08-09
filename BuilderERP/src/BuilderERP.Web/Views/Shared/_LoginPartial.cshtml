@@ -3,16 +3,26 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <li class="nav-item">
-            <span class="text-dark">Hello, @User.Identity?.Name!</span>
-        </li>
-        <li class="nav-item">
-            <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
-            </form>
-        </li>
-    }
-</ul>
+@if (SignInManager.IsSignedIn(User))
+{
+    var displayName = User.Identity?.Name ?? "User";
+    var initial = displayName.Length > 0 ? displayName[0].ToString().ToUpperInvariant() : "U";
+
+    <div class="dropdown">
+        <a href="#" class="user-chip dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="user-avatar">@initial</span>
+            <span class="d-none d-md-inline">@displayName</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">Signed in as @displayName</h6></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="dropdown-item">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}

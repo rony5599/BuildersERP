@@ -107,6 +107,27 @@ public static class PermissionNames
     public const string StockAdjustmentView = "StockAdjustment.View";
     public const string StockAdjustmentManage = "StockAdjustment.Manage";
 
+    public const string WbsTaskView = "WbsTask.View";
+    public const string WbsTaskManage = "WbsTask.Manage";
+
+    public const string MilestoneView = "Milestone.View";
+    public const string MilestoneManage = "Milestone.Manage";
+
+    public const string BoqItemView = "BoqItem.View";
+    public const string BoqItemManage = "BoqItem.Manage";
+
+    public const string DailyProgressView = "DailyProgress.View";
+    public const string DailyProgressManage = "DailyProgress.Manage";
+
+    public const string SitePhotoView = "SitePhoto.View";
+    public const string SitePhotoManage = "SitePhoto.Manage";
+
+    public const string DelayEventView = "DelayEvent.View";
+    public const string DelayEventManage = "DelayEvent.Manage";
+
+    public const string BudgetLineView = "BudgetLine.View";
+    public const string BudgetLineManage = "BudgetLine.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -144,6 +165,13 @@ public static class PermissionNames
         (StockIssueView, "StockIssue"), (StockIssueManage, "StockIssue"),
         (StockReturnView, "StockReturn"), (StockReturnManage, "StockReturn"),
         (StockAdjustmentView, "StockAdjustment"), (StockAdjustmentManage, "StockAdjustment"),
+        (WbsTaskView, "WbsTask"), (WbsTaskManage, "WbsTask"),
+        (MilestoneView, "Milestone"), (MilestoneManage, "Milestone"),
+        (BoqItemView, "BoqItem"), (BoqItemManage, "BoqItem"),
+        (DailyProgressView, "DailyProgress"), (DailyProgressManage, "DailyProgress"),
+        (SitePhotoView, "SitePhoto"), (SitePhotoManage, "SitePhoto"),
+        (DelayEventView, "DelayEvent"), (DelayEventManage, "DelayEvent"),
+        (BudgetLineView, "BudgetLine"), (BudgetLineManage, "BudgetLine"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -183,5 +211,12 @@ public static class PermissionNames
         StockIssueView, StockIssueManage,
         StockReturnView, StockReturnManage,
         StockAdjustmentView, StockAdjustmentManage,
+        WbsTaskView, WbsTaskManage,
+        MilestoneView, MilestoneManage,
+        BoqItemView, BoqItemManage,
+        DailyProgressView, DailyProgressManage,
+        SitePhotoView, SitePhotoManage,
+        DelayEventView, DelayEventManage,
+        BudgetLineView, BudgetLineManage,
     };
 }

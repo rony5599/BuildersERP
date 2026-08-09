@@ -45,6 +45,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<StockIssue> StockIssues => Set<StockIssue>();
     public DbSet<StockReturn> StockReturns => Set<StockReturn>();
     public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
+    public DbSet<WbsTask> WbsTasks => Set<WbsTask>();
+    public DbSet<Milestone> Milestones => Set<Milestone>();
+    public DbSet<BoqItem> BoqItems => Set<BoqItem>();
+    public DbSet<DailyProgress> DailyProgresses => Set<DailyProgress>();
+    public DbSet<SitePhoto> SitePhotos => Set<SitePhoto>();
+    public DbSet<DelayEvent> DelayEvents => Set<DelayEvent>();
+    public DbSet<BudgetLine> BudgetLines => Set<BudgetLine>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -362,6 +369,78 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(a => a.WarehouseId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Construction Project Management
+        builder.Entity<WbsTask>().Property(t => t.PercentComplete).HasPrecision(5, 2);
+
+        builder.Entity<WbsTask>()
+            .HasOne(t => t.Project)
+            .WithMany()
+            .HasForeignKey(t => t.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<WbsTask>()
+            .HasOne(t => t.Parent)
+            .WithMany()
+            .HasForeignKey(t => t.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Milestone>()
+            .HasOne(m => m.Project)
+            .WithMany()
+            .HasForeignKey(m => m.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<BoqItem>().Property(b => b.Quantity).HasPrecision(18, 3);
+        builder.Entity<BoqItem>().Property(b => b.Rate).HasPrecision(18, 2);
+        builder.Entity<BoqItem>().Property(b => b.Amount).HasPrecision(18, 2);
+
+        builder.Entity<BoqItem>()
+            .HasOne(b => b.Project)
+            .WithMany()
+            .HasForeignKey(b => b.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DailyProgress>().Property(d => d.PercentComplete).HasPrecision(5, 2);
+
+        builder.Entity<DailyProgress>()
+            .HasOne(d => d.Project)
+            .WithMany()
+            .HasForeignKey(d => d.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SitePhoto>()
+            .HasOne(p => p.Project)
+            .WithMany()
+            .HasForeignKey(p => p.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SitePhoto>()
+            .HasOne(p => p.DailyProgress)
+            .WithMany()
+            .HasForeignKey(p => p.DailyProgressId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DelayEvent>()
+            .HasOne(e => e.Project)
+            .WithMany()
+            .HasForeignKey(e => e.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DelayEvent>()
+            .HasOne(e => e.WbsTask)
+            .WithMany()
+            .HasForeignKey(e => e.WbsTaskId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<BudgetLine>().Property(b => b.BudgetedAmount).HasPrecision(18, 2);
+        builder.Entity<BudgetLine>().Property(b => b.ActualAmount).HasPrecision(18, 2);
+
+        builder.Entity<BudgetLine>()
+            .HasOne(b => b.Project)
+            .WithMany()
+            .HasForeignKey(b => b.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -387,7 +466,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Supplier), typeof(PurchaseRequisition), typeof(Rfq), typeof(VendorQuotation),
             typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
-            typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment)
+            typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
+            typeof(WbsTask), typeof(Milestone), typeof(BoqItem), typeof(DailyProgress),
+            typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

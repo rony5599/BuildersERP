@@ -1,0 +1,75 @@
+@model IReadOnlyList<BuilderERP.Application.DTOs.BudgetLineDto>
+@{
+    ViewData["Title"] = "Budget vs Actual Report";
+    var totalBudgeted = Model.Sum(x => x.BudgetedAmount);
+    var totalActual = Model.Sum(x => x.ActualAmount);
+    var totalVariance = totalBudgeted - totalActual;
+    var maxAmount = Model.Any() ? Model.Max(x => Math.Max(x.BudgetedAmount, x.ActualAmount)) : 1;
+    var grouped = Model.OrderBy(x => x.Category).GroupBy(x => x.Category);
+}
+
+<h1 class="h3 mb-4">Budget vs Actual Report</h1>
+
+<form method="get" class="mb-3 col-md-4">
+    <label class="form-label">Project</label>
+    <select name="projectId" asp-items="ViewBag.Projects" class="form-select" onchange="this.form.submit()">
+        <option value="">-- All Projects --</option>
+    </select>
+</form>
+
+<div class="row g-3 mb-3">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted">Total Budgeted</div>
+                <div class="h4 mb-0">@totalBudgeted.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted">Total Actual</div>
+                <div class="h4 mb-0">@totalActual.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted">Total Variance</div>
+                <div class="h4 mb-0 @(totalVariance >= 0 ? "text-success" : "text-danger")">@totalVariance.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped bg-white">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Budgeted</th>
+            <th>Actual</th>
+            <th>Variance</th>
+            <th style="min-width: 200px;">Comparison</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var group in grouped)
+        {
+            var budgeted = group.Sum(x => x.BudgetedAmount);
+            var actual = group.Sum(x => x.ActualAmount);
+            var variance = budgeted - actual;
+            <tr>
+                <td>@group.Key</td>
+                <td>@budgeted.ToString("N2")</td>
+                <td>@actual.ToString("N2")</td>
+                <td class="@(variance >= 0 ? "text-success" : "text-danger")">@variance.ToString("N2")</td>
+                <td>
+                    <div style="height: 8px; background-color: #0d6efd; width: @(maxAmount > 0 ? (budgeted / maxAmount * 100) : 0)%;"></div>
+                    <div style="height: 8px; background-color: #dc3545; width: @(maxAmount > 0 ? (actual / maxAmount * 100) : 0)%; margin-top: 2px;"></div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
