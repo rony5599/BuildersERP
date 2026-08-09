@@ -264,6 +264,26 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingRevisionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingApprovalView))
+                {
+                    <div class="nav-section-title">Engineering</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingView))
+                        {
+                            <li class="nav-item"><a asp-controller="Drawings" asp-action="Index" class="@NavClass("Drawings")"><i class="bi bi-file-earmark-ruled"></i> Drawings</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingRevisionView))
+                        {
+                            <li class="nav-item"><a asp-controller="DrawingRevisions" asp-action="Index" class="@NavClass("DrawingRevisions")"><i class="bi bi-arrow-repeat"></i> Revisions</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingApprovalView))
+                        {
+                            <li class="nav-item"><a asp-controller="DrawingApprovals" asp-action="Index" class="@NavClass("DrawingApprovals")"><i class="bi bi-patch-check"></i> Approvals</a></li>
+                        }
+                    </ul>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView)

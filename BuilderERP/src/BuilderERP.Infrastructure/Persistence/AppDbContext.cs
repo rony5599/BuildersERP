@@ -52,6 +52,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<SitePhoto> SitePhotos => Set<SitePhoto>();
     public DbSet<DelayEvent> DelayEvents => Set<DelayEvent>();
     public DbSet<BudgetLine> BudgetLines => Set<BudgetLine>();
+    public DbSet<Drawing> Drawings => Set<Drawing>();
+    public DbSet<DrawingRevision> DrawingRevisions => Set<DrawingRevision>();
+    public DbSet<DrawingApproval> DrawingApprovals => Set<DrawingApproval>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -441,6 +444,31 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(b => b.ProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Engineering
+        builder.Entity<Drawing>()
+            .HasOne(d => d.Project)
+            .WithMany()
+            .HasForeignKey(d => d.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DrawingRevision>()
+            .HasOne(r => r.Drawing)
+            .WithMany()
+            .HasForeignKey(r => r.DrawingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DrawingApproval>()
+            .HasOne(a => a.Drawing)
+            .WithMany()
+            .HasForeignKey(a => a.DrawingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DrawingApproval>()
+            .HasOne(a => a.DrawingRevision)
+            .WithMany()
+            .HasForeignKey(a => a.DrawingRevisionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -468,7 +496,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
             typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
             typeof(WbsTask), typeof(Milestone), typeof(BoqItem), typeof(DailyProgress),
-            typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine)
+            typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),
+            typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

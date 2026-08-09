@@ -1,0 +1,42 @@
+@model BuilderERP.Application.DTOs.CreateDrawingRevisionDto
+@{
+    ViewData["Title"] = "New Drawing Revision";
+}
+
+<h1 class="h3 mb-4">New Drawing Revision</h1>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="DrawingId" class="form-label"></label>
+        <select asp-for="DrawingId" asp-items="ViewBag.Drawings" class="form-select">
+            <option value="">-- Select Drawing --</option>
+        </select>
+        <span asp-validation-for="DrawingId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="RevisionCode" class="form-label"></label>
+        <input asp-for="RevisionCode" class="form-control" />
+        <span asp-validation-for="RevisionCode" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">File</label>
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="RevisedDate" class="form-label"></label>
+        <input asp-for="RevisedDate" class="form-control" />
+        <span asp-validation-for="RevisedDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ChangeDescription" class="form-label"></label>
+        <textarea asp-for="ChangeDescription" class="form-control"></textarea>
+        <span asp-validation-for="ChangeDescription" class="text-danger"></span>
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="IsCurrent" class="form-check-input" />
+        <label asp-for="IsCurrent" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

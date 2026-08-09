@@ -128,6 +128,15 @@ public static class PermissionNames
     public const string BudgetLineView = "BudgetLine.View";
     public const string BudgetLineManage = "BudgetLine.Manage";
 
+    public const string DrawingView = "Drawing.View";
+    public const string DrawingManage = "Drawing.Manage";
+
+    public const string DrawingRevisionView = "DrawingRevision.View";
+    public const string DrawingRevisionManage = "DrawingRevision.Manage";
+
+    public const string DrawingApprovalView = "DrawingApproval.View";
+    public const string DrawingApprovalManage = "DrawingApproval.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -172,6 +181,9 @@ public static class PermissionNames
         (SitePhotoView, "SitePhoto"), (SitePhotoManage, "SitePhoto"),
         (DelayEventView, "DelayEvent"), (DelayEventManage, "DelayEvent"),
         (BudgetLineView, "BudgetLine"), (BudgetLineManage, "BudgetLine"),
+        (DrawingView, "Drawing"), (DrawingManage, "Drawing"),
+        (DrawingRevisionView, "DrawingRevision"), (DrawingRevisionManage, "DrawingRevision"),
+        (DrawingApprovalView, "DrawingApproval"), (DrawingApprovalManage, "DrawingApproval"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -218,5 +230,8 @@ public static class PermissionNames
         SitePhotoView, SitePhotoManage,
         DelayEventView, DelayEventManage,
         BudgetLineView, BudgetLineManage,
+        DrawingView, DrawingManage,
+        DrawingRevisionView, DrawingRevisionManage,
+        DrawingApprovalView, DrawingApprovalManage,
     };
 }
