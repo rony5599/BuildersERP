@@ -158,6 +158,21 @@ public static class PermissionNames
     public const string ContractorLedgerView = "ContractorLedger.View";
     public const string ContractorLedgerManage = "ContractorLedger.Manage";
 
+    public const string WorkerView = "Worker.View";
+    public const string WorkerManage = "Worker.Manage";
+
+    public const string AttendanceView = "Attendance.View";
+    public const string AttendanceManage = "Attendance.Manage";
+
+    public const string SafetyTrainingView = "SafetyTraining.View";
+    public const string SafetyTrainingManage = "SafetyTraining.Manage";
+
+    public const string OvertimeView = "Overtime.View";
+    public const string OvertimeManage = "Overtime.Manage";
+
+    public const string SalaryView = "Salary.View";
+    public const string SalaryManage = "Salary.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -212,6 +227,11 @@ public static class PermissionNames
         (SecurityDepositView, "SecurityDeposit"), (SecurityDepositManage, "SecurityDeposit"),
         (PerformanceEvaluationView, "PerformanceEvaluation"), (PerformanceEvaluationManage, "PerformanceEvaluation"),
         (ContractorLedgerView, "ContractorLedger"), (ContractorLedgerManage, "ContractorLedger"),
+        (WorkerView, "Worker"), (WorkerManage, "Worker"),
+        (AttendanceView, "Attendance"), (AttendanceManage, "Attendance"),
+        (SafetyTrainingView, "SafetyTraining"), (SafetyTrainingManage, "SafetyTraining"),
+        (OvertimeView, "Overtime"), (OvertimeManage, "Overtime"),
+        (SalaryView, "Salary"), (SalaryManage, "Salary"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -268,5 +288,10 @@ public static class PermissionNames
         SecurityDepositView, SecurityDepositManage,
         PerformanceEvaluationView, PerformanceEvaluationManage,
         ContractorLedgerView, ContractorLedgerManage,
+        WorkerView, WorkerManage,
+        AttendanceView, AttendanceManage,
+        SafetyTrainingView, SafetyTrainingManage,
+        OvertimeView, OvertimeManage,
+        SalaryView, SalaryManage,
     };
 }

@@ -1,0 +1,49 @@
+@model BuilderERP.Application.DTOs.CreateSafetyTrainingDto
+@{
+    ViewData["Title"] = "New Safety Training";
+}
+
+<h1 class="h3 mb-4">New Safety Training</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="WorkerId" class="form-label"></label>
+        <select asp-for="WorkerId" asp-items="ViewBag.Workers" class="form-select">
+            <option value="">-- Select Worker --</option>
+        </select>
+        <span asp-validation-for="WorkerId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TrainingTitle" class="form-label"></label>
+        <input asp-for="TrainingTitle" class="form-control" />
+        <span asp-validation-for="TrainingTitle" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TrainingDate" class="form-label"></label>
+        <input asp-for="TrainingDate" type="date" class="form-control" />
+        <span asp-validation-for="TrainingDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TrainerName" class="form-label"></label>
+        <input asp-for="TrainerName" class="form-control" />
+        <span asp-validation-for="TrainerName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DurationHours" class="form-label"></label>
+        <input asp-for="DurationHours" class="form-control" />
+        <span asp-validation-for="DurationHours" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CertificateNumber" class="form-label"></label>
+        <input asp-for="CertificateNumber" class="form-control" />
+        <span asp-validation-for="CertificateNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ExpiryDate" class="form-label"></label>
+        <input asp-for="ExpiryDate" type="date" class="form-control" />
+        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

@@ -1,0 +1,59 @@
+@model BuilderERP.Application.DTOs.UpdateSalaryDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Salary";
+}
+
+<h1 class="h3 mb-4">Edit Salary</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="WorkerId" class="form-label"></label>
+        <select asp-for="WorkerId" asp-items="ViewBag.Workers" class="form-select">
+            <option value="">-- Select Worker --</option>
+        </select>
+        <span asp-validation-for="WorkerId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PeriodStart" class="form-label"></label>
+        <input asp-for="PeriodStart" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="PeriodEnd" class="form-label"></label>
+        <input asp-for="PeriodEnd" type="date" class="form-control" />
+        <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DaysWorked" class="form-label"></label>
+        <input asp-for="DaysWorked" class="form-control" />
+        <span asp-validation-for="DaysWorked" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="BasicAmount" class="form-label"></label>
+        <input asp-for="BasicAmount" class="form-control" />
+        <span asp-validation-for="BasicAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="OvertimeAmount" class="form-label"></label>
+        <input asp-for="OvertimeAmount" class="form-control" />
+        <span asp-validation-for="OvertimeAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DeductionAmount" class="form-label"></label>
+        <input asp-for="DeductionAmount" class="form-control" />
+        <span asp-validation-for="DeductionAmount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<SalaryStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PaymentDate" class="form-label"></label>
+        <input asp-for="PaymentDate" type="date" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

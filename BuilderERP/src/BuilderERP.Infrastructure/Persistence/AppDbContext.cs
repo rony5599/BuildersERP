@@ -62,6 +62,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<SecurityDeposit> SecurityDeposits => Set<SecurityDeposit>();
     public DbSet<PerformanceEvaluation> PerformanceEvaluations => Set<PerformanceEvaluation>();
     public DbSet<ContractorLedger> ContractorLedgers => Set<ContractorLedger>();
+    public DbSet<Worker> Workers => Set<Worker>();
+    public DbSet<Attendance> Attendances => Set<Attendance>();
+    public DbSet<SafetyTraining> SafetyTrainings => Set<SafetyTraining>();
+    public DbSet<Overtime> Overtimes => Set<Overtime>();
+    public DbSet<Salary> Salaries => Set<Salary>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -552,6 +557,65 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(l => l.ContractorId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Labor Management
+        builder.Entity<Worker>().Property(w => w.DailyWageRate).HasPrecision(18, 2);
+
+        builder.Entity<Worker>()
+            .HasOne(w => w.Contractor)
+            .WithMany()
+            .HasForeignKey(w => w.ContractorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Attendance>().Property(a => a.HoursWorked).HasPrecision(5, 2);
+
+        builder.Entity<Attendance>()
+            .HasOne(a => a.Worker)
+            .WithMany()
+            .HasForeignKey(a => a.WorkerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Attendance>()
+            .HasOne(a => a.Project)
+            .WithMany()
+            .HasForeignKey(a => a.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SafetyTraining>().Property(s => s.DurationHours).HasPrecision(5, 2);
+
+        builder.Entity<SafetyTraining>()
+            .HasOne(s => s.Worker)
+            .WithMany()
+            .HasForeignKey(s => s.WorkerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Overtime>().Property(o => o.Hours).HasPrecision(5, 2);
+        builder.Entity<Overtime>().Property(o => o.RatePerHour).HasPrecision(18, 2);
+        builder.Entity<Overtime>().Property(o => o.Amount).HasPrecision(18, 2);
+
+        builder.Entity<Overtime>()
+            .HasOne(o => o.Worker)
+            .WithMany()
+            .HasForeignKey(o => o.WorkerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Overtime>()
+            .HasOne(o => o.Project)
+            .WithMany()
+            .HasForeignKey(o => o.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Salary>().Property(s => s.DaysWorked).HasPrecision(5, 2);
+        builder.Entity<Salary>().Property(s => s.BasicAmount).HasPrecision(18, 2);
+        builder.Entity<Salary>().Property(s => s.OvertimeAmount).HasPrecision(18, 2);
+        builder.Entity<Salary>().Property(s => s.DeductionAmount).HasPrecision(18, 2);
+        builder.Entity<Salary>().Property(s => s.NetAmount).HasPrecision(18, 2);
+
+        builder.Entity<Salary>()
+            .HasOne(s => s.Worker)
+            .WithMany()
+            .HasForeignKey(s => s.WorkerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -582,7 +646,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),
             typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),
             typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),
-            typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger)
+            typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger),
+            typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

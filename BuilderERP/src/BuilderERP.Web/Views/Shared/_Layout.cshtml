@@ -324,6 +324,36 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WorkerView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AttendanceView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyTrainingView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.OvertimeView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SalaryView))
+                {
+                    <div class="nav-section-title">Labor Management</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WorkerView))
+                        {
+                            <li class="nav-item"><a asp-controller="Workers" asp-action="Index" class="@NavClass("Workers")"><i class="bi bi-person-workspace"></i> Workers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AttendanceView))
+                        {
+                            <li class="nav-item"><a asp-controller="Attendances" asp-action="Index" class="@NavClass("Attendances")"><i class="bi bi-calendar-check"></i> Attendance</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.OvertimeView))
+                        {
+                            <li class="nav-item"><a asp-controller="Overtimes" asp-action="Index" class="@NavClass("Overtimes")"><i class="bi bi-clock-history"></i> Overtime</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SalaryView))
+                        {
+                            <li class="nav-item"><a asp-controller="Salaries" asp-action="Index" class="@NavClass("Salaries")"><i class="bi bi-cash-coin"></i> Salary / Wages</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyTrainingView))
+                        {
+                            <li class="nav-item"><a asp-controller="SafetyTrainings" asp-action="Index" class="@NavClass("SafetyTrainings")"><i class="bi bi-shield-check"></i> Safety Training</a></li>
+                        }
+                    </ul>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView)

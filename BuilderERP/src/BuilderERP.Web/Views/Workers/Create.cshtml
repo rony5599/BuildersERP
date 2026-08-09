@@ -1,0 +1,54 @@
+@model BuilderERP.Application.DTOs.CreateWorkerDto
+@{
+    ViewData["Title"] = "New Worker";
+}
+
+<h1 class="h3 mb-4">New Worker</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="WorkerCode" class="form-label"></label>
+        <input asp-for="WorkerCode" class="form-control" />
+        <span asp-validation-for="WorkerCode" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Trade" class="form-label"></label>
+        <input asp-for="Trade" class="form-control" />
+        <span asp-validation-for="Trade" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DailyWageRate" class="form-label"></label>
+        <input asp-for="DailyWageRate" class="form-control" />
+        <span asp-validation-for="DailyWageRate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ContractorId" class="form-label"></label>
+        <select asp-for="ContractorId" asp-items="ViewBag.Contractors" class="form-select">
+            <option value="">-- Direct Labor (no contractor) --</option>
+        </select>
+        <span asp-validation-for="ContractorId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="JoinDate" class="form-label"></label>
+        <input asp-for="JoinDate" type="date" class="form-control" />
+        <span asp-validation-for="JoinDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
