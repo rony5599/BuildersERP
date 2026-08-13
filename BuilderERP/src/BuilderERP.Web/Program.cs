@@ -20,6 +20,8 @@ builder.Host.UseSerilog();
 
 try
 {
+    QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
 

@@ -663,6 +663,15 @@
                     </ul>
                     </div>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReportView))
+                {
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Reports<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
+                        <li class="nav-item"><a asp-controller="Reports" asp-action="Index" class="@NavClass("Reports")"><i class="bi bi-file-earmark-bar-graph"></i> Report Catalog</a></li>
+                    </ul>
+                    </div>
+                }
             </nav>
 
             <div class="app-content">

@@ -1,4 +1,6 @@
 using System.Reflection;
+using BuilderERP.Application.Features.Reports;
+using BuilderERP.Application.Features.Reports.Export;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,14 @@ public static class DependencyInjection
         services.AddAutoMapper(assembly);
         services.AddValidatorsFromAssembly(assembly);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+
+        foreach (var specType in assembly.GetTypes().Where(t => typeof(IReportSpec).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract))
+        {
+            services.AddScoped(typeof(IReportSpec), specType);
+        }
+        services.AddScoped<ReportRegistry>();
+        services.AddScoped<ExcelReportExporter>();
+        services.AddScoped<PdfReportExporter>();
 
         return services;
     }

@@ -1,0 +1,52 @@
+@model IReadOnlyList<IGrouping<string, BuilderERP.Application.Features.Reports.IReportSpec>>
+@{
+    ViewData["Title"] = "Report Catalog";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Report Catalog</h1>
+</div>
+
+<div class="mb-3">
+    <input type="text" id="reportSearchBox" class="form-control" placeholder="Search reports by name or category..." autocomplete="off" />
+</div>
+
+@foreach (var group in Model)
+{
+    <div class="report-category mb-4">
+        <h2 class="h5">@group.Key</h2>
+        <div class="row g-3">
+            @foreach (var spec in group)
+            {
+                <div class="col-md-4 report-card-col" data-name="@spec.Name.ToLowerInvariant()" data-category="@group.Key.ToLowerInvariant()">
+                    <a asp-action="View" asp-route-key="@spec.Key" class="text-decoration-none">
+                        <div class="card h-100 bg-white">
+                            <div class="card-body">
+                                <h3 class="h6 mb-1">@spec.Name</h3>
+                                <p class="text-muted small mb-0">@group.Key</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('reportSearchBox').addEventListener('input', function (e) {
+            var term = e.target.value.trim().toLowerCase();
+            document.querySelectorAll('.report-card-col').forEach(function (col) {
+                var matches = col.dataset.name.includes(term) || col.dataset.category.includes(term);
+                col.style.display = matches ? '' : 'none';
+            });
+            document.querySelectorAll('.report-category').forEach(function (section) {
+                var anyVisible = Array.from(section.querySelectorAll('.report-card-col')).some(function (col) {
+                    return col.style.display !== 'none';
+                });
+                section.style.display = anyVisible ? '' : 'none';
+            });
+        });
+    </script>
+}
