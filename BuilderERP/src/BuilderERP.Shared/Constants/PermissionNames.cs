@@ -227,6 +227,44 @@ public static class PermissionNames
     public const string DocumentVersionView = "DocumentVersion.View";
     public const string DocumentVersionManage = "DocumentVersion.Manage";
 
+    public const string LandDocumentView = "LandDocument.View";
+    public const string LandDocumentManage = "LandDocument.Manage";
+    public const string LandMutationView = "LandMutation.View";
+    public const string LandMutationManage = "LandMutation.Manage";
+    public const string LandRegistrationView = "LandRegistration.View";
+    public const string LandRegistrationManage = "LandRegistration.Manage";
+    public const string LegalCaseView = "LegalCase.View";
+    public const string LegalCaseManage = "LegalCase.Manage";
+    public const string LegalAgreementView = "LegalAgreement.View";
+    public const string LegalAgreementManage = "LegalAgreement.Manage";
+    public const string LegalNoticeView = "LegalNotice.View";
+    public const string LegalNoticeManage = "LegalNotice.Manage";
+    public const string FlatHandoverView = "FlatHandover.View";
+    public const string FlatHandoverManage = "FlatHandover.Manage";
+    public const string SnagItemView = "SnagItem.View";
+    public const string SnagItemManage = "SnagItem.Manage";
+    public const string DefectRecordView = "DefectRecord.View";
+    public const string DefectRecordManage = "DefectRecord.Manage";
+    public const string WarrantyView = "Warranty.View";
+    public const string WarrantyManage = "Warranty.Manage";
+    public const string MaintenanceRequestView = "MaintenanceRequest.View";
+    public const string MaintenanceRequestManage = "MaintenanceRequest.Manage";
+    public const string ServiceTicketView = "ServiceTicket.View";
+    public const string ServiceTicketManage = "ServiceTicket.Manage";
+    public const string ApartmentMaintenanceView = "ApartmentMaintenance.View";
+    public const string ApartmentMaintenanceManage = "ApartmentMaintenance.Manage";
+    public const string UtilityBillView = "UtilityBill.View";
+    public const string UtilityBillManage = "UtilityBill.Manage";
+    public const string VisitorLogView = "VisitorLog.View";
+    public const string VisitorLogManage = "VisitorLog.Manage";
+    public const string SecurityIncidentView = "SecurityIncident.View";
+    public const string SecurityIncidentManage = "SecurityIncident.Manage";
+    public const string ParkingSlotView = "ParkingSlot.View";
+    public const string ParkingSlotManage = "ParkingSlot.Manage";
+    public const string CommonAreaBookingView = "CommonAreaBooking.View";
+    public const string CommonAreaBookingManage = "CommonAreaBooking.Manage";
+    public const string DashboardView = "Dashboard.View";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -304,6 +342,25 @@ public static class PermissionNames
         (RiskAssessmentView, "RiskAssessment"), (RiskAssessmentManage, "RiskAssessment"),
         (DocumentView, "Document"), (DocumentManage, "Document"),
         (DocumentVersionView, "DocumentVersion"), (DocumentVersionManage, "DocumentVersion"),
+        (LandDocumentView, "LandDocument"), (LandDocumentManage, "LandDocument"),
+        (LandMutationView, "LandMutation"), (LandMutationManage, "LandMutation"),
+        (LandRegistrationView, "LandRegistration"), (LandRegistrationManage, "LandRegistration"),
+        (LegalCaseView, "LegalCase"), (LegalCaseManage, "LegalCase"),
+        (LegalAgreementView, "LegalAgreement"), (LegalAgreementManage, "LegalAgreement"),
+        (LegalNoticeView, "LegalNotice"), (LegalNoticeManage, "LegalNotice"),
+        (FlatHandoverView, "FlatHandover"), (FlatHandoverManage, "FlatHandover"),
+        (SnagItemView, "SnagItem"), (SnagItemManage, "SnagItem"),
+        (DefectRecordView, "DefectRecord"), (DefectRecordManage, "DefectRecord"),
+        (WarrantyView, "Warranty"), (WarrantyManage, "Warranty"),
+        (MaintenanceRequestView, "MaintenanceRequest"), (MaintenanceRequestManage, "MaintenanceRequest"),
+        (ServiceTicketView, "ServiceTicket"), (ServiceTicketManage, "ServiceTicket"),
+        (ApartmentMaintenanceView, "ApartmentMaintenance"), (ApartmentMaintenanceManage, "ApartmentMaintenance"),
+        (UtilityBillView, "UtilityBill"), (UtilityBillManage, "UtilityBill"),
+        (VisitorLogView, "VisitorLog"), (VisitorLogManage, "VisitorLog"),
+        (SecurityIncidentView, "SecurityIncident"), (SecurityIncidentManage, "SecurityIncident"),
+        (ParkingSlotView, "ParkingSlot"), (ParkingSlotManage, "ParkingSlot"),
+        (CommonAreaBookingView, "CommonAreaBooking"), (CommonAreaBookingManage, "CommonAreaBooking"),
+        (DashboardView, "Dashboard"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -383,5 +440,24 @@ public static class PermissionNames
         RiskAssessmentView, RiskAssessmentManage,
         DocumentView, DocumentManage,
         DocumentVersionView, DocumentVersionManage,
+        LandDocumentView, LandDocumentManage,
+        LandMutationView, LandMutationManage,
+        LandRegistrationView, LandRegistrationManage,
+        LegalCaseView, LegalCaseManage,
+        LegalAgreementView, LegalAgreementManage,
+        LegalNoticeView, LegalNoticeManage,
+        FlatHandoverView, FlatHandoverManage,
+        SnagItemView, SnagItemManage,
+        DefectRecordView, DefectRecordManage,
+        WarrantyView, WarrantyManage,
+        MaintenanceRequestView, MaintenanceRequestManage,
+        ServiceTicketView, ServiceTicketManage,
+        ApartmentMaintenanceView, ApartmentMaintenanceManage,
+        UtilityBillView, UtilityBillManage,
+        VisitorLogView, VisitorLogManage,
+        SecurityIncidentView, SecurityIncidentManage,
+        ParkingSlotView, ParkingSlotManage,
+        CommonAreaBookingView, CommonAreaBookingManage,
+        DashboardView,
     };
 }

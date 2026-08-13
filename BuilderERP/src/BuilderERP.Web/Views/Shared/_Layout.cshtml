@@ -513,6 +513,118 @@
                         }
                     </ul>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandDocumentView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandMutationView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandRegistrationView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalCaseView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalAgreementView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalNoticeView))
+                {
+                    <div class="nav-section-title">Legal Module</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandDocumentView))
+                        {
+                            <li class="nav-item"><a asp-controller="LandDocuments" asp-action="Index" class="@NavClass("LandDocuments")"><i class="bi bi-file-earmark-text"></i> Land Documents</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandMutationView))
+                        {
+                            <li class="nav-item"><a asp-controller="LandMutations" asp-action="Index" class="@NavClass("LandMutations")"><i class="bi bi-arrow-left-right"></i> Land Mutations</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandRegistrationView))
+                        {
+                            <li class="nav-item"><a asp-controller="LandRegistrations" asp-action="Index" class="@NavClass("LandRegistrations")"><i class="bi bi-file-earmark-check"></i> Land Registrations</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalCaseView))
+                        {
+                            <li class="nav-item"><a asp-controller="LegalCases" asp-action="Index" class="@NavClass("LegalCases")"><i class="bi bi-bank"></i> Legal Cases</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalAgreementView))
+                        {
+                            <li class="nav-item"><a asp-controller="LegalAgreements" asp-action="Index" class="@NavClass("LegalAgreements")"><i class="bi bi-file-earmark-ruled"></i> Legal Agreements</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalNoticeView))
+                        {
+                            <li class="nav-item"><a asp-controller="LegalNotices" asp-action="Index" class="@NavClass("LegalNotices")"><i class="bi bi-envelope-exclamation"></i> Legal Notices</a></li>
+                        }
+                    </ul>
+                }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FlatHandoverView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SnagItemView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DefectRecordView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarrantyView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaintenanceRequestView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ServiceTicketView))
+                {
+                    <div class="nav-section-title">After Handover</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FlatHandoverView))
+                        {
+                            <li class="nav-item"><a asp-controller="FlatHandovers" asp-action="Index" class="@NavClass("FlatHandovers")"><i class="bi bi-key"></i> Flat Handovers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SnagItemView))
+                        {
+                            <li class="nav-item"><a asp-controller="SnagItems" asp-action="Index" class="@NavClass("SnagItems")"><i class="bi bi-list-check"></i> Snag Items</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DefectRecordView))
+                        {
+                            <li class="nav-item"><a asp-controller="DefectRecords" asp-action="Index" class="@NavClass("DefectRecords")"><i class="bi bi-bug"></i> Defect Records</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarrantyView))
+                        {
+                            <li class="nav-item"><a asp-controller="Warranties" asp-action="Index" class="@NavClass("Warranties")"><i class="bi bi-shield-check"></i> Warranties</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaintenanceRequestView))
+                        {
+                            <li class="nav-item"><a asp-controller="MaintenanceRequests" asp-action="Index" class="@NavClass("MaintenanceRequests")"><i class="bi bi-tools"></i> Maintenance Requests</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ServiceTicketView))
+                        {
+                            <li class="nav-item"><a asp-controller="ServiceTickets" asp-action="Index" class="@NavClass("ServiceTickets")"><i class="bi bi-ticket-perforated"></i> Service Tickets</a></li>
+                        }
+                    </ul>
+                }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ApartmentMaintenanceView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UtilityBillView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VisitorLogView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SecurityIncidentView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ParkingSlotView) ||
+                    User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommonAreaBookingView))
+                {
+                    <div class="nav-section-title">Facility Management</div>
+                    <ul class="nav flex-column mb-0">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ApartmentMaintenanceView))
+                        {
+                            <li class="nav-item"><a asp-controller="ApartmentMaintenances" asp-action="Index" class="@NavClass("ApartmentMaintenances")"><i class="bi bi-wrench-adjustable"></i> Apartment Maintenances</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UtilityBillView))
+                        {
+                            <li class="nav-item"><a asp-controller="UtilityBills" asp-action="Index" class="@NavClass("UtilityBills")"><i class="bi bi-lightning-charge"></i> Utility Bills</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VisitorLogView))
+                        {
+                            <li class="nav-item"><a asp-controller="VisitorLogs" asp-action="Index" class="@NavClass("VisitorLogs")"><i class="bi bi-person-walking"></i> Visitor Logs</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SecurityIncidentView))
+                        {
+                            <li class="nav-item"><a asp-controller="SecurityIncidents" asp-action="Index" class="@NavClass("SecurityIncidents")"><i class="bi bi-shield-exclamation"></i> Security Incidents</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ParkingSlotView))
+                        {
+                            <li class="nav-item"><a asp-controller="ParkingSlots" asp-action="Index" class="@NavClass("ParkingSlots")"><i class="bi bi-p-square"></i> Parking Slots</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommonAreaBookingView))
+                        {
+                            <li class="nav-item"><a asp-controller="CommonAreaBookings" asp-action="Index" class="@NavClass("CommonAreaBookings")"><i class="bi bi-calendar2-check"></i> Common Area Bookings</a></li>
+                        }
+                    </ul>
+                }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DashboardView))
+                {
+                    <div class="nav-section-title">Dashboard &amp; Analytics</div>
+                    <ul class="nav flex-column mb-0">
+                        <li class="nav-item"><a asp-controller="Dashboard" asp-action="Index" class="@NavClass("Dashboard")"><i class="bi bi-speedometer2"></i> Management Dashboard</a></li>
+                    </ul>
+                }
             </nav>
 
             <div class="app-content">

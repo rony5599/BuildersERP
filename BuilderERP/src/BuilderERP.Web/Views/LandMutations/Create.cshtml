@@ -1,0 +1,55 @@
+﻿@model BuilderERP.Application.DTOs.CreateLandMutationDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Land Mutation";
+}
+
+<h1 class="h3 mb-4">New Land Mutation</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label">Project</label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MutationNumber" class="form-label"></label>
+        <input asp-for="MutationNumber" class="form-control" />
+        <span asp-validation-for="MutationNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ApplicantName" class="form-label"></label>
+        <input asp-for="ApplicantName" class="form-control" />
+        <span asp-validation-for="ApplicantName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="KhatianNumber" class="form-label"></label>
+        <input asp-for="KhatianNumber" class="form-control" />
+        <span asp-validation-for="KhatianNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DagNumber" class="form-label"></label>
+        <input asp-for="DagNumber" class="form-control" />
+        <span asp-validation-for="DagNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MutationDate" class="form-label"></label>
+        <input asp-for="MutationDate" type="date" class="form-control" />
+        <span asp-validation-for="MutationDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<MutationStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

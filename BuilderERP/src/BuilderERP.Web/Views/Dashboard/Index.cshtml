@@ -1,0 +1,99 @@
+@model BuilderERP.Application.DTOs.DashboardSummaryDto
+@{
+    ViewData["Title"] = "Management Dashboard";
+}
+
+<h1 class="h3 mb-4">Management Dashboard</h1>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Project Progress</div>
+                <div class="h4 mb-0">@Model.ProjectProgressPercent%</div>
+                <div class="text-muted small">@Model.ActiveProjectCount active projects</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Sales Today</div>
+                <div class="h4 mb-0">@Model.SalesTodayAmount.ToString("N0")</div>
+                <div class="text-muted small">@Model.SalesTodayCount booking(s)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Net Cash Flow (MTD)</div>
+                <div class="h4 mb-0">@Model.NetCashFlowThisMonth.ToString("N0")</div>
+                <div class="text-muted small">In @Model.CashInflowThisMonth.ToString("N0") / Out @Model.CashOutflowThisMonth.ToString("N0")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Due Collection</div>
+                <div class="h4 mb-0">@Model.DueCollectionAmount.ToString("N0")</div>
+                <div class="text-muted small">@Model.DueCollectionCount installment(s) overdue/pending</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Inventory on Hand</div>
+                <div class="h4 mb-0">@Model.InventoryQuantityOnHand.ToString("N0")</div>
+                <div class="text-muted small">total quantity across warehouses</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Material Consumption (MTD)</div>
+                <div class="h4 mb-0">@Model.MaterialConsumptionThisMonth.ToString("N0")</div>
+                <div class="text-muted small">quantity issued this month</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Budget vs Actual</div>
+                <div class="h4 mb-0">@Model.BudgetVariancePercent%</div>
+                <div class="text-muted small">Budget @Model.BudgetedAmountTotal.ToString("N0") / Actual @Model.ActualAmountTotal.ToString("N0")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Profit / Loss (MTD)</div>
+                <div class="h4 mb-0 @(Model.ProfitLossThisMonth >= 0 ? "text-success" : "text-danger")">@Model.ProfitLossThisMonth.ToString("N0")</div>
+                <div class="text-muted small">receipts less bills &amp; payroll</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Contractor Performance</div>
+                <div class="h4 mb-0">@Model.ContractorPerformanceAvgScore / 10</div>
+                <div class="text-muted small">avg quality/timeliness/safety score</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small">Employee Productivity</div>
+                <div class="h4 mb-0">@Model.EmployeeProductivityAvgHoursPerDay hrs/day</div>
+                <div class="text-muted small">@Model.EmployeeAttendanceRatePercent% attendance rate (MTD)</div>
+            </div>
+        </div>
+    </div>
+</div>

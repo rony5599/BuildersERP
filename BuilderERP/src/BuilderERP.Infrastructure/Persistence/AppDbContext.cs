@@ -85,6 +85,24 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<RiskAssessment> RiskAssessments => Set<RiskAssessment>();
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
+    public DbSet<LandDocument> LandDocuments => Set<LandDocument>();
+    public DbSet<LandMutation> LandMutations => Set<LandMutation>();
+    public DbSet<LandRegistration> LandRegistrations => Set<LandRegistration>();
+    public DbSet<LegalCase> LegalCases => Set<LegalCase>();
+    public DbSet<LegalAgreement> LegalAgreements => Set<LegalAgreement>();
+    public DbSet<LegalNotice> LegalNotices => Set<LegalNotice>();
+    public DbSet<FlatHandover> FlatHandovers => Set<FlatHandover>();
+    public DbSet<SnagItem> SnagItems => Set<SnagItem>();
+    public DbSet<DefectRecord> DefectRecords => Set<DefectRecord>();
+    public DbSet<Warranty> Warranties => Set<Warranty>();
+    public DbSet<MaintenanceRequest> MaintenanceRequests => Set<MaintenanceRequest>();
+    public DbSet<ServiceTicket> ServiceTickets => Set<ServiceTicket>();
+    public DbSet<ApartmentMaintenance> ApartmentMaintenances => Set<ApartmentMaintenance>();
+    public DbSet<UtilityBill> UtilityBills => Set<UtilityBill>();
+    public DbSet<VisitorLog> VisitorLogs => Set<VisitorLog>();
+    public DbSet<SecurityIncident> SecurityIncidents => Set<SecurityIncident>();
+    public DbSet<ParkingSlot> ParkingSlots => Set<ParkingSlot>();
+    public DbSet<CommonAreaBooking> CommonAreaBookings => Set<CommonAreaBooking>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -795,6 +813,121 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(v => v.DocumentId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Legal Module, After Handover, Facility Management
+        builder.Entity<LandDocument>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<LandMutation>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<LandRegistration>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<LegalCase>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<LegalAgreement>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<LegalNotice>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<FlatHandover>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<FlatHandover>()
+            .HasOne(x => x.Customer)
+            .WithMany()
+            .HasForeignKey(x => x.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SnagItem>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<DefectRecord>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Warranty>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<MaintenanceRequest>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ServiceTicket>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ApartmentMaintenance>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<UtilityBill>()
+            .HasOne(x => x.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<VisitorLog>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SecurityIncident>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ParkingSlot>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CommonAreaBooking>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<ApplicationUser>()
             .HasOne(u => u.Company)
             .WithMany()
@@ -832,7 +965,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(TestReport), typeof(Ncr), typeof(PunchList),
             typeof(PpeTracking), typeof(SafetyInspection), typeof(SafetyAudit),
             typeof(IncidentReport), typeof(RiskAssessment),
-            typeof(Document), typeof(DocumentVersion)
+            typeof(Document), typeof(DocumentVersion),
+            typeof(LandDocument), typeof(LandMutation), typeof(LandRegistration),
+            typeof(LegalCase), typeof(LegalAgreement), typeof(LegalNotice),
+            typeof(FlatHandover), typeof(SnagItem), typeof(DefectRecord), typeof(Warranty),
+            typeof(MaintenanceRequest), typeof(ServiceTicket),
+            typeof(ApartmentMaintenance), typeof(UtilityBill), typeof(VisitorLog),
+            typeof(SecurityIncident), typeof(ParkingSlot), typeof(CommonAreaBooking)
         };
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

@@ -1,0 +1,71 @@
+﻿@model BuilderERP.Application.DTOs.UpdateServiceTicketDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Service Ticket";
+}
+
+<h1 class="h3 mb-4">Edit Service Ticket</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="PropertyUnitId" class="form-label">Property Unit</label>
+        <select asp-for="PropertyUnitId" asp-items="ViewBag.PropertyUnits" class="form-select">
+            <option value="">-- Select Property Unit --</option>
+        </select>
+        <span asp-validation-for="PropertyUnitId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TicketNumber" class="form-label"></label>
+        <input asp-for="TicketNumber" class="form-control" />
+        <span asp-validation-for="TicketNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Subject" class="form-label"></label>
+        <input asp-for="Subject" class="form-control" />
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Category" class="form-label"></label>
+        <select asp-for="Category" asp-items="Html.GetEnumSelectList<ServiceTicketCategory>()" class="form-select"></select>
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Priority" class="form-label"></label>
+        <select asp-for="Priority" asp-items="Html.GetEnumSelectList<RequestPriority>()" class="form-select"></select>
+        <span asp-validation-for="Priority" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<ServiceTicketStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="RaisedDate" class="form-label"></label>
+        <input asp-for="RaisedDate" type="date" class="form-control" />
+        <span asp-validation-for="RaisedDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ClosedDate" class="form-label"></label>
+        <input asp-for="ClosedDate" type="date" class="form-control" />
+        <span asp-validation-for="ClosedDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AssignedTo" class="form-label"></label>
+        <input asp-for="AssignedTo" class="form-control" />
+        <span asp-validation-for="AssignedTo" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

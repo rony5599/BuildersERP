@@ -1,0 +1,71 @@
+﻿@model BuilderERP.Application.DTOs.UpdateLandDocumentDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Land Document";
+}
+
+<h1 class="h3 mb-4">Edit Land Document</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label">Project</label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DocumentNumber" class="form-label"></label>
+        <input asp-for="DocumentNumber" class="form-control" />
+        <span asp-validation-for="DocumentNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LandDocumentType" class="form-label"></label>
+        <select asp-for="LandDocumentType" asp-items="Html.GetEnumSelectList<LandDocumentType>()" class="form-select"></select>
+        <span asp-validation-for="LandDocumentType" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MouzaName" class="form-label"></label>
+        <input asp-for="MouzaName" class="form-control" />
+        <span asp-validation-for="MouzaName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="JlNumber" class="form-label"></label>
+        <input asp-for="JlNumber" class="form-control" />
+        <span asp-validation-for="JlNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="KhatianNumber" class="form-label"></label>
+        <input asp-for="KhatianNumber" class="form-control" />
+        <span asp-validation-for="KhatianNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DagNumber" class="form-label"></label>
+        <input asp-for="DagNumber" class="form-control" />
+        <span asp-validation-for="DagNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AreaInDecimal" class="form-label"></label>
+        <input asp-for="AreaInDecimal" type="number" step="any" class="form-control" />
+        <span asp-validation-for="AreaInDecimal" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AcquisitionDate" class="form-label"></label>
+        <input asp-for="AcquisitionDate" type="date" class="form-control" />
+        <span asp-validation-for="AcquisitionDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

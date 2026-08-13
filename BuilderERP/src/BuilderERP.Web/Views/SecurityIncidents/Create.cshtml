@@ -1,0 +1,65 @@
+﻿@model BuilderERP.Application.DTOs.CreateSecurityIncidentDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Security Incident";
+}
+
+<h1 class="h3 mb-4">New Security Incident</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label">Project</label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="IncidentNumber" class="form-label"></label>
+        <input asp-for="IncidentNumber" class="form-control" />
+        <span asp-validation-for="IncidentNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="IncidentType" class="form-label"></label>
+        <select asp-for="IncidentType" asp-items="Html.GetEnumSelectList<SecurityIncidentType>()" class="form-select"></select>
+        <span asp-validation-for="IncidentType" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="IncidentDateTime" class="form-label"></label>
+        <input asp-for="IncidentDateTime" type="date" class="form-control" />
+        <span asp-validation-for="IncidentDateTime" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReportedBy" class="form-label"></label>
+        <input asp-for="ReportedBy" class="form-control" />
+        <span asp-validation-for="ReportedBy" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Severity" class="form-label"></label>
+        <select asp-for="Severity" asp-items="Html.GetEnumSelectList<IncidentSeverity>()" class="form-select"></select>
+        <span asp-validation-for="Severity" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<SecurityIncidentStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ActionTaken" class="form-label"></label>
+        <textarea asp-for="ActionTaken" class="form-control"></textarea>
+        <span asp-validation-for="ActionTaken" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

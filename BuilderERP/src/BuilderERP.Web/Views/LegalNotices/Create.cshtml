@@ -1,0 +1,60 @@
+﻿@model BuilderERP.Application.DTOs.CreateLegalNoticeDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Legal Notice";
+}
+
+<h1 class="h3 mb-4">New Legal Notice</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label">Project</label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NoticeNumber" class="form-label"></label>
+        <input asp-for="NoticeNumber" class="form-control" />
+        <span asp-validation-for="NoticeNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NoticeType" class="form-label"></label>
+        <select asp-for="NoticeType" asp-items="Html.GetEnumSelectList<LegalNoticeType>()" class="form-select"></select>
+        <span asp-validation-for="NoticeType" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="IssuedTo" class="form-label"></label>
+        <input asp-for="IssuedTo" class="form-control" />
+        <span asp-validation-for="IssuedTo" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="IssueDate" class="form-label"></label>
+        <input asp-for="IssueDate" type="date" class="form-control" />
+        <span asp-validation-for="IssueDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ResponseDeadline" class="form-label"></label>
+        <input asp-for="ResponseDeadline" type="date" class="form-control" />
+        <span asp-validation-for="ResponseDeadline" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<LegalNoticeStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
