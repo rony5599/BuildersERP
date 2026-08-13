@@ -69,8 +69,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))
                 {
-                    <div class="nav-section-title">Administration</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Administration<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CompanyView))
                         {
                             <li class="nav-item"><a asp-controller="Companies" asp-action="Index" class="@NavClass("Companies")"><i class="bi bi-building"></i> Companies</a></li>
@@ -100,14 +101,16 @@
                             <li class="nav-item"><a asp-controller="Roles" asp-action="Index" class="@NavClass("Roles")"><i class="bi bi-shield-check"></i> Roles</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BuildingView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.TowerView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FloorView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PropertyUnitView))
                 {
-                    <div class="nav-section-title">Property Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Property Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BuildingView))
                         {
                             <li class="nav-item"><a asp-controller="Buildings" asp-action="Index" class="@NavClass("Buildings")"><i class="bi bi-building-fill"></i> Buildings</a></li>
@@ -125,14 +128,16 @@
                             <li class="nav-item"><a asp-controller="PropertyUnits" asp-action="Index" class="@NavClass("PropertyUnits")"><i class="bi bi-door-closed"></i> Property Units</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InquiryView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FollowUpView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerView))
                 {
-                    <div class="nav-section-title">CRM</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">CRM<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadView))
                         {
                             <li class="nav-item"><a asp-controller="Leads" asp-action="Index" class="@NavClass("Leads")"><i class="bi bi-person-lines-fill"></i> Leads</a></li>
@@ -150,13 +155,15 @@
                             <li class="nav-item"><a asp-controller="Customers" asp-action="Index" class="@NavClass("Customers")"><i class="bi bi-person-badge"></i> Customers</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QuotationView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BookingView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SaleAgreementView))
                 {
-                    <div class="nav-section-title">Sales</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Sales<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QuotationView))
                         {
                             <li class="nav-item"><a asp-controller="Quotations" asp-action="Index" class="@NavClass("Quotations")"><i class="bi bi-file-earmark-text"></i> Quotations</a></li>
@@ -170,13 +177,15 @@
                             <li class="nav-item"><a asp-controller="SaleAgreements" asp-action="Index" class="@NavClass("SaleAgreements")"><i class="bi bi-file-earmark-check"></i> Sale Agreements</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentPlanView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReceiptView))
                 {
-                    <div class="nav-section-title">Installments</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Installments<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentPlanView))
                         {
                             <li class="nav-item"><a asp-controller="InstallmentPlans" asp-action="Index" class="@NavClass("InstallmentPlans")"><i class="bi bi-calendar3"></i> Installment Plans</a></li>
@@ -190,6 +199,7 @@
                             <li class="nav-item"><a asp-controller="Receipts" asp-action="Index" class="@NavClass("Receipts")"><i class="bi bi-receipt"></i> Receipts</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView)
@@ -199,8 +209,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
                 {
-                    <div class="nav-section-title">Procurement</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Procurement<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierView))
                         {
                             <li class="nav-item"><a asp-controller="Suppliers" asp-action="Index" class="@NavClass("Suppliers")"><i class="bi bi-truck"></i> Suppliers</a></li>
@@ -230,6 +241,7 @@
                             <li class="nav-item"><a asp-controller="PurchaseReturns" asp-action="Index" class="@NavClass("PurchaseReturns")"><i class="bi bi-arrow-return-left"></i> Purchase Returns</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WbsTaskView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MilestoneView)
@@ -239,8 +251,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DelayEventView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BudgetLineView))
                 {
-                    <div class="nav-section-title">Construction Project Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Construction Project Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WbsTaskView))
                         {
                             <li class="nav-item"><a asp-controller="WbsTasks" asp-action="Index" class="@NavClass("WbsTasks")"><i class="bi bi-diagram-3-fill"></i> Work Breakdown (WBS)</a></li>
@@ -272,13 +285,15 @@
                             <li class="nav-item"><a asp-controller="BudgetLines" asp-action="Report" class="@NavClass("BudgetLines")"><i class="bi bi-bar-chart"></i> Budget vs Actual</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingRevisionView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingApprovalView))
                 {
-                    <div class="nav-section-title">Engineering</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Engineering<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingView))
                         {
                             <li class="nav-item"><a asp-controller="Drawings" asp-action="Index" class="@NavClass("Drawings")"><i class="bi bi-file-earmark-ruled"></i> Drawings</a></li>
@@ -292,6 +307,7 @@
                             <li class="nav-item"><a asp-controller="DrawingApprovals" asp-action="Index" class="@NavClass("DrawingApprovals")"><i class="bi bi-patch-check"></i> Approvals</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ContractorView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WorkOrderView)
@@ -301,8 +317,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PerformanceEvaluationView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ContractorLedgerView))
                 {
-                    <div class="nav-section-title">Contractor Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Contractor Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ContractorView))
                         {
                             <li class="nav-item"><a asp-controller="Contractors" asp-action="Index" class="@NavClass("Contractors")"><i class="bi bi-person-vcard"></i> Contractors</a></li>
@@ -332,6 +349,7 @@
                             <li class="nav-item"><a asp-controller="ContractorLedgers" asp-action="Index" class="@NavClass("ContractorLedgers")"><i class="bi bi-journal-text"></i> Contractor Ledger</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WorkerView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AttendanceView)
@@ -339,8 +357,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.OvertimeView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SalaryView))
                 {
-                    <div class="nav-section-title">Labor Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Labor Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WorkerView))
                         {
                             <li class="nav-item"><a asp-controller="Workers" asp-action="Index" class="@NavClass("Workers")"><i class="bi bi-person-workspace"></i> Workers</a></li>
@@ -362,6 +381,7 @@
                             <li class="nav-item"><a asp-controller="SafetyTrainings" asp-action="Index" class="@NavClass("SafetyTrainings")"><i class="bi bi-shield-check"></i> Safety Training</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentRentalView)
@@ -369,8 +389,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaintenanceRecordView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.OperatorAssignmentView))
                 {
-                    <div class="nav-section-title">Equipment Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Equipment Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EquipmentView))
                         {
                             <li class="nav-item"><a asp-controller="Equipment" asp-action="Index" class="@NavClass("Equipment")"><i class="bi bi-truck-front"></i> Equipment</a></li>
@@ -392,6 +413,7 @@
                             <li class="nav-item"><a asp-controller="OperatorAssignments" asp-action="Index" class="@NavClass("OperatorAssignments")"><i class="bi bi-person-gear"></i> Operator Assignment</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialInspectionView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SiteInspectionView)
@@ -400,8 +422,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.NcrView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PunchListView))
                 {
-                    <div class="nav-section-title">Quality Control</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Quality Control<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialInspectionView))
                         {
                             <li class="nav-item"><a asp-controller="MaterialInspections" asp-action="Index" class="@NavClass("MaterialInspections")"><i class="bi bi-search"></i> Material Inspection</a></li>
@@ -427,6 +450,7 @@
                             <li class="nav-item"><a asp-controller="QualityChecklists" asp-action="Index" class="@NavClass("QualityChecklists")"><i class="bi bi-clipboard2-check"></i> Quality Checklist</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PpeTrackingView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SafetyInspectionView)
@@ -434,8 +458,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.IncidentReportView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RiskAssessmentView))
                 {
-                    <div class="nav-section-title">Safety (HSE)</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Safety (HSE)<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PpeTrackingView))
                         {
                             <li class="nav-item"><a asp-controller="PpeTrackings" asp-action="Index" class="@NavClass("PpeTrackings")"><i class="bi bi-shield-plus"></i> PPE Tracking</a></li>
@@ -457,12 +482,14 @@
                             <li class="nav-item"><a asp-controller="SafetyAudits" asp-action="Index" class="@NavClass("SafetyAudits")"><i class="bi bi-clipboard-data"></i> Safety Audit</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentVersionView))
                 {
-                    <div class="nav-section-title">Document Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Document Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DocumentView))
                         {
                             <li class="nav-item"><a asp-controller="Documents" asp-action="Index" class="@NavClass("Documents")"><i class="bi bi-file-earmark-text"></i> Documents</a></li>
@@ -472,6 +499,7 @@
                             <li class="nav-item"><a asp-controller="DocumentVersions" asp-action="Index" class="@NavClass("DocumentVersions")"><i class="bi bi-clock-history"></i> Versions</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialView)
@@ -481,8 +509,9 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockReturnView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockAdjustmentView))
                 {
-                    <div class="nav-section-title">Inventory</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Inventory<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WarehouseView))
                         {
                             <li class="nav-item"><a asp-controller="Warehouses" asp-action="Index" class="@NavClass("Warehouses")"><i class="bi bi-house-gear"></i> Warehouses</a></li>
@@ -512,6 +541,7 @@
                             <li class="nav-item"><a asp-controller="StockAdjustments" asp-action="Index" class="@NavClass("StockAdjustments")"><i class="bi bi-sliders"></i> Stock Adjustments</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandDocumentView) ||
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandMutationView) ||
@@ -520,8 +550,9 @@
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalAgreementView) ||
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LegalNoticeView))
                 {
-                    <div class="nav-section-title">Legal Module</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Legal Module<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LandDocumentView))
                         {
                             <li class="nav-item"><a asp-controller="LandDocuments" asp-action="Index" class="@NavClass("LandDocuments")"><i class="bi bi-file-earmark-text"></i> Land Documents</a></li>
@@ -547,6 +578,7 @@
                             <li class="nav-item"><a asp-controller="LegalNotices" asp-action="Index" class="@NavClass("LegalNotices")"><i class="bi bi-envelope-exclamation"></i> Legal Notices</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FlatHandoverView) ||
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SnagItemView) ||
@@ -555,8 +587,9 @@
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaintenanceRequestView) ||
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ServiceTicketView))
                 {
-                    <div class="nav-section-title">After Handover</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">After Handover<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FlatHandoverView))
                         {
                             <li class="nav-item"><a asp-controller="FlatHandovers" asp-action="Index" class="@NavClass("FlatHandovers")"><i class="bi bi-key"></i> Flat Handovers</a></li>
@@ -582,6 +615,7 @@
                             <li class="nav-item"><a asp-controller="ServiceTickets" asp-action="Index" class="@NavClass("ServiceTickets")"><i class="bi bi-ticket-perforated"></i> Service Tickets</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ApartmentMaintenanceView) ||
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UtilityBillView) ||
@@ -590,8 +624,9 @@
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ParkingSlotView) ||
                     User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommonAreaBookingView))
                 {
-                    <div class="nav-section-title">Facility Management</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Facility Management<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ApartmentMaintenanceView))
                         {
                             <li class="nav-item"><a asp-controller="ApartmentMaintenances" asp-action="Index" class="@NavClass("ApartmentMaintenances")"><i class="bi bi-wrench-adjustable"></i> Apartment Maintenances</a></li>
@@ -617,13 +652,16 @@
                             <li class="nav-item"><a asp-controller="CommonAreaBookings" asp-action="Index" class="@NavClass("CommonAreaBookings")"><i class="bi bi-calendar2-check"></i> Common Area Bookings</a></li>
                         }
                     </ul>
+                    </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DashboardView))
                 {
-                    <div class="nav-section-title">Dashboard &amp; Analytics</div>
-                    <ul class="nav flex-column mb-0">
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Dashboard &amp; Analytics<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
                         <li class="nav-item"><a asp-controller="Dashboard" asp-action="Index" class="@NavClass("Dashboard")"><i class="bi bi-speedometer2"></i> Management Dashboard</a></li>
                     </ul>
+                    </div>
                 }
             </nav>
 
@@ -653,6 +691,70 @@
                     shell.classList.toggle('sidebar-collapsed');
                 });
             }
+        })();
+
+        (function () {
+            var sidebar = document.querySelector('.app-sidebar');
+            if (!sidebar) return;
+            var storageKey = 'sidebarScrollTop';
+
+            var savedScroll = sessionStorage.getItem(storageKey);
+            if (savedScroll !== null) {
+                sidebar.scrollTop = parseInt(savedScroll, 10) || 0;
+            }
+
+            sidebar.addEventListener('click', function (e) {
+                var link = e.target.closest('a');
+                if (link) {
+                    sessionStorage.setItem(storageKey, sidebar.scrollTop);
+                }
+            });
+
+            sidebar.addEventListener('scroll', function () {
+                sessionStorage.setItem(storageKey, sidebar.scrollTop);
+            });
+        })();
+
+        (function () {
+            var sidebar = document.querySelector('.app-sidebar');
+            if (!sidebar) return;
+            var sections = Array.prototype.slice.call(sidebar.querySelectorAll('.nav-section'));
+            if (!sections.length) return;
+            var storageKey = 'sidebarOpenSections';
+
+            var openTitles;
+            try {
+                openTitles = JSON.parse(sessionStorage.getItem(storageKey) || '[]');
+            } catch (e) {
+                openTitles = [];
+            }
+
+            function titleOf(section) {
+                return section.querySelector('.nav-section-title').textContent.trim();
+            }
+
+            function saveState() {
+                var open = sections
+                    .filter(function (s) { return !s.classList.contains('collapsed'); })
+                    .map(titleOf);
+                sessionStorage.setItem(storageKey, JSON.stringify(open));
+            }
+
+            sections.forEach(function (section) {
+                var hasActive = !!section.querySelector('.nav-link.active');
+                var wasOpen = openTitles.indexOf(titleOf(section)) !== -1;
+                var hasSavedState = sessionStorage.getItem(storageKey) !== null;
+
+                var shouldOpen = hasActive || (hasSavedState ? wasOpen : true);
+                section.classList.toggle('collapsed', !shouldOpen);
+
+                section.querySelector('.nav-section-title').addEventListener('click', function () {
+                    section.classList.toggle('collapsed');
+                    saveState();
+                });
+            });
+
+            saveState();
         })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)

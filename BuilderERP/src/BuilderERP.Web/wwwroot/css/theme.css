@@ -195,12 +195,54 @@ a:hover {
 }
 
 .app-sidebar .nav-section-title {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0.6rem 0 0.2rem;
+  box-sizing: border-box;
   text-transform: uppercase;
+  font-family: inherit;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--gray-400);
-  padding: 1.1rem 0.6rem 0.4rem;
+  color: var(--gray-500);
+  background: #dcfce7;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.app-sidebar .nav-section-title:hover {
+  background: #86efac;
+  color: var(--gray-700);
+}
+
+.app-sidebar .nav-section-title:focus-visible {
+  outline: 2px solid var(--brand-300);
+  outline-offset: 1px;
+}
+
+.app-sidebar .nav-section-caret {
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.app-sidebar .nav-section.collapsed .nav-section-caret {
+  transform: rotate(-90deg);
+}
+
+.app-sidebar .nav-section-body {
+  overflow: hidden;
+}
+
+.app-sidebar .nav-section.collapsed .nav-section-body {
+  display: none;
 }
 
 .app-sidebar .nav-item {
