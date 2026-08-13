@@ -208,8 +208,8 @@ a:hover {
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--gray-500);
-  background: #dcfce7;
+  color: #fff;
+  background: #228b22;
   border: none;
   border-radius: 0.5rem;
   padding: 0.55rem 0.65rem;
@@ -218,8 +218,8 @@ a:hover {
 }
 
 .app-sidebar .nav-section-title:hover {
-  background: #86efac;
-  color: var(--gray-700);
+  background: #1b6e1b;
+  color: #fff;
 }
 
 .app-sidebar .nav-section-title:focus-visible {
