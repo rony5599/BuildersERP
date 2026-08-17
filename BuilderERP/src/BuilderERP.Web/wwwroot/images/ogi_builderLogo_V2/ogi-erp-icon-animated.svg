@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <linearGradient id="badgeGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1D21"/>
+      <stop offset="100%" stop-color="#2B3238"/>
+    </linearGradient>
+    <linearGradient id="towerGradA" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#B7C0C8"/>
+      <stop offset="100%" stop-color="#6B7785"/>
+    </linearGradient>
+    <linearGradient id="boltGradA" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFE3B0"/>
+      <stop offset="45%" stop-color="#FFB347"/>
+      <stop offset="100%" stop-color="#FF8A00"/>
+    </linearGradient>
+    <filter id="glowA" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="flashGradA" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#FFD9A0" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="#FF8A00" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FF8A00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="240" height="240" rx="48" fill="url(#badgeGradA)"/>
+
+  <circle cx="120" cy="100" r="90" fill="url(#flashGradA)">
+    <animate attributeName="opacity" values="0.15;0.9;0.15;0.15;0.6;0.15" keyTimes="0;0.06;0.14;0.7;0.78;1" dur="3.2s" repeatCount="indefinite"/>
+  </circle>
+
+  <g filter="url(#glowA)">
+    <rect x="68" y="96" width="26" height="82" fill="#8B96A3" opacity="0.55"/>
+    <rect x="98" y="58" width="32" height="120" fill="url(#towerGradA)"/>
+    <rect x="132" y="102" width="38" height="76" fill="#12151A"/>
+    <rect x="140" y="112" width="4" height="10" fill="#1A1D21"/>
+    <rect x="150" y="112" width="4" height="10" fill="#1A1D21"/>
+    <rect x="140" y="128" width="4" height="10" fill="#1A1D21"/>
+    <rect x="150" y="128" width="4" height="10" fill="#1A1D21"/>
+    <rect x="140" y="144" width="4" height="10" fill="#1A1D21"/>
+    <rect x="150" y="144" width="4" height="10" fill="#1A1D21"/>
+    <path d="M60 178 L120 148 L180 178 L164 178 L120 156 L76 178 Z" fill="#12151A"/>
+  </g>
+
+  <g stroke="#FF8A00" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9">
+    <path d="M60 178 L48 190 L36 190 L28 198" stroke-dasharray="6 6">
+      <animate attributeName="stroke-dashoffset" values="60;0" dur="1.4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M180 178 L192 190 L204 190 L212 198" stroke-dasharray="6 6">
+      <animate attributeName="stroke-dashoffset" values="0;60" dur="1.4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="28" cy="198" r="5" fill="#FFB347"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite"/></circle>
+  <circle cx="212" cy="198" r="5" fill="#FFB347"><animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite"/></circle>
+
+  <!-- construction crane placing a block onto the building -->
+  <g transform="translate(120,55)">
+    <g filter="url(#glowA)">
+      <rect x="-5" y="0" width="10" height="118" fill="url(#towerGradA)"/>
+      <rect x="-72" y="-6" width="104" height="8" rx="3" fill="url(#towerGradA)"/>
+      <rect x="24" y="-14" width="16" height="14" rx="2" fill="#12151A"/>
+    </g>
+    <line x1="-64" y1="0" x2="-64" y2="20" stroke="#6B7785" stroke-width="2">
+      <animate attributeName="y2" values="20;90;20;20;90;20" keyTimes="0;0.06;0.14;0.7;0.78;1" dur="3.2s" repeatCount="indefinite"/>
+    </line>
+    <g transform="translate(-64,20)">
+      <animateTransform attributeName="transform" type="translate" values="-64 20;-64 90;-64 20;-64 20;-64 90;-64 20" keyTimes="0;0.06;0.14;0.7;0.78;1" dur="3.2s" repeatCount="indefinite"/>
+      <g filter="url(#glowA)">
+        <rect x="-11" y="-9" width="22" height="18" rx="3" fill="url(#boltGradA)" stroke="#FFF3DC" stroke-width="1"/>
+      </g>
+      <g stroke="#FFB347" stroke-width="2" stroke-linecap="round">
+        <line x1="-16" y1="10" x2="-28" y2="20">
+          <animate attributeName="opacity" values="0;1;0;0;1;0" keyTimes="0;0.06;0.14;0.7;0.78;1" dur="3.2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="0" y1="14" x2="0" y2="28">
+          <animate attributeName="opacity" values="0;1;0;0;1;0" keyTimes="0;0.06;0.14;0.7;0.78;1" dur="3.2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="16" y1="10" x2="28" y2="20">
+          <animate attributeName="opacity" values="0;1;0;0;1;0" keyTimes="0;0.06;0.14;0.7;0.78;1" dur="3.2s" repeatCount="indefinite"/>
+        </line>
+      </g>
+    </g>
+  </g>
+
+  <rect x="1.5" y="1.5" width="237" height="237" rx="47" fill="none" stroke="#FFB347" stroke-width="2">
+    <animate attributeName="opacity" values="0;0.7;0;0;0" keyTimes="0;0.06;0.14;0.7;1" dur="3.2s" repeatCount="indefinite"/>
+  </rect>
+</svg>

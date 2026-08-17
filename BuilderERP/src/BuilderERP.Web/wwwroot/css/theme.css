@@ -92,24 +92,12 @@ a:hover {
   color: var(--gray-900);
 }
 
-.app-topbar .brand .brand-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 0.6rem;
-  background: var(--brand-50);
-  color: var(--brand-500);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.65rem;
-  font-size: 1.05rem;
-  overflow: hidden;
-}
-
-.app-topbar .brand .brand-badge img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.app-topbar .brand .brand-logo {
+  height: 30px;
+  max-height: 30px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
 }
 
 .app-topbar .sidebar-toggle {

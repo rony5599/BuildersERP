@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" width="900" height="240">
+  <defs>
+    <linearGradient id="steelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#9AA7B2"/>
+      <stop offset="100%" stop-color="#5B6875"/>
+    </linearGradient>
+    <linearGradient id="boltGradL" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFE3B0"/>
+      <stop offset="45%" stop-color="#FFB347"/>
+      <stop offset="100%" stop-color="#FF8A00"/>
+    </linearGradient>
+    <filter id="glowL" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- skyline mark -->
+  <g>
+    <rect x="70" y="90" width="26" height="90" fill="#8B96A3" opacity="0.55"/>
+    <rect x="100" y="50" width="32" height="130" fill="url(#steelGrad)"/>
+    <rect x="132" y="100" width="38" height="80" fill="#2B3238"/>
+    <rect x="140" y="112" width="4" height="10" fill="#1A1D21"/>
+    <rect x="150" y="112" width="4" height="10" fill="#1A1D21"/>
+    <rect x="140" y="128" width="4" height="10" fill="#1A1D21"/>
+    <rect x="150" y="128" width="4" height="10" fill="#1A1D21"/>
+    <path d="M62 180 L120 150 L178 180 L162 180 L120 158 L78 180 Z" fill="#2B3238"/>
+
+    <!-- circuit traces -->
+    <g stroke="#FF8A00" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.85">
+      <path d="M62 180 L50 190 L38 190 L30 198" stroke-dasharray="5 5">
+        <animate attributeName="stroke-dashoffset" values="50;0" dur="1.4s" repeatCount="indefinite"/>
+      </path>
+      <path d="M178 180 L190 190 L202 190 L210 198" stroke-dasharray="5 5">
+        <animate attributeName="stroke-dashoffset" values="0;50" dur="1.4s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <circle cx="30" cy="198" r="4" fill="#FFB347"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite"/></circle>
+    <circle cx="210" cy="198" r="4" fill="#FFB347"><animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite"/></circle>
+
+    <!-- construction crane placing a block onto the building -->
+    <g transform="translate(120,50)">
+      <g filter="url(#glowL)">
+        <rect x="-5" y="0" width="10" height="130" fill="url(#steelGrad)"/>
+        <rect x="-72" y="-6" width="104" height="8" rx="3" fill="url(#steelGrad)"/>
+        <rect x="24" y="-14" width="16" height="14" rx="2" fill="#2B3238"/>
+      </g>
+      <line x1="-64" y1="0" x2="-64" y2="20" stroke="#6B7785" stroke-width="2">
+        <animate attributeName="y2" values="20;90;20;20;20;90;20" keyTimes="0;0.05;0.1;0.4;0.6;0.65;1" dur="2.6s" repeatCount="indefinite"/>
+      </line>
+      <g transform="translate(-64,20)">
+        <animateTransform attributeName="transform" type="translate" values="-64 20;-64 90;-64 20;-64 20;-64 20;-64 90;-64 20" keyTimes="0;0.05;0.1;0.4;0.6;0.65;1" dur="2.6s" repeatCount="indefinite"/>
+        <g filter="url(#glowL)">
+          <rect x="-11" y="-9" width="22" height="18" rx="3" fill="url(#boltGradL)" stroke="#FFF3DC" stroke-width="1"/>
+        </g>
+        <g stroke="#FF8A00" stroke-width="2" stroke-linecap="round">
+          <line x1="-16" y1="10" x2="-28" y2="20">
+            <animate attributeName="opacity" values="0;1;0;0;0;1;0" keyTimes="0;0.05;0.1;0.4;0.6;0.65;1" dur="2.6s" repeatCount="indefinite"/>
+          </line>
+          <line x1="0" y1="14" x2="0" y2="28">
+            <animate attributeName="opacity" values="0;1;0;0;0;1;0" keyTimes="0;0.05;0.1;0.4;0.6;0.65;1" dur="2.6s" repeatCount="indefinite"/>
+          </line>
+          <line x1="16" y1="10" x2="28" y2="20">
+            <animate attributeName="opacity" values="0;1;0;0;0;1;0" keyTimes="0;0.05;0.1;0.4;0.6;0.65;1" dur="2.6s" repeatCount="indefinite"/>
+          </line>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- divider -->
+  <rect x="222" y="48" width="3" height="132" fill="#5B6875"/>
+
+  <!-- wordmark -->
+  <text x="250" y="128" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="72" fill="#2B3238">OGI<tspan fill="#FF8A00" dx="18">
+      <animate attributeName="opacity" values="1;0.55;1" dur="2.6s" repeatCount="indefinite"/>
+    ERP</tspan></text>
+
+  <rect x="250" y="150" width="480" height="2" fill="#5B6875" opacity="0.6"/>
+  <text x="250" y="176" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="17" letter-spacing="2" fill="#6B7785">BUILD SMART. MANAGE BETTER. GROW FURTHER.</text>
+</svg>
