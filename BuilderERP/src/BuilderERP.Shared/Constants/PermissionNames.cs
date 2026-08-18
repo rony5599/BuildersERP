@@ -287,6 +287,7 @@ public static class PermissionNames
     public const string CommonAreaBookingManage = "CommonAreaBooking.Manage";
     public const string DashboardView = "Dashboard.View";
     public const string ReportView = "Report.View";
+    public const string AuditTrailView = "AuditTrail.View";
 
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
@@ -393,6 +394,7 @@ public static class PermissionNames
         (CommonAreaBookingView, "CommonAreaBooking"), (CommonAreaBookingManage, "CommonAreaBooking"),
         (DashboardView, "Dashboard"),
         (ReportView, "Report"),
+        (AuditTrailView, "AuditTrail"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -500,5 +502,6 @@ public static class PermissionNames
         CommonAreaBookingView, CommonAreaBookingManage,
         DashboardView,
         ReportView,
+        AuditTrailView,
     };
 }

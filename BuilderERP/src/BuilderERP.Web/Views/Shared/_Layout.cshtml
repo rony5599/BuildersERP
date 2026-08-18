@@ -713,6 +713,15 @@
                     </ul>
                     </div>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AuditTrailView))
+                {
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Audit<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
+                        <li class="nav-item"><a asp-controller="AuditTrail" asp-action="Index" class="@NavClass("AuditTrail")"><i class="bi bi-clock-history"></i> Audit Trail</a></li>
+                    </ul>
+                    </div>
+                }
             </nav>
 
             <div class="app-content">

@@ -1,0 +1,116 @@
+@using BuilderERP.Application.Features.AuditTrail
+@using BuilderERP.Domain.Entities
+@model AuditLogPagedResult
+@{
+    var filter = (AuditLogFilter)ViewBag.Filter;
+    var isHistoryView = ViewBag.IsHistoryView as bool? ?? false;
+    ViewData["Title"] = isHistoryView ? $"History — {filter.EntityName} ({filter.EntityId})" : "Audit Trail";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0">@ViewData["Title"]</h1>
+        <p class="text-muted small mb-0">Field-level change history across all modules — current vs. previous value.</p>
+    </div>
+    @if (isHistoryView)
+    {
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to Audit Trail</a>
+    }
+</div>
+
+@if (!isHistoryView)
+{
+    <form method="get" asp-action="Index" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <select name="EntityName" asp-items="(SelectList)ViewBag.EntityNames" class="form-select">
+                <option value="">All Modules</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="EntityId" value="@filter.EntityId" class="form-control" placeholder="Record Id (optional)" />
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="ChangedBy" value="@filter.ChangedBy" class="form-control" placeholder="Changed By" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="DateFrom" value="@(filter.DateFrom?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="DateTo" value="@(filter.DateTo?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover bg-white">
+        <thead>
+            <tr>
+                <th>Changed At</th>
+                <th>Module</th>
+                <th>Record Id</th>
+                <th>Action</th>
+                <th>Field</th>
+                <th>Previous Value</th>
+                <th>Current Value</th>
+                <th>Changed By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Items)
+            {
+                <tr>
+                    <td>@log.ChangedAt.ToLocalTime().ToString("g")</td>
+                    <td>@log.EntityName</td>
+                    <td>
+                        <span title="@log.EntityId">@log.EntityId.ToString()[..8]</span>
+                        @if (!isHistoryView)
+                        {
+                            <a asp-action="History" asp-route-entityName="@log.EntityName" asp-route-entityId="@log.EntityId" class="ms-1" title="View full history for this record">history</a>
+                        }
+                    </td>
+                    <td>
+                        <span class="badge @(log.Action == AuditAction.Created ? "bg-success" : log.Action == AuditAction.Deleted ? "bg-danger" : "bg-warning text-dark")">@log.Action</span>
+                    </td>
+                    <td>@(log.PropertyName ?? "—")</td>
+                    <td class="text-break">@(log.OldValue ?? "—")</td>
+                    <td class="text-break">@(log.NewValue ?? "—")</td>
+                    <td>@(log.ChangedBy ?? "system")</td>
+                </tr>
+            }
+            @if (Model.Items.Count == 0)
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted">No audit records found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <li class="page-item @(p == Model.Page ? "active" : "")">
+                    @if (isHistoryView)
+                    {
+                        <a class="page-link" asp-action="History" asp-route-entityName="@filter.EntityName" asp-route-entityId="@filter.EntityId" asp-route-page="@p" asp-route-pageSize="@Model.PageSize">@p</a>
+                    }
+                    else
+                    {
+                        <a class="page-link" asp-action="Index" asp-route-page="@p" asp-route-pageSize="@Model.PageSize"
+                           asp-route-EntityName="@filter.EntityName" asp-route-EntityId="@filter.EntityId" asp-route-ChangedBy="@filter.ChangedBy"
+                           asp-route-DateFrom="@filter.DateFrom" asp-route-DateTo="@filter.DateTo">@p</a>
+                    }
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+<p class="text-muted small">@Model.TotalCount total record(s).</p>

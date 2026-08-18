@@ -10,6 +10,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
     }
 
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<Project> Projects => Set<Project>();
@@ -127,6 +128,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<AuditLog>(entity =>
+        {
+            entity.Property(a => a.Action).HasConversion<string>().HasMaxLength(20);
+            entity.Property(a => a.EntityName).HasMaxLength(200);
+            entity.Property(a => a.ChangedBy).HasMaxLength(256);
+            entity.Property(a => a.PropertyName).HasMaxLength(200);
+            entity.HasIndex(a => new { a.EntityName, a.EntityId });
+            entity.HasIndex(a => a.ChangedAt);
         });
 
         builder.Entity<Company>().HasIndex(c => c.Code).IsUnique();
