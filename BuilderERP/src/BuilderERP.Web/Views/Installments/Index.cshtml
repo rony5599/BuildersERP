@@ -35,7 +35,13 @@
                 <td>@installment.DueAmount</td>
                 <td>@installment.PenaltyAmount</td>
                 <td>@installment.PaidAmount</td>
-                <td>@installment.Status</td>
+                <td>
+                    @installment.Status
+                    @if (installment.IsRescheduled)
+                    {
+                        <span class="badge bg-info" title="Original due date: @installment.OriginalDueDate?.ToString("yyyy-MM-dd") — @installment.RescheduleReason">Rescheduled</span>
+                    }
+                </td>
                 <td>
                     <span class="badge @(installment.IsActive ? "bg-success" : "bg-secondary")">
                         @(installment.IsActive ? "Active" : "Inactive")
@@ -45,6 +51,10 @@
                     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentManage))
                     {
                         <a asp-action="Edit" asp-route-id="@installment.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        @if (installment.Status != BuilderERP.Domain.Enums.InstallmentStatus.Paid)
+                        {
+                            <a asp-action="Reschedule" asp-route-id="@installment.Id" class="btn btn-sm btn-outline-primary">Reschedule</a>
+                        }
                         <form asp-action="ToggleActive" asp-route-id="@installment.Id" asp-route-isActive="@installment.IsActive" method="post" class="d-inline">
                             <button type="submit" class="btn btn-sm btn-outline-danger">
                                 @(installment.IsActive ? "Deactivate" : "Activate")

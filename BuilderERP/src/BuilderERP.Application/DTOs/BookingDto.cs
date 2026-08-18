@@ -16,6 +16,8 @@ public class BookingDto
     public string PropertyUnitNumber { get; set; } = string.Empty;
     public Guid? BrokerId { get; set; }
     public string? BrokerName { get; set; }
+    public Guid? CollectionOfficerId { get; set; }
+    public string? CollectionOfficerName { get; set; }
 }
 
 public class CreateBookingDto
@@ -27,6 +29,7 @@ public class CreateBookingDto
     public Guid CustomerId { get; set; }
     public Guid PropertyUnitId { get; set; }
     public Guid? BrokerId { get; set; }
+    public Guid? CollectionOfficerId { get; set; }
 }
 
 public class UpdateBookingDto
@@ -39,4 +42,5 @@ public class UpdateBookingDto
     public Guid CustomerId { get; set; }
     public Guid PropertyUnitId { get; set; }
     public Guid? BrokerId { get; set; }
+    public Guid? CollectionOfficerId { get; set; }
 }

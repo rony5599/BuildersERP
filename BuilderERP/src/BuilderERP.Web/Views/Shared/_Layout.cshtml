@@ -206,7 +206,10 @@
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentPlanView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InstallmentView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReceiptView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReceiptView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DueCollectionForecastView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CollectionTargetView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PaymentReminderView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">Installments<i class="bi bi-chevron-down nav-section-caret"></i></button>
@@ -222,6 +225,18 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ReceiptView))
                         {
                             <li class="nav-item"><a asp-controller="Receipts" asp-action="Index" class="@NavClass("Receipts")"><i class="bi bi-receipt"></i> Receipts</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DueCollectionForecastView))
+                        {
+                            <li class="nav-item"><a asp-controller="CollectionForecast" asp-action="Index" class="@NavClass("CollectionForecast")"><i class="bi bi-graph-up-arrow"></i> Collection Forecast</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CollectionTargetView))
+                        {
+                            <li class="nav-item"><a asp-controller="CollectionTargets" asp-action="Index" class="@NavClass("CollectionTargets")"><i class="bi bi-bullseye"></i> Collection Targets</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PaymentReminderView))
+                        {
+                            <li class="nav-item"><a asp-controller="PaymentReminders" asp-action="Index" class="@NavClass("PaymentReminders")"><i class="bi bi-bell"></i> Payment Reminders</a></li>
                         }
                     </ul>
                     </div>
@@ -282,7 +297,8 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WbsTaskView))
                         {
                             <li class="nav-item"><a asp-controller="WbsTasks" asp-action="Index" class="@NavClass("WbsTasks")"><i class="bi bi-diagram-3-fill"></i> Work Breakdown (WBS)</a></li>
-                            <li class="nav-item"><a asp-controller="WbsTasks" asp-action="Gantt" class="@NavClass("WbsTasks")"><i class="bi bi-bar-chart-steps"></i> Gantt Chart</a></li>
+                            <li class="nav-item"><a asp-controller="WbsTasks" asp-action="Gantt" class="@NavClass("WbsTasks")"><i class="bi bi-bar-chart-steps"></i> Gantt Chart (Project-wise)</a></li>
+                            <li class="nav-item"><a asp-controller="WbsTasks" asp-action="GanttByUnit" class="@NavClass("WbsTasks")"><i class="bi bi-bar-chart-steps"></i> Gantt Chart (Unit-wise)</a></li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MilestoneView))
                         {

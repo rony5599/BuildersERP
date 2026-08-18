@@ -10,7 +10,8 @@ public class WbsTaskMappingProfile : Profile
     {
         CreateMap<WbsTask, WbsTaskDto>()
             .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project != null ? src.Project.Name : string.Empty))
-            .ForMember(dest => dest.ParentCode, opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Code : null));
+            .ForMember(dest => dest.ParentCode, opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Code : null))
+            .ForMember(dest => dest.PropertyUnitNumber, opt => opt.MapFrom(src => src.PropertyUnit != null ? src.PropertyUnit.UnitNumber : null));
         CreateMap<CreateWbsTaskDto, WbsTask>();
         CreateMap<UpdateWbsTaskDto, WbsTask>();
     }

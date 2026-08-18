@@ -1,0 +1,106 @@
+@model IReadOnlyList<BuilderERP.Application.DTOs.PaymentReminderDto>
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Payment Reminders";
+
+    string StatusBadge(ReminderStatus status) => status switch
+    {
+        ReminderStatus.Pending => "bg-warning text-dark",
+        ReminderStatus.Sent => "bg-success",
+        ReminderStatus.Cancelled => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Payment Reminders</h1>
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PaymentReminderManage))
+    {
+        <form asp-action="Generate" method="post" class="d-flex gap-2">
+            <input type="number" name="lookaheadDays" value="7" min="1" max="90" class="form-control form-control-sm" style="width:100px;" title="Lookahead days" />
+            <button type="submit" class="btn btn-primary">Generate Reminders</button>
+        </form>
+    }
+</div>
+
+@if (TempData["ReminderGenerationResult"] is not null)
+{
+    <div class="alert alert-info">@TempData["ReminderGenerationResult"]</div>
+}
+
+<form method="get" class="mb-3 col-md-3">
+    <label class="form-label">Status</label>
+    <select name="status" class="form-select" onchange="this.form.submit()">
+        <option value="">-- All --</option>
+        @foreach (ReminderStatus s in Enum.GetValues(typeof(ReminderStatus)))
+        {
+            if (ViewBag.SelectedStatus is not null && (ReminderStatus)ViewBag.SelectedStatus == s)
+            {
+                <option value="@s" selected>@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</form>
+
+<p class="text-muted">Reminders are generated and logged for staff to action manually (SMS/Email/WhatsApp dispatch is not automated in this environment). Marking a reminder "Sent" also logs it in the customer's communication history.</p>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Installment</th>
+            <th>Due Date</th>
+            <th>Outstanding</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Sent Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reminder in Model)
+        {
+            <tr>
+                <td>@reminder.CustomerName</td>
+                <td>@reminder.CustomerPhone</td>
+                <td>@reminder.InstallmentNumber</td>
+                <td>@reminder.DueDate?.ToString("yyyy-MM-dd")</td>
+                <td>@reminder.OutstandingAmount?.ToString("N2")</td>
+                <td style="max-width:300px;" class="text-truncate" title="@reminder.Message">@reminder.Message</td>
+                <td><span class="badge @StatusBadge(reminder.Status)">@reminder.Status</span></td>
+                <td>@reminder.SentDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                <td class="text-end">
+                    @if (reminder.Status == ReminderStatus.Pending && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PaymentReminderManage))
+                    {
+                        <form asp-action="MarkSent" asp-route-id="@reminder.Id" method="post" class="d-inline-flex gap-1">
+                            <select name="channel" class="form-select form-select-sm" style="width:110px;">
+                                @foreach (ReminderChannel c in Enum.GetValues(typeof(ReminderChannel)))
+                                {
+                                    if (c == reminder.Channel)
+                                    {
+                                        <option value="@c" selected>@c</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@c">@c</option>
+                                    }
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-success">Mark Sent</button>
+                        </form>
+                        <form asp-action="Cancel" asp-route-id="@reminder.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

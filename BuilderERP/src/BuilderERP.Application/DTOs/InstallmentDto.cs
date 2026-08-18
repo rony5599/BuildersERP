@@ -11,6 +11,9 @@ public class InstallmentDto
     public decimal PenaltyAmount { get; set; }
     public decimal PaidAmount { get; set; }
     public InstallmentStatus Status { get; set; }
+    public bool IsRescheduled { get; set; }
+    public DateTime? OriginalDueDate { get; set; }
+    public string? RescheduleReason { get; set; }
     public bool IsActive { get; set; }
     public Guid InstallmentPlanId { get; set; }
 }

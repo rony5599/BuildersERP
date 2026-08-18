@@ -1,0 +1,52 @@
+@model IReadOnlyList<BuilderERP.Application.DTOs.InstallmentDueRowDto>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No installments in this bucket.</p>
+}
+else
+{
+    <table class="table table-striped table-hover bg-white">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Project</th>
+                <th>Unit</th>
+                <th>Due Date</th>
+                <th>Days Overdue</th>
+                <th>Outstanding</th>
+                <th>Probability</th>
+                <th>Officer</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model)
+            {
+                <tr>
+                    <td>@row.CustomerName</td>
+                    <td>@row.CustomerPhone</td>
+                    <td>@row.ProjectName</td>
+                    <td>@row.UnitNumber</td>
+                    <td>@row.DueDate.ToString("yyyy-MM-dd")</td>
+                    <td>@(row.DaysOverdue > 0 ? row.DaysOverdue.ToString() : "-")</td>
+                    <td>@row.OutstandingAmount.ToString("N2")</td>
+                    <td>
+                        <span class="badge @(row.CollectionProbabilityPercent >= 70 ? "bg-success" : row.CollectionProbabilityPercent >= 40 ? "bg-warning text-dark" : "bg-danger")">
+                            @row.CollectionProbabilityPercent%
+                        </span>
+                        @if (row.IsRescheduled)
+                        {
+                            <span class="badge bg-info">Rescheduled</span>
+                        }
+                    </td>
+                    <td>@row.CollectionOfficerName</td>
+                    <td class="text-end">
+                        <a asp-controller="Installments" asp-action="Reschedule" asp-route-id="@row.InstallmentId" class="btn btn-sm btn-outline-primary">Reschedule</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

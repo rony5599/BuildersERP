@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.WbsTasks;
 
-public record GetAllWbsTasksQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<WbsTaskDto>>;
+public record GetAllWbsTasksQuery(Guid? ProjectId = null, Guid? PropertyUnitId = null) : IRequest<IReadOnlyList<WbsTaskDto>>;
 
 public class GetAllWbsTasksQueryHandler : IRequestHandler<GetAllWbsTasksQuery, IReadOnlyList<WbsTaskDto>>
 {
@@ -25,11 +25,17 @@ public class GetAllWbsTasksQueryHandler : IRequestHandler<GetAllWbsTasksQuery, I
         var query = _unitOfWork.Repository<WbsTask>().Query()
             .Include(x => x.Project)
             .Include(x => x.Parent)
+            .Include(x => x.PropertyUnit)
             .AsQueryable();
 
         if (request.ProjectId.HasValue)
         {
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
+        }
+
+        if (request.PropertyUnitId.HasValue)
+        {
+            query = query.Where(x => x.PropertyUnitId == request.PropertyUnitId.Value);
         }
 
         var wbsTasks = await query.OrderBy(x => x.Sequence).ToListAsync(cancellationToken);

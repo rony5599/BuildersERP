@@ -3,13 +3,16 @@ using BuilderERP.Application.Features.Bookings;
 using BuilderERP.Application.Features.Brokers;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.PropertyUnits;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -17,12 +20,14 @@ namespace BuilderERP.Web.Controllers;
 public class BookingsController : Controller
 {
     private readonly IMediator _mediator;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IValidator<CreateBookingDto> _createValidator;
     private readonly IValidator<UpdateBookingDto> _updateValidator;
 
-    public BookingsController(IMediator mediator, IValidator<CreateBookingDto> createValidator, IValidator<UpdateBookingDto> updateValidator)
+    public BookingsController(IMediator mediator, UserManager<ApplicationUser> userManager, IValidator<CreateBookingDto> createValidator, IValidator<UpdateBookingDto> updateValidator)
     {
         _mediator = mediator;
+        _userManager = userManager;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
     }
@@ -75,7 +80,8 @@ public class BookingsController : Controller
             CancellationReason = booking.CancellationReason,
             CustomerId = booking.CustomerId,
             PropertyUnitId = booking.PropertyUnitId,
-            BrokerId = booking.BrokerId
+            BrokerId = booking.BrokerId,
+            CollectionOfficerId = booking.CollectionOfficerId
         };
 
         await PopulateDropdownsAsync();
@@ -123,5 +129,8 @@ public class BookingsController : Controller
 
         var brokers = await _mediator.Send(new GetAllBrokersQuery());
         ViewBag.Brokers = new SelectList(brokers, "Id", "Name");
+
+        var users = await _userManager.Users.ToListAsync();
+        ViewBag.CollectionOfficers = new SelectList(users, "Id", "FullName");
     }
 }

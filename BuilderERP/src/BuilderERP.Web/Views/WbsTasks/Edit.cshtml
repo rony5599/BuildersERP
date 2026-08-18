@@ -38,6 +38,13 @@
         <span asp-validation-for="ParentId" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label asp-for="PropertyUnitId" class="form-label">Property Unit</label>
+        <select asp-for="PropertyUnitId" asp-items="ViewBag.PropertyUnits" class="form-select">
+            <option value="">-- None (project-level task) --</option>
+        </select>
+        <span asp-validation-for="PropertyUnitId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
         <label asp-for="StartDate" class="form-label"></label>
         <input asp-for="StartDate" type="date" class="form-control" />
         <span asp-validation-for="StartDate" class="text-danger"></span>

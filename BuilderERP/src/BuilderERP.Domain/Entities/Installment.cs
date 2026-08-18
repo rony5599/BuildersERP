@@ -10,6 +10,9 @@ public class Installment : BaseEntity
     public decimal PenaltyAmount { get; set; }
     public decimal PaidAmount { get; set; }
     public InstallmentStatus Status { get; set; } = InstallmentStatus.Pending;
+    public bool IsRescheduled { get; set; }
+    public DateTime? OriginalDueDate { get; set; }
+    public string? RescheduleReason { get; set; }
     public bool IsActive { get; set; } = true;
 
     public Guid InstallmentPlanId { get; set; }

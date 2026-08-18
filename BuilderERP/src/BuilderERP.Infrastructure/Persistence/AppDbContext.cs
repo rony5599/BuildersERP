@@ -35,6 +35,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<InstallmentPlan> InstallmentPlans => Set<InstallmentPlan>();
     public DbSet<Installment> Installments => Set<Installment>();
     public DbSet<Receipt> Receipts => Set<Receipt>();
+    public DbSet<CollectionTarget> CollectionTargets => Set<CollectionTarget>();
+    public DbSet<PaymentReminder> PaymentReminders => Set<PaymentReminder>();
     public DbSet<Supplier> Suppliers => Set<Supplier>();
     public DbSet<PurchaseRequisition> PurchaseRequisitions => Set<PurchaseRequisition>();
     public DbSet<Rfq> Rfqs => Set<Rfq>();
@@ -276,6 +278,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(b => b.BrokerId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.Entity<Booking>()
+            .HasOne(b => b.CollectionOfficer)
+            .WithMany()
+            .HasForeignKey(b => b.CollectionOfficerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.Entity<Booking>().Property(b => b.BookingAmount).HasPrecision(18, 2);
 
         builder.Entity<Commission>()
@@ -326,6 +334,30 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .WithMany()
             .HasForeignKey(r => r.InstallmentId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CollectionTarget>()
+            .HasOne(t => t.CollectionOfficer)
+            .WithMany()
+            .HasForeignKey(t => t.CollectionOfficerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CollectionTarget>()
+            .HasIndex(t => new { t.CollectionOfficerId, t.Year, t.Month })
+            .IsUnique();
+
+        builder.Entity<CollectionTarget>().Property(t => t.TargetAmount).HasPrecision(18, 2);
+
+        builder.Entity<PaymentReminder>()
+            .HasOne(r => r.Customer)
+            .WithMany()
+            .HasForeignKey(r => r.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PaymentReminder>()
+            .HasOne(r => r.Installment)
+            .WithMany()
+            .HasForeignKey(r => r.InstallmentId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Entity<Receipt>().Property(r => r.AmountPaid).HasPrecision(18, 2);
 
@@ -492,6 +524,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .WithMany()
             .HasForeignKey(t => t.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<WbsTask>()
+            .HasOne(t => t.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(t => t.PropertyUnitId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Entity<Milestone>()
             .HasOne(m => m.Project)
@@ -1008,6 +1046,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer), typeof(CustomerCommunication), typeof(SiteVisit),
             typeof(Quotation), typeof(Booking), typeof(SaleAgreement), typeof(Broker), typeof(Commission),
             typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
+            typeof(CollectionTarget), typeof(PaymentReminder),
             typeof(Supplier), typeof(PurchaseRequisition), typeof(Rfq), typeof(VendorQuotation),
             typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),

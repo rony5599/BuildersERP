@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
+using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Application.Features.WbsTasks;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -25,16 +26,34 @@ public class WbsTasksController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId)
     {
-        var wbsTasks = await _mediator.Send(new GetAllWbsTasksQuery(projectId));
+        var wbsTasks = await _mediator.Send(new GetAllWbsTasksQuery(projectId, propertyUnitId));
+        ViewBag.Projects = new SelectList(await _mediator.Send(new GetAllProjectsQuery()), "Id", "Name", projectId);
+        ViewBag.PropertyUnits = new SelectList(await _mediator.Send(new GetAllPropertyUnitsQuery(projectId)), "Id", "UnitNumber", propertyUnitId);
+        ViewBag.SelectedProjectId = projectId;
+        ViewBag.SelectedPropertyUnitId = propertyUnitId;
         return View(wbsTasks);
     }
 
     public async Task<IActionResult> Gantt(Guid? projectId)
     {
-        ViewBag.Projects = new SelectList(await _mediator.Send(new GetAllProjectsQuery()), "Id", "Name");
+        ViewBag.Projects = new SelectList(await _mediator.Send(new GetAllProjectsQuery()), "Id", "Name", projectId);
         var wbsTasks = await _mediator.Send(new GetAllWbsTasksQuery(projectId));
+        return View(wbsTasks);
+    }
+
+    public async Task<IActionResult> GanttByUnit(Guid? projectId, Guid? propertyUnitId)
+    {
+        ViewBag.Projects = new SelectList(await _mediator.Send(new GetAllProjectsQuery()), "Id", "Name", projectId);
+        ViewBag.PropertyUnits = new SelectList(await _mediator.Send(new GetAllPropertyUnitsQuery(projectId)), "Id", "UnitNumber", propertyUnitId);
+        ViewBag.SelectedProjectId = projectId;
+        ViewBag.SelectedPropertyUnitId = propertyUnitId;
+
+        var wbsTasks = propertyUnitId.HasValue
+            ? await _mediator.Send(new GetAllWbsTasksQuery(null, propertyUnitId))
+            : new List<WbsTaskDto>();
+
         return View(wbsTasks);
     }
 
@@ -82,7 +101,8 @@ public class WbsTasksController : Controller
             PercentComplete = wbsTask.PercentComplete,
             Sequence = wbsTask.Sequence,
             ParentId = wbsTask.ParentId,
-            ProjectId = wbsTask.ProjectId
+            ProjectId = wbsTask.ProjectId,
+            PropertyUnitId = wbsTask.PropertyUnitId
         };
 
         await PopulateDropdownsAsync();
@@ -124,5 +144,6 @@ public class WbsTasksController : Controller
     {
         ViewBag.Projects = new SelectList(await _mediator.Send(new GetAllProjectsQuery()), "Id", "Name");
         ViewBag.ParentTasks = new SelectList(await _mediator.Send(new GetAllWbsTasksQuery()), "Id", "Code");
+        ViewBag.PropertyUnits = new SelectList(await _mediator.Send(new GetAllPropertyUnitsQuery()), "Id", "UnitNumber");
     }
 }

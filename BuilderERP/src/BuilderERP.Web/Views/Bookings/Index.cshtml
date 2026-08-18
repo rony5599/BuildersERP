@@ -22,6 +22,7 @@
             <th>Amount</th>
             <th>Status</th>
             <th>Broker</th>
+            <th>Collection Officer</th>
             <th>Active</th>
             <th></th>
         </tr>
@@ -36,6 +37,7 @@
                 <td>@booking.BookingAmount</td>
                 <td title="@booking.CancellationReason">@booking.Status</td>
                 <td>@booking.BrokerName</td>
+                <td>@booking.CollectionOfficerName</td>
                 <td>
                     <span class="badge @(booking.IsActive ? "bg-success" : "bg-secondary")">
                         @(booking.IsActive ? "Active" : "Inactive")

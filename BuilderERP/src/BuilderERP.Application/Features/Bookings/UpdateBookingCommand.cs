@@ -32,6 +32,7 @@ public class UpdateBookingCommandHandler : IRequestHandler<UpdateBookingCommand,
         booking.CustomerId = request.Dto.CustomerId;
         booking.PropertyUnitId = request.Dto.PropertyUnitId;
         booking.BrokerId = request.Dto.BrokerId;
+        booking.CollectionOfficerId = request.Dto.CollectionOfficerId;
 
         repository.Update(booking);
 

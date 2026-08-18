@@ -16,4 +16,7 @@ public class WbsTask : BaseEntity
 
     public Guid ProjectId { get; set; }
     public Project Project { get; set; } = null!;
+
+    public Guid? PropertyUnitId { get; set; }
+    public PropertyUnit? PropertyUnit { get; set; }
 }

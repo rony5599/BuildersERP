@@ -18,4 +18,7 @@ public class Booking : BaseEntity
 
     public Guid? BrokerId { get; set; }
     public Broker? Broker { get; set; }
+
+    public Guid? CollectionOfficerId { get; set; }
+    public ApplicationUser? CollectionOfficer { get; set; }
 }

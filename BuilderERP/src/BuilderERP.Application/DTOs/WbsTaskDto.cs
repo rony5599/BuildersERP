@@ -14,6 +14,8 @@ public class WbsTaskDto
     public string? ParentCode { get; set; }
     public Guid ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
+    public Guid? PropertyUnitId { get; set; }
+    public string? PropertyUnitNumber { get; set; }
     public bool IsActive { get; set; }
 }
 
@@ -28,6 +30,7 @@ public class CreateWbsTaskDto
     public int Sequence { get; set; }
     public Guid? ParentId { get; set; }
     public Guid ProjectId { get; set; }
+    public Guid? PropertyUnitId { get; set; }
 }
 
 public class UpdateWbsTaskDto
@@ -42,4 +45,5 @@ public class UpdateWbsTaskDto
     public int Sequence { get; set; }
     public Guid? ParentId { get; set; }
     public Guid ProjectId { get; set; }
+    public Guid? PropertyUnitId { get; set; }
 }

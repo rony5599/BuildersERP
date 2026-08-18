@@ -79,6 +79,14 @@ public static class PermissionNames
     public const string ReceiptView = "Receipt.View";
     public const string ReceiptManage = "Receipt.Manage";
 
+    public const string DueCollectionForecastView = "DueCollectionForecast.View";
+
+    public const string CollectionTargetView = "CollectionTarget.View";
+    public const string CollectionTargetManage = "CollectionTarget.Manage";
+
+    public const string PaymentReminderView = "PaymentReminder.View";
+    public const string PaymentReminderManage = "PaymentReminder.Manage";
+
     public const string SupplierView = "Supplier.View";
     public const string SupplierManage = "Supplier.Manage";
 
@@ -308,6 +316,9 @@ public static class PermissionNames
         (InstallmentPlanView, "InstallmentPlan"), (InstallmentPlanManage, "InstallmentPlan"),
         (InstallmentView, "Installment"), (InstallmentManage, "Installment"),
         (ReceiptView, "Receipt"), (ReceiptManage, "Receipt"),
+        (DueCollectionForecastView, "DueCollectionForecast"),
+        (CollectionTargetView, "CollectionTarget"), (CollectionTargetManage, "CollectionTarget"),
+        (PaymentReminderView, "PaymentReminder"), (PaymentReminderManage, "PaymentReminder"),
         (SupplierView, "Supplier"), (SupplierManage, "Supplier"),
         (PurchaseRequisitionView, "PurchaseRequisition"), (PurchaseRequisitionManage, "PurchaseRequisition"),
         (RfqView, "Rfq"), (RfqManage, "Rfq"),
@@ -412,6 +423,9 @@ public static class PermissionNames
         InstallmentPlanView, InstallmentPlanManage,
         InstallmentView, InstallmentManage,
         ReceiptView, ReceiptManage,
+        DueCollectionForecastView,
+        CollectionTargetView, CollectionTargetManage,
+        PaymentReminderView, PaymentReminderManage,
         SupplierView, SupplierManage,
         PurchaseRequisitionView, PurchaseRequisitionManage,
         RfqView, RfqManage,

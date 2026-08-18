@@ -263,6 +263,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CancellationReason")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("CollectionOfficerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -293,6 +296,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BrokerId");
+
+                    b.HasIndex("CollectionOfficerId");
 
                     b.HasIndex("CustomerId");
 
@@ -552,6 +557,51 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Buildings");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.CollectionTarget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CollectionOfficerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TargetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectionOfficerId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("CollectionTargets");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Commission", b =>
@@ -1961,11 +2011,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsRescheduled")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("OriginalDueDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("PaidAmount")
                         .HasPrecision(18, 2)
@@ -1974,6 +2030,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("PenaltyAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("RescheduleReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -2943,6 +3002,61 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ParkingSlots");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.PaymentReminder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InstallmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("InstallmentId");
+
+                    b.ToTable("PaymentReminders");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PerformanceEvaluation", b =>
@@ -5235,6 +5349,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("PropertyUnitId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
 
@@ -5246,6 +5363,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("ParentId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("PropertyUnitId");
 
                     b.ToTable("WbsTasks");
                 });
@@ -5526,6 +5645,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasForeignKey("BrokerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("BuilderERP.Domain.Entities.ApplicationUser", "CollectionOfficer")
+                        .WithMany()
+                        .HasForeignKey("CollectionOfficerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("BuilderERP.Domain.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
@@ -5539,6 +5663,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Broker");
+
+                    b.Navigation("CollectionOfficer");
 
                     b.Navigation("Customer");
 
@@ -5587,6 +5713,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.CollectionTarget", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.ApplicationUser", "CollectionOfficer")
+                        .WithMany()
+                        .HasForeignKey("CollectionOfficerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CollectionOfficer");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Commission", b =>
@@ -6122,6 +6259,24 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.PaymentReminder", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.Installment", "Installment")
+                        .WithMany()
+                        .HasForeignKey("InstallmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Installment");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PerformanceEvaluation", b =>
@@ -6706,9 +6861,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("BuilderERP.Domain.Entities.PropertyUnit", "PropertyUnit")
+                        .WithMany()
+                        .HasForeignKey("PropertyUnitId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Parent");
 
                     b.Navigation("Project");
+
+                    b.Navigation("PropertyUnit");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.WorkOrder", b =>

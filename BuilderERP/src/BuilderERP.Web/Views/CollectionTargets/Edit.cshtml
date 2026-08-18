@@ -1,0 +1,35 @@
+@model BuilderERP.Application.DTOs.UpdateCollectionTargetDto
+@{
+    ViewData["Title"] = "Edit Collection Target";
+}
+
+<h1 class="h3 mb-4">Edit Collection Target</h1>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="CollectionOfficerId" class="form-label">Collection Officer</label>
+        <select asp-for="CollectionOfficerId" asp-items="ViewBag.CollectionOfficers" class="form-select">
+            <option value="">-- Select Officer --</option>
+        </select>
+        <span asp-validation-for="CollectionOfficerId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Year" class="form-label"></label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Month" class="form-label"></label>
+        <input asp-for="Month" class="form-control" />
+        <span asp-validation-for="Month" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TargetAmount" class="form-label"></label>
+        <input asp-for="TargetAmount" class="form-control" />
+        <span asp-validation-for="TargetAmount" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

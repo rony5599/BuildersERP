@@ -34,6 +34,7 @@ public class UpdateWbsTaskCommandHandler : IRequestHandler<UpdateWbsTaskCommand,
         wbsTask.Sequence = request.Dto.Sequence;
         wbsTask.ParentId = request.Dto.ParentId;
         wbsTask.ProjectId = request.Dto.ProjectId;
+        wbsTask.PropertyUnitId = request.Dto.PropertyUnitId;
 
         repository.Update(wbsTask);
         await _unitOfWork.SaveChangesAsync();

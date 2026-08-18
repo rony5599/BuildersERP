@@ -110,6 +110,27 @@ public class InstallmentsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [PermissionAuthorize(PermissionNames.InstallmentManage)]
+    public async Task<IActionResult> Reschedule(Guid id)
+    {
+        var installment = await _mediator.Send(new GetInstallmentByIdQuery(id));
+        if (installment is null)
+        {
+            return NotFound();
+        }
+
+        return View(installment);
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.InstallmentManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Reschedule(Guid id, DateTime newDueDate, string reason)
+    {
+        await _mediator.Send(new RescheduleInstallmentCommand(id, newDueDate, reason));
+        return RedirectToAction(nameof(Index));
+    }
+
     private async Task PopulateDropdownsAsync()
     {
         var plans = await _mediator.Send(new BuilderERP.Application.Features.InstallmentPlans.GetAllInstallmentPlansQuery());
