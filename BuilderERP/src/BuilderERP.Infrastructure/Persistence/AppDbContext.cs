@@ -25,9 +25,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Inquiry> Inquiries => Set<Inquiry>();
     public DbSet<FollowUp> FollowUps => Set<FollowUp>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<CustomerCommunication> CustomerCommunications => Set<CustomerCommunication>();
+    public DbSet<SiteVisit> SiteVisits => Set<SiteVisit>();
     public DbSet<Quotation> Quotations => Set<Quotation>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<SaleAgreement> SaleAgreements => Set<SaleAgreement>();
+    public DbSet<Broker> Brokers => Set<Broker>();
+    public DbSet<Commission> Commissions => Set<Commission>();
     public DbSet<InstallmentPlan> InstallmentPlans => Set<InstallmentPlan>();
     public DbSet<Installment> Installments => Set<Installment>();
     public DbSet<Receipt> Receipts => Set<Receipt>();
@@ -216,6 +220,30 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(l => l.AssignedToUserId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.Entity<CustomerCommunication>()
+            .HasOne(c => c.Customer)
+            .WithMany()
+            .HasForeignKey(c => c.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SiteVisit>()
+            .HasOne(v => v.Lead)
+            .WithMany()
+            .HasForeignKey(v => v.LeadId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SiteVisit>()
+            .HasOne(v => v.PropertyUnit)
+            .WithMany()
+            .HasForeignKey(v => v.PropertyUnitId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<SiteVisit>()
+            .HasOne(v => v.AssignedToUser)
+            .WithMany()
+            .HasForeignKey(v => v.AssignedToUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.Entity<Quotation>()
             .HasOne(q => q.Customer)
             .WithMany()
@@ -242,7 +270,29 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(b => b.PropertyUnitId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<Booking>()
+            .HasOne(b => b.Broker)
+            .WithMany()
+            .HasForeignKey(b => b.BrokerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.Entity<Booking>().Property(b => b.BookingAmount).HasPrecision(18, 2);
+
+        builder.Entity<Commission>()
+            .HasOne(c => c.Broker)
+            .WithMany()
+            .HasForeignKey(c => c.BrokerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Commission>()
+            .HasOne(c => c.Booking)
+            .WithMany()
+            .HasForeignKey(c => c.BookingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Commission>().Property(c => c.CommissionRate).HasPrecision(9, 4);
+        builder.Entity<Commission>().Property(c => c.CommissionAmount).HasPrecision(18, 2);
+        builder.Entity<Broker>().Property(b => b.DefaultCommissionRate).HasPrecision(9, 4);
 
         builder.Entity<SaleAgreement>()
             .HasOne(a => a.Booking)
@@ -949,8 +999,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         {
             typeof(Company), typeof(Branch), typeof(Project), typeof(Department), typeof(CostCenter),
             typeof(Building), typeof(Tower), typeof(Floor), typeof(PropertyUnit),
-            typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer),
-            typeof(Quotation), typeof(Booking), typeof(SaleAgreement),
+            typeof(Lead), typeof(Inquiry), typeof(FollowUp), typeof(Customer), typeof(CustomerCommunication), typeof(SiteVisit),
+            typeof(Quotation), typeof(Booking), typeof(SaleAgreement), typeof(Broker), typeof(Commission),
             typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
             typeof(Supplier), typeof(PurchaseRequisition), typeof(Rfq), typeof(VendorQuotation),
             typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),

@@ -1,0 +1,67 @@
+@model IReadOnlyList<BuilderERP.Application.DTOs.LeadDto>
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Sales Pipeline";
+    var stages = new[] { LeadStatus.New, LeadStatus.Contacted, LeadStatus.Qualified, LeadStatus.Converted, LeadStatus.Lost };
+
+    string StageColor(LeadStatus status) => status switch
+    {
+        LeadStatus.New => "bg-info",
+        LeadStatus.Contacted => "bg-primary",
+        LeadStatus.Qualified => "bg-warning text-dark",
+        LeadStatus.Converted => "bg-success",
+        LeadStatus.Lost => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}
+
+<h1 class="h3 mb-4">Sales Pipeline</h1>
+
+<div class="d-flex gap-3" style="overflow-x:auto;">
+    @foreach (var stage in stages)
+    {
+        var leadsInStage = Model.Where(l => l.Status == stage).ToList();
+        <div class="flex-shrink-0" style="width:280px;">
+            <div class="p-2 rounded-top text-white @StageColor(stage)">
+                <strong>@stage</strong> <span class="badge bg-light text-dark float-end">@leadsInStage.Count</span>
+            </div>
+            <div class="bg-white border p-2" style="min-height:300px;">
+                @foreach (var lead in leadsInStage)
+                {
+                    <div class="card mb-2">
+                        <div class="card-body p-2">
+                            <div class="fw-bold">@lead.Name</div>
+                            <div class="small text-muted">@lead.Phone</div>
+                            @if (!string.IsNullOrEmpty(lead.AssignedToUserName))
+                            {
+                                <div class="small text-muted">Assigned: @lead.AssignedToUserName</div>
+                            }
+                            @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadManage))
+                            {
+                                <form asp-action="MoveStage" method="post" class="d-flex gap-1 mt-2">
+                                    <input type="hidden" name="id" value="@lead.Id" />
+                                    <select name="status" class="form-select form-select-sm">
+                                        @foreach (var s in stages)
+                                        {
+                                            if (s == stage)
+                                            {
+                                                <option value="@s" selected>@s</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@s">@s</option>
+                                            }
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Move</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

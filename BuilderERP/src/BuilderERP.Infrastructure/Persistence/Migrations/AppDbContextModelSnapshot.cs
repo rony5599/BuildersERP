@@ -257,6 +257,12 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("BrokerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -285,6 +291,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrokerId");
 
                     b.HasIndex("CustomerId");
 
@@ -399,6 +407,56 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.ToTable("Branches");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.Broker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DefaultCommissionRate")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LicenseNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brokers");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.BudgetLine", b =>
                 {
                     b.Property<Guid>("Id")
@@ -494,6 +552,62 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Buildings");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.Commission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BrokerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CommissionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("BrokerId");
+
+                    b.ToTable("Commissions");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CommonAreaBooking", b =>
@@ -817,6 +931,53 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("LeadId");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.CustomerCommunication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CommunicationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("CustomerCommunications");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DailyProgress", b =>
@@ -4201,6 +4362,59 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.ToTable("SitePhotos");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.SiteVisit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AssignedToUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LeadId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PropertyUnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("VisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedToUserId");
+
+                    b.HasIndex("LeadId");
+
+                    b.HasIndex("PropertyUnitId");
+
+                    b.ToTable("SiteVisits");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.SnagItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5302,6 +5516,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Booking", b =>
                 {
+                    b.HasOne("BuilderERP.Domain.Entities.Broker", "Broker")
+                        .WithMany()
+                        .HasForeignKey("BrokerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("BuilderERP.Domain.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
@@ -5313,6 +5532,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasForeignKey("PropertyUnitId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Broker");
 
                     b.Navigation("Customer");
 
@@ -5361,6 +5582,25 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.Commission", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.Broker", "Broker")
+                        .WithMany()
+                        .HasForeignKey("BrokerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Broker");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CommonAreaBooking", b =>
@@ -5412,6 +5652,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Lead");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.CustomerCommunication", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DailyProgress", b =>
@@ -6204,6 +6455,31 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("DailyProgress");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.SiteVisit", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.ApplicationUser", "AssignedToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedToUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BuilderERP.Domain.Entities.Lead", "Lead")
+                        .WithMany()
+                        .HasForeignKey("LeadId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.PropertyUnit", "PropertyUnit")
+                        .WithMany()
+                        .HasForeignKey("PropertyUnitId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AssignedToUser");
+
+                    b.Navigation("Lead");
+
+                    b.Navigation("PropertyUnit");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SnagItem", b =>

@@ -47,6 +47,14 @@ public static class PermissionNames
     public const string CustomerView = "Customer.View";
     public const string CustomerManage = "Customer.Manage";
 
+    public const string CustomerCommunicationView = "CustomerCommunication.View";
+    public const string CustomerCommunicationManage = "CustomerCommunication.Manage";
+
+    public const string SiteVisitView = "SiteVisit.View";
+    public const string SiteVisitManage = "SiteVisit.Manage";
+
+    public const string SalesPipelineView = "SalesPipeline.View";
+
     public const string QuotationView = "Quotation.View";
     public const string QuotationManage = "Quotation.Manage";
 
@@ -55,6 +63,12 @@ public static class PermissionNames
 
     public const string SaleAgreementView = "SaleAgreement.View";
     public const string SaleAgreementManage = "SaleAgreement.Manage";
+
+    public const string BrokerView = "Broker.View";
+    public const string BrokerManage = "Broker.Manage";
+
+    public const string CommissionView = "Commission.View";
+    public const string CommissionManage = "Commission.Manage";
 
     public const string InstallmentPlanView = "InstallmentPlan.View";
     public const string InstallmentPlanManage = "InstallmentPlan.Manage";
@@ -283,9 +297,14 @@ public static class PermissionNames
         (InquiryView, "Inquiry"), (InquiryManage, "Inquiry"),
         (FollowUpView, "FollowUp"), (FollowUpManage, "FollowUp"),
         (CustomerView, "Customer"), (CustomerManage, "Customer"),
+        (CustomerCommunicationView, "CustomerCommunication"), (CustomerCommunicationManage, "CustomerCommunication"),
+        (SiteVisitView, "SiteVisit"), (SiteVisitManage, "SiteVisit"),
+        (SalesPipelineView, "SalesPipeline"),
         (QuotationView, "Quotation"), (QuotationManage, "Quotation"),
         (BookingView, "Booking"), (BookingManage, "Booking"),
         (SaleAgreementView, "SaleAgreement"), (SaleAgreementManage, "SaleAgreement"),
+        (BrokerView, "Broker"), (BrokerManage, "Broker"),
+        (CommissionView, "Commission"), (CommissionManage, "Commission"),
         (InstallmentPlanView, "InstallmentPlan"), (InstallmentPlanManage, "InstallmentPlan"),
         (InstallmentView, "Installment"), (InstallmentManage, "Installment"),
         (ReceiptView, "Receipt"), (ReceiptManage, "Receipt"),
@@ -382,9 +401,14 @@ public static class PermissionNames
         InquiryView, InquiryManage,
         FollowUpView, FollowUpManage,
         CustomerView, CustomerManage,
+        CustomerCommunicationView, CustomerCommunicationManage,
+        SiteVisitView, SiteVisitManage,
+        SalesPipelineView,
         QuotationView, QuotationManage,
         BookingView, BookingManage,
         SaleAgreementView, SaleAgreementManage,
+        BrokerView, BrokerManage,
+        CommissionView, CommissionManage,
         InstallmentPlanView, InstallmentPlanManage,
         InstallmentView, InstallmentManage,
         ReceiptView, ReceiptManage,

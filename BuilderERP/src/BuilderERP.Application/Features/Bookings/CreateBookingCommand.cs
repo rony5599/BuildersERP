@@ -23,6 +23,11 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     public async Task<Guid> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         var booking = _mapper.Map<Booking>(request.Dto);
+        if (booking.Status != BookingRequestStatus.Cancelled)
+        {
+            booking.CancellationReason = null;
+        }
+
         await _unitOfWork.Repository<Booking>().AddAsync(booking);
 
         await BookingUnitStatusSync.ApplyAsync(_unitOfWork, booking.PropertyUnitId, booking.Status);

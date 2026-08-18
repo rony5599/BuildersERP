@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Bookings;
+using BuilderERP.Application.Features.Brokers;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -71,8 +72,10 @@ public class BookingsController : Controller
             BookingDate = booking.BookingDate,
             BookingAmount = booking.BookingAmount,
             Status = booking.Status,
+            CancellationReason = booking.CancellationReason,
             CustomerId = booking.CustomerId,
-            PropertyUnitId = booking.PropertyUnitId
+            PropertyUnitId = booking.PropertyUnitId,
+            BrokerId = booking.BrokerId
         };
 
         await PopulateDropdownsAsync();
@@ -117,5 +120,8 @@ public class BookingsController : Controller
 
         var units = await _mediator.Send(new GetAllPropertyUnitsQuery());
         ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber");
+
+        var brokers = await _mediator.Send(new GetAllBrokersQuery());
+        ViewBag.Brokers = new SelectList(brokers, "Id", "Name");
     }
 }

@@ -133,11 +133,18 @@
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.InquiryView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FollowUpView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerCommunicationView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SiteVisitView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SalesPipelineView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">CRM<i class="bi bi-chevron-down nav-section-caret"></i></button>
                         <ul class="nav flex-column mb-0 nav-section-body">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SalesPipelineView))
+                        {
+                            <li class="nav-item"><a asp-controller="SalesPipeline" asp-action="Index" class="@NavClass("SalesPipeline")"><i class="bi bi-kanban"></i> Sales Pipeline</a></li>
+                        }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.LeadView))
                         {
                             <li class="nav-item"><a asp-controller="Leads" asp-action="Index" class="@NavClass("Leads")"><i class="bi bi-person-lines-fill"></i> Leads</a></li>
@@ -150,16 +157,26 @@
                         {
                             <li class="nav-item"><a asp-controller="FollowUps" asp-action="Index" class="@NavClass("FollowUps")"><i class="bi bi-telephone-outbound"></i> Follow-ups</a></li>
                         }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SiteVisitView))
+                        {
+                            <li class="nav-item"><a asp-controller="SiteVisits" asp-action="Index" class="@NavClass("SiteVisits")"><i class="bi bi-geo-alt"></i> Site Visits</a></li>
+                        }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerView))
                         {
                             <li class="nav-item"><a asp-controller="Customers" asp-action="Index" class="@NavClass("Customers")"><i class="bi bi-person-badge"></i> Customers</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CustomerCommunicationView))
+                        {
+                            <li class="nav-item"><a asp-controller="CustomerCommunications" asp-action="Index" class="@NavClass("CustomerCommunications")"><i class="bi bi-chat-dots"></i> Communications</a></li>
                         }
                     </ul>
                     </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.QuotationView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BookingView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SaleAgreementView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SaleAgreementView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BrokerView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommissionView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">Sales<i class="bi bi-chevron-down nav-section-caret"></i></button>
@@ -175,6 +192,14 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SaleAgreementView))
                         {
                             <li class="nav-item"><a asp-controller="SaleAgreements" asp-action="Index" class="@NavClass("SaleAgreements")"><i class="bi bi-file-earmark-check"></i> Sale Agreements</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BrokerView))
+                        {
+                            <li class="nav-item"><a asp-controller="Brokers" asp-action="Index" class="@NavClass("Brokers")"><i class="bi bi-people"></i> Brokers / Agents</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommissionView))
+                        {
+                            <li class="nav-item"><a asp-controller="Commissions" asp-action="Index" class="@NavClass("Commissions")"><i class="bi bi-cash-coin"></i> Commissions</a></li>
                         }
                     </ul>
                     </div>

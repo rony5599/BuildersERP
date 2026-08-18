@@ -1,0 +1,67 @@
+@model IReadOnlyList<BuilderERP.Application.DTOs.CommissionDto>
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "Commissions";
+
+    string StatusBadge(CommissionStatus status) => status switch
+    {
+        CommissionStatus.Pending => "bg-secondary",
+        CommissionStatus.Approved => "bg-primary",
+        CommissionStatus.Paid => "bg-success",
+        _ => "bg-secondary"
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Commissions</h1>
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommissionManage))
+    {
+        <a asp-action="Create" class="btn btn-primary">New Commission</a>
+    }
+</div>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Broker</th>
+            <th>Booking Amount</th>
+            <th>Rate %</th>
+            <th>Commission Amount</th>
+            <th>Status</th>
+            <th>Payment Date</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var commission in Model)
+        {
+            <tr>
+                <td>@commission.BrokerName</td>
+                <td>@commission.BookingAmount.ToString("N2")</td>
+                <td>@commission.CommissionRate.ToString("N2")</td>
+                <td><strong>@commission.CommissionAmount.ToString("N2")</strong></td>
+                <td><span class="badge @StatusBadge(commission.Status)">@commission.Status</span></td>
+                <td>@(commission.PaymentDate?.ToString("yyyy-MM-dd"))</td>
+                <td>
+                    <span class="badge @(commission.IsActive ? "bg-success" : "bg-secondary")">
+                        @(commission.IsActive ? "Active" : "Inactive")
+                    </span>
+                </td>
+                <td class="text-end">
+                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CommissionManage))
+                    {
+                        <a asp-action="Edit" asp-route-id="@commission.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <form asp-action="ToggleActive" asp-route-id="@commission.Id" asp-route-isActive="@commission.IsActive" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                @(commission.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

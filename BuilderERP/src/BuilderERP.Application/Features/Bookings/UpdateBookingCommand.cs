@@ -28,8 +28,10 @@ public class UpdateBookingCommandHandler : IRequestHandler<UpdateBookingCommand,
         booking.BookingDate = request.Dto.BookingDate;
         booking.BookingAmount = request.Dto.BookingAmount;
         booking.Status = request.Dto.Status;
+        booking.CancellationReason = request.Dto.Status == BuilderERP.Domain.Enums.BookingRequestStatus.Cancelled ? request.Dto.CancellationReason : null;
         booking.CustomerId = request.Dto.CustomerId;
         booking.PropertyUnitId = request.Dto.PropertyUnitId;
+        booking.BrokerId = request.Dto.BrokerId;
 
         repository.Update(booking);
 
