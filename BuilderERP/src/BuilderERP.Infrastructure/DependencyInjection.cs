@@ -45,6 +45,22 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
+        var redisConnectionString = configuration.GetConnectionString("Redis");
+        if (!string.IsNullOrWhiteSpace(redisConnectionString))
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = "BuilderERP:";
+            });
+        }
+        else
+        {
+            // No Redis connection configured (e.g. local dev) - fall back to an in-process
+            // cache so the same IDistributedCache-based query caching still works.
+            services.AddDistributedMemoryCache();
+        }
+
         services.AddAuthorization();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
