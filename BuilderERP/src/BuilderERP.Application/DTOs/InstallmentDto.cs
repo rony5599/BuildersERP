@@ -16,6 +16,10 @@ public class InstallmentDto
     public string? RescheduleReason { get; set; }
     public bool IsActive { get; set; }
     public Guid InstallmentPlanId { get; set; }
+    public Guid? ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string UnitNumber { get; set; } = string.Empty;
+    public string CustomerName { get; set; } = string.Empty;
 }
 
 public class CreateInstallmentDto

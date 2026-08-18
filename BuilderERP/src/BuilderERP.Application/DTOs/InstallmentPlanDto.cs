@@ -13,6 +13,10 @@ public class InstallmentPlanDto
     public bool IsActive { get; set; }
     public Guid SaleAgreementId { get; set; }
     public string SaleAgreementNumber { get; set; } = string.Empty;
+    public Guid? ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string UnitNumber { get; set; } = string.Empty;
+    public string CustomerName { get; set; } = string.Empty;
 }
 
 public class CreateInstallmentPlanDto

@@ -1,5 +1,8 @@
 using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.Installments;
+using BuilderERP.Application.Features.Projects;
+using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -24,9 +27,10 @@ public class InstallmentsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId, Guid? customerId)
     {
-        var installments = await _mediator.Send(new GetAllInstallmentsQuery());
+        var installments = await _mediator.Send(new GetAllInstallmentsQuery(projectId, propertyUnitId, customerId));
+        await PopulateFiltersAsync(projectId, propertyUnitId, customerId);
         return View(installments);
     }
 
@@ -135,5 +139,17 @@ public class InstallmentsController : Controller
     {
         var plans = await _mediator.Send(new BuilderERP.Application.Features.InstallmentPlans.GetAllInstallmentPlansQuery());
         ViewBag.InstallmentPlans = new SelectList(plans, "Id", "TotalAmount");
+    }
+
+    private async Task PopulateFiltersAsync(Guid? projectId, Guid? propertyUnitId, Guid? customerId)
+    {
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId));
+        ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber", propertyUnitId);
+
+        var customers = await _mediator.Send(new GetAllCustomersQuery());
+        ViewBag.Customers = new SelectList(customers, "Id", "FullName", customerId);
     }
 }

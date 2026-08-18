@@ -7,7 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.InstallmentPlans;
 
-public record GetAllInstallmentPlansQuery : IRequest<IReadOnlyList<InstallmentPlanDto>>;
+public record GetAllInstallmentPlansQuery(
+    Guid? ProjectId = null,
+    Guid? PropertyUnitId = null,
+    Guid? CustomerId = null) : IRequest<IReadOnlyList<InstallmentPlanDto>>;
 
 public class GetAllInstallmentPlansQueryHandler : IRequestHandler<GetAllInstallmentPlansQuery, IReadOnlyList<InstallmentPlanDto>>
 {
@@ -22,9 +25,27 @@ public class GetAllInstallmentPlansQueryHandler : IRequestHandler<GetAllInstallm
 
     public async Task<IReadOnlyList<InstallmentPlanDto>> Handle(GetAllInstallmentPlansQuery request, CancellationToken cancellationToken)
     {
-        var plans = await _unitOfWork.Repository<InstallmentPlan>().Query()
-            .Include(p => p.SaleAgreement)
-            .ToListAsync(cancellationToken);
+        var query = _unitOfWork.Repository<InstallmentPlan>().Query()
+            .Include(p => p.SaleAgreement).ThenInclude(a => a.Booking).ThenInclude(b => b.Customer)
+            .Include(p => p.SaleAgreement).ThenInclude(a => a.Booking).ThenInclude(b => b.PropertyUnit).ThenInclude(u => u!.Floor).ThenInclude(f => f.Tower).ThenInclude(t => t.Building).ThenInclude(b => b.Project)
+            .AsQueryable();
+
+        if (request.CustomerId.HasValue)
+        {
+            query = query.Where(p => p.SaleAgreement.Booking.CustomerId == request.CustomerId.Value);
+        }
+
+        if (request.PropertyUnitId.HasValue)
+        {
+            query = query.Where(p => p.SaleAgreement.Booking.PropertyUnitId == request.PropertyUnitId.Value);
+        }
+
+        if (request.ProjectId.HasValue)
+        {
+            query = query.Where(p => p.SaleAgreement.Booking.PropertyUnit.Floor.Tower.Building.ProjectId == request.ProjectId.Value);
+        }
+
+        var plans = await query.ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<InstallmentPlanDto>>(plans);
     }
 }
