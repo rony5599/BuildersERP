@@ -13,6 +13,8 @@ public class PropertyUnitDto
     public bool IsActive { get; set; }
     public Guid FloorId { get; set; }
     public string FloorName { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreatePropertyUnitDto

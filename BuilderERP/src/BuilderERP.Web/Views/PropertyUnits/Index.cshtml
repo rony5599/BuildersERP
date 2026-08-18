@@ -1,15 +1,40 @@
 @model IReadOnlyList<BuilderERP.Application.DTOs.PropertyUnitDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Enums
 @{
     ViewData["Title"] = "Property Units";
+
+    string StatusBadge(BookingStatus status) => status switch
+    {
+        BookingStatus.Available => "bg-success",
+        BookingStatus.Reserved => "bg-warning text-dark",
+        BookingStatus.Booked => "bg-info",
+        BookingStatus.Sold => "bg-primary",
+        BookingStatus.Blocked => "bg-secondary",
+        _ => "bg-secondary"
+    };
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">Property Units</h1>
     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PropertyUnitManage))
     {
-        <a asp-action="Create" class="btn btn-primary">New Unit</a>
+        <a asp-action="Create" asp-route-projectId="@ViewBag.SelectedProjectId" class="btn btn-primary">New Unit</a>
+    }
+</div>
+
+<form method="get" class="mb-3 col-md-4">
+    <label class="form-label">Project</label>
+    <select name="projectId" asp-items="ViewBag.Projects" class="form-select" onchange="this.form.submit()">
+        <option value="">-- All Projects --</option>
+    </select>
+</form>
+
+<div class="d-flex gap-2 mb-3">
+    @foreach (var group in Model.GroupBy(u => u.BookingStatus).OrderBy(g => g.Key))
+    {
+        <span class="badge @StatusBadge(group.Key)">@group.Key: @group.Count()</span>
     }
 </div>
 
@@ -18,6 +43,7 @@
         <tr>
             <th>Unit #</th>
             <th>Type</th>
+            <th>Project</th>
             <th>Floor</th>
             <th>Area</th>
             <th>Price</th>
@@ -32,10 +58,11 @@
             <tr>
                 <td>@unit.UnitNumber</td>
                 <td>@unit.UnitType</td>
+                <td>@unit.ProjectName</td>
                 <td>@unit.FloorName</td>
                 <td>@unit.Area</td>
                 <td>@unit.Price</td>
-                <td>@unit.BookingStatus</td>
+                <td><span class="badge @StatusBadge(unit.BookingStatus)">@unit.BookingStatus</span></td>
                 <td>
                     <span class="badge @(unit.IsActive ? "bg-success" : "bg-secondary")">
                         @(unit.IsActive ? "Active" : "Inactive")

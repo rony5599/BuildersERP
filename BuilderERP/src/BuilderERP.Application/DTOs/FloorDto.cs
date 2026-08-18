@@ -8,6 +8,8 @@ public class FloorDto
     public bool IsActive { get; set; }
     public Guid TowerId { get; set; }
     public string TowerName { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreateFloorDto

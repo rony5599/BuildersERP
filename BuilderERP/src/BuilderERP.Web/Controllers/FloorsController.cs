@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Floors;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Towers;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -25,16 +26,19 @@ public class FloorsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var floors = await _mediator.Send(new GetAllFloorsQuery());
+        var floors = await _mediator.Send(new GetAllFloorsQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(floors);
     }
 
     [PermissionAuthorize(PermissionNames.FloorManage)]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(Guid? projectId)
     {
-        await PopulateTowersAsync();
+        await PopulateTowersAsync(projectId);
         return View(new CreateFloorDto());
     }
 
@@ -47,7 +51,7 @@ public class FloorsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            await PopulateTowersAsync();
+            await PopulateTowersAsync(null);
             return View(dto);
         }
 
@@ -72,7 +76,7 @@ public class FloorsController : Controller
             TowerId = floor.TowerId
         };
 
-        await PopulateTowersAsync();
+        await PopulateTowersAsync(null);
         return View(dto);
     }
 
@@ -85,7 +89,7 @@ public class FloorsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            await PopulateTowersAsync();
+            await PopulateTowersAsync(null);
             return View(dto);
         }
 
@@ -107,9 +111,9 @@ public class FloorsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateTowersAsync()
+    private async Task PopulateTowersAsync(Guid? projectId)
     {
-        var towers = await _mediator.Send(new GetAllTowersQuery());
+        var towers = await _mediator.Send(new GetAllTowersQuery(projectId));
         ViewBag.Towers = new SelectList(towers, "Id", "Name");
     }
 }

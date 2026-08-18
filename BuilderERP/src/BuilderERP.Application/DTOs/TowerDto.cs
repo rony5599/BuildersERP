@@ -8,6 +8,8 @@ public class TowerDto
     public bool IsActive { get; set; }
     public Guid BuildingId { get; set; }
     public string BuildingName { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreateTowerDto

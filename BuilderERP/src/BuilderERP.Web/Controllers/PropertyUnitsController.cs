@@ -1,4 +1,5 @@
 using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,16 +25,19 @@ public class PropertyUnitsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery());
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(units);
     }
 
     [PermissionAuthorize(PermissionNames.PropertyUnitManage)]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(Guid? projectId)
     {
-        await PopulateFloorsAsync();
+        await PopulateFloorsAsync(projectId);
         return View(new CreatePropertyUnitDto());
     }
 
@@ -46,7 +50,7 @@ public class PropertyUnitsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            await PopulateFloorsAsync();
+            await PopulateFloorsAsync(null);
             return View(dto);
         }
 
@@ -74,7 +78,7 @@ public class PropertyUnitsController : Controller
             FloorId = unit.FloorId
         };
 
-        await PopulateFloorsAsync();
+        await PopulateFloorsAsync(null);
         return View(dto);
     }
 
@@ -87,7 +91,7 @@ public class PropertyUnitsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            await PopulateFloorsAsync();
+            await PopulateFloorsAsync(null);
             return View(dto);
         }
 
@@ -109,9 +113,9 @@ public class PropertyUnitsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateFloorsAsync()
+    private async Task PopulateFloorsAsync(Guid? projectId)
     {
-        var floors = await _mediator.Send(new BuilderERP.Application.Features.Floors.GetAllFloorsQuery());
+        var floors = await _mediator.Send(new BuilderERP.Application.Features.Floors.GetAllFloorsQuery(projectId));
         ViewBag.Floors = new SelectList(floors, "Id", "Name");
     }
 }

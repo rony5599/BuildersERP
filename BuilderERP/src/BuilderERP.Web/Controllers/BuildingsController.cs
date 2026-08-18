@@ -25,9 +25,12 @@ public class BuildingsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var buildings = await _mediator.Send(new GetAllBuildingsQuery());
+        var buildings = await _mediator.Send(new GetAllBuildingsQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(buildings);
     }
 

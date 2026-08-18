@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Buildings;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Towers;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -25,16 +26,19 @@ public class TowersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var towers = await _mediator.Send(new GetAllTowersQuery());
+        var towers = await _mediator.Send(new GetAllTowersQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(towers);
     }
 
     [PermissionAuthorize(PermissionNames.TowerManage)]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(Guid? projectId)
     {
-        await PopulateBuildingsAsync();
+        await PopulateBuildingsAsync(projectId);
         return View(new CreateTowerDto());
     }
 
@@ -47,7 +51,7 @@ public class TowersController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            await PopulateBuildingsAsync();
+            await PopulateBuildingsAsync(null);
             return View(dto);
         }
 
@@ -72,7 +76,7 @@ public class TowersController : Controller
             BuildingId = tower.BuildingId
         };
 
-        await PopulateBuildingsAsync();
+        await PopulateBuildingsAsync(null);
         return View(dto);
     }
 
@@ -85,7 +89,7 @@ public class TowersController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            await PopulateBuildingsAsync();
+            await PopulateBuildingsAsync(null);
             return View(dto);
         }
 
@@ -107,9 +111,9 @@ public class TowersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateBuildingsAsync()
+    private async Task PopulateBuildingsAsync(Guid? projectId)
     {
-        var buildings = await _mediator.Send(new GetAllBuildingsQuery());
+        var buildings = await _mediator.Send(new GetAllBuildingsQuery(projectId));
         ViewBag.Buildings = new SelectList(buildings, "Id", "Name");
     }
 }

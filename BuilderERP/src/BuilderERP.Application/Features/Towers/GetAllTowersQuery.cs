@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Towers;
 
-public record GetAllTowersQuery : IRequest<IReadOnlyList<TowerDto>>;
+public record GetAllTowersQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<TowerDto>>;
 
 public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, IReadOnlyList<TowerDto>>
 {
@@ -22,7 +22,16 @@ public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, IRead
 
     public async Task<IReadOnlyList<TowerDto>> Handle(GetAllTowersQuery request, CancellationToken cancellationToken)
     {
-        var towers = await _unitOfWork.Repository<Tower>().Query().Include(t => t.Building).ToListAsync(cancellationToken);
+        var query = _unitOfWork.Repository<Tower>().Query()
+            .Include(t => t.Building).ThenInclude(b => b.Project)
+            .AsQueryable();
+
+        if (request.ProjectId.HasValue)
+        {
+            query = query.Where(t => t.Building.ProjectId == request.ProjectId.Value);
+        }
+
+        var towers = await query.ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<TowerDto>>(towers);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Buildings;
 
-public record GetAllBuildingsQuery : IRequest<IReadOnlyList<BuildingDto>>;
+public record GetAllBuildingsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<BuildingDto>>;
 
 public class GetAllBuildingsQueryHandler : IRequestHandler<GetAllBuildingsQuery, IReadOnlyList<BuildingDto>>
 {
@@ -22,7 +22,14 @@ public class GetAllBuildingsQueryHandler : IRequestHandler<GetAllBuildingsQuery,
 
     public async Task<IReadOnlyList<BuildingDto>> Handle(GetAllBuildingsQuery request, CancellationToken cancellationToken)
     {
-        var buildings = await _unitOfWork.Repository<Building>().Query().Include(b => b.Project).ToListAsync(cancellationToken);
+        var query = _unitOfWork.Repository<Building>().Query().Include(b => b.Project).AsQueryable();
+
+        if (request.ProjectId.HasValue)
+        {
+            query = query.Where(b => b.ProjectId == request.ProjectId.Value);
+        }
+
+        var buildings = await query.ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<BuildingDto>>(buildings);
     }
 }
