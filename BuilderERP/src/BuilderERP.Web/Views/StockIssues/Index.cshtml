@@ -20,6 +20,8 @@
             <th>Material</th>
             <th>Warehouse</th>
             <th>Quantity</th>
+            <th>Consumed</th>
+            <th>Wastage</th>
             <th>Issued To</th>
             <th>Date</th>
             <th>Active</th>
@@ -34,6 +36,8 @@
                 <td>@issue.MaterialName</td>
                 <td>@issue.WarehouseName</td>
                 <td>@issue.Quantity</td>
+                <td>@issue.ConsumedQuantity</td>
+                <td class="@(issue.WastageQuantity > 0 ? "text-danger" : "")" title="@issue.WastageReason">@issue.WastageQuantity</td>
                 <td>@issue.IssuedTo</td>
                 <td>@issue.IssueDate.ToString("yyyy-MM-dd")</td>
                 <td>

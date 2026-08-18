@@ -72,6 +72,9 @@ public class StockIssuesController : Controller
             IssueDate = issue.IssueDate,
             Quantity = issue.Quantity,
             IssuedTo = issue.IssuedTo,
+            ConsumedQuantity = issue.ConsumedQuantity,
+            WastageQuantity = issue.WastageQuantity,
+            WastageReason = issue.WastageReason,
             Remarks = issue.Remarks,
             MaterialId = issue.MaterialId,
             WarehouseId = issue.WarehouseId

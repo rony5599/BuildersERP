@@ -379,6 +379,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<StockIssue>().Property(i => i.Quantity).HasPrecision(18, 3);
+        builder.Entity<StockIssue>().Property(i => i.ConsumedQuantity).HasPrecision(18, 3);
+        builder.Entity<StockIssue>().Property(i => i.WastageQuantity).HasPrecision(18, 3);
 
         builder.Entity<StockIssue>()
             .HasOne(i => i.Material)

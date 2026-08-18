@@ -16,12 +16,14 @@ public class RunningBillsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateRunningBillDto> _createValidator;
     private readonly IValidator<UpdateRunningBillDto> _updateValidator;
+    private readonly IValidator<CertifyRunningBillDto> _certifyValidator;
 
-    public RunningBillsController(IMediator mediator, IValidator<CreateRunningBillDto> createValidator, IValidator<UpdateRunningBillDto> updateValidator)
+    public RunningBillsController(IMediator mediator, IValidator<CreateRunningBillDto> createValidator, IValidator<UpdateRunningBillDto> updateValidator, IValidator<CertifyRunningBillDto> certifyValidator)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _certifyValidator = certifyValidator;
     }
 
     public async Task<IActionResult> Index()
@@ -107,6 +109,48 @@ public class RunningBillsController : Controller
     public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
     {
         await _mediator.Send(new SetRunningBillActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [PermissionAuthorize(PermissionNames.RunningBillManage)]
+    public async Task<IActionResult> Certify(Guid id)
+    {
+        var bill = await _mediator.Send(new GetRunningBillByIdQuery(id));
+        if (bill is null)
+        {
+            return NotFound();
+        }
+
+        var dto = new CertifyRunningBillDto
+        {
+            Id = bill.Id,
+            CertifiedBy = User.Identity?.Name ?? string.Empty
+        };
+
+        ViewBag.RunningBill = bill;
+        return View(dto);
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.RunningBillManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Certify(CertifyRunningBillDto dto)
+    {
+        var validationResult = await _certifyValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            var bill = await _mediator.Send(new GetRunningBillByIdQuery(dto.Id));
+            ViewBag.RunningBill = bill;
+            return View(dto);
+        }
+
+        var success = await _mediator.Send(new CertifyRunningBillCommand(dto));
+        if (!success)
+        {
+            return NotFound();
+        }
+
         return RedirectToAction(nameof(Index));
     }
 

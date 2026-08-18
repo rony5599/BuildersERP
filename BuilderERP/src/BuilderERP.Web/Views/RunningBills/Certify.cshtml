@@ -1,0 +1,36 @@
+@model BuilderERP.Application.DTOs.CertifyRunningBillDto
+@{
+    ViewData["Title"] = "Certify Running Bill";
+    var bill = ViewBag.RunningBill as BuilderERP.Application.DTOs.RunningBillDto;
+}
+
+<h1 class="h3 mb-4">Certify Running Bill</h1>
+
+@if (bill is not null)
+{
+    <dl class="row col-md-6">
+        <dt class="col-sm-4">Bill #</dt>
+        <dd class="col-sm-8">@bill.BillNumber</dd>
+        <dt class="col-sm-4">Work Order</dt>
+        <dd class="col-sm-8">@bill.WorkOrderNumber</dd>
+        <dt class="col-sm-4">Net Payable</dt>
+        <dd class="col-sm-8">@bill.NetPayableAmount.ToString("C2")</dd>
+    </dl>
+}
+
+<form asp-action="Certify" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="CertificateNumber" class="form-label"></label>
+        <input asp-for="CertificateNumber" class="form-control" />
+        <span asp-validation-for="CertificateNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CertifiedBy" class="form-label"></label>
+        <input asp-for="CertifiedBy" class="form-control" />
+        <span asp-validation-for="CertifiedBy" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Certify Payment</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

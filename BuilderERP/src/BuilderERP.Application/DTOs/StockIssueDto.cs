@@ -7,6 +7,9 @@ public class StockIssueDto
     public DateTime IssueDate { get; set; }
     public decimal Quantity { get; set; }
     public string IssuedTo { get; set; } = string.Empty;
+    public decimal ConsumedQuantity { get; set; }
+    public decimal WastageQuantity { get; set; }
+    public string? WastageReason { get; set; }
     public string? Remarks { get; set; }
     public bool IsActive { get; set; }
     public Guid MaterialId { get; set; }
@@ -21,6 +24,9 @@ public class CreateStockIssueDto
     public DateTime IssueDate { get; set; } = DateTime.UtcNow;
     public decimal Quantity { get; set; }
     public string IssuedTo { get; set; } = string.Empty;
+    public decimal ConsumedQuantity { get; set; }
+    public decimal WastageQuantity { get; set; }
+    public string? WastageReason { get; set; }
     public string? Remarks { get; set; }
     public Guid MaterialId { get; set; }
     public Guid WarehouseId { get; set; }
@@ -33,6 +39,9 @@ public class UpdateStockIssueDto
     public DateTime IssueDate { get; set; }
     public decimal Quantity { get; set; }
     public string IssuedTo { get; set; } = string.Empty;
+    public decimal ConsumedQuantity { get; set; }
+    public decimal WastageQuantity { get; set; }
+    public string? WastageReason { get; set; }
     public string? Remarks { get; set; }
     public Guid MaterialId { get; set; }
     public Guid WarehouseId { get; set; }

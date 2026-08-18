@@ -33,6 +33,7 @@
             <th>Deduction</th>
             <th>Net Payable</th>
             <th>Status</th>
+            <th>Certification</th>
             <th>Active</th>
             <th></th>
         </tr>
@@ -49,6 +50,16 @@
                 <td><strong>@bill.NetPayableAmount.ToString("C2")</strong></td>
                 <td><span class="badge @StatusBadge(bill.Status)">@bill.Status</span></td>
                 <td>
+                    @if (bill.CertificationDate is not null)
+                    {
+                        <span class="badge bg-success" title="Certified by @bill.CertifiedBy on @bill.CertificationDate.Value.ToString("yyyy-MM-dd")">@bill.CertificateNumber</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Uncertified</span>
+                    }
+                </td>
+                <td>
                     <span class="badge @(bill.IsActive ? "bg-success" : "bg-secondary")">
                         @(bill.IsActive ? "Active" : "Inactive")
                     </span>
@@ -57,6 +68,10 @@
                     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RunningBillManage))
                     {
                         <a asp-action="Edit" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        @if (bill.CertificationDate is null)
+                        {
+                            <a asp-action="Certify" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-primary">Certify</a>
+                        }
                         <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post" class="d-inline">
                             <button type="submit" class="btn btn-sm btn-outline-danger">
                                 @(bill.IsActive ? "Deactivate" : "Activate")

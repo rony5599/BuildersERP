@@ -34,6 +34,9 @@ public class UpdateStockIssueCommandHandler : IRequestHandler<UpdateStockIssueCo
         issue.IssueDate = request.Dto.IssueDate;
         issue.Quantity = request.Dto.Quantity;
         issue.IssuedTo = request.Dto.IssuedTo;
+        issue.ConsumedQuantity = request.Dto.ConsumedQuantity;
+        issue.WastageQuantity = request.Dto.WastageQuantity;
+        issue.WastageReason = request.Dto.WastageReason;
         issue.Remarks = request.Dto.Remarks;
         issue.MaterialId = request.Dto.MaterialId;
         issue.WarehouseId = request.Dto.WarehouseId;

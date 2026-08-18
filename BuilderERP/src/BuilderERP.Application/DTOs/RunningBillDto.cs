@@ -12,9 +12,19 @@ public class RunningBillDto
     public decimal DeductionAmount { get; set; }
     public decimal NetPayableAmount { get; set; }
     public RunningBillStatus Status { get; set; }
+    public string? CertificateNumber { get; set; }
+    public string? CertifiedBy { get; set; }
+    public DateTime? CertificationDate { get; set; }
     public bool IsActive { get; set; }
     public Guid WorkOrderId { get; set; }
     public string WorkOrderNumber { get; set; } = string.Empty;
+}
+
+public class CertifyRunningBillDto
+{
+    public Guid Id { get; set; }
+    public string CertificateNumber { get; set; } = string.Empty;
+    public string CertifiedBy { get; set; } = string.Empty;
 }
 
 public class CreateRunningBillDto

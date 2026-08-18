@@ -11,6 +11,9 @@ public class RunningBill : BaseEntity
     public decimal DeductionAmount { get; set; }
     public decimal NetPayableAmount { get; set; }
     public RunningBillStatus Status { get; set; } = RunningBillStatus.Draft;
+    public string? CertificateNumber { get; set; }
+    public string? CertifiedBy { get; set; }
+    public DateTime? CertificationDate { get; set; }
     public bool IsActive { get; set; } = true;
 
     public Guid WorkOrderId { get; set; }

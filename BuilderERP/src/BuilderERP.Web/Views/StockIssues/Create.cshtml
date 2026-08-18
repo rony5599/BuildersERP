@@ -41,6 +41,21 @@
         <span asp-validation-for="IssuedTo" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label asp-for="ConsumedQuantity" class="form-label"></label>
+        <input asp-for="ConsumedQuantity" class="form-control" />
+        <span asp-validation-for="ConsumedQuantity" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="WastageQuantity" class="form-label"></label>
+        <input asp-for="WastageQuantity" class="form-control" />
+        <span asp-validation-for="WastageQuantity" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="WastageReason" class="form-label"></label>
+        <input asp-for="WastageReason" class="form-control" />
+        <span asp-validation-for="WastageReason" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
         <label asp-for="Remarks" class="form-label"></label>
         <textarea asp-for="Remarks" class="form-control"></textarea>
         <span asp-validation-for="Remarks" class="text-danger"></span>
