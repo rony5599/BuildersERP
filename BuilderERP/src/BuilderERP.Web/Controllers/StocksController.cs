@@ -1,8 +1,10 @@
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Stocks;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -16,9 +18,12 @@ public class StocksController : Controller
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var stock = await _mediator.Send(new GetAllStockQuery());
+        var stock = await _mediator.Send(new GetAllStockQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(stock);
     }
 

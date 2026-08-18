@@ -19,6 +19,13 @@
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label asp-for="ProjectId" class="form-label"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+            <option value="">-- Select Project --</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
         <label asp-for="BranchId" class="form-label"></label>
         <select asp-for="BranchId" asp-items="ViewBag.Branches" class="form-select">
             <option value="">-- Select Branch --</option>

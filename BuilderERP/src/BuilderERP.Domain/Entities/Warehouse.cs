@@ -9,4 +9,7 @@ public class Warehouse : BaseEntity
 
     public Guid BranchId { get; set; }
     public Branch Branch { get; set; } = null!;
+
+    public Guid ProjectId { get; set; }
+    public Project Project { get; set; } = null!;
 }

@@ -390,6 +390,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(w => w.BranchId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<Warehouse>()
+            .HasOne(w => w.Project)
+            .WithMany()
+            .HasForeignKey(w => w.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<Material>().HasIndex(m => m.MaterialCode).IsUnique();
         builder.Entity<Material>().Property(m => m.ReorderLevel).HasPrecision(18, 3);
 

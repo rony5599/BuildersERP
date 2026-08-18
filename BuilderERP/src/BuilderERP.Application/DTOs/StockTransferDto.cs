@@ -14,6 +14,10 @@ public class StockTransferDto
     public string FromWarehouseName { get; set; } = string.Empty;
     public Guid ToWarehouseId { get; set; }
     public string ToWarehouseName { get; set; } = string.Empty;
+    public Guid FromProjectId { get; set; }
+    public string FromProjectName { get; set; } = string.Empty;
+    public Guid ToProjectId { get; set; }
+    public string ToProjectName { get; set; } = string.Empty;
 }
 
 public class CreateStockTransferDto

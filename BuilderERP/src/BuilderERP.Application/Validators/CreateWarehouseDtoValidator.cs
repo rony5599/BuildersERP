@@ -11,5 +11,6 @@ public class CreateWarehouseDtoValidator : AbstractValidator<CreateWarehouseDto>
         RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
         RuleFor(x => x.Location).MaximumLength(500);
         RuleFor(x => x.BranchId).NotEmpty();
+        RuleFor(x => x.ProjectId).NotEmpty();
     }
 }

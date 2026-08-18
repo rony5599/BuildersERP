@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Warehouses;
 
-public record GetAllWarehousesQuery : IRequest<IReadOnlyList<WarehouseDto>>;
+public record GetAllWarehousesQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<WarehouseDto>>;
 
 public class GetAllWarehousesQueryHandler : IRequestHandler<GetAllWarehousesQuery, IReadOnlyList<WarehouseDto>>
 {
@@ -22,9 +22,17 @@ public class GetAllWarehousesQueryHandler : IRequestHandler<GetAllWarehousesQuer
 
     public async Task<IReadOnlyList<WarehouseDto>> Handle(GetAllWarehousesQuery request, CancellationToken cancellationToken)
     {
-        var warehouses = await _unitOfWork.Repository<Warehouse>().Query()
+        var query = _unitOfWork.Repository<Warehouse>().Query()
             .Include(w => w.Branch)
-            .ToListAsync(cancellationToken);
+            .Include(w => w.Project)
+            .AsQueryable();
+
+        if (request.ProjectId.HasValue)
+        {
+            query = query.Where(w => w.ProjectId == request.ProjectId.Value);
+        }
+
+        var warehouses = await query.ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<WarehouseDto>>(warehouses);
     }
 }

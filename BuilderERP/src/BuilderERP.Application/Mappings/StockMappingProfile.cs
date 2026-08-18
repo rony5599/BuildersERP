@@ -13,6 +13,8 @@ public class StockMappingProfile : Profile
             .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material != null ? src.Material.Name : string.Empty))
             .ForMember(dest => dest.ReorderLevel, opt => opt.MapFrom(src => src.Material != null ? src.Material.ReorderLevel : 0))
             .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(src => src.Warehouse != null ? src.Warehouse.Name : string.Empty))
-            .ForMember(dest => dest.IsBelowReorderLevel, opt => opt.MapFrom(src => src.Material != null && src.QuantityOnHand < src.Material.ReorderLevel));
+            .ForMember(dest => dest.IsBelowReorderLevel, opt => opt.MapFrom(src => src.Material != null && src.QuantityOnHand < src.Material.ReorderLevel))
+            .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.Warehouse != null ? src.Warehouse.ProjectId : Guid.Empty))
+            .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Warehouse != null && src.Warehouse.Project != null ? src.Warehouse.Project.Name : string.Empty));
     }
 }

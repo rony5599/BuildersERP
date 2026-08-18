@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Branches;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Warehouses;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -25,9 +26,12 @@ public class WarehousesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var warehouses = await _mediator.Send(new GetAllWarehousesQuery());
+        var warehouses = await _mediator.Send(new GetAllWarehousesQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(warehouses);
     }
 
@@ -70,7 +74,8 @@ public class WarehousesController : Controller
             WarehouseCode = warehouse.WarehouseCode,
             Name = warehouse.Name,
             Location = warehouse.Location,
-            BranchId = warehouse.BranchId
+            BranchId = warehouse.BranchId,
+            ProjectId = warehouse.ProjectId
         };
 
         await PopulateDropdownsAsync();
@@ -112,5 +117,8 @@ public class WarehousesController : Controller
     {
         var branches = await _mediator.Send(new GetAllBranchesQuery());
         ViewBag.Branches = new SelectList(branches, "Id", "Name");
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name");
     }
 }

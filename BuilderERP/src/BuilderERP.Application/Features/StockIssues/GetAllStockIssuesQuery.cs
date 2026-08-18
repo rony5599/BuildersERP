@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockIssues;
 
-public record GetAllStockIssuesQuery : IRequest<IReadOnlyList<StockIssueDto>>;
+public record GetAllStockIssuesQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<StockIssueDto>>;
 
 public class GetAllStockIssuesQueryHandler : IRequestHandler<GetAllStockIssuesQuery, IReadOnlyList<StockIssueDto>>
 {
@@ -22,10 +22,17 @@ public class GetAllStockIssuesQueryHandler : IRequestHandler<GetAllStockIssuesQu
 
     public async Task<IReadOnlyList<StockIssueDto>> Handle(GetAllStockIssuesQuery request, CancellationToken cancellationToken)
     {
-        var issues = await _unitOfWork.Repository<StockIssue>().Query()
+        var query = _unitOfWork.Repository<StockIssue>().Query()
             .Include(i => i.Material)
-            .Include(i => i.Warehouse)
-            .ToListAsync(cancellationToken);
+            .Include(i => i.Warehouse).ThenInclude(w => w.Project)
+            .AsQueryable();
+
+        if (request.ProjectId.HasValue)
+        {
+            query = query.Where(i => i.Warehouse.ProjectId == request.ProjectId.Value);
+        }
+
+        var issues = await query.ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<StockIssueDto>>(issues);
     }
 }

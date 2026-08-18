@@ -12,6 +12,8 @@ public class StockReturnDto
     public string MaterialName { get; set; } = string.Empty;
     public Guid WarehouseId { get; set; }
     public string WarehouseName { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreateStockReturnDto

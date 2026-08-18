@@ -12,4 +12,6 @@ public class StockDto
     public Guid WarehouseId { get; set; }
     public string WarehouseName { get; set; } = string.Empty;
     public bool IsBelowReorderLevel { get; set; }
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
 }

@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Materials;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.StockIssues;
 using BuilderERP.Application.Features.Warehouses;
 using BuilderERP.Shared.Authorization;
@@ -26,9 +27,12 @@ public class StockIssuesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? projectId)
     {
-        var issues = await _mediator.Send(new GetAllStockIssuesQuery());
+        var issues = await _mediator.Send(new GetAllStockIssuesQuery(projectId));
+        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        ViewBag.SelectedProjectId = projectId;
         return View(issues);
     }
 

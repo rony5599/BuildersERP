@@ -3,10 +3,11 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record GetAllMaterialsQuery : IRequest<IReadOnlyList<MaterialDto>>;
+public record GetAllMaterialsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<MaterialDto>>;
 
 public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery, IReadOnlyList<MaterialDto>>
 {
@@ -21,7 +22,19 @@ public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery,
 
     public async Task<IReadOnlyList<MaterialDto>> Handle(GetAllMaterialsQuery request, CancellationToken cancellationToken)
     {
-        var materials = await _unitOfWork.Repository<Material>().GetAllAsync();
+        var query = _unitOfWork.Repository<Material>().Query().AsQueryable();
+
+        if (request.ProjectId.HasValue)
+        {
+            var materialIdsInProject = _unitOfWork.Repository<Stock>().Query()
+                .Where(s => s.Warehouse.ProjectId == request.ProjectId.Value)
+                .Select(s => s.MaterialId)
+                .Distinct();
+
+            query = query.Where(m => materialIdsInProject.Contains(m.Id));
+        }
+
+        var materials = await query.ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<MaterialDto>>(materials);
     }
 }
