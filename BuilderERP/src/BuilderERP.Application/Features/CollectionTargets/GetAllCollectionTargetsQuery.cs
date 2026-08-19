@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.CollectionTargets;
 
-public record GetAllCollectionTargetsQuery : IRequest<IReadOnlyList<CollectionTargetDto>>;
+public record GetAllCollectionTargetsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<CollectionTargetDto>>;
 
-public class GetAllCollectionTargetsQueryHandler : IRequestHandler<GetAllCollectionTargetsQuery, IReadOnlyList<CollectionTargetDto>>
+public class GetAllCollectionTargetsQueryHandler : IRequestHandler<GetAllCollectionTargetsQuery, PagedResult<CollectionTargetDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,10 +21,19 @@ public class GetAllCollectionTargetsQueryHandler : IRequestHandler<GetAllCollect
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<CollectionTargetDto>> Handle(GetAllCollectionTargetsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<CollectionTargetDto>> Handle(GetAllCollectionTargetsQuery request, CancellationToken cancellationToken)
     {
-        var targets = await _unitOfWork.Repository<CollectionTarget>().Query()
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var query = _unitOfWork.Repository<CollectionTarget>().Query()
             .Include(t => t.CollectionOfficer)
+            .OrderByDescending(t => t.Year).ThenByDescending(t => t.Month);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var targets = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
         var receipts = await _unitOfWork.Repository<Receipt>().Query()
@@ -45,6 +55,6 @@ public class GetAllCollectionTargetsQueryHandler : IRequestHandler<GetAllCollect
             dto.AchievementPercent = dto.TargetAmount == 0 ? 0 : Math.Round(dto.ActualCollected * 100m / dto.TargetAmount, 1);
         }
 
-        return dtos;
+        return new PagedResult<CollectionTargetDto>(dtos, totalCount, page, pageSize);
     }
 }

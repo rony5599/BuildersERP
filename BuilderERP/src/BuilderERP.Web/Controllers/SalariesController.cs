@@ -24,9 +24,15 @@ public class SalariesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var salaries = await _mediator.Send(new GetAllSalariesQuery());
+        var salaries = await _mediator.Send(new GetAllSalariesQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", salaries);
+        }
+
         return View(salaries);
     }
 
@@ -114,7 +120,7 @@ public class SalariesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var workers = await _mediator.Send(new BuilderERP.Application.Features.Workers.GetAllWorkersQuery());
-        ViewBag.Workers = new SelectList(workers, "Id", "Name");
+        var workers = await _mediator.Send(new BuilderERP.Application.Features.Workers.GetAllWorkersQuery(PageSize: int.MaxValue));
+        ViewBag.Workers = new SelectList(workers.Items, "Id", "Name");
     }
 }

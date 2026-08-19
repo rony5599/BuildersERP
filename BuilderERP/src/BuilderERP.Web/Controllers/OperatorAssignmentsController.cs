@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.OperatorAssignments;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Workers;
@@ -26,9 +26,15 @@ public class OperatorAssignmentsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var assignments = await _mediator.Send(new GetAllOperatorAssignmentsQuery());
+        var assignments = await _mediator.Send(new GetAllOperatorAssignmentsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", assignments);
+        }
+
         return View(assignments);
     }
 
@@ -112,13 +118,13 @@ public class OperatorAssignmentsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var equipment = await _mediator.Send(new BuilderERP.Application.Features.Equipments.GetAllEquipmentQuery());
-        ViewBag.Equipment = new SelectList(equipment, "Id", "Name");
+        var equipment = await _mediator.Send(new BuilderERP.Application.Features.Equipments.GetAllEquipmentQuery(PageSize: int.MaxValue));
+        ViewBag.Equipment = new SelectList(equipment.Items, "Id", "Name");
 
-        var workers = await _mediator.Send(new GetAllWorkersQuery());
-        ViewBag.Workers = new SelectList(workers, "Id", "Name");
+        var workers = await _mediator.Send(new GetAllWorkersQuery(PageSize: int.MaxValue));
+        ViewBag.Workers = new SelectList(workers.Items, "Id", "Name");
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.DelayEvents;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,9 +24,16 @@ public class DelayEventsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var delayEvents = await _mediator.Send(new GetAllDelayEventsQuery(projectId));
+        var delayEvents = await _mediator.Send(new GetAllDelayEventsQuery(projectId, page, pageSize));
+        ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", delayEvents);
+        }
+
         return View(delayEvents);
     }
 
@@ -111,8 +118,8 @@ public class DelayEventsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
 
         var wbsTasks = await _mediator.Send(new BuilderERP.Application.Features.WbsTasks.GetAllWbsTasksQuery());
         ViewBag.WbsTasks = new SelectList(wbsTasks, "Id", "Code");

@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -10,9 +11,11 @@ namespace BuilderERP.Application.Features.Installments;
 public record GetAllInstallmentsQuery(
     Guid? ProjectId = null,
     Guid? PropertyUnitId = null,
-    Guid? CustomerId = null) : IRequest<IReadOnlyList<InstallmentDto>>;
+    Guid? CustomerId = null,
+    int Page = 1,
+    int PageSize = 25) : IRequest<PagedResult<InstallmentDto>>;
 
-public class GetAllInstallmentsQueryHandler : IRequestHandler<GetAllInstallmentsQuery, IReadOnlyList<InstallmentDto>>
+public class GetAllInstallmentsQueryHandler : IRequestHandler<GetAllInstallmentsQuery, PagedResult<InstallmentDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,7 +26,7 @@ public class GetAllInstallmentsQueryHandler : IRequestHandler<GetAllInstallments
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<InstallmentDto>> Handle(GetAllInstallmentsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<InstallmentDto>> Handle(GetAllInstallmentsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Installment>().Query()
             .Include(i => i.InstallmentPlan).ThenInclude(p => p.SaleAgreement).ThenInclude(a => a.Booking).ThenInclude(b => b.Customer)
@@ -45,7 +48,17 @@ public class GetAllInstallmentsQueryHandler : IRequestHandler<GetAllInstallments
             query = query.Where(i => i.InstallmentPlan.SaleAgreement.Booking.PropertyUnit.Floor.Tower.Building.ProjectId == request.ProjectId.Value);
         }
 
-        var installments = await query.ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<InstallmentDto>>(installments);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var installments = await query
+            .OrderByDescending(i => i.DueDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<InstallmentDto>>(installments);
+        return new PagedResult<InstallmentDto>(items, totalCount, page, pageSize);
     }
 }

@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CustomerCommunications;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class CustomerCommunicationsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var communications = await _mediator.Send(new GetAllCustomerCommunicationsQuery());
+        var communications = await _mediator.Send(new GetAllCustomerCommunicationsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", communications);
+        }
+
         return View(communications);
     }
 
@@ -111,7 +117,7 @@ public class CustomerCommunicationsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName");
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
     }
 }

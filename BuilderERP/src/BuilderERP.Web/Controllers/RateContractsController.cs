@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.RateContracts;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class RateContractsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var contracts = await _mediator.Send(new GetAllRateContractsQuery());
+        var contracts = await _mediator.Send(new GetAllRateContractsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", contracts);
+        }
+
         return View(contracts);
     }
 
@@ -114,10 +120,10 @@ public class RateContractsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery());
-        ViewBag.Contractors = new SelectList(contractors, "Id", "Name");
+        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery(PageSize: int.MaxValue));
+        ViewBag.Contractors = new SelectList(contractors.Items, "Id", "Name");
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

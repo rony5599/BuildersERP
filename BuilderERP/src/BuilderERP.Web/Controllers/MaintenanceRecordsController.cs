@@ -24,9 +24,15 @@ public class MaintenanceRecordsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var records = await _mediator.Send(new GetAllMaintenanceRecordsQuery());
+        var records = await _mediator.Send(new GetAllMaintenanceRecordsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", records);
+        }
+
         return View(records);
     }
 
@@ -112,7 +118,7 @@ public class MaintenanceRecordsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var equipment = await _mediator.Send(new BuilderERP.Application.Features.Equipments.GetAllEquipmentQuery());
-        ViewBag.Equipment = new SelectList(equipment, "Id", "Name");
+        var equipment = await _mediator.Send(new BuilderERP.Application.Features.Equipments.GetAllEquipmentQuery(PageSize: int.MaxValue));
+        ViewBag.Equipment = new SelectList(equipment.Items, "Id", "Name");
     }
 }

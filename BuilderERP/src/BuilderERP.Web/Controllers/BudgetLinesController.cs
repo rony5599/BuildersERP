@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.BudgetLines;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,20 +24,27 @@ public class BudgetLinesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var budgetLines = await _mediator.Send(new GetAllBudgetLinesQuery(projectId));
+        var budgetLines = await _mediator.Send(new GetAllBudgetLinesQuery(projectId, page, pageSize));
+        ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", budgetLines);
+        }
+
         return View(budgetLines);
     }
 
     [PermissionAuthorize(PermissionNames.BudgetLineView)]
     public async Task<IActionResult> Report(Guid? projectId)
     {
-        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
 
-        var lines = await _mediator.Send(new GetAllBudgetLinesQuery(projectId));
-        return View(lines);
+        var lines = await _mediator.Send(new GetAllBudgetLinesQuery(projectId, PageSize: int.MaxValue));
+        return View(lines.Items);
     }
 
     [PermissionAuthorize(PermissionNames.BudgetLineManage)]
@@ -121,7 +128,7 @@ public class BudgetLinesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

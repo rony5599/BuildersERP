@@ -1,17 +1,10 @@
-@model IReadOnlyList<BuilderERP.Application.DTOs.PaymentReminderDto>
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.PaymentReminderDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @using BuilderERP.Domain.Enums
 @{
     ViewData["Title"] = "Payment Reminders";
-
-    string StatusBadge(ReminderStatus status) => status switch
-    {
-        ReminderStatus.Pending => "bg-warning text-dark",
-        ReminderStatus.Sent => "bg-success",
-        ReminderStatus.Cancelled => "bg-secondary",
-        _ => "bg-secondary"
-    };
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -50,57 +43,6 @@
 
 <p class="text-muted">Reminders are generated and logged for staff to action manually (SMS/Email/WhatsApp dispatch is not automated in this environment). Marking a reminder "Sent" also logs it in the customer's communication history.</p>
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Installment</th>
-            <th>Due Date</th>
-            <th>Outstanding</th>
-            <th>Message</th>
-            <th>Status</th>
-            <th>Sent Date</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var reminder in Model)
-        {
-            <tr>
-                <td>@reminder.CustomerName</td>
-                <td>@reminder.CustomerPhone</td>
-                <td>@reminder.InstallmentNumber</td>
-                <td>@reminder.DueDate?.ToString("yyyy-MM-dd")</td>
-                <td>@reminder.OutstandingAmount?.ToString("N2")</td>
-                <td style="max-width:300px;" class="text-truncate" title="@reminder.Message">@reminder.Message</td>
-                <td><span class="badge @StatusBadge(reminder.Status)">@reminder.Status</span></td>
-                <td>@reminder.SentDate?.ToString("yyyy-MM-dd HH:mm")</td>
-                <td class="text-end">
-                    @if (reminder.Status == ReminderStatus.Pending && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PaymentReminderManage))
-                    {
-                        <form asp-action="MarkSent" asp-route-id="@reminder.Id" method="post" class="d-inline-flex gap-1">
-                            <select name="channel" class="form-select form-select-sm" style="width:110px;">
-                                @foreach (ReminderChannel c in Enum.GetValues(typeof(ReminderChannel)))
-                                {
-                                    if (c == reminder.Channel)
-                                    {
-                                        <option value="@c" selected>@c</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@c">@c</option>
-                                    }
-                                }
-                            </select>
-                            <button type="submit" class="btn btn-sm btn-success">Mark Sent</button>
-                        </form>
-                        <form asp-action="Cancel" asp-route-id="@reminder.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

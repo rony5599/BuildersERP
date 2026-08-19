@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Application.Features.Quotations;
@@ -26,9 +26,15 @@ public class QuotationsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var quotations = await _mediator.Send(new GetAllQuotationsQuery());
+        var quotations = await _mediator.Send(new GetAllQuotationsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", quotations);
+        }
+
         return View(quotations);
     }
 
@@ -112,10 +118,10 @@ public class QuotationsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName");
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
 
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery());
-        ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber");
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(units.Items, "Id", "UnitNumber");
     }
 }

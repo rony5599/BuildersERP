@@ -2,6 +2,7 @@ using BuilderERP.Application.Features.PaymentReminders;
 using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
+using BuilderERP.Web.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +18,16 @@ public class PaymentRemindersController : Controller
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> Index(ReminderStatus? status)
+    public async Task<IActionResult> Index(ReminderStatus? status, int page = 1, int pageSize = 25)
     {
-        var reminders = await _mediator.Send(new GetAllPaymentRemindersQuery(status));
+        var reminders = await _mediator.Send(new GetAllPaymentRemindersQuery(status, page, pageSize));
         ViewBag.SelectedStatus = status;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", reminders);
+        }
+
         return View(reminders);
     }
 

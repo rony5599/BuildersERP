@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Buildings;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -25,12 +25,18 @@ public class BuildingsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var buildings = await _mediator.Send(new GetAllBuildingsQuery(projectId));
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var buildings = await _mediator.Send(new GetAllBuildingsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", buildings);
+        }
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(buildings);
     }
 
@@ -113,7 +119,7 @@ public class BuildingsController : Controller
 
     private async Task PopulateProjectsAsync()
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

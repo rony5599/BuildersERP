@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Rfqs;
 
-public record GetAllRfqsQuery : IRequest<IReadOnlyList<RfqDto>>;
+public record GetAllRfqsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<RfqDto>>;
 
-public class GetAllRfqsQueryHandler : IRequestHandler<GetAllRfqsQuery, IReadOnlyList<RfqDto>>
+public class GetAllRfqsQueryHandler : IRequestHandler<GetAllRfqsQuery, PagedResult<RfqDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,24 @@ public class GetAllRfqsQueryHandler : IRequestHandler<GetAllRfqsQuery, IReadOnly
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<RfqDto>> Handle(GetAllRfqsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<RfqDto>> Handle(GetAllRfqsQuery request, CancellationToken cancellationToken)
     {
-        var rfqs = await _unitOfWork.Repository<Rfq>().Query()
+        var query = _unitOfWork.Repository<Rfq>().Query()
             .Include(r => r.PurchaseRequisition)
             .Include(r => r.Supplier)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var rfqs = await query
+            .OrderByDescending(r => r.IssueDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<RfqDto>>(rfqs);
+
+        var items = _mapper.Map<IReadOnlyList<RfqDto>>(rfqs);
+        return new PagedResult<RfqDto>(items, totalCount, page, pageSize);
     }
 }

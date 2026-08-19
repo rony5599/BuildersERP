@@ -32,9 +32,16 @@ public class DrawingRevisionsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? drawingId)
+    public async Task<IActionResult> Index(Guid? drawingId, int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllDrawingRevisionsQuery(drawingId));
+        var items = await _mediator.Send(new GetAllDrawingRevisionsQuery(drawingId, page, pageSize));
+        ViewBag.SelectedDrawingId = drawingId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -159,7 +166,7 @@ public class DrawingRevisionsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var drawings = await _mediator.Send(new GetAllDrawingsQuery());
-        ViewBag.Drawings = new SelectList(drawings, "Id", "DrawingNumber");
+        var drawings = await _mediator.Send(new GetAllDrawingsQuery(PageSize: int.MaxValue));
+        ViewBag.Drawings = new SelectList(drawings.Items, "Id", "DrawingNumber");
     }
 }

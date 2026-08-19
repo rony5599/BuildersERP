@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.SiteInspections;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class SiteInspectionsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var inspections = await _mediator.Send(new GetAllSiteInspectionsQuery());
+        var inspections = await _mediator.Send(new GetAllSiteInspectionsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", inspections);
+        }
+
         return View(inspections);
     }
 
@@ -112,7 +118,7 @@ public class SiteInspectionsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

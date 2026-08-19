@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Overtimes;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,9 +24,15 @@ public class OvertimesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var overtimes = await _mediator.Send(new GetAllOvertimesQuery());
+        var overtimes = await _mediator.Send(new GetAllOvertimesQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", overtimes);
+        }
+
         return View(overtimes);
     }
 
@@ -110,10 +116,10 @@ public class OvertimesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var workers = await _mediator.Send(new BuilderERP.Application.Features.Workers.GetAllWorkersQuery());
-        ViewBag.Workers = new SelectList(workers, "Id", "Name");
+        var workers = await _mediator.Send(new BuilderERP.Application.Features.Workers.GetAllWorkersQuery(PageSize: int.MaxValue));
+        ViewBag.Workers = new SelectList(workers.Items, "Id", "Name");
 
-        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

@@ -24,9 +24,16 @@ public class ContractorLedgersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? contractorId)
+    public async Task<IActionResult> Index(Guid? contractorId, int page = 1, int pageSize = 25)
     {
-        var ledgers = await _mediator.Send(new GetAllContractorLedgersQuery(contractorId));
+        var ledgers = await _mediator.Send(new GetAllContractorLedgersQuery(contractorId, page, pageSize));
+        ViewBag.SelectedContractorId = contractorId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", ledgers);
+        }
+
         return View(ledgers);
     }
 
@@ -110,7 +117,7 @@ public class ContractorLedgersController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery());
-        ViewBag.Contractors = new SelectList(contractors, "Id", "Name");
+        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery(PageSize: int.MaxValue));
+        ViewBag.Contractors = new SelectList(contractors.Items, "Id", "Name");
     }
 }

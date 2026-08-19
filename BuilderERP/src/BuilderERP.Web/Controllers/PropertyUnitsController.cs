@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -25,12 +25,18 @@ public class PropertyUnitsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId));
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", units);
+        }
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(units);
     }
 
@@ -115,7 +121,7 @@ public class PropertyUnitsController : Controller
 
     private async Task PopulateFloorsAsync(Guid? projectId)
     {
-        var floors = await _mediator.Send(new BuilderERP.Application.Features.Floors.GetAllFloorsQuery(projectId));
-        ViewBag.Floors = new SelectList(floors, "Id", "Name");
+        var floors = await _mediator.Send(new BuilderERP.Application.Features.Floors.GetAllFloorsQuery(projectId, PageSize: int.MaxValue));
+        ViewBag.Floors = new SelectList(floors.Items, "Id", "Name");
     }
 }

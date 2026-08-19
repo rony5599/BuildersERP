@@ -25,9 +25,15 @@ public class SecurityIncidentsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllSecurityIncidentsQuery());
+        var items = await _mediator.Send(new GetAllSecurityIncidentsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -116,7 +122,7 @@ public class SecurityIncidentsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

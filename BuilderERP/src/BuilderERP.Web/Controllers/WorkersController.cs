@@ -25,9 +25,15 @@ public class WorkersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var workers = await _mediator.Send(new GetAllWorkersQuery());
+        var workers = await _mediator.Send(new GetAllWorkersQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", workers);
+        }
+
         return View(workers);
     }
 
@@ -114,7 +120,8 @@ public class WorkersController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var contractors = await _mediator.Send(new GetAllContractorsQuery());
-        ViewBag.Contractors = new SelectList(contractors, "Id", "Name");
+        var contractors = await _mediator.Send(new GetAllContractorsQuery(PageSize: int.MaxValue));
+        ViewBag.Contractors = new SelectList(contractors.Items, "Id", "Name");
+
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Ncrs;
 
-public record GetAllNcrsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<NcrDto>>;
+public record GetAllNcrsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<NcrDto>>;
 
-public class GetAllNcrsQueryHandler : IRequestHandler<GetAllNcrsQuery, IReadOnlyList<NcrDto>>
+public class GetAllNcrsQueryHandler : IRequestHandler<GetAllNcrsQuery, PagedResult<NcrDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllNcrsQueryHandler : IRequestHandler<GetAllNcrsQuery, IReadOnly
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<NcrDto>> Handle(GetAllNcrsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<NcrDto>> Handle(GetAllNcrsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Ncr>().Query()
             .Include(x => x.Project)
@@ -31,7 +32,17 @@ public class GetAllNcrsQueryHandler : IRequestHandler<GetAllNcrsQuery, IReadOnly
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
-        var items = await query.OrderByDescending(x => x.RaisedDate).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<NcrDto>>(items);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(x => x.RaisedDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var mapped = _mapper.Map<IReadOnlyList<NcrDto>>(items);
+        return new PagedResult<NcrDto>(mapped, totalCount, page, pageSize);
     }
 }

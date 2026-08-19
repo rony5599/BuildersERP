@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.MaintenanceRequests;
 
-public record GetAllMaintenanceRequestsQuery : IRequest<IReadOnlyList<MaintenanceRequestDto>>;
+public record GetAllMaintenanceRequestsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaintenanceRequestDto>>;
 
-public class GetAllMaintenanceRequestsQueryHandler : IRequestHandler<GetAllMaintenanceRequestsQuery, IReadOnlyList<MaintenanceRequestDto>>
+public class GetAllMaintenanceRequestsQueryHandler : IRequestHandler<GetAllMaintenanceRequestsQuery, PagedResult<MaintenanceRequestDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,23 @@ public class GetAllMaintenanceRequestsQueryHandler : IRequestHandler<GetAllMaint
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<MaintenanceRequestDto>> Handle(GetAllMaintenanceRequestsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<MaintenanceRequestDto>> Handle(GetAllMaintenanceRequestsQuery request, CancellationToken cancellationToken)
     {
-        var items = await _unitOfWork.Repository<MaintenanceRequest>().Query()
+        var query = _unitOfWork.Repository<MaintenanceRequest>().Query()
             .Include(x => x.PropertyUnit)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var results = await query
             .OrderBy(x => x.RequestNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<MaintenanceRequestDto>>(items);
+
+        var items = _mapper.Map<IReadOnlyList<MaintenanceRequestDto>>(results);
+        return new PagedResult<MaintenanceRequestDto>(items, totalCount, page, pageSize);
     }
 }

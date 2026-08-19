@@ -26,9 +26,15 @@ public class RunningBillsController : Controller
         _certifyValidator = certifyValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var bills = await _mediator.Send(new GetAllRunningBillsQuery());
+        var bills = await _mediator.Send(new GetAllRunningBillsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", bills);
+        }
+
         return View(bills);
     }
 
@@ -156,7 +162,7 @@ public class RunningBillsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var workOrders = await _mediator.Send(new BuilderERP.Application.Features.WorkOrders.GetAllWorkOrdersQuery());
-        ViewBag.WorkOrders = new SelectList(workOrders, "Id", "WorkOrderNumber");
+        var workOrders = await _mediator.Send(new BuilderERP.Application.Features.WorkOrders.GetAllWorkOrdersQuery(PageSize: int.MaxValue));
+        ViewBag.WorkOrders = new SelectList(workOrders.Items, "Id", "WorkOrderNumber");
     }
 }

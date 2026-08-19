@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SafetyAudits;
 
-public record GetAllSafetyAuditsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<SafetyAuditDto>>;
+public record GetAllSafetyAuditsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyAuditDto>>;
 
-public class GetAllSafetyAuditsQueryHandler : IRequestHandler<GetAllSafetyAuditsQuery, IReadOnlyList<SafetyAuditDto>>
+public class GetAllSafetyAuditsQueryHandler : IRequestHandler<GetAllSafetyAuditsQuery, PagedResult<SafetyAuditDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllSafetyAuditsQueryHandler : IRequestHandler<GetAllSafetyAudits
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<SafetyAuditDto>> Handle(GetAllSafetyAuditsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<SafetyAuditDto>> Handle(GetAllSafetyAuditsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<SafetyAudit>().Query()
             .Include(x => x.Project)
@@ -31,10 +32,17 @@ public class GetAllSafetyAuditsQueryHandler : IRequestHandler<GetAllSafetyAudits
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
             .OrderByDescending(x => x.AuditDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<SafetyAuditDto>>(items);
+        var mapped = _mapper.Map<IReadOnlyList<SafetyAuditDto>>(items);
+        return new PagedResult<SafetyAuditDto>(mapped, totalCount, page, pageSize);
     }
 }

@@ -1,0 +1,64 @@
+@using BuilderERP.Application.Common
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@model PagedResult<BuilderERP.Application.DTOs.StockTransferDto>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Transfer #</th>
+            <th>Material</th>
+            <th>From (Project)</th>
+            <th>To (Project)</th>
+            <th>Quantity</th>
+            <th>Date</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transfer in Model.Items)
+        {
+            <tr>
+                <td>@transfer.TransferNumber</td>
+                <td>@transfer.MaterialName</td>
+                <td>@transfer.FromWarehouseName <span class="text-muted">(@transfer.FromProjectName)</span></td>
+                <td>@transfer.ToWarehouseName <span class="text-muted">(@transfer.ToProjectName)</span></td>
+                <td>@transfer.Quantity</td>
+                <td>@transfer.TransferDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <span class="badge @(transfer.IsActive ? "bg-success" : "bg-secondary")">
+                        @(transfer.IsActive ? "Active" : "Inactive")
+                    </span>
+                </td>
+                <td class="text-end">
+                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockTransferManage))
+                    {
+                        <a asp-action="Edit" asp-route-id="@transfer.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <form asp-action="ToggleActive" asp-route-id="@transfer.Id" asp-route-isActive="@transfer.IsActive" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                @(transfer.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Items.Count == 0)
+        {
+            <tr>
+                <td colspan="8" class="text-center text-muted">No stock transfers found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+{
+    Page = Model.Page,
+    PageSize = Model.PageSize,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    Action = "Index",
+    RouteValues = new Dictionary<string, string?> { ["projectId"] = ViewBag.SelectedProjectId?.ToString() }
+})" />

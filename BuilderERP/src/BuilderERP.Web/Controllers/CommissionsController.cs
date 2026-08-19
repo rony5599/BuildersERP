@@ -26,9 +26,15 @@ public class CommissionsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var commissions = await _mediator.Send(new GetAllCommissionsQuery());
+        var commissions = await _mediator.Send(new GetAllCommissionsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", commissions);
+        }
+
         return View(commissions);
     }
 
@@ -114,11 +120,11 @@ public class CommissionsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var brokers = await _mediator.Send(new GetAllBrokersQuery());
-        ViewBag.Brokers = new SelectList(brokers, "Id", "Name");
+        var brokers = await _mediator.Send(new GetAllBrokersQuery(PageSize: int.MaxValue));
+        ViewBag.Brokers = new SelectList(brokers.Items, "Id", "Name");
 
-        var bookings = await _mediator.Send(new GetAllBookingsQuery());
-        var bookingOptions = bookings.Select(b => new { b.Id, Display = $"{b.PropertyUnitNumber} - {b.CustomerName} ({b.BookingAmount:N0})" });
+        var bookings = await _mediator.Send(new GetAllBookingsQuery(PageSize: int.MaxValue));
+        var bookingOptions = bookings.Items.Select(b => new { b.Id, Display = $"{b.PropertyUnitNumber} - {b.CustomerName} ({b.BookingAmount:N0})" });
         ViewBag.Bookings = new SelectList(bookingOptions, "Id", "Display");
     }
 }

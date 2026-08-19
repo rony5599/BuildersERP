@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DelayEvents;
 
-public record GetAllDelayEventsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<DelayEventDto>>;
+public record GetAllDelayEventsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DelayEventDto>>;
 
-public class GetAllDelayEventsQueryHandler : IRequestHandler<GetAllDelayEventsQuery, IReadOnlyList<DelayEventDto>>
+public class GetAllDelayEventsQueryHandler : IRequestHandler<GetAllDelayEventsQuery, PagedResult<DelayEventDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllDelayEventsQueryHandler : IRequestHandler<GetAllDelayEventsQu
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<DelayEventDto>> Handle(GetAllDelayEventsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<DelayEventDto>> Handle(GetAllDelayEventsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<DelayEvent>().Query()
             .Include(x => x.Project)
@@ -32,10 +33,17 @@ public class GetAllDelayEventsQueryHandler : IRequestHandler<GetAllDelayEventsQu
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var delayEvents = await query
             .OrderByDescending(x => x.ReportedDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<DelayEventDto>>(delayEvents);
+        var items = _mapper.Map<IReadOnlyList<DelayEventDto>>(delayEvents);
+        return new PagedResult<DelayEventDto>(items, totalCount, page, pageSize);
     }
 }

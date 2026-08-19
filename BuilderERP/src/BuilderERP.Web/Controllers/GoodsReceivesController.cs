@@ -25,9 +25,15 @@ public class GoodsReceivesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var receives = await _mediator.Send(new GetAllGoodsReceivesQuery());
+        var receives = await _mediator.Send(new GetAllGoodsReceivesQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", receives);
+        }
+
         return View(receives);
     }
 
@@ -111,7 +117,7 @@ public class GoodsReceivesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var orders = await _mediator.Send(new GetAllPurchaseOrdersQuery());
-        ViewBag.PurchaseOrders = new SelectList(orders, "Id", "PONumber");
+        var orders = await _mediator.Send(new GetAllPurchaseOrdersQuery(PageSize: int.MaxValue));
+        ViewBag.PurchaseOrders = new SelectList(orders.Items, "Id", "PONumber");
     }
 }

@@ -27,12 +27,18 @@ public class StockIssuesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var issues = await _mediator.Send(new GetAllStockIssuesQuery(projectId));
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var issues = await _mediator.Send(new GetAllStockIssuesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", issues);
+        }
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(issues);
     }
 
@@ -121,10 +127,10 @@ public class StockIssuesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var materials = await _mediator.Send(new GetAllMaterialsQuery());
-        ViewBag.Materials = new SelectList(materials, "Id", "Name");
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
 
-        var warehouses = await _mediator.Send(new GetAllWarehousesQuery());
-        ViewBag.Warehouses = new SelectList(warehouses, "Id", "Name");
+        var warehouses = await _mediator.Send(new GetAllWarehousesQuery(PageSize: int.MaxValue));
+        ViewBag.Warehouses = new SelectList(warehouses.Items, "Id", "Name");
     }
 }

@@ -24,9 +24,16 @@ public class SecurityDepositsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? contractorId)
+    public async Task<IActionResult> Index(Guid? contractorId, int page = 1, int pageSize = 25)
     {
-        var deposits = await _mediator.Send(new GetAllSecurityDepositsQuery(contractorId));
+        var deposits = await _mediator.Send(new GetAllSecurityDepositsQuery(contractorId, page, pageSize));
+        ViewBag.SelectedContractorId = contractorId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", deposits);
+        }
+
         return View(deposits);
     }
 
@@ -111,10 +118,10 @@ public class SecurityDepositsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery());
-        ViewBag.Contractors = new SelectList(contractors, "Id", "Name");
+        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery(PageSize: int.MaxValue));
+        ViewBag.Contractors = new SelectList(contractors.Items, "Id", "Name");
 
-        var workOrders = await _mediator.Send(new BuilderERP.Application.Features.WorkOrders.GetAllWorkOrdersQuery());
-        ViewBag.WorkOrders = new SelectList(workOrders, "Id", "WorkOrderNumber");
+        var workOrders = await _mediator.Send(new BuilderERP.Application.Features.WorkOrders.GetAllWorkOrdersQuery(PageSize: int.MaxValue));
+        ViewBag.WorkOrders = new SelectList(workOrders.Items, "Id", "WorkOrderNumber");
     }
 }

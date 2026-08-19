@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.WorkOrders;
 
-public record GetAllWorkOrdersQuery(Guid? ContractorId = null, Guid? ProjectId = null) : IRequest<IReadOnlyList<WorkOrderDto>>;
+public record GetAllWorkOrdersQuery(Guid? ContractorId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<WorkOrderDto>>;
 
-public class GetAllWorkOrdersQueryHandler : IRequestHandler<GetAllWorkOrdersQuery, IReadOnlyList<WorkOrderDto>>
+public class GetAllWorkOrdersQueryHandler : IRequestHandler<GetAllWorkOrdersQuery, PagedResult<WorkOrderDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllWorkOrdersQueryHandler : IRequestHandler<GetAllWorkOrdersQuer
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<WorkOrderDto>> Handle(GetAllWorkOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<WorkOrderDto>> Handle(GetAllWorkOrdersQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<WorkOrder>().Query()
             .Include(x => x.Contractor)
@@ -37,10 +38,17 @@ public class GetAllWorkOrdersQueryHandler : IRequestHandler<GetAllWorkOrdersQuer
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var workOrders = await query
             .OrderByDescending(x => x.OrderDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<WorkOrderDto>>(workOrders);
+        var items = _mapper.Map<IReadOnlyList<WorkOrderDto>>(workOrders);
+        return new PagedResult<WorkOrderDto>(items, totalCount, page, pageSize);
     }
 }

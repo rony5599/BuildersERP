@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.CustomerCommunications;
 
-public record GetAllCustomerCommunicationsQuery : IRequest<IReadOnlyList<CustomerCommunicationDto>>;
+public record GetAllCustomerCommunicationsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<CustomerCommunicationDto>>;
 
-public class GetAllCustomerCommunicationsQueryHandler : IRequestHandler<GetAllCustomerCommunicationsQuery, IReadOnlyList<CustomerCommunicationDto>>
+public class GetAllCustomerCommunicationsQueryHandler : IRequestHandler<GetAllCustomerCommunicationsQuery, PagedResult<CustomerCommunicationDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,23 @@ public class GetAllCustomerCommunicationsQueryHandler : IRequestHandler<GetAllCu
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<CustomerCommunicationDto>> Handle(GetAllCustomerCommunicationsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<CustomerCommunicationDto>> Handle(GetAllCustomerCommunicationsQuery request, CancellationToken cancellationToken)
     {
-        var communications = await _unitOfWork.Repository<CustomerCommunication>().Query()
+        var query = _unitOfWork.Repository<CustomerCommunication>().Query()
             .Include(c => c.Customer)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var communications = await query
             .OrderByDescending(c => c.CommunicationDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<CustomerCommunicationDto>>(communications);
+
+        var items = _mapper.Map<IReadOnlyList<CustomerCommunicationDto>>(communications);
+        return new PagedResult<CustomerCommunicationDto>(items, totalCount, page, pageSize);
     }
 }

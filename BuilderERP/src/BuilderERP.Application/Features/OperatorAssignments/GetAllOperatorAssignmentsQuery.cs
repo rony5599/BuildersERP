@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.OperatorAssignments;
 
-public record GetAllOperatorAssignmentsQuery(Guid? EquipmentId = null, Guid? WorkerId = null) : IRequest<IReadOnlyList<OperatorAssignmentDto>>;
+public record GetAllOperatorAssignmentsQuery(Guid? EquipmentId = null, Guid? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<OperatorAssignmentDto>>;
 
-public class GetAllOperatorAssignmentsQueryHandler : IRequestHandler<GetAllOperatorAssignmentsQuery, IReadOnlyList<OperatorAssignmentDto>>
+public class GetAllOperatorAssignmentsQueryHandler : IRequestHandler<GetAllOperatorAssignmentsQuery, PagedResult<OperatorAssignmentDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllOperatorAssignmentsQueryHandler : IRequestHandler<GetAllOpera
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<OperatorAssignmentDto>> Handle(GetAllOperatorAssignmentsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<OperatorAssignmentDto>> Handle(GetAllOperatorAssignmentsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<OperatorAssignment>().Query()
             .Include(x => x.Equipment)
@@ -38,9 +39,17 @@ public class GetAllOperatorAssignmentsQueryHandler : IRequestHandler<GetAllOpera
             query = query.Where(x => x.WorkerId == request.WorkerId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var assignments = await query
             .OrderByDescending(x => x.AssignmentStartDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<OperatorAssignmentDto>>(assignments);
+
+        var items = _mapper.Map<IReadOnlyList<OperatorAssignmentDto>>(assignments);
+        return new PagedResult<OperatorAssignmentDto>(items, totalCount, page, pageSize);
     }
 }

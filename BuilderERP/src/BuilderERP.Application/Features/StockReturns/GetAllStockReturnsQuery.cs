@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockReturns;
 
-public record GetAllStockReturnsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<StockReturnDto>>;
+public record GetAllStockReturnsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockReturnDto>>;
 
-public class GetAllStockReturnsQueryHandler : IRequestHandler<GetAllStockReturnsQuery, IReadOnlyList<StockReturnDto>>
+public class GetAllStockReturnsQueryHandler : IRequestHandler<GetAllStockReturnsQuery, PagedResult<StockReturnDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllStockReturnsQueryHandler : IRequestHandler<GetAllStockReturns
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<StockReturnDto>> Handle(GetAllStockReturnsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<StockReturnDto>> Handle(GetAllStockReturnsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<StockReturn>().Query()
             .Include(r => r.Material)
@@ -32,7 +33,17 @@ public class GetAllStockReturnsQueryHandler : IRequestHandler<GetAllStockReturns
             query = query.Where(r => r.Warehouse.ProjectId == request.ProjectId.Value);
         }
 
-        var returns = await query.ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<StockReturnDto>>(returns);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var returns = await query
+            .OrderByDescending(r => r.ReturnDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<StockReturnDto>>(returns);
+        return new PagedResult<StockReturnDto>(items, totalCount, page, pageSize);
     }
 }

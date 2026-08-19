@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.EquipmentRentals;
 
-public record GetAllEquipmentRentalsQuery(Guid? EquipmentId = null, Guid? ProjectId = null) : IRequest<IReadOnlyList<EquipmentRentalDto>>;
+public record GetAllEquipmentRentalsQuery(Guid? EquipmentId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<EquipmentRentalDto>>;
 
-public class GetAllEquipmentRentalsQueryHandler : IRequestHandler<GetAllEquipmentRentalsQuery, IReadOnlyList<EquipmentRentalDto>>
+public class GetAllEquipmentRentalsQueryHandler : IRequestHandler<GetAllEquipmentRentalsQuery, PagedResult<EquipmentRentalDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllEquipmentRentalsQueryHandler : IRequestHandler<GetAllEquipmen
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<EquipmentRentalDto>> Handle(GetAllEquipmentRentalsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<EquipmentRentalDto>> Handle(GetAllEquipmentRentalsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<EquipmentRental>().Query()
             .Include(x => x.Equipment)
@@ -38,9 +39,17 @@ public class GetAllEquipmentRentalsQueryHandler : IRequestHandler<GetAllEquipmen
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var rentals = await query
             .OrderByDescending(x => x.RentalStartDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<EquipmentRentalDto>>(rentals);
+
+        var items = _mapper.Map<IReadOnlyList<EquipmentRentalDto>>(rentals);
+        return new PagedResult<EquipmentRentalDto>(items, totalCount, page, pageSize);
     }
 }

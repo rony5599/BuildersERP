@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Attendances;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Workers;
@@ -26,9 +26,15 @@ public class AttendancesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var attendances = await _mediator.Send(new GetAllAttendancesQuery());
+        var attendances = await _mediator.Send(new GetAllAttendancesQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", attendances);
+        }
+
         return View(attendances);
     }
 
@@ -112,10 +118,10 @@ public class AttendancesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var workers = await _mediator.Send(new GetAllWorkersQuery());
-        ViewBag.Workers = new SelectList(workers, "Id", "Name");
+        var workers = await _mediator.Send(new GetAllWorkersQuery(PageSize: int.MaxValue));
+        ViewBag.Workers = new SelectList(workers.Items, "Id", "Name");
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

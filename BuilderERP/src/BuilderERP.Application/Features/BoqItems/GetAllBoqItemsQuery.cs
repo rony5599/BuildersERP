@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BoqItems;
 
-public record GetAllBoqItemsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<BoqItemDto>>;
+public record GetAllBoqItemsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BoqItemDto>>;
 
-public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, IReadOnlyList<BoqItemDto>>
+public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, PagedResult<BoqItemDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, I
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<BoqItemDto>> Handle(GetAllBoqItemsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<BoqItemDto>> Handle(GetAllBoqItemsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<BoqItem>().Query().Include(x => x.Project).AsQueryable();
 
@@ -29,7 +30,17 @@ public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, I
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
-        var items = await query.OrderBy(x => x.ItemCode).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<BoqItemDto>>(items);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderBy(x => x.ItemCode)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var dtos = _mapper.Map<IReadOnlyList<BoqItemDto>>(items);
+        return new PagedResult<BoqItemDto>(dtos, totalCount, page, pageSize);
     }
 }

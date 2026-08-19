@@ -23,9 +23,15 @@ public class CompaniesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var companies = await _mediator.Send(new GetAllCompaniesQuery());
+        var companies = await _mediator.Send(new GetAllCompaniesQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", companies);
+        }
+
         return View(companies);
     }
 

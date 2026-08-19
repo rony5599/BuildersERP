@@ -24,9 +24,15 @@ public class DrawingApprovalsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? drawingId)
+    public async Task<IActionResult> Index(Guid? drawingId, int page = 1, int pageSize = 25)
     {
-        var approvals = await _mediator.Send(new GetAllDrawingApprovalsQuery(drawingId));
+        var approvals = await _mediator.Send(new GetAllDrawingApprovalsQuery(drawingId, page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", approvals);
+        }
+
         return View(approvals);
     }
 
@@ -112,10 +118,10 @@ public class DrawingApprovalsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var drawings = await _mediator.Send(new BuilderERP.Application.Features.Drawings.GetAllDrawingsQuery());
-        ViewBag.Drawings = new SelectList(drawings, "Id", "DrawingNumber");
+        var drawings = await _mediator.Send(new BuilderERP.Application.Features.Drawings.GetAllDrawingsQuery(PageSize: int.MaxValue));
+        ViewBag.Drawings = new SelectList(drawings.Items, "Id", "DrawingNumber");
 
-        var revisions = await _mediator.Send(new BuilderERP.Application.Features.DrawingRevisions.GetAllDrawingRevisionsQuery());
-        ViewBag.DrawingRevisions = new SelectList(revisions, "Id", "RevisionCode");
+        var revisions = await _mediator.Send(new BuilderERP.Application.Features.DrawingRevisions.GetAllDrawingRevisionsQuery(PageSize: int.MaxValue));
+        ViewBag.DrawingRevisions = new SelectList(revisions.Items, "Id", "RevisionCode");
     }
 }

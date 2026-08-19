@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.PpeTrackings;
 using BuilderERP.Application.Features.Workers;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class PpeTrackingsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllPpeTrackingsQuery());
+        var items = await _mediator.Send(new GetAllPpeTrackingsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -112,7 +118,7 @@ public class PpeTrackingsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var workers = await _mediator.Send(new GetAllWorkersQuery());
-        ViewBag.Workers = new SelectList(workers, "Id", "Name");
+        var workers = await _mediator.Send(new GetAllWorkersQuery(PageSize: int.MaxValue));
+        ViewBag.Workers = new SelectList(workers.Items, "Id", "Name");
     }
 }

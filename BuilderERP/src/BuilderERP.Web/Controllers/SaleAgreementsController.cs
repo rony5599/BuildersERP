@@ -25,9 +25,15 @@ public class SaleAgreementsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var agreements = await _mediator.Send(new GetAllSaleAgreementsQuery());
+        var agreements = await _mediator.Send(new GetAllSaleAgreementsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", agreements);
+        }
+
         return View(agreements);
     }
 
@@ -111,7 +117,7 @@ public class SaleAgreementsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var bookings = await _mediator.Send(new GetAllBookingsQuery());
-        ViewBag.Bookings = new SelectList(bookings, "Id", "PropertyUnitNumber");
+        var bookings = await _mediator.Send(new GetAllBookingsQuery(PageSize: int.MaxValue));
+        ViewBag.Bookings = new SelectList(bookings.Items, "Id", "PropertyUnitNumber");
     }
 }

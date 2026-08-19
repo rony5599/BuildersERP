@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Stocks;
 
-public record GetAllStockQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<StockDto>>;
+public record GetAllStockQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockDto>>;
 
-public class GetAllStockQueryHandler : IRequestHandler<GetAllStockQuery, IReadOnlyList<StockDto>>
+public class GetAllStockQueryHandler : IRequestHandler<GetAllStockQuery, PagedResult<StockDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllStockQueryHandler : IRequestHandler<GetAllStockQuery, IReadOn
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<StockDto>> Handle(GetAllStockQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<StockDto>> Handle(GetAllStockQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Stock>().Query()
             .Include(s => s.Material)
@@ -32,7 +33,18 @@ public class GetAllStockQueryHandler : IRequestHandler<GetAllStockQuery, IReadOn
             query = query.Where(s => s.Warehouse.ProjectId == request.ProjectId.Value);
         }
 
-        var stocks = await query.ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<StockDto>>(stocks);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var stocks = await query
+            .OrderBy(s => s.Material.Name)
+            .ThenBy(s => s.Warehouse.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<StockDto>>(stocks);
+        return new PagedResult<StockDto>(items, totalCount, page, pageSize);
     }
 }

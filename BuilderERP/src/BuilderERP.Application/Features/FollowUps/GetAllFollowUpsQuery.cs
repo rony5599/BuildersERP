@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.FollowUps;
 
-public record GetAllFollowUpsQuery : IRequest<IReadOnlyList<FollowUpDto>>;
+public record GetAllFollowUpsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<FollowUpDto>>;
 
-public class GetAllFollowUpsQueryHandler : IRequestHandler<GetAllFollowUpsQuery, IReadOnlyList<FollowUpDto>>
+public class GetAllFollowUpsQueryHandler : IRequestHandler<GetAllFollowUpsQuery, PagedResult<FollowUpDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,11 +21,23 @@ public class GetAllFollowUpsQueryHandler : IRequestHandler<GetAllFollowUpsQuery,
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<FollowUpDto>> Handle(GetAllFollowUpsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<FollowUpDto>> Handle(GetAllFollowUpsQuery request, CancellationToken cancellationToken)
     {
-        var followUps = await _unitOfWork.Repository<FollowUp>().Query()
+        var query = _unitOfWork.Repository<FollowUp>().Query()
             .Include(f => f.Lead)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var followUps = await query
+            .OrderByDescending(f => f.FollowUpDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<FollowUpDto>>(followUps);
+
+        var items = _mapper.Map<IReadOnlyList<FollowUpDto>>(followUps);
+        return new PagedResult<FollowUpDto>(items, totalCount, page, pageSize);
     }
 }

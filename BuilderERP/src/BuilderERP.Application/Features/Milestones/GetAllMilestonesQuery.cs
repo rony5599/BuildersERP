@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Milestones;
 
-public record GetAllMilestonesQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<MilestoneDto>>;
+public record GetAllMilestonesQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MilestoneDto>>;
 
-public class GetAllMilestonesQueryHandler : IRequestHandler<GetAllMilestonesQuery, IReadOnlyList<MilestoneDto>>
+public class GetAllMilestonesQueryHandler : IRequestHandler<GetAllMilestonesQuery, PagedResult<MilestoneDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllMilestonesQueryHandler : IRequestHandler<GetAllMilestonesQuer
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<MilestoneDto>> Handle(GetAllMilestonesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<MilestoneDto>> Handle(GetAllMilestonesQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Milestone>().Query()
             .Include(x => x.Project)
@@ -31,7 +32,17 @@ public class GetAllMilestonesQueryHandler : IRequestHandler<GetAllMilestonesQuer
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
-        var milestones = await query.OrderBy(x => x.TargetDate).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<MilestoneDto>>(milestones);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var milestones = await query
+            .OrderBy(x => x.TargetDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<MilestoneDto>>(milestones);
+        return new PagedResult<MilestoneDto>(items, totalCount, page, pageSize);
     }
 }

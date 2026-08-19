@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.RunningBills;
 
-public record GetAllRunningBillsQuery(Guid? WorkOrderId = null) : IRequest<IReadOnlyList<RunningBillDto>>;
+public record GetAllRunningBillsQuery(Guid? WorkOrderId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RunningBillDto>>;
 
-public class GetAllRunningBillsQueryHandler : IRequestHandler<GetAllRunningBillsQuery, IReadOnlyList<RunningBillDto>>
+public class GetAllRunningBillsQueryHandler : IRequestHandler<GetAllRunningBillsQuery, PagedResult<RunningBillDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllRunningBillsQueryHandler : IRequestHandler<GetAllRunningBills
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<RunningBillDto>> Handle(GetAllRunningBillsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<RunningBillDto>> Handle(GetAllRunningBillsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<RunningBill>().Query()
             .Include(x => x.WorkOrder)
@@ -31,10 +32,17 @@ public class GetAllRunningBillsQueryHandler : IRequestHandler<GetAllRunningBills
             query = query.Where(x => x.WorkOrderId == request.WorkOrderId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var bills = await query
             .OrderByDescending(x => x.BillDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<RunningBillDto>>(bills);
+        var items = _mapper.Map<IReadOnlyList<RunningBillDto>>(bills);
+        return new PagedResult<RunningBillDto>(items, totalCount, page, pageSize);
     }
 }

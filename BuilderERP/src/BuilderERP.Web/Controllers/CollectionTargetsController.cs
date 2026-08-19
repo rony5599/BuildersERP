@@ -33,9 +33,15 @@ public class CollectionTargetsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var targets = await _mediator.Send(new GetAllCollectionTargetsQuery());
+        var targets = await _mediator.Send(new GetAllCollectionTargetsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", targets);
+        }
+
         return View(targets);
     }
 

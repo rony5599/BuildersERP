@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,16 +24,22 @@ public class ProjectsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
+        var projects = await _mediator.Send(new GetAllProjectsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", projects);
+        }
+
         return View(projects);
     }
 
     [PermissionAuthorize(PermissionNames.ProjectManage)]
     public async Task<IActionResult> Create()
     {
-        ViewBag.Branches = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery()), "Id", "Name");
+        ViewBag.Branches = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
         return View(new CreateProjectDto());
     }
 
@@ -46,7 +52,7 @@ public class ProjectsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            ViewBag.Branches = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery()), "Id", "Name");
+            ViewBag.Branches = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
             return View(dto);
         }
 
@@ -74,7 +80,7 @@ public class ProjectsController : Controller
             BranchId = project.BranchId
         };
 
-        ViewBag.Branches = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery()), "Id", "Name");
+        ViewBag.Branches = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
         return View(dto);
     }
 
@@ -87,7 +93,7 @@ public class ProjectsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            ViewBag.Branches = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery()), "Id", "Name");
+            ViewBag.Branches = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
             return View(dto);
         }
 

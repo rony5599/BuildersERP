@@ -1,4 +1,5 @@
-@model IReadOnlyList<BuilderERP.Application.DTOs.SalaryDto>
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.SalaryDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @using BuilderERP.Domain.Enums
@@ -14,54 +15,6 @@
     }
 </div>
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Worker</th>
-            <th>Period</th>
-            <th>Days Worked</th>
-            <th>Basic Amount</th>
-            <th>Overtime</th>
-            <th>Deduction</th>
-            <th>Net Amount</th>
-            <th>Status</th>
-            <th>Active</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.WorkerName</td>
-                <td>@item.PeriodStart.ToString("MMM dd") - @item.PeriodEnd.ToString("MMM dd, yyyy")</td>
-                <td>@item.DaysWorked</td>
-                <td>@item.BasicAmount.ToString("C")</td>
-                <td>@item.OvertimeAmount.ToString("C")</td>
-                <td>@item.DeductionAmount.ToString("C")</td>
-                <td><strong>@item.NetAmount.ToString("C")</strong></td>
-                <td>
-                    <span class="badge @(item.Status == SalaryStatus.Paid ? "bg-success" : "bg-warning")">
-                        @item.Status
-                    </span>
-                </td>
-                <td>
-                    <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
-                        @(item.IsActive ? "Active" : "Inactive")
-                    </span>
-                </td>
-                <td class="text-end">
-                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SalaryManage))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <form asp-action="ToggleActive" asp-route-id="@item.Id" asp-route-isActive="@item.IsActive" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                @(item.IsActive ? "Deactivate" : "Activate")
-                            </button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

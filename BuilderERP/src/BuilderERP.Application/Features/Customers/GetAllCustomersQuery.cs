@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Customers;
 
-public record GetAllCustomersQuery : IRequest<IReadOnlyList<CustomerDto>>;
+public record GetAllCustomersQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<CustomerDto>>;
 
-public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery, IReadOnlyList<CustomerDto>>
+public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery, PagedResult<CustomerDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,9 +21,21 @@ public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery,
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<CustomerDto>> Handle(GetAllCustomersQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<CustomerDto>> Handle(GetAllCustomersQuery request, CancellationToken cancellationToken)
     {
-        var customers = await _unitOfWork.Repository<Customer>().Query().Include(c => c.Company).Include(c => c.Lead).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<CustomerDto>>(customers);
+        var query = _unitOfWork.Repository<Customer>().Query().Include(c => c.Company).Include(c => c.Lead).AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var customers = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<CustomerDto>>(customers);
+        return new PagedResult<CustomerDto>(items, totalCount, page, pageSize);
     }
 }

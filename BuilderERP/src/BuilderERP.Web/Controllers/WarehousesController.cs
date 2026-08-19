@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Branches;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Warehouses;
@@ -26,12 +26,18 @@ public class WarehousesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var warehouses = await _mediator.Send(new GetAllWarehousesQuery(projectId));
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var warehouses = await _mediator.Send(new GetAllWarehousesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", warehouses);
+        }
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(warehouses);
     }
 
@@ -115,10 +121,10 @@ public class WarehousesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var branches = await _mediator.Send(new GetAllBranchesQuery());
-        ViewBag.Branches = new SelectList(branches, "Id", "Name");
+        var branches = await _mediator.Send(new GetAllBranchesQuery(PageSize: int.MaxValue));
+        ViewBag.Branches = new SelectList(branches.Items, "Id", "Name");
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

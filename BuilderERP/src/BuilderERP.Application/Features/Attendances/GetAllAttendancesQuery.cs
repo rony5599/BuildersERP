@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Attendances;
 
-public record GetAllAttendancesQuery(Guid? WorkerId = null, Guid? ProjectId = null) : IRequest<IReadOnlyList<AttendanceDto>>;
+public record GetAllAttendancesQuery(Guid? WorkerId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<AttendanceDto>>;
 
-public class GetAllAttendancesQueryHandler : IRequestHandler<GetAllAttendancesQuery, IReadOnlyList<AttendanceDto>>
+public class GetAllAttendancesQueryHandler : IRequestHandler<GetAllAttendancesQuery, PagedResult<AttendanceDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllAttendancesQueryHandler : IRequestHandler<GetAllAttendancesQu
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<AttendanceDto>> Handle(GetAllAttendancesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<AttendanceDto>> Handle(GetAllAttendancesQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Attendance>().Query()
             .Include(x => x.Worker)
@@ -37,9 +38,17 @@ public class GetAllAttendancesQueryHandler : IRequestHandler<GetAllAttendancesQu
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var attendances = await query
             .OrderByDescending(x => x.AttendanceDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<AttendanceDto>>(attendances);
+
+        var items = _mapper.Map<IReadOnlyList<AttendanceDto>>(attendances);
+        return new PagedResult<AttendanceDto>(items, totalCount, page, pageSize);
     }
 }

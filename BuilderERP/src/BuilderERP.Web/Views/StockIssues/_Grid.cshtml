@@ -1,0 +1,70 @@
+@using BuilderERP.Application.Common
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@model PagedResult<BuilderERP.Application.DTOs.StockIssueDto>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Issue #</th>
+            <th>Material</th>
+            <th>Project</th>
+            <th>Warehouse</th>
+            <th>Quantity</th>
+            <th>Consumed</th>
+            <th>Wastage</th>
+            <th>Issued To</th>
+            <th>Date</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var issue in Model.Items)
+        {
+            <tr>
+                <td>@issue.IssueNumber</td>
+                <td>@issue.MaterialName</td>
+                <td>@issue.ProjectName</td>
+                <td>@issue.WarehouseName</td>
+                <td>@issue.Quantity</td>
+                <td>@issue.ConsumedQuantity</td>
+                <td class="@(issue.WastageQuantity > 0 ? "text-danger" : "")" title="@issue.WastageReason">@issue.WastageQuantity</td>
+                <td>@issue.IssuedTo</td>
+                <td>@issue.IssueDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <span class="badge @(issue.IsActive ? "bg-success" : "bg-secondary")">
+                        @(issue.IsActive ? "Active" : "Inactive")
+                    </span>
+                </td>
+                <td class="text-end">
+                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockIssueManage))
+                    {
+                        <a asp-action="Edit" asp-route-id="@issue.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <form asp-action="ToggleActive" asp-route-id="@issue.Id" asp-route-isActive="@issue.IsActive" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                @(issue.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Items.Count == 0)
+        {
+            <tr>
+                <td colspan="11" class="text-center text-muted">No stock issues found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+{
+    Page = Model.Page,
+    PageSize = Model.PageSize,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    Action = "Index",
+    RouteValues = new Dictionary<string, string?> { ["projectId"] = ViewBag.SelectedProjectId?.ToString() }
+})" />

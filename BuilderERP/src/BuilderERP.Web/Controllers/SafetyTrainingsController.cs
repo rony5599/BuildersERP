@@ -25,9 +25,15 @@ public class SafetyTrainingsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var trainings = await _mediator.Send(new GetAllSafetyTrainingsQuery());
+        var trainings = await _mediator.Send(new GetAllSafetyTrainingsQuery(Page: page, PageSize: pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", trainings);
+        }
+
         return View(trainings);
     }
 
@@ -113,7 +119,7 @@ public class SafetyTrainingsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var workers = await _mediator.Send(new GetAllWorkersQuery());
-        ViewBag.Workers = new SelectList(workers, "Id", "Name");
+        var workers = await _mediator.Send(new GetAllWorkersQuery(PageSize: int.MaxValue));
+        ViewBag.Workers = new SelectList(workers.Items, "Id", "Name");
     }
 }

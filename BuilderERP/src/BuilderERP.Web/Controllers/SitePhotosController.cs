@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.DailyProgresses;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.SitePhotos;
@@ -33,9 +33,16 @@ public class SitePhotosController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllSitePhotosQuery(projectId));
+        var items = await _mediator.Send(new GetAllSitePhotosQuery(projectId, page, pageSize));
+        ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -157,10 +164,10 @@ public class SitePhotosController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
 
-        var dailyProgresses = await _mediator.Send(new GetAllDailyProgressesQuery());
-        ViewBag.DailyProgresses = new SelectList(dailyProgresses, "Id", "ProgressDate");
+        var dailyProgresses = await _mediator.Send(new GetAllDailyProgressesQuery(PageSize: int.MaxValue));
+        ViewBag.DailyProgresses = new SelectList(dailyProgresses.Items, "Id", "ProgressDate");
     }
 }

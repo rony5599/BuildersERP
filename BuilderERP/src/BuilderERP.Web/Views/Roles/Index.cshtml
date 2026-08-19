@@ -1,4 +1,5 @@
-@model IReadOnlyList<BuilderERP.Application.DTOs.RoleDto>
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.RoleDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @{
@@ -13,28 +14,6 @@
     }
 </div>
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var role in Model)
-        {
-            <tr>
-                <td>@role.Name</td>
-                <td>@role.Description</td>
-                <td class="text-end">
-                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleManage))
-                    {
-                        <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a asp-action="Permissions" asp-route-id="@role.Id" class="btn btn-sm btn-outline-primary">Permissions</a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

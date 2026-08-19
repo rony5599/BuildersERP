@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Quotations;
 
-public record GetAllQuotationsQuery : IRequest<IReadOnlyList<QuotationDto>>;
+public record GetAllQuotationsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<QuotationDto>>;
 
-public class GetAllQuotationsQueryHandler : IRequestHandler<GetAllQuotationsQuery, IReadOnlyList<QuotationDto>>
+public class GetAllQuotationsQueryHandler : IRequestHandler<GetAllQuotationsQuery, PagedResult<QuotationDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,23 @@ public class GetAllQuotationsQueryHandler : IRequestHandler<GetAllQuotationsQuer
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<QuotationDto>> Handle(GetAllQuotationsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<QuotationDto>> Handle(GetAllQuotationsQuery request, CancellationToken cancellationToken)
     {
-        var quotations = await _unitOfWork.Repository<Quotation>().Query()
+        var query = _unitOfWork.Repository<Quotation>().Query()
             .Include(q => q.Customer)
-            .Include(q => q.PropertyUnit)
+            .Include(q => q.PropertyUnit);
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var quotations = await query
+            .OrderByDescending(q => q.ValidUntil)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<QuotationDto>>(quotations);
+
+        var items = _mapper.Map<IReadOnlyList<QuotationDto>>(quotations);
+        return new PagedResult<QuotationDto>(items, totalCount, page, pageSize);
     }
 }

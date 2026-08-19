@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record GetAllMaterialsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<MaterialDto>>;
+public record GetAllMaterialsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaterialDto>>;
 
-public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery, IReadOnlyList<MaterialDto>>
+public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery, PagedResult<MaterialDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery,
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<MaterialDto>> Handle(GetAllMaterialsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<MaterialDto>> Handle(GetAllMaterialsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Material>().Query().AsQueryable();
 
@@ -34,7 +35,17 @@ public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery,
             query = query.Where(m => materialIdsInProject.Contains(m.Id));
         }
 
-        var materials = await query.ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<MaterialDto>>(materials);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var materials = await query
+            .OrderBy(m => m.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<MaterialDto>>(materials);
+        return new PagedResult<MaterialDto>(items, totalCount, page, pageSize);
     }
 }

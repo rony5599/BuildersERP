@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Receipts;
 
-public record GetAllReceiptsQuery : IRequest<IReadOnlyList<ReceiptDto>>;
+public record GetAllReceiptsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<ReceiptDto>>;
 
-public class GetAllReceiptsQueryHandler : IRequestHandler<GetAllReceiptsQuery, IReadOnlyList<ReceiptDto>>
+public class GetAllReceiptsQueryHandler : IRequestHandler<GetAllReceiptsQuery, PagedResult<ReceiptDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,11 +21,22 @@ public class GetAllReceiptsQueryHandler : IRequestHandler<GetAllReceiptsQuery, I
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<ReceiptDto>> Handle(GetAllReceiptsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<ReceiptDto>> Handle(GetAllReceiptsQuery request, CancellationToken cancellationToken)
     {
-        var receipts = await _unitOfWork.Repository<Receipt>().Query()
-            .Include(r => r.Installment)
+        var query = _unitOfWork.Repository<Receipt>().Query()
+            .Include(r => r.Installment);
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var receipts = await query
+            .OrderByDescending(r => r.PaymentDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<ReceiptDto>>(receipts);
+
+        var items = _mapper.Map<IReadOnlyList<ReceiptDto>>(receipts);
+        return new PagedResult<ReceiptDto>(items, totalCount, page, pageSize);
     }
 }

@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.PerformanceEvaluations;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,9 +24,16 @@ public class PerformanceEvaluationsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? contractorId)
+    public async Task<IActionResult> Index(Guid? contractorId, int page = 1, int pageSize = 25)
     {
-        var evaluations = await _mediator.Send(new GetAllPerformanceEvaluationsQuery(contractorId));
+        var evaluations = await _mediator.Send(new GetAllPerformanceEvaluationsQuery(contractorId, page, pageSize));
+        ViewBag.SelectedContractorId = contractorId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", evaluations);
+        }
+
         return View(evaluations);
     }
 
@@ -112,10 +119,10 @@ public class PerformanceEvaluationsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery());
-        ViewBag.Contractors = new SelectList(contractors, "Id", "Name");
+        var contractors = await _mediator.Send(new BuilderERP.Application.Features.Contractors.GetAllContractorsQuery(PageSize: int.MaxValue));
+        ViewBag.Contractors = new SelectList(contractors.Items, "Id", "Name");
 
-        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

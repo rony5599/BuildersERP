@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ParkingSlots;
 
-public record GetAllParkingSlotsQuery : IRequest<IReadOnlyList<ParkingSlotDto>>;
+public record GetAllParkingSlotsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<ParkingSlotDto>>;
 
-public class GetAllParkingSlotsQueryHandler : IRequestHandler<GetAllParkingSlotsQuery, IReadOnlyList<ParkingSlotDto>>
+public class GetAllParkingSlotsQueryHandler : IRequestHandler<GetAllParkingSlotsQuery, PagedResult<ParkingSlotDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,23 @@ public class GetAllParkingSlotsQueryHandler : IRequestHandler<GetAllParkingSlots
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<ParkingSlotDto>> Handle(GetAllParkingSlotsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<ParkingSlotDto>> Handle(GetAllParkingSlotsQuery request, CancellationToken cancellationToken)
     {
-        var items = await _unitOfWork.Repository<ParkingSlot>().Query()
+        var query = _unitOfWork.Repository<ParkingSlot>().Query()
             .Include(x => x.Project)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
             .OrderBy(x => x.SlotNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<ParkingSlotDto>>(items);
+
+        var mapped = _mapper.Map<IReadOnlyList<ParkingSlotDto>>(items);
+        return new PagedResult<ParkingSlotDto>(mapped, totalCount, page, pageSize);
     }
 }

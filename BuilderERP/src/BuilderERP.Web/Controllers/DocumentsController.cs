@@ -33,9 +33,17 @@ public class DocumentsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? customerId, Guid? projectId)
+    public async Task<IActionResult> Index(Guid? customerId, Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllDocumentsQuery(customerId, projectId));
+        var items = await _mediator.Send(new GetAllDocumentsQuery(customerId, projectId, page, pageSize));
+        ViewBag.SelectedCustomerId = customerId;
+        ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -163,10 +171,10 @@ public class DocumentsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName");
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

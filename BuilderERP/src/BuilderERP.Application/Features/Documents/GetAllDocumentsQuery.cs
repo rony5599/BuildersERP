@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Documents;
 
-public record GetAllDocumentsQuery(Guid? CustomerId = null, Guid? ProjectId = null) : IRequest<IReadOnlyList<DocumentDto>>;
+public record GetAllDocumentsQuery(Guid? CustomerId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DocumentDto>>;
 
-public class GetAllDocumentsQueryHandler : IRequestHandler<GetAllDocumentsQuery, IReadOnlyList<DocumentDto>>
+public class GetAllDocumentsQueryHandler : IRequestHandler<GetAllDocumentsQuery, PagedResult<DocumentDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllDocumentsQueryHandler : IRequestHandler<GetAllDocumentsQuery,
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<DocumentDto>> Handle(GetAllDocumentsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<DocumentDto>> Handle(GetAllDocumentsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Document>().Query()
             .Include(x => x.Customer)
@@ -37,7 +38,17 @@ public class GetAllDocumentsQueryHandler : IRequestHandler<GetAllDocumentsQuery,
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
-        var items = await query.OrderBy(x => x.DocumentNumber).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<DocumentDto>>(items);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var results = await query
+            .OrderBy(x => x.DocumentNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<DocumentDto>>(results);
+        return new PagedResult<DocumentDto>(items, totalCount, page, pageSize);
     }
 }

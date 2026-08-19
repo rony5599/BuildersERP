@@ -1,4 +1,4 @@
-using BuilderERP.Application.Features.CollectionForecast;
+﻿using BuilderERP.Application.Features.CollectionForecast;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
@@ -45,8 +45,8 @@ public class CollectionForecastController : Controller
     {
         var defaulters = await _mediator.Send(new GetHighRiskDefaultersQuery(projectId));
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         ViewBag.SelectedProjectId = projectId;
 
         return View(defaulters);
@@ -54,14 +54,14 @@ public class CollectionForecastController : Controller
 
     private async Task PopulateFiltersAsync(Guid? projectId)
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name");
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
 
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId));
-        ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber");
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId, PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(units.Items, "Id", "UnitNumber");
 
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName");
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
 
         var users = await _userManager.Users.ToListAsync();
         ViewBag.CollectionOfficers = new SelectList(users, "Id", "FullName");

@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Branches;
 using BuilderERP.Application.Features.Companies;
 using BuilderERP.Shared.Authorization;
@@ -25,16 +25,22 @@ public class BranchesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var branches = await _mediator.Send(new GetAllBranchesQuery());
+        var branches = await _mediator.Send(new GetAllBranchesQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", branches);
+        }
+
         return View(branches);
     }
 
     [PermissionAuthorize(PermissionNames.BranchManage)]
     public async Task<IActionResult> Create()
     {
-        ViewBag.Companies = new SelectList(await _mediator.Send(new GetAllCompaniesQuery()), "Id", "Name");
+        ViewBag.Companies = new SelectList((await _mediator.Send(new GetAllCompaniesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
         return View(new CreateBranchDto());
     }
 
@@ -47,7 +53,7 @@ public class BranchesController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            ViewBag.Companies = new SelectList(await _mediator.Send(new GetAllCompaniesQuery()), "Id", "Name");
+            ViewBag.Companies = new SelectList((await _mediator.Send(new GetAllCompaniesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
             return View(dto);
         }
 
@@ -73,7 +79,7 @@ public class BranchesController : Controller
             CompanyId = branch.CompanyId
         };
 
-        ViewBag.Companies = new SelectList(await _mediator.Send(new GetAllCompaniesQuery()), "Id", "Name");
+        ViewBag.Companies = new SelectList((await _mediator.Send(new GetAllCompaniesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
         return View(dto);
     }
 
@@ -86,7 +92,7 @@ public class BranchesController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            ViewBag.Companies = new SelectList(await _mediator.Send(new GetAllCompaniesQuery()), "Id", "Name");
+            ViewBag.Companies = new SelectList((await _mediator.Send(new GetAllCompaniesQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
             return View(dto);
         }
 

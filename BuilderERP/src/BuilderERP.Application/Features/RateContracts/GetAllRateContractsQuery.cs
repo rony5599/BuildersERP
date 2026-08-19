@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.RateContracts;
 
-public record GetAllRateContractsQuery(Guid? ContractorId = null) : IRequest<IReadOnlyList<RateContractDto>>;
+public record GetAllRateContractsQuery(Guid? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RateContractDto>>;
 
-public class GetAllRateContractsQueryHandler : IRequestHandler<GetAllRateContractsQuery, IReadOnlyList<RateContractDto>>
+public class GetAllRateContractsQueryHandler : IRequestHandler<GetAllRateContractsQuery, PagedResult<RateContractDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllRateContractsQueryHandler : IRequestHandler<GetAllRateContrac
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<RateContractDto>> Handle(GetAllRateContractsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<RateContractDto>> Handle(GetAllRateContractsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<RateContract>().Query()
             .Include(x => x.Contractor)
@@ -32,10 +33,17 @@ public class GetAllRateContractsQueryHandler : IRequestHandler<GetAllRateContrac
             query = query.Where(x => x.ContractorId == request.ContractorId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var contracts = await query
             .OrderBy(x => x.ContractNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<RateContractDto>>(contracts);
+        var items = _mapper.Map<IReadOnlyList<RateContractDto>>(contracts);
+        return new PagedResult<RateContractDto>(items, totalCount, page, pageSize);
     }
 }

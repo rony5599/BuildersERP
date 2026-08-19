@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CostCenters;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,16 +24,22 @@ public class CostCentersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var costCenters = await _mediator.Send(new GetAllCostCentersQuery());
+        var costCenters = await _mediator.Send(new GetAllCostCentersQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", costCenters);
+        }
+
         return View(costCenters);
     }
 
     [PermissionAuthorize(PermissionNames.CostCenterManage)]
     public async Task<IActionResult> Create()
     {
-        ViewBag.Projects = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery()), "Id", "Name");
+        ViewBag.Projects = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
         return View(new CreateCostCenterDto());
     }
 
@@ -46,7 +52,7 @@ public class CostCentersController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            ViewBag.Projects = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery()), "Id", "Name");
+            ViewBag.Projects = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
             return View(dto);
         }
 
@@ -71,7 +77,7 @@ public class CostCentersController : Controller
             ProjectId = costCenter.ProjectId
         };
 
-        ViewBag.Projects = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery()), "Id", "Name");
+        ViewBag.Projects = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
         return View(dto);
     }
 
@@ -84,7 +90,7 @@ public class CostCentersController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
-            ViewBag.Projects = new SelectList(await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery()), "Id", "Name");
+            ViewBag.Projects = new SelectList((await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
             return View(dto);
         }
 

@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Departments;
 using BuilderERP.Application.Features.PurchaseRequisitions;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class PurchaseRequisitionsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery());
+        var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", requisitions);
+        }
+
         return View(requisitions);
     }
 
@@ -113,7 +119,7 @@ public class PurchaseRequisitionsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var departments = await _mediator.Send(new GetAllDepartmentsQuery());
-        ViewBag.Departments = new SelectList(departments, "Id", "Name");
+        var departments = await _mediator.Send(new GetAllDepartmentsQuery(PageSize: int.MaxValue));
+        ViewBag.Departments = new SelectList(departments.Items, "Id", "Name");
     }
 }

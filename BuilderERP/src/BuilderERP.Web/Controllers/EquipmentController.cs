@@ -6,6 +6,7 @@ using BuilderERP.Web.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -23,9 +24,15 @@ public class EquipmentController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var equipment = await _mediator.Send(new GetAllEquipmentQuery());
+        var equipment = await _mediator.Send(new GetAllEquipmentQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", equipment);
+        }
+
         return View(equipment);
     }
 

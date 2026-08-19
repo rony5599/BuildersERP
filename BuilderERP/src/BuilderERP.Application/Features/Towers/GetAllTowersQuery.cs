@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Towers;
 
-public record GetAllTowersQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<TowerDto>>;
+public record GetAllTowersQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<TowerDto>>;
 
-public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, IReadOnlyList<TowerDto>>
+public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, PagedResult<TowerDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, IRead
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<TowerDto>> Handle(GetAllTowersQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<TowerDto>> Handle(GetAllTowersQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Tower>().Query()
             .Include(t => t.Building).ThenInclude(b => b.Project)
@@ -31,7 +32,17 @@ public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, IRead
             query = query.Where(t => t.Building.ProjectId == request.ProjectId.Value);
         }
 
-        var towers = await query.ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<TowerDto>>(towers);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var towers = await query
+            .OrderBy(t => t.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<TowerDto>>(towers);
+        return new PagedResult<TowerDto>(items, totalCount, page, pageSize);
     }
 }

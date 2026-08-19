@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Bookings;
 using BuilderERP.Application.Features.Brokers;
 using BuilderERP.Application.Features.Customers;
@@ -32,9 +32,15 @@ public class BookingsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var bookings = await _mediator.Send(new GetAllBookingsQuery());
+        var bookings = await _mediator.Send(new GetAllBookingsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", bookings);
+        }
+
         return View(bookings);
     }
 
@@ -121,14 +127,14 @@ public class BookingsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName");
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
 
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery());
-        ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber");
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(units.Items, "Id", "UnitNumber");
 
-        var brokers = await _mediator.Send(new GetAllBrokersQuery());
-        ViewBag.Brokers = new SelectList(brokers, "Id", "Name");
+        var brokers = await _mediator.Send(new GetAllBrokersQuery(PageSize: int.MaxValue));
+        ViewBag.Brokers = new SelectList(brokers.Items, "Id", "Name");
 
         var users = await _userManager.Users.ToListAsync();
         ViewBag.CollectionOfficers = new SelectList(users, "Id", "FullName");

@@ -26,9 +26,15 @@ public class RfqsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var rfqs = await _mediator.Send(new GetAllRfqsQuery());
+        var rfqs = await _mediator.Send(new GetAllRfqsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", rfqs);
+        }
+
         return View(rfqs);
     }
 
@@ -113,10 +119,10 @@ public class RfqsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery());
-        ViewBag.PurchaseRequisitions = new SelectList(requisitions, "Id", "RequisitionNumber");
+        var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery(PageSize: int.MaxValue));
+        ViewBag.PurchaseRequisitions = new SelectList(requisitions.Items, "Id", "RequisitionNumber");
 
-        var suppliers = await _mediator.Send(new GetAllSuppliersQuery());
-        ViewBag.Suppliers = new SelectList(suppliers, "Id", "Name");
+        var suppliers = await _mediator.Send(new GetAllSuppliersQuery(PageSize: int.MaxValue));
+        ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name");
     }
 }

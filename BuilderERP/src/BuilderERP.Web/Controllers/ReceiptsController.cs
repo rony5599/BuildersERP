@@ -25,9 +25,15 @@ public class ReceiptsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var receipts = await _mediator.Send(new GetAllReceiptsQuery());
+        var receipts = await _mediator.Send(new GetAllReceiptsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", receipts);
+        }
+
         return View(receipts);
     }
 
@@ -112,7 +118,7 @@ public class ReceiptsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var installments = await _mediator.Send(new GetAllInstallmentsQuery());
-        ViewBag.Installments = new SelectList(installments, "Id", "InstallmentNumber");
+        var installments = await _mediator.Send(new GetAllInstallmentsQuery(PageSize: int.MaxValue));
+        ViewBag.Installments = new SelectList(installments.Items, "Id", "InstallmentNumber");
     }
 }

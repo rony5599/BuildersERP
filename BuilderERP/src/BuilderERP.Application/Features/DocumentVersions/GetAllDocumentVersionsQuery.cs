@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DocumentVersions;
 
-public record GetAllDocumentVersionsQuery(Guid? DocumentId = null) : IRequest<IReadOnlyList<DocumentVersionDto>>;
+public record GetAllDocumentVersionsQuery(Guid? DocumentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DocumentVersionDto>>;
 
-public class GetAllDocumentVersionsQueryHandler : IRequestHandler<GetAllDocumentVersionsQuery, IReadOnlyList<DocumentVersionDto>>
+public class GetAllDocumentVersionsQueryHandler : IRequestHandler<GetAllDocumentVersionsQuery, PagedResult<DocumentVersionDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllDocumentVersionsQueryHandler : IRequestHandler<GetAllDocument
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<DocumentVersionDto>> Handle(GetAllDocumentVersionsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<DocumentVersionDto>> Handle(GetAllDocumentVersionsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<DocumentVersion>().Query()
             .Include(x => x.Document)
@@ -31,7 +32,17 @@ public class GetAllDocumentVersionsQueryHandler : IRequestHandler<GetAllDocument
             query = query.Where(x => x.DocumentId == request.DocumentId.Value);
         }
 
-        var items = await query.OrderByDescending(x => x.UploadedDate).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<DocumentVersionDto>>(items);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var results = await query
+            .OrderByDescending(x => x.UploadedDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<DocumentVersionDto>>(results);
+        return new PagedResult<DocumentVersionDto>(items, totalCount, page, pageSize);
     }
 }

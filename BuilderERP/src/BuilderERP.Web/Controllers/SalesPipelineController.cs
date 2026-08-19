@@ -1,4 +1,4 @@
-using BuilderERP.Application.Features.Leads;
+﻿using BuilderERP.Application.Features.Leads;
 using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -19,8 +19,8 @@ public class SalesPipelineController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var leads = await _mediator.Send(new GetAllLeadsQuery());
-        return View(leads.Where(l => l.IsActive).ToList());
+        var leads = await _mediator.Send(new GetAllLeadsQuery(PageSize: int.MaxValue));
+        return View(leads.Items.Where(l => l.IsActive).ToList());
     }
 
     [HttpPost]

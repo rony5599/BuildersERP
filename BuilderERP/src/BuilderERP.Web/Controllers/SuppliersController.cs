@@ -23,9 +23,15 @@ public class SuppliersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var suppliers = await _mediator.Send(new GetAllSuppliersQuery());
+        var suppliers = await _mediator.Send(new GetAllSuppliersQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", suppliers);
+        }
+
         return View(suppliers);
     }
 

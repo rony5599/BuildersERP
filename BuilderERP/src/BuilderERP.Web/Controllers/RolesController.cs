@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -31,14 +32,29 @@ public class RolesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(int page = 1, int pageSize = 25)
     {
-        var roles = _roleManager.Roles
+        page = page < 1 ? 1 : page;
+        pageSize = pageSize < 1 ? 25 : pageSize;
+
+        var query = _roleManager.Roles
             .OrderBy(r => r.Name)
-            .Select(r => new RoleDto { Id = r.Id, Name = r.Name ?? string.Empty, Description = r.Description })
+            .Select(r => new RoleDto { Id = r.Id, Name = r.Name ?? string.Empty, Description = r.Description });
+
+        var totalCount = query.Count();
+        var roles = query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToList();
 
-        return View(roles);
+        var result = new PagedResult<RoleDto>(roles, totalCount, page, pageSize);
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", result);
+        }
+
+        return View(result);
     }
 
     [PermissionAuthorize(PermissionNames.RoleManage)]

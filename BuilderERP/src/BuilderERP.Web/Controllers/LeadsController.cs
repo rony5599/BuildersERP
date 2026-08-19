@@ -33,9 +33,15 @@ public class LeadsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var leads = await _mediator.Send(new GetAllLeadsQuery());
+        var leads = await _mediator.Send(new GetAllLeadsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", leads);
+        }
+
         return View(leads);
     }
 

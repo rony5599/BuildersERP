@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.FollowUps;
 using BuilderERP.Application.Features.Leads;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class FollowUpsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var followUps = await _mediator.Send(new GetAllFollowUpsQuery());
+        var followUps = await _mediator.Send(new GetAllFollowUpsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", followUps);
+        }
+
         return View(followUps);
     }
 
@@ -111,7 +117,7 @@ public class FollowUpsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var leads = await _mediator.Send(new GetAllLeadsQuery());
-        ViewBag.Leads = new SelectList(leads, "Id", "Name");
+        var leads = await _mediator.Send(new GetAllLeadsQuery(PageSize: int.MaxValue));
+        ViewBag.Leads = new SelectList(leads.Items, "Id", "Name");
     }
 }

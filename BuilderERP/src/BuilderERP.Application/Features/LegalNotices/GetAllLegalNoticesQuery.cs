@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.LegalNotices;
 
-public record GetAllLegalNoticesQuery : IRequest<IReadOnlyList<LegalNoticeDto>>;
+public record GetAllLegalNoticesQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<LegalNoticeDto>>;
 
-public class GetAllLegalNoticesQueryHandler : IRequestHandler<GetAllLegalNoticesQuery, IReadOnlyList<LegalNoticeDto>>
+public class GetAllLegalNoticesQueryHandler : IRequestHandler<GetAllLegalNoticesQuery, PagedResult<LegalNoticeDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,23 @@ public class GetAllLegalNoticesQueryHandler : IRequestHandler<GetAllLegalNotices
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<LegalNoticeDto>> Handle(GetAllLegalNoticesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<LegalNoticeDto>> Handle(GetAllLegalNoticesQuery request, CancellationToken cancellationToken)
     {
-        var items = await _unitOfWork.Repository<LegalNotice>().Query()
+        var query = _unitOfWork.Repository<LegalNotice>().Query()
             .Include(x => x.Project)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
             .OrderBy(x => x.NoticeNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<LegalNoticeDto>>(items);
+
+        var dtos = _mapper.Map<IReadOnlyList<LegalNoticeDto>>(items);
+        return new PagedResult<LegalNoticeDto>(dtos, totalCount, page, pageSize);
     }
 }

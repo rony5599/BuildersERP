@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockTransfers;
 
-public record GetAllStockTransfersQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<StockTransferDto>>;
+public record GetAllStockTransfersQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockTransferDto>>;
 
-public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTransfersQuery, IReadOnlyList<StockTransferDto>>
+public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTransfersQuery, PagedResult<StockTransferDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTrans
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<StockTransferDto>> Handle(GetAllStockTransfersQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<StockTransferDto>> Handle(GetAllStockTransfersQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<StockTransfer>().Query()
             .Include(t => t.Material)
@@ -33,7 +34,17 @@ public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTrans
             query = query.Where(t => t.FromWarehouse.ProjectId == request.ProjectId.Value || t.ToWarehouse.ProjectId == request.ProjectId.Value);
         }
 
-        var transfers = await query.ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<StockTransferDto>>(transfers);
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var transfers = await query
+            .OrderByDescending(t => t.TransferDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<StockTransferDto>>(transfers);
+        return new PagedResult<StockTransferDto>(items, totalCount, page, pageSize);
     }
 }

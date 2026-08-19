@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.QualityChecklists;
 
-public record GetAllQualityChecklistsQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<QualityChecklistDto>>;
+public record GetAllQualityChecklistsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<QualityChecklistDto>>;
 
-public class GetAllQualityChecklistsQueryHandler : IRequestHandler<GetAllQualityChecklistsQuery, IReadOnlyList<QualityChecklistDto>>
+public class GetAllQualityChecklistsQueryHandler : IRequestHandler<GetAllQualityChecklistsQuery, PagedResult<QualityChecklistDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllQualityChecklistsQueryHandler : IRequestHandler<GetAllQuality
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<QualityChecklistDto>> Handle(GetAllQualityChecklistsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<QualityChecklistDto>> Handle(GetAllQualityChecklistsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<QualityChecklist>().Query()
             .Include(x => x.Project)
@@ -31,10 +32,17 @@ public class GetAllQualityChecklistsQueryHandler : IRequestHandler<GetAllQuality
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var checklists = await query
             .OrderByDescending(x => x.ChecklistDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<QualityChecklistDto>>(checklists);
+        var items = _mapper.Map<IReadOnlyList<QualityChecklistDto>>(checklists);
+        return new PagedResult<QualityChecklistDto>(items, totalCount, page, pageSize);
     }
 }

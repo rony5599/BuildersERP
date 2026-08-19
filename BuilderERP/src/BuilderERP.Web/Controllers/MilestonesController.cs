@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Milestones;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,16 @@ public class MilestonesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId)
+    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
     {
-        var milestones = await _mediator.Send(new GetAllMilestonesQuery(projectId));
+        var milestones = await _mediator.Send(new GetAllMilestonesQuery(projectId, page, pageSize));
+        ViewBag.SelectedProjectId = projectId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", milestones);
+        }
+
         return View(milestones);
     }
 
@@ -112,6 +119,6 @@ public class MilestonesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        ViewBag.Projects = new SelectList(await _mediator.Send(new GetAllProjectsQuery()), "Id", "Name");
+        ViewBag.Projects = new SelectList((await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name");
     }
 }

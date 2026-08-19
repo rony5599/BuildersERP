@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SecurityIncidents;
 
-public record GetAllSecurityIncidentsQuery : IRequest<IReadOnlyList<SecurityIncidentDto>>;
+public record GetAllSecurityIncidentsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<SecurityIncidentDto>>;
 
-public class GetAllSecurityIncidentsQueryHandler : IRequestHandler<GetAllSecurityIncidentsQuery, IReadOnlyList<SecurityIncidentDto>>
+public class GetAllSecurityIncidentsQueryHandler : IRequestHandler<GetAllSecurityIncidentsQuery, PagedResult<SecurityIncidentDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,12 +21,23 @@ public class GetAllSecurityIncidentsQueryHandler : IRequestHandler<GetAllSecurit
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<SecurityIncidentDto>> Handle(GetAllSecurityIncidentsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<SecurityIncidentDto>> Handle(GetAllSecurityIncidentsQuery request, CancellationToken cancellationToken)
     {
-        var items = await _unitOfWork.Repository<SecurityIncident>().Query()
+        var query = _unitOfWork.Repository<SecurityIncident>().Query()
             .Include(x => x.Project)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var results = await query
             .OrderBy(x => x.IncidentNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<SecurityIncidentDto>>(items);
+
+        var items = _mapper.Map<IReadOnlyList<SecurityIncidentDto>>(results);
+        return new PagedResult<SecurityIncidentDto>(items, totalCount, page, pageSize);
     }
 }

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.FlatHandovers;
 
-public record GetAllFlatHandoversQuery : IRequest<IReadOnlyList<FlatHandoverDto>>;
+public record GetAllFlatHandoversQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<FlatHandoverDto>>;
 
-public class GetAllFlatHandoversQueryHandler : IRequestHandler<GetAllFlatHandoversQuery, IReadOnlyList<FlatHandoverDto>>
+public class GetAllFlatHandoversQueryHandler : IRequestHandler<GetAllFlatHandoversQuery, PagedResult<FlatHandoverDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,13 +21,24 @@ public class GetAllFlatHandoversQueryHandler : IRequestHandler<GetAllFlatHandove
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<FlatHandoverDto>> Handle(GetAllFlatHandoversQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<FlatHandoverDto>> Handle(GetAllFlatHandoversQuery request, CancellationToken cancellationToken)
     {
-        var items = await _unitOfWork.Repository<FlatHandover>().Query()
+        var query = _unitOfWork.Repository<FlatHandover>().Query()
             .Include(x => x.PropertyUnit)
             .Include(x => x.Customer)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var results = await query
             .OrderBy(x => x.HandoverNumber)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<FlatHandoverDto>>(items);
+
+        var items = _mapper.Map<IReadOnlyList<FlatHandoverDto>>(results);
+        return new PagedResult<FlatHandoverDto>(items, totalCount, page, pageSize);
     }
 }

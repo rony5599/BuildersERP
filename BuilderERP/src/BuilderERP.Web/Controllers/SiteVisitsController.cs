@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Leads;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Application.Features.SiteVisits;
@@ -35,9 +35,15 @@ public class SiteVisitsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var visits = await _mediator.Send(new GetAllSiteVisitsQuery());
+        var visits = await _mediator.Send(new GetAllSiteVisitsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", visits);
+        }
+
         return View(visits);
     }
 
@@ -122,11 +128,11 @@ public class SiteVisitsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var leads = await _mediator.Send(new GetAllLeadsQuery());
-        ViewBag.Leads = new SelectList(leads, "Id", "Name");
+        var leads = await _mediator.Send(new GetAllLeadsQuery(PageSize: int.MaxValue));
+        ViewBag.Leads = new SelectList(leads.Items, "Id", "Name");
 
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery());
-        ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber");
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(units.Items, "Id", "UnitNumber");
 
         var users = await _userManager.Users.ToListAsync();
         ViewBag.Users = new SelectList(users, "Id", "FullName");

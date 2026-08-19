@@ -26,9 +26,15 @@ public class FlatHandoversController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllFlatHandoversQuery());
+        var items = await _mediator.Send(new GetAllFlatHandoversQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -114,9 +120,9 @@ public class FlatHandoversController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var propertyunits = await _mediator.Send(new GetAllPropertyUnitsQuery());
-        ViewBag.PropertyUnits = new SelectList(propertyunits, "Id", "UnitNumber");
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName");
+        var propertyunits = await _mediator.Send(new GetAllPropertyUnitsQuery(PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(propertyunits.Items, "Id", "UnitNumber");
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
     }
 }

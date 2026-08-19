@@ -1,0 +1,68 @@
+@using BuilderERP.Application.Common
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@model PagedResult<BuilderERP.Application.DTOs.VendorQuotationDto>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Quotation #</th>
+            <th>RFQ</th>
+            <th>Requisition</th>
+            <th>Supplier</th>
+            <th>Amount</th>
+            <th>Delivery (days)</th>
+            <th>Status</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var quotation in Model.Items)
+        {
+            <tr>
+                <td>@quotation.QuotationNumber</td>
+                <td>@quotation.RfqNumber</td>
+                <td>
+                    <a asp-action="Compare" asp-route-requisitionId="@quotation.PurchaseRequisitionId">@quotation.RequisitionNumber</a>
+                </td>
+                <td>@quotation.SupplierName</td>
+                <td>@quotation.QuotedAmount</td>
+                <td>@quotation.DeliveryDays</td>
+                <td>@quotation.Status</td>
+                <td>
+                    <span class="badge @(quotation.IsActive ? "bg-success" : "bg-secondary")">
+                        @(quotation.IsActive ? "Active" : "Inactive")
+                    </span>
+                </td>
+                <td class="text-end">
+                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationManage))
+                    {
+                        <a asp-action="Edit" asp-route-id="@quotation.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <form asp-action="ToggleActive" asp-route-id="@quotation.Id" asp-route-isActive="@quotation.IsActive" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                @(quotation.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Items.Count == 0)
+        {
+            <tr>
+                <td colspan="9" class="text-center text-muted">No vendor quotations found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+{
+    Page = Model.Page,
+    PageSize = Model.PageSize,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    Action = "Index",
+    RouteValues = new()
+})" />

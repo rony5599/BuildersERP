@@ -23,9 +23,15 @@ public class BrokersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var brokers = await _mediator.Send(new GetAllBrokersQuery());
+        var brokers = await _mediator.Send(new GetAllBrokersQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", brokers);
+        }
+
         return View(brokers);
     }
 

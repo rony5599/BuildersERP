@@ -1,4 +1,5 @@
-@model IReadOnlyList<BuilderERP.Application.DTOs.FollowUpDto>
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.FollowUpDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @{
@@ -13,42 +14,6 @@
     }
 </div>
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Lead</th>
-            <th>Follow-up Date</th>
-            <th>Next Follow-up</th>
-            <th>Outcome</th>
-            <th>Active</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var followUp in Model)
-        {
-            <tr>
-                <td>@followUp.LeadName</td>
-                <td>@followUp.FollowUpDate.ToString("yyyy-MM-dd")</td>
-                <td>@followUp.NextFollowUpDate?.ToString("yyyy-MM-dd")</td>
-                <td>@followUp.Outcome</td>
-                <td>
-                    <span class="badge @(followUp.IsActive ? "bg-success" : "bg-secondary")">
-                        @(followUp.IsActive ? "Active" : "Inactive")
-                    </span>
-                </td>
-                <td class="text-end">
-                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.FollowUpManage))
-                    {
-                        <a asp-action="Edit" asp-route-id="@followUp.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <form asp-action="ToggleActive" asp-route-id="@followUp.Id" asp-route-isActive="@followUp.IsActive" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                @(followUp.IsActive ? "Deactivate" : "Activate")
-                            </button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

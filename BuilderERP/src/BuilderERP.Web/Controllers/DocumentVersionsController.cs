@@ -32,9 +32,16 @@ public class DocumentVersionsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? documentId)
+    public async Task<IActionResult> Index(Guid? documentId, int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllDocumentVersionsQuery(documentId));
+        var items = await _mediator.Send(new GetAllDocumentVersionsQuery(documentId, page, pageSize));
+        ViewBag.SelectedDocumentId = documentId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -159,7 +166,7 @@ public class DocumentVersionsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var documents = await _mediator.Send(new GetAllDocumentsQuery());
-        ViewBag.Documents = new SelectList(documents, "Id", "DocumentNumber");
+        var documents = await _mediator.Send(new GetAllDocumentsQuery(PageSize: int.MaxValue));
+        ViewBag.Documents = new SelectList(documents.Items, "Id", "DocumentNumber");
     }
 }

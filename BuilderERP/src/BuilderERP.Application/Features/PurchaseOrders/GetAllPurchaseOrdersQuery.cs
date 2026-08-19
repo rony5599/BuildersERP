@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseOrders;
 
-public record GetAllPurchaseOrdersQuery : IRequest<IReadOnlyList<PurchaseOrderDto>>;
+public record GetAllPurchaseOrdersQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<PurchaseOrderDto>>;
 
-public class GetAllPurchaseOrdersQueryHandler : IRequestHandler<GetAllPurchaseOrdersQuery, IReadOnlyList<PurchaseOrderDto>>
+public class GetAllPurchaseOrdersQueryHandler : IRequestHandler<GetAllPurchaseOrdersQuery, PagedResult<PurchaseOrderDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,13 +21,25 @@ public class GetAllPurchaseOrdersQueryHandler : IRequestHandler<GetAllPurchaseOr
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<PurchaseOrderDto>> Handle(GetAllPurchaseOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<PurchaseOrderDto>> Handle(GetAllPurchaseOrdersQuery request, CancellationToken cancellationToken)
     {
-        var orders = await _unitOfWork.Repository<PurchaseOrder>().Query()
+        var query = _unitOfWork.Repository<PurchaseOrder>().Query()
             .Include(o => o.VendorQuotation)
             .ThenInclude(v => v.Rfq)
             .ThenInclude(r => r.Supplier)
+            .AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var orders = await query
+            .OrderByDescending(o => o.OrderDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<PurchaseOrderDto>>(orders);
+
+        var items = _mapper.Map<IReadOnlyList<PurchaseOrderDto>>(orders);
+        return new PagedResult<PurchaseOrderDto>(items, totalCount, page, pageSize);
     }
 }

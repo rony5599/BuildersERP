@@ -1,3 +1,4 @@
+﻿using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Companies;
 using BuilderERP.Domain.Entities;
@@ -36,12 +37,20 @@ public class UsersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var users = await _userManager.Users
+        page = page < 1 ? 1 : page;
+        pageSize = pageSize < 1 ? 25 : pageSize;
+
+        var query = _userManager.Users
             .Include(u => u.Company)
             .Include(u => u.Branch)
-            .OrderBy(u => u.Email)
+            .OrderBy(u => u.Email);
+
+        var totalCount = await query.CountAsync();
+        var users = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
 
         var dtos = new List<UserDto>();
@@ -60,7 +69,14 @@ public class UsersController : Controller
             });
         }
 
-        return View(dtos);
+        var result = new PagedResult<UserDto>(dtos, totalCount, page, pageSize);
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", result);
+        }
+
+        return View(result);
     }
 
     [PermissionAuthorize(PermissionNames.UserManage)]
@@ -170,11 +186,11 @@ public class UsersController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var companies = await _mediator.Send(new GetAllCompaniesQuery());
-        ViewBag.Companies = new SelectList(companies, "Id", "Name");
+        var companies = await _mediator.Send(new GetAllCompaniesQuery(PageSize: int.MaxValue));
+        ViewBag.Companies = new SelectList(companies.Items, "Id", "Name");
 
-        var branches = await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery());
-        ViewBag.Branches = new SelectList(branches, "Id", "Name");
+        var branches = await _mediator.Send(new BuilderERP.Application.Features.Branches.GetAllBranchesQuery(PageSize: int.MaxValue));
+        ViewBag.Branches = new SelectList(branches.Items, "Id", "Name");
 
         var roles = _roleManager.Roles.Select(r => r.Name).ToList();
         ViewBag.Roles = new SelectList(roles);

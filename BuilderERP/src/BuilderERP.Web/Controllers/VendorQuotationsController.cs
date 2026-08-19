@@ -25,9 +25,15 @@ public class VendorQuotationsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery());
+        var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", quotations);
+        }
+
         return View(quotations);
     }
 
@@ -128,7 +134,7 @@ public class VendorQuotationsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var rfqs = await _mediator.Send(new GetAllRfqsQuery());
-        ViewBag.Rfqs = new SelectList(rfqs, "Id", "RfqNumber");
+        var rfqs = await _mediator.Send(new GetAllRfqsQuery(PageSize: int.MaxValue));
+        ViewBag.Rfqs = new SelectList(rfqs.Items, "Id", "RfqNumber");
     }
 }

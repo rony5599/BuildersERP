@@ -1,0 +1,46 @@
+@using BuilderERP.Application.Common
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@model PagedResult<BuilderERP.Application.DTOs.RoleDto>
+
+<table class="table table-striped table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model.Items)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>@role.Description</td>
+                <td class="text-end">
+                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleManage))
+                    {
+                        <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a asp-action="Permissions" asp-route-id="@role.Id" class="btn btn-sm btn-outline-primary">Permissions</a>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Items.Count == 0)
+        {
+            <tr>
+                <td colspan="3" class="text-center text-muted">No roles found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+{
+    Page = Model.Page,
+    PageSize = Model.PageSize,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    Action = "Index",
+    RouteValues = new()
+})" />

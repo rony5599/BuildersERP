@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.Installments;
 using BuilderERP.Application.Features.Projects;
@@ -27,9 +27,18 @@ public class InstallmentsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId, Guid? customerId)
+    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId, Guid? customerId, int page = 1, int pageSize = 25)
     {
-        var installments = await _mediator.Send(new GetAllInstallmentsQuery(projectId, propertyUnitId, customerId));
+        var installments = await _mediator.Send(new GetAllInstallmentsQuery(projectId, propertyUnitId, customerId, page, pageSize));
+        ViewBag.SelectedProjectId = projectId;
+        ViewBag.SelectedPropertyUnitId = propertyUnitId;
+        ViewBag.SelectedCustomerId = customerId;
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", installments);
+        }
+
         await PopulateFiltersAsync(projectId, propertyUnitId, customerId);
         return View(installments);
     }
@@ -137,19 +146,19 @@ public class InstallmentsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var plans = await _mediator.Send(new BuilderERP.Application.Features.InstallmentPlans.GetAllInstallmentPlansQuery());
-        ViewBag.InstallmentPlans = new SelectList(plans, "Id", "TotalAmount");
+        var plans = await _mediator.Send(new BuilderERP.Application.Features.InstallmentPlans.GetAllInstallmentPlansQuery(PageSize: int.MaxValue));
+        ViewBag.InstallmentPlans = new SelectList(plans.Items, "Id", "TotalAmount");
     }
 
     private async Task PopulateFiltersAsync(Guid? projectId, Guid? propertyUnitId, Guid? customerId)
     {
-        var projects = await _mediator.Send(new GetAllProjectsQuery());
-        ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
 
-        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId));
-        ViewBag.PropertyUnits = new SelectList(units, "Id", "UnitNumber", propertyUnitId);
+        var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId, PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(units.Items, "Id", "UnitNumber", propertyUnitId);
 
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
-        ViewBag.Customers = new SelectList(customers, "Id", "FullName", customerId);
+        var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
+        ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName", customerId);
     }
 }

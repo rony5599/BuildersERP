@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Projects;
 
-public record GetAllProjectsQuery : IRequest<IReadOnlyList<ProjectDto>>;
+public record GetAllProjectsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<ProjectDto>>;
 
-public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, IReadOnlyList<ProjectDto>>
+public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, PagedResult<ProjectDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,9 +21,21 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, I
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<ProjectDto>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<ProjectDto>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
     {
-        var projects = await _unitOfWork.Repository<Project>().Query().Include(p => p.Branch).ToListAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<ProjectDto>>(projects);
+        var query = _unitOfWork.Repository<Project>().Query().Include(p => p.Branch).AsQueryable();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var projects = await query
+            .OrderBy(p => p.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = _mapper.Map<IReadOnlyList<ProjectDto>>(projects);
+        return new PagedResult<ProjectDto>(items, totalCount, page, pageSize);
     }
 }

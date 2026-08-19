@@ -23,9 +23,15 @@ public class ContractorsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var contractors = await _mediator.Send(new GetAllContractorsQuery());
+        var contractors = await _mediator.Send(new GetAllContractorsQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", contractors);
+        }
+
         return View(contractors);
     }
 

@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BudgetLines;
 
-public record GetAllBudgetLinesQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<BudgetLineDto>>;
+public record GetAllBudgetLinesQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BudgetLineDto>>;
 
-public class GetAllBudgetLinesQueryHandler : IRequestHandler<GetAllBudgetLinesQuery, IReadOnlyList<BudgetLineDto>>
+public class GetAllBudgetLinesQueryHandler : IRequestHandler<GetAllBudgetLinesQuery, PagedResult<BudgetLineDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ public class GetAllBudgetLinesQueryHandler : IRequestHandler<GetAllBudgetLinesQu
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<BudgetLineDto>> Handle(GetAllBudgetLinesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<BudgetLineDto>> Handle(GetAllBudgetLinesQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<BudgetLine>().Query()
             .Include(x => x.Project)
@@ -31,10 +32,17 @@ public class GetAllBudgetLinesQueryHandler : IRequestHandler<GetAllBudgetLinesQu
             query = query.Where(x => x.ProjectId == request.ProjectId.Value);
         }
 
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 25 : request.PageSize;
+
+        var totalCount = await query.CountAsync(cancellationToken);
         var budgetLines = await query
             .OrderByDescending(x => x.PeriodStart)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<IReadOnlyList<BudgetLineDto>>(budgetLines);
+        var items = _mapper.Map<IReadOnlyList<BudgetLineDto>>(budgetLines);
+        return new PagedResult<BudgetLineDto>(items, totalCount, page, pageSize);
     }
 }

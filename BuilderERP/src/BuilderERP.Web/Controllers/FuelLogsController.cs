@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Equipments;
 using BuilderERP.Application.Features.FuelLogs;
 using BuilderERP.Shared.Authorization;
@@ -25,9 +25,15 @@ public class FuelLogsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? equipmentId, int page = 1, int pageSize = 25)
     {
-        var logs = await _mediator.Send(new GetAllFuelLogsQuery());
+        var logs = await _mediator.Send(new GetAllFuelLogsQuery(equipmentId, page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", logs);
+        }
+
         return View(logs);
     }
 
@@ -112,7 +118,7 @@ public class FuelLogsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var equipment = await _mediator.Send(new GetAllEquipmentQuery());
-        ViewBag.Equipment = new SelectList(equipment, "Id", "Name");
+        var equipment = await _mediator.Send(new GetAllEquipmentQuery(PageSize: int.MaxValue));
+        ViewBag.Equipment = new SelectList(equipment.Items, "Id", "Name");
     }
 }

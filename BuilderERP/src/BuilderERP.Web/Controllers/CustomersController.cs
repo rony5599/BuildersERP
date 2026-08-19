@@ -1,4 +1,4 @@
-using BuilderERP.Application.DTOs;
+﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,9 +24,15 @@ public class CustomersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var customers = await _mediator.Send(new GetAllCustomersQuery());
+        var customers = await _mediator.Send(new GetAllCustomersQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", customers);
+        }
+
         return View(customers);
     }
 
@@ -113,10 +119,10 @@ public class CustomersController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var companies = await _mediator.Send(new BuilderERP.Application.Features.Companies.GetAllCompaniesQuery());
-        ViewBag.Companies = new SelectList(companies, "Id", "Name");
+        var companies = await _mediator.Send(new BuilderERP.Application.Features.Companies.GetAllCompaniesQuery(PageSize: int.MaxValue));
+        ViewBag.Companies = new SelectList(companies.Items, "Id", "Name");
 
-        var leads = await _mediator.Send(new BuilderERP.Application.Features.Leads.GetAllLeadsQuery());
-        ViewBag.Leads = new SelectList(leads, "Id", "Name");
+        var leads = await _mediator.Send(new BuilderERP.Application.Features.Leads.GetAllLeadsQuery(PageSize: int.MaxValue));
+        ViewBag.Leads = new SelectList(leads.Items, "Id", "Name");
     }
 }

@@ -25,9 +25,15 @@ public class ApartmentMaintenancesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
     {
-        var items = await _mediator.Send(new GetAllApartmentMaintenancesQuery());
+        var items = await _mediator.Send(new GetAllApartmentMaintenancesQuery(page, pageSize));
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", items);
+        }
+
         return View(items);
     }
 
@@ -115,7 +121,7 @@ public class ApartmentMaintenancesController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var propertyunits = await _mediator.Send(new GetAllPropertyUnitsQuery());
-        ViewBag.PropertyUnits = new SelectList(propertyunits, "Id", "UnitNumber");
+        var propertyunits = await _mediator.Send(new GetAllPropertyUnitsQuery(PageSize: int.MaxValue));
+        ViewBag.PropertyUnits = new SelectList(propertyunits.Items, "Id", "UnitNumber");
     }
 }
