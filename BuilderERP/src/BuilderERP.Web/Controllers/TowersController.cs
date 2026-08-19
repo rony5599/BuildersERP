@@ -36,6 +36,10 @@ public class TowersController : Controller
             return PartialView("_Grid", towers);
         }
 
+        //var projects = await _mediator.Send(new GetAllProjectsQuery());
+        //ViewBag.Projects = new SelectList(projects, "Id", "Name", projectId);
+        //return View(towers);
+
         var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(towers);
