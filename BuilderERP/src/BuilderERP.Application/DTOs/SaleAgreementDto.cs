@@ -12,6 +12,8 @@ public class SaleAgreementDto
     public bool IsActive { get; set; }
     public Guid BookingId { get; set; }
     public string BookingUnitNumber { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreateSaleAgreementDto

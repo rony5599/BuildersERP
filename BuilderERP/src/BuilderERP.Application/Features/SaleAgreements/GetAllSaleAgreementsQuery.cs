@@ -25,7 +25,7 @@ public class GetAllSaleAgreementsQueryHandler : IRequestHandler<GetAllSaleAgreem
     {
         var query = _unitOfWork.Repository<SaleAgreement>().Query()
             .Include(a => a.Booking)
-            .ThenInclude(b => b.PropertyUnit);
+            .ThenInclude(b => b.PropertyUnit).ThenInclude(u => u.Floor).ThenInclude(f => f.Tower).ThenInclude(t => t.Building).ThenInclude(bd => bd.Project);
 
         var page = request.Page < 1 ? 1 : request.Page;
         var pageSize = request.PageSize < 1 ? 25 : request.PageSize;

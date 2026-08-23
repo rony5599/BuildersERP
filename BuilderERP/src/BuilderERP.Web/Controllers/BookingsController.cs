@@ -2,6 +2,7 @@
 using BuilderERP.Application.Features.Bookings;
 using BuilderERP.Application.Features.Brokers;
 using BuilderERP.Application.Features.Customers;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Shared.Authorization;
@@ -130,8 +131,11 @@ public class BookingsController : Controller
         var customers = await _mediator.Send(new GetAllCustomersQuery(PageSize: int.MaxValue));
         ViewBag.Customers = new SelectList(customers.Items, "Id", "FullName");
 
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
+
         var units = await _mediator.Send(new GetAllPropertyUnitsQuery(PageSize: int.MaxValue));
-        ViewBag.PropertyUnits = new SelectList(units.Items, "Id", "UnitNumber");
+        ViewBag.PropertyUnits = units.Items;
 
         var brokers = await _mediator.Send(new GetAllBrokersQuery(PageSize: int.MaxValue));
         ViewBag.Brokers = new SelectList(brokers.Items, "Id", "Name");

@@ -11,6 +11,8 @@ public class BookingMappingProfile : Profile
         CreateMap<Booking, BookingDto>()
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.FullName : string.Empty))
             .ForMember(dest => dest.PropertyUnitNumber, opt => opt.MapFrom(src => src.PropertyUnit != null ? src.PropertyUnit.UnitNumber : string.Empty))
+            .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.PropertyUnit != null && src.PropertyUnit.Floor != null && src.PropertyUnit.Floor.Tower != null && src.PropertyUnit.Floor.Tower.Building != null ? src.PropertyUnit.Floor.Tower.Building.ProjectId : Guid.Empty))
+            .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.PropertyUnit != null && src.PropertyUnit.Floor != null && src.PropertyUnit.Floor.Tower != null && src.PropertyUnit.Floor.Tower.Building != null && src.PropertyUnit.Floor.Tower.Building.Project != null ? src.PropertyUnit.Floor.Tower.Building.Project.Name : string.Empty))
             .ForMember(dest => dest.BrokerName, opt => opt.MapFrom(src => src.Broker != null ? src.Broker.Name : null))
             .ForMember(dest => dest.CollectionOfficerName, opt => opt.MapFrom(src => src.CollectionOfficer != null ? src.CollectionOfficer.FullName : null));
         CreateMap<CreateBookingDto, Booking>();

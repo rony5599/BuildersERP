@@ -15,9 +15,30 @@
         <span asp-validation-for="AgreementNumber" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label class="form-label">Project</label>
+        <select id="ProjectFilter" class="form-select">
+            <option value="">-- Select Project --</option>
+            @foreach (var project in (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Projects)
+            {
+                <option value="@project.Value">@project.Text</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
         <label asp-for="BookingId" class="form-label"></label>
-        <select asp-for="BookingId" asp-items="ViewBag.Bookings" class="form-select">
+        <select asp-for="BookingId" class="form-select" id="BookingId">
             <option value="">-- Select Booking --</option>
+            @foreach (var booking in (IEnumerable<BuilderERP.Application.DTOs.BookingDto>)ViewBag.Bookings)
+            {
+                if (booking.Id == Model.BookingId)
+                {
+                    <option value="@booking.Id" data-project-id="@booking.ProjectId" selected>@booking.PropertyUnitNumber</option>
+                }
+                else
+                {
+                    <option value="@booking.Id" data-project-id="@booking.ProjectId">@booking.PropertyUnitNumber</option>
+                }
+            }
         </select>
         <span asp-validation-for="BookingId" class="text-danger"></span>
     </div>
@@ -38,3 +59,37 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var projectSelect = document.getElementById('ProjectFilter');
+            var bookingSelect = document.getElementById('BookingId');
+            var bookingOptions = Array.prototype.slice.call(bookingSelect.options);
+            var selectedOption = bookingOptions.find(function (opt) { return opt.selected; });
+
+            if (selectedOption && selectedOption.getAttribute('data-project-id')) {
+                projectSelect.value = selectedOption.getAttribute('data-project-id');
+            }
+
+            function filterBookings() {
+                var projectId = projectSelect.value;
+                var currentValue = bookingSelect.value;
+                bookingSelect.innerHTML = '';
+                bookingSelect.appendChild(bookingOptions[0].cloneNode(true));
+                bookingOptions.forEach(function (opt) {
+                    if (opt.value === '') return;
+                    if (!projectId || opt.getAttribute('data-project-id') === projectId) {
+                        var clone = opt.cloneNode(true);
+                        if (opt.value === currentValue) {
+                            clone.selected = true;
+                        }
+                        bookingSelect.appendChild(clone);
+                    }
+                });
+            }
+
+            projectSelect.addEventListener('change', filterBookings);
+        })();
+    </script>
+}

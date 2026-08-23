@@ -14,6 +14,8 @@ public class BookingDto
     public string CustomerName { get; set; } = string.Empty;
     public Guid PropertyUnitId { get; set; }
     public string PropertyUnitNumber { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public Guid? BrokerId { get; set; }
     public string? BrokerName { get; set; }
     public Guid? CollectionOfficerId { get; set; }

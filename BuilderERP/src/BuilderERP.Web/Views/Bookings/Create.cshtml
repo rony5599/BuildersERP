@@ -16,9 +16,23 @@
         <span asp-validation-for="CustomerId" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label class="form-label">Project</label>
+        <select id="ProjectFilter" class="form-select">
+            <option value="">-- Select Project --</option>
+            @foreach (var project in (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Projects)
+            {
+                <option value="@project.Value">@project.Text</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
         <label asp-for="PropertyUnitId" class="form-label"></label>
-        <select asp-for="PropertyUnitId" asp-items="ViewBag.PropertyUnits" class="form-select">
+        <select asp-for="PropertyUnitId" class="form-select" id="PropertyUnitId">
             <option value="">-- Select Property Unit --</option>
+            @foreach (var unit in (IEnumerable<BuilderERP.Application.DTOs.PropertyUnitDto>)ViewBag.PropertyUnits)
+            {
+                <option value="@unit.Id" data-project-id="@unit.ProjectId">@unit.UnitNumber</option>
+            }
         </select>
         <span asp-validation-for="PropertyUnitId" class="text-danger"></span>
     </div>
@@ -58,3 +72,27 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var projectSelect = document.getElementById('ProjectFilter');
+            var unitSelect = document.getElementById('PropertyUnitId');
+            var unitOptions = Array.prototype.slice.call(unitSelect.options);
+
+            function filterUnits() {
+                var projectId = projectSelect.value;
+                unitSelect.innerHTML = '';
+                unitSelect.appendChild(unitOptions[0].cloneNode(true));
+                unitOptions.forEach(function (opt) {
+                    if (opt.value === '') return;
+                    if (!projectId || opt.getAttribute('data-project-id') === projectId) {
+                        unitSelect.appendChild(opt.cloneNode(true));
+                    }
+                });
+            }
+
+            projectSelect.addEventListener('change', filterUnits);
+        })();
+    </script>
+}

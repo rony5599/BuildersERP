@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Bookings;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.SaleAgreements;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -117,7 +118,10 @@ public class SaleAgreementsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
+
         var bookings = await _mediator.Send(new GetAllBookingsQuery(PageSize: int.MaxValue));
-        ViewBag.Bookings = new SelectList(bookings.Items, "Id", "PropertyUnitNumber");
+        ViewBag.Bookings = bookings.Items;
     }
 }

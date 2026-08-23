@@ -25,7 +25,7 @@ public class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQuery, P
     {
         var query = _unitOfWork.Repository<Booking>().Query()
             .Include(b => b.Customer)
-            .Include(b => b.PropertyUnit)
+            .Include(b => b.PropertyUnit).ThenInclude(u => u.Floor).ThenInclude(f => f.Tower).ThenInclude(t => t.Building).ThenInclude(bd => bd.Project)
             .AsQueryable();
 
         var page = request.Page < 1 ? 1 : request.Page;

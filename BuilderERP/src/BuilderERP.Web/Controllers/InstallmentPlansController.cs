@@ -126,7 +126,7 @@ public class InstallmentPlansController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var agreements = await _mediator.Send(new GetAllSaleAgreementsQuery(PageSize: int.MaxValue));
-        ViewBag.SaleAgreements = new SelectList(agreements.Items, "Id", "AgreementNumber");
+        ViewBag.SaleAgreements = agreements.Items;
     }
 
     private async Task PopulateFiltersAsync(Guid? projectId, Guid? propertyUnitId, Guid? customerId)

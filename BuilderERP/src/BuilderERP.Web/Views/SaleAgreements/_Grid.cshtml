@@ -7,6 +7,7 @@
     <thead>
         <tr>
             <th>Agreement #</th>
+            <th>Project</th>
             <th>Unit</th>
             <th>Sale Price</th>
             <th>Date</th>
@@ -20,6 +21,7 @@
         {
             <tr>
                 <td>@agreement.AgreementNumber</td>
+                <td>@agreement.ProjectName</td>
                 <td>@agreement.BookingUnitNumber</td>
                 <td>@agreement.TotalSalePrice</td>
                 <td>@agreement.AgreementDate.ToString("yyyy-MM-dd")</td>
@@ -45,7 +47,7 @@
         @if (Model.Items.Count == 0)
         {
             <tr>
-                <td colspan="7" class="text-center text-muted">No sale agreements found.</td>
+                <td colspan="8" class="text-center text-muted">No sale agreements found.</td>
             </tr>
         }
     </tbody>

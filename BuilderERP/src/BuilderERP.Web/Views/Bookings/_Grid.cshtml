@@ -7,6 +7,7 @@
     <thead>
         <tr>
             <th>Customer</th>
+            <th>Project</th>
             <th>Property Unit</th>
             <th>Booking Date</th>
             <th>Amount</th>
@@ -22,6 +23,7 @@
         {
             <tr>
                 <td>@booking.CustomerName</td>
+                <td>@booking.ProjectName</td>
                 <td>@booking.PropertyUnitNumber</td>
                 <td>@booking.BookingDate.ToString("yyyy-MM-dd")</td>
                 <td>@booking.BookingAmount</td>
@@ -49,7 +51,7 @@
         @if (Model.Items.Count == 0)
         {
             <tr>
-                <td colspan="9" class="text-center text-muted">No bookings found.</td>
+                <td colspan="10" class="text-center text-muted">No bookings found.</td>
             </tr>
         }
     </tbody>
