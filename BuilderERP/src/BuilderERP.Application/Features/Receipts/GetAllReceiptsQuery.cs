@@ -24,7 +24,7 @@ public class GetAllReceiptsQueryHandler : IRequestHandler<GetAllReceiptsQuery, P
     public async Task<PagedResult<ReceiptDto>> Handle(GetAllReceiptsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Receipt>().Query()
-            .Include(r => r.Installment);
+            .Include(r => r.Installment).ThenInclude(i => i.InstallmentPlan).ThenInclude(p => p.SaleAgreement).ThenInclude(a => a.Booking).ThenInclude(b => b.PropertyUnit).ThenInclude(u => u!.Floor).ThenInclude(f => f.Tower).ThenInclude(t => t.Building).ThenInclude(bd => bd.Project);
 
         var page = request.Page < 1 ? 1 : request.Page;
         var pageSize = request.PageSize < 1 ? 25 : request.PageSize;

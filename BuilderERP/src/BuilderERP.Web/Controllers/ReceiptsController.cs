@@ -7,7 +7,6 @@ using BuilderERP.Web.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -119,6 +118,6 @@ public class ReceiptsController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var installments = await _mediator.Send(new GetAllInstallmentsQuery(PageSize: int.MaxValue));
-        ViewBag.Installments = new SelectList(installments.Items, "Id", "InstallmentNumber");
+        ViewBag.Installments = installments.Items;
     }
 }

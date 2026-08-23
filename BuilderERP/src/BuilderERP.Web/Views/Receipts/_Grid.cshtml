@@ -7,6 +7,9 @@
     <thead>
         <tr>
             <th>Receipt #</th>
+            <th>Agreement</th>
+            <th>Project</th>
+            <th>Unit</th>
             <th>Installment #</th>
             <th>Payment Date</th>
             <th>Amount Paid</th>
@@ -20,6 +23,9 @@
         {
             <tr>
                 <td>@receipt.ReceiptNumber</td>
+                <td>@receipt.AgreementNumber</td>
+                <td>@receipt.ProjectName</td>
+                <td>@receipt.UnitNumber</td>
                 <td>@receipt.InstallmentNumber</td>
                 <td>@receipt.PaymentDate.ToString("yyyy-MM-dd")</td>
                 <td>@receipt.AmountPaid</td>
@@ -45,7 +51,7 @@
         @if (Model.Items.Count == 0)
         {
             <tr>
-                <td colspan="7" class="text-center text-muted">No receipts found.</td>
+                <td colspan="10" class="text-center text-muted">No receipts found.</td>
             </tr>
         }
     </tbody>

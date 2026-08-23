@@ -147,7 +147,7 @@ public class InstallmentsController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var plans = await _mediator.Send(new BuilderERP.Application.Features.InstallmentPlans.GetAllInstallmentPlansQuery(PageSize: int.MaxValue));
-        ViewBag.InstallmentPlans = new SelectList(plans.Items, "Id", "TotalAmount");
+        ViewBag.InstallmentPlans = plans.Items;
     }
 
     private async Task PopulateFiltersAsync(Guid? projectId, Guid? propertyUnitId, Guid? customerId)

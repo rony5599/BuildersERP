@@ -10,9 +10,34 @@
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="mb-3">
         <label asp-for="InstallmentId" class="form-label"></label>
-        <select asp-for="InstallmentId" asp-items="ViewBag.Installments" class="form-select">
-            <option value="">-- Select Installment --</option>
-        </select>
+        <div class="mc-select" data-mc-select>
+            <input type="text" class="form-control mc-select-input" placeholder="-- Select Installment --" autocomplete="off" data-mc-search />
+            <input type="hidden" asp-for="InstallmentId" data-mc-value />
+            <div class="mc-select-dropdown" data-mc-dropdown>
+                <table class="table table-sm table-hover mc-select-table">
+                    <thead>
+                        <tr>
+                            <th>Installment #</th>
+                            <th>Agreement</th>
+                            <th>Unit</th>
+                            <th>Project</th>
+                        </tr>
+                    </thead>
+                    <tbody data-mc-body>
+                        @foreach (var installment in (IEnumerable<BuilderERP.Application.DTOs.InstallmentDto>)ViewBag.Installments)
+                        {
+                            <tr data-mc-option data-value="@installment.Id" data-label="@installment.InstallmentNumber" data-search="@($"{installment.InstallmentNumber} {installment.AgreementNumber} {installment.UnitNumber} {installment.ProjectName}".ToLower())">
+                                <td>@installment.InstallmentNumber</td>
+                                <td>@installment.AgreementNumber</td>
+                                <td>@installment.UnitNumber</td>
+                                <td>@installment.ProjectName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="mc-select-empty" style="display:none">No installments found.</div>
+            </div>
+        </div>
         <span asp-validation-for="InstallmentId" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -41,3 +66,10 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/multi-column-select.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/multi-column-select.js" asp-append-version="true"></script>
+}

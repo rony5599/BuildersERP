@@ -15,9 +15,32 @@
     </div>
     <div class="mb-3">
         <label asp-for="InstallmentPlanId" class="form-label"></label>
-        <select asp-for="InstallmentPlanId" asp-items="ViewBag.InstallmentPlans" class="form-select">
-            <option value="">-- Select Plan --</option>
-        </select>
+        <div class="mc-select" data-mc-select>
+            <input type="text" class="form-control mc-select-input" placeholder="-- Select Plan --" autocomplete="off" data-mc-search />
+            <input type="hidden" asp-for="InstallmentPlanId" data-mc-value />
+            <div class="mc-select-dropdown" data-mc-dropdown>
+                <table class="table table-sm table-hover mc-select-table">
+                    <thead>
+                        <tr>
+                            <th>Installment Plan</th>
+                            <th>Unit/Flat</th>
+                            <th>Project</th>
+                        </tr>
+                    </thead>
+                    <tbody data-mc-body>
+                        @foreach (var plan in (IEnumerable<BuilderERP.Application.DTOs.InstallmentPlanDto>)ViewBag.InstallmentPlans)
+                        {
+                            <tr data-mc-option data-value="@plan.Id" data-label="@plan.SaleAgreementNumber" data-search="@($"{plan.SaleAgreementNumber} {plan.UnitNumber} {plan.ProjectName}".ToLower())">
+                                <td>@plan.SaleAgreementNumber</td>
+                                <td>@plan.UnitNumber</td>
+                                <td>@plan.ProjectName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="mc-select-empty" style="display:none">No installment plans found.</div>
+            </div>
+        </div>
         <span asp-validation-for="InstallmentPlanId" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -42,3 +65,10 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/multi-column-select.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/multi-column-select.js" asp-append-version="true"></script>
+}

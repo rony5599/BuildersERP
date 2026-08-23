@@ -13,6 +13,9 @@ public class ReceiptDto
     public bool IsActive { get; set; }
     public Guid InstallmentId { get; set; }
     public int InstallmentNumber { get; set; }
+    public string AgreementNumber { get; set; } = string.Empty;
+    public string UnitNumber { get; set; } = string.Empty;
+    public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreateReceiptDto
