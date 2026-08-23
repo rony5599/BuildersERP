@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -5,7 +6,10 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Installments;
 
-public record UpdateInstallmentCommand(UpdateInstallmentDto Dto) : IRequest<bool>;
+public record UpdateInstallmentCommand(UpdateInstallmentDto Dto) : IRequest<bool>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CollectionForecast"];
+}
 
 public class UpdateInstallmentCommandHandler : IRequestHandler<UpdateInstallmentCommand, bool>
 {

@@ -6,6 +6,17 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace BuilderERP.Application.Common.Caching;
 
 /// <summary>
+/// Implemented by commands whose effects are read by other features' queries
+/// (e.g. a Receipt/Installment command also feeds the CollectionForecast page),
+/// so <see cref="CacheInvalidationBehavior{TRequest,TResponse}"/> can bump those
+/// features' cache versions too, not just the command's own feature.
+/// </summary>
+public interface IInvalidatesFeatures
+{
+    IReadOnlyCollection<string> AdditionalFeatures { get; }
+}
+
+/// <summary>
 /// Builds Redis cache keys grouped by feature (e.g. "Customers", "RunningBills").
 /// Each feature has a version counter; commands bump it so every cached query
 /// under that feature is invalidated at once, without tracking individual keys.

@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
@@ -7,7 +8,10 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Receipts;
 
-public record CreateReceiptCommand(CreateReceiptDto Dto) : IRequest<Guid>;
+public record CreateReceiptCommand(CreateReceiptDto Dto) : IRequest<Guid>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["Installments", "CollectionForecast"];
+}
 
 public class CreateReceiptCommandHandler : IRequestHandler<CreateReceiptCommand, Guid>
 {

@@ -30,13 +30,20 @@ public class CacheInvalidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         if (requestType.Name.EndsWith("Command", StringComparison.Ordinal))
         {
             var feature = CacheKeys.GetFeatureName(requestType);
-            try
+            var featuresToBump = request is IInvalidatesFeatures invalidator
+                ? invalidator.AdditionalFeatures.Prepend(feature)
+                : [feature];
+
+            foreach (var featureToBump in featuresToBump.Distinct())
             {
-                await CacheKeys.BumpFeatureVersionAsync(_cache, feature, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Cache invalidation failed for feature {Feature}.", feature);
+                try
+                {
+                    await CacheKeys.BumpFeatureVersionAsync(_cache, featureToBump, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Cache invalidation failed for feature {Feature}.", featureToBump);
+                }
             }
         }
 

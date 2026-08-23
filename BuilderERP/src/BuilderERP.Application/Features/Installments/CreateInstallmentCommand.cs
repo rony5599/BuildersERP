@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,7 +7,10 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Installments;
 
-public record CreateInstallmentCommand(CreateInstallmentDto Dto) : IRequest<Guid>;
+public record CreateInstallmentCommand(CreateInstallmentDto Dto) : IRequest<Guid>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CollectionForecast"];
+}
 
 public class CreateInstallmentCommandHandler : IRequestHandler<CreateInstallmentCommand, Guid>
 {

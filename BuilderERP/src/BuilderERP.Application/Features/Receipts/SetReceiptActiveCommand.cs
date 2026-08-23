@@ -1,10 +1,14 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.Receipts;
 
-public record SetReceiptActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetReceiptActiveCommand(Guid Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["Installments", "CollectionForecast"];
+}
 
 public class SetReceiptActiveCommandHandler : IRequestHandler<SetReceiptActiveCommand, bool>
 {

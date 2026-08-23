@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
@@ -5,7 +6,10 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Installments;
 
-public record RescheduleInstallmentCommand(Guid Id, DateTime NewDueDate, string Reason) : IRequest<bool>;
+public record RescheduleInstallmentCommand(Guid Id, DateTime NewDueDate, string Reason) : IRequest<bool>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CollectionForecast"];
+}
 
 public class RescheduleInstallmentCommandHandler : IRequestHandler<RescheduleInstallmentCommand, bool>
 {
