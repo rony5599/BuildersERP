@@ -23,7 +23,7 @@ public class GetGoodsReceiveByIdQueryHandler : IRequestHandler<GetGoodsReceiveBy
     public async Task<GoodsReceiveDto?> Handle(GetGoodsReceiveByIdQuery request, CancellationToken cancellationToken)
     {
         var receive = await _unitOfWork.Repository<GoodsReceive>().Query()
-            .Include(g => g.PurchaseOrder)
+            .Include(g => g.PurchaseOrder).ThenInclude(o => o.VendorQuotation).ThenInclude(v => v.Rfq).ThenInclude(r => r.PurchaseRequisition).ThenInclude(pr => pr.Project)
             .Include(g => g.Warehouse)
             .Include(g => g.Details).ThenInclude(d => d.Material)
             .FirstOrDefaultAsync(g => g.Id == request.Id, cancellationToken);

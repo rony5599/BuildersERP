@@ -1,4 +1,5 @@
 using BuilderERP.Application.Common;
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
@@ -8,7 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
-public record UpdatePurchaseReturnCommand(UpdatePurchaseReturnDto Dto) : IRequest<UpdatePurchaseReturnResult>;
+public record UpdatePurchaseReturnCommand(UpdatePurchaseReturnDto Dto) : IRequest<UpdatePurchaseReturnResult>, IInvalidatesFeatures
+{
+    // Approving/completing a return posts stock deductions via PurchaseReturnPostingService,
+    // so Stocks' cached queries must be invalidated too, not just PurchaseReturns' own.
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["Stocks"];
+}
 
 public enum UpdatePurchaseReturnResult
 {

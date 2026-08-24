@@ -15,17 +15,9 @@ public class CreateGoodsReceiveDtoValidatorTests
     };
 
     [Fact]
-    public void Should_have_error_when_grn_number_is_empty()
-    {
-        var model = new CreateGoodsReceiveDto { GrnNumber = "", PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.GrnNumber);
-    }
-
-    [Fact]
     public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreateGoodsReceiveDto { GrnNumber = "GRN-001", PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = new() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = new() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Details);
     }
@@ -33,7 +25,7 @@ public class CreateGoodsReceiveDtoValidatorTests
     [Fact]
     public void Should_have_error_when_purchase_order_id_is_empty()
     {
-        var model = new CreateGoodsReceiveDto { GrnNumber = "GRN-001", PurchaseOrderId = Guid.Empty, WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.Empty, WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PurchaseOrderId);
     }
@@ -41,7 +33,7 @@ public class CreateGoodsReceiveDtoValidatorTests
     [Fact]
     public void Should_have_error_when_warehouse_id_is_empty()
     {
-        var model = new CreateGoodsReceiveDto { GrnNumber = "GRN-001", PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.Empty, Details = ValidDetails() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.Empty, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WarehouseId);
     }
@@ -49,7 +41,7 @@ public class CreateGoodsReceiveDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateGoodsReceiveDto { GrnNumber = "GRN-001", PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

@@ -10,11 +10,6 @@
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row col-md-8">
         <div class="mb-3 col-md-4">
-            <label asp-for="ReturnNumber" class="form-label"></label>
-            <input asp-for="ReturnNumber" class="form-control" />
-            <span asp-validation-for="ReturnNumber" class="text-danger"></span>
-        </div>
-        <div class="mb-3 col-md-4">
             <label asp-for="GoodsReceiveId" class="form-label"></label>
             <select asp-for="GoodsReceiveId" asp-items="ViewBag.GoodsReceives" class="form-select" id="goodsReceiveSelect">
                 <option value="">-- Select Goods Receive --</option>
@@ -108,6 +103,7 @@
                         clone.querySelector('.material-id').value = line.materialId;
                         clone.querySelector('.grn-line-label').textContent = line.materialName + ' (received ' + line.receivedQuantity + ')';
                         clone.querySelector('.material-name').textContent = line.materialName;
+                        clone.querySelector('select[name*="UnitOfMeasure"]').value = line.unitOfMeasure;
                         clone.querySelector('input[name*="UnitPrice"]').value = line.unitPrice;
                         tbody.appendChild(clone);
                     });

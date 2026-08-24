@@ -10,11 +10,6 @@
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row col-md-8">
         <div class="mb-3 col-md-4">
-            <label asp-for="PONumber" class="form-label"></label>
-            <input asp-for="PONumber" class="form-control" />
-            <span asp-validation-for="PONumber" class="text-danger"></span>
-        </div>
-        <div class="mb-3 col-md-4">
             <label asp-for="VendorQuotationId" class="form-label"></label>
             <select asp-for="VendorQuotationId" asp-items="ViewBag.VendorQuotations" class="form-select">
                 <option value="">-- Select Vendor Quotation --</option>

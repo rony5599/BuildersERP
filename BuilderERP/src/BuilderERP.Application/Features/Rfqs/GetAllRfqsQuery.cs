@@ -24,7 +24,7 @@ public class GetAllRfqsQueryHandler : IRequestHandler<GetAllRfqsQuery, PagedResu
     public async Task<PagedResult<RfqDto>> Handle(GetAllRfqsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<Rfq>().Query()
-            .Include(r => r.PurchaseRequisition)
+            .Include(r => r.PurchaseRequisition).ThenInclude(pr => pr.Project)
             .Include(r => r.RfqVendors).ThenInclude(v => v.Supplier)
             .Include(r => r.Details)
             .AsQueryable();

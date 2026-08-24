@@ -4,6 +4,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
@@ -13,16 +14,24 @@ public class CreatePurchaseReturnCommandHandler : IRequestHandler<CreatePurchase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IDocumentNumberGenerator _numberGenerator;
 
-    public CreatePurchaseReturnCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreatePurchaseReturnCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IDocumentNumberGenerator numberGenerator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<Guid> Handle(CreatePurchaseReturnCommand request, CancellationToken cancellationToken)
     {
+        var projectId = await _unitOfWork.Repository<GoodsReceive>().Query()
+            .Where(g => g.Id == request.Dto.GoodsReceiveId)
+            .Select(g => g.PurchaseOrder.VendorQuotation.Rfq.PurchaseRequisition.ProjectId)
+            .SingleAsync(cancellationToken);
+
         var purchaseReturn = _mapper.Map<PurchaseReturn>(request.Dto);
+        purchaseReturn.ReturnNumber = await _numberGenerator.GenerateAsync(projectId, "PRTN", cancellationToken);
 
         decimal returnAmount = 0;
         foreach (var detail in request.Dto.Details)

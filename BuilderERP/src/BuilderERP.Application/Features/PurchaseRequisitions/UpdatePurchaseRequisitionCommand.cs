@@ -48,6 +48,7 @@ public class UpdatePurchaseRequisitionCommandHandler : IRequestHandler<UpdatePur
         requisition.Description = request.Dto.Description;
         requisition.Status = request.Dto.Status;
         requisition.DepartmentId = request.Dto.DepartmentId;
+        requisition.ProjectId = request.Dto.ProjectId;
 
         var detailRepository = _unitOfWork.Repository<PurchaseRequisitionDetail>();
         foreach (var detail in requisition.Details.ToList())

@@ -45,6 +45,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
     public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
+    public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();
     public DbSet<Material> Materials => Set<Material>();
     public DbSet<Stock> Stocks => Set<Stock>();
@@ -388,6 +389,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(r => r.DepartmentId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<PurchaseRequisition>()
+            .HasOne(r => r.Project)
+            .WithMany()
+            .HasForeignKey(r => r.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<PurchaseRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
 
         builder.Entity<Rfq>()
@@ -555,6 +562,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<PurchaseReturn>().Property(r => r.ReturnAmount).HasPrecision(18, 2);
+
+        builder.Entity<DocumentSequence>().HasIndex(s => new { s.ProjectId, s.DocumentType }).IsUnique();
 
         builder.Entity<PurchaseReturnDetail>()
             .HasOne(d => d.PurchaseReturn)

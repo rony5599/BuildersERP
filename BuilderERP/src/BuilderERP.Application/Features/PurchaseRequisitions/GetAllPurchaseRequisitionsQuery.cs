@@ -25,6 +25,7 @@ public class GetAllPurchaseRequisitionsQueryHandler : IRequestHandler<GetAllPurc
     {
         var query = _unitOfWork.Repository<PurchaseRequisition>().Query()
             .Include(r => r.Department)
+            .Include(r => r.Project)
             .Include(r => r.Details)
             .AsQueryable();
 

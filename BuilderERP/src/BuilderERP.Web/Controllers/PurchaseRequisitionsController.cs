@@ -1,6 +1,7 @@
 ﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Departments;
 using BuilderERP.Application.Features.Materials;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PurchaseRequisitions;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -80,6 +81,7 @@ public class PurchaseRequisitionsController : Controller
             Description = requisition.Description,
             Status = requisition.Status,
             DepartmentId = requisition.DepartmentId,
+            ProjectId = requisition.ProjectId,
             Details = requisition.Details.Select(d => new CreatePurchaseRequisitionDetailDto
             {
                 MaterialId = d.MaterialId,
@@ -139,5 +141,8 @@ public class PurchaseRequisitionsController : Controller
 
         var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
         ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
     }
 }

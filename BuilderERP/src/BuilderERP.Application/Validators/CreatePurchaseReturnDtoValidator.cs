@@ -7,7 +7,6 @@ public class CreatePurchaseReturnDtoValidator : AbstractValidator<CreatePurchase
 {
     public CreatePurchaseReturnDtoValidator()
     {
-        RuleFor(x => x.ReturnNumber).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Reason).NotEmpty().MaximumLength(500);
         RuleFor(x => x.GoodsReceiveId).NotEmpty();
         RuleFor(x => x.Status).IsInEnum();

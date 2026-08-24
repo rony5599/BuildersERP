@@ -50,7 +50,6 @@ public class CreatePurchaseOrderDetailDto
 
 public class CreatePurchaseOrderDto
 {
-    public string PONumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;

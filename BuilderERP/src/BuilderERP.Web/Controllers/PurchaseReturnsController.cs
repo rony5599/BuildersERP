@@ -90,6 +90,8 @@ public class PurchaseReturnsController : Controller
             }).ToList()
         };
 
+        ViewBag.DetailMaterialNames = purchaseReturn.Details.Select(d => d.MaterialName).ToList();
+
         await PopulateDropdownsAsync();
         return View(dto);
     }
@@ -154,7 +156,7 @@ public class PurchaseReturnsController : Controller
             goodsReceiveDetailId = d.Id,
             materialId = d.MaterialId,
             materialName = d.MaterialName,
-            unitOfMeasure = d.UnitOfMeasure.ToString(),
+            unitOfMeasure = (int)d.UnitOfMeasure,
             receivedQuantity = d.ReceivedQuantity,
             unitPrice = d.UnitPrice
         });

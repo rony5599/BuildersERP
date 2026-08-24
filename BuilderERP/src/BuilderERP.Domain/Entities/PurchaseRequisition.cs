@@ -15,5 +15,8 @@ public class PurchaseRequisition : BaseEntity
     public Guid DepartmentId { get; set; }
     public Department Department { get; set; } = null!;
 
+    public Guid ProjectId { get; set; }
+    public Project Project { get; set; } = null!;
+
     public ICollection<PurchaseRequisitionDetail> Details { get; set; } = new List<PurchaseRequisitionDetail>();
 }

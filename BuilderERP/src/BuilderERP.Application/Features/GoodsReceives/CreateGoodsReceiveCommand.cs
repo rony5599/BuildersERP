@@ -4,6 +4,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.GoodsReceives;
 
@@ -13,16 +14,24 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IDocumentNumberGenerator _numberGenerator;
 
-    public CreateGoodsReceiveCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreateGoodsReceiveCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IDocumentNumberGenerator numberGenerator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<Guid> Handle(CreateGoodsReceiveCommand request, CancellationToken cancellationToken)
     {
+        var projectId = await _unitOfWork.Repository<PurchaseOrder>().Query()
+            .Where(o => o.Id == request.Dto.PurchaseOrderId)
+            .Select(o => o.VendorQuotation.Rfq.PurchaseRequisition.ProjectId)
+            .SingleAsync(cancellationToken);
+
         var receive = _mapper.Map<GoodsReceive>(request.Dto);
+        receive.GrnNumber = await _numberGenerator.GenerateAsync(projectId, "GRN", cancellationToken);
 
         decimal receivedAmount = 0;
         foreach (var detail in request.Dto.Details)

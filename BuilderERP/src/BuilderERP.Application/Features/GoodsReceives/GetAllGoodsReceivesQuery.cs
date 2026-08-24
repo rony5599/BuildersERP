@@ -24,7 +24,7 @@ public class GetAllGoodsReceivesQueryHandler : IRequestHandler<GetAllGoodsReceiv
     public async Task<PagedResult<GoodsReceiveDto>> Handle(GetAllGoodsReceivesQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<GoodsReceive>().Query()
-            .Include(g => g.PurchaseOrder)
+            .Include(g => g.PurchaseOrder).ThenInclude(o => o.VendorQuotation).ThenInclude(v => v.Rfq).ThenInclude(r => r.PurchaseRequisition).ThenInclude(pr => pr.Project)
             .Include(g => g.Warehouse)
             .Include(g => g.Details)
             .AsQueryable();

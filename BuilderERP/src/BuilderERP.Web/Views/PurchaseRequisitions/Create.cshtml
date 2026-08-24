@@ -10,16 +10,18 @@
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row col-md-8">
         <div class="mb-3 col-md-4">
-            <label asp-for="RequisitionNumber" class="form-label"></label>
-            <input asp-for="RequisitionNumber" class="form-control" />
-            <span asp-validation-for="RequisitionNumber" class="text-danger"></span>
-        </div>
-        <div class="mb-3 col-md-4">
             <label asp-for="DepartmentId" class="form-label"></label>
             <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-select">
                 <option value="">-- Select Department --</option>
             </select>
             <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="ProjectId" class="form-label"></label>
+            <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
+                <option value="">-- Select Project --</option>
+            </select>
+            <span asp-validation-for="ProjectId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="Status" class="form-label"></label>

@@ -23,7 +23,7 @@ public class GetPurchaseReturnByIdQueryHandler : IRequestHandler<GetPurchaseRetu
     public async Task<PurchaseReturnDto?> Handle(GetPurchaseReturnByIdQuery request, CancellationToken cancellationToken)
     {
         var purchaseReturn = await _unitOfWork.Repository<PurchaseReturn>().Query()
-            .Include(r => r.GoodsReceive)
+            .Include(r => r.GoodsReceive).ThenInclude(g => g.PurchaseOrder).ThenInclude(o => o.VendorQuotation).ThenInclude(v => v.Rfq).ThenInclude(rfq => rfq.PurchaseRequisition).ThenInclude(pr => pr.Project)
             .Include(r => r.Details).ThenInclude(d => d.Material)
             .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
         return purchaseReturn is null ? null : _mapper.Map<PurchaseReturnDto>(purchaseReturn);

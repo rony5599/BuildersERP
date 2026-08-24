@@ -4,6 +4,7 @@ using BuilderERP.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuilderERP.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260824082232_AddProjectToProcurement")]
+    partial class AddProjectToProcurement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1346,30 +1349,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.ToTable("Documents");
                 });
 
-            modelBuilder.Entity("BuilderERP.Domain.Entities.DocumentSequence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DocumentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("LastNumber")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId", "DocumentType")
-                        .IsUnique();
-
-                    b.ToTable("DocumentSequences");
-                });
-
             modelBuilder.Entity("BuilderERP.Domain.Entities.DocumentVersion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1920,6 +1899,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PurchaseOrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1940,6 +1922,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("PurchaseOrderId");
 
@@ -4045,6 +4029,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -4066,6 +4053,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GoodsReceiveId");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("PurchaseReturns");
                 });
@@ -4386,6 +4375,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PurchaseRequisitionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -4397,6 +4389,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("PurchaseRequisitionId");
 
@@ -5840,6 +5834,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("QuotationDate")
                         .HasColumnType("datetime2");
 
@@ -5861,6 +5858,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("RfqId");
 
@@ -6824,6 +6823,12 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.GoodsReceive", b =>
                 {
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BuilderERP.Domain.Entities.PurchaseOrder", "PurchaseOrder")
                         .WithMany("GoodsReceives")
                         .HasForeignKey("PurchaseOrderId")
@@ -6835,6 +6840,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Project");
 
                     b.Navigation("PurchaseOrder");
 
@@ -7328,7 +7335,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("GoodsReceive");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseReturnDetail", b =>
@@ -7419,11 +7434,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Rfq", b =>
                 {
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BuilderERP.Domain.Entities.PurchaseRequisition", "PurchaseRequisition")
                         .WithMany()
                         .HasForeignKey("PurchaseRequisitionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Project");
 
                     b.Navigation("PurchaseRequisition");
                 });
@@ -7812,6 +7835,12 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.VendorQuotation", b =>
                 {
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BuilderERP.Domain.Entities.Rfq", "Rfq")
                         .WithMany("VendorQuotations")
                         .HasForeignKey("RfqId")
@@ -7823,6 +7852,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Project");
 
                     b.Navigation("Rfq");
 

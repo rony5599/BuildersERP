@@ -12,6 +12,8 @@ public class RfqDto
     public bool IsActive { get; set; }
     public Guid PurchaseRequisitionId { get; set; }
     public string RequisitionNumber { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public List<RfqVendorDto> Vendors { get; set; } = new();
     public List<RfqDetailDto> Details { get; set; } = new();
 }
@@ -45,7 +47,6 @@ public class CreateRfqDetailDto
 
 public class CreateRfqDto
 {
-    public string RfqNumber { get; set; } = string.Empty;
     public DateTime IssueDate { get; set; } = DateTime.UtcNow;
     public DateTime ClosingDate { get; set; }
     public RfqStatus Status { get; set; } = RfqStatus.Sent;

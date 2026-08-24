@@ -7,7 +7,6 @@ public class CreateVendorQuotationDtoValidator : AbstractValidator<CreateVendorQ
 {
     public CreateVendorQuotationDtoValidator()
     {
-        RuleFor(x => x.QuotationNumber).NotEmpty().MaximumLength(50);
         RuleFor(x => x.DeliveryDays).GreaterThan(0);
         RuleFor(x => x.RfqId).NotEmpty();
         RuleFor(x => x.SupplierId).NotEmpty();

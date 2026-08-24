@@ -7,7 +7,6 @@ public class CreateGoodsReceiveDtoValidator : AbstractValidator<CreateGoodsRecei
 {
     public CreateGoodsReceiveDtoValidator()
     {
-        RuleFor(x => x.GrnNumber).NotEmpty().MaximumLength(50);
         RuleFor(x => x.PurchaseOrderId).NotEmpty();
         RuleFor(x => x.WarehouseId).NotEmpty();
         RuleFor(x => x.Remarks).MaximumLength(500);

@@ -17,6 +17,8 @@ public class VendorQuotationDto
     public string SupplierName { get; set; } = string.Empty;
     public Guid PurchaseRequisitionId { get; set; }
     public string RequisitionNumber { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public List<VendorQuotationDetailDto> Details { get; set; } = new();
 }
 
@@ -52,7 +54,6 @@ public class CreateVendorQuotationDetailDto
 
 public class CreateVendorQuotationDto
 {
-    public string QuotationNumber { get; set; } = string.Empty;
     public DateTime QuotationDate { get; set; } = DateTime.UtcNow;
     public int DeliveryDays { get; set; }
     public VendorQuotationStatus Status { get; set; } = VendorQuotationStatus.Received;

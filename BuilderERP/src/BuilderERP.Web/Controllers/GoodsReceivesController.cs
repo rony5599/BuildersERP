@@ -94,6 +94,8 @@ public class GoodsReceivesController : Controller
             }).ToList()
         };
 
+        ViewBag.DetailMaterialNames = receive.Details.Select(d => d.MaterialName).ToList();
+
         await PopulateDropdownsAsync();
         return View(dto);
     }
@@ -158,7 +160,7 @@ public class GoodsReceivesController : Controller
             purchaseOrderDetailId = d.Id,
             materialId = d.MaterialId,
             materialName = d.MaterialName,
-            unitOfMeasure = d.UnitOfMeasure.ToString(),
+            unitOfMeasure = (int)d.UnitOfMeasure,
             remainingQuantity = d.RemainingQuantity,
             unitPrice = d.UnitPrice
         });

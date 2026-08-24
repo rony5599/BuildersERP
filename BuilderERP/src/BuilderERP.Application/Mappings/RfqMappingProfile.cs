@@ -10,6 +10,8 @@ public class RfqMappingProfile : Profile
     {
         CreateMap<Rfq, RfqDto>()
             .ForMember(dest => dest.RequisitionNumber, opt => opt.MapFrom(src => src.PurchaseRequisition != null ? src.PurchaseRequisition.RequisitionNumber : string.Empty))
+            .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.PurchaseRequisition != null ? src.PurchaseRequisition.ProjectId : Guid.Empty))
+            .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.PurchaseRequisition != null && src.PurchaseRequisition.Project != null ? src.PurchaseRequisition.Project.Name : string.Empty))
             .ForMember(dest => dest.Vendors, opt => opt.MapFrom(src => src.RfqVendors))
             .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details));
         CreateMap<RfqVendor, RfqVendorDto>()

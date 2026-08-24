@@ -13,6 +13,8 @@ public class PurchaseReturnDto
     public bool IsActive { get; set; }
     public Guid GoodsReceiveId { get; set; }
     public string GrnNumber { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public List<PurchaseReturnDetailDto> Details { get; set; } = new();
 }
 
@@ -45,7 +47,6 @@ public class CreatePurchaseReturnDetailDto
 
 public class CreatePurchaseReturnDto
 {
-    public string ReturnNumber { get; set; } = string.Empty;
     public DateTime ReturnDate { get; set; } = DateTime.UtcNow;
     public string Reason { get; set; } = string.Empty;
     public PurchaseReturnStatus Status { get; set; } = PurchaseReturnStatus.Pending;

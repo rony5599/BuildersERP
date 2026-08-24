@@ -11,6 +11,7 @@ public class UpdatePurchaseRequisitionDtoValidator : AbstractValidator<UpdatePur
         RuleFor(x => x.RequisitionNumber).NotEmpty().MaximumLength(50);
         RuleFor(x => x.RequiredByDate).NotEmpty();
         RuleFor(x => x.DepartmentId).NotEmpty();
+        RuleFor(x => x.ProjectId).NotEmpty();
         RuleFor(x => x.Status).IsInEnum();
         RuleFor(x => x.Details).NotEmpty().WithMessage("At least one line item is required.");
         RuleForEach(x => x.Details).ChildRules(detail =>

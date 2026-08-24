@@ -23,7 +23,7 @@ public class GetRfqByIdQueryHandler : IRequestHandler<GetRfqByIdQuery, RfqDto?>
     public async Task<RfqDto?> Handle(GetRfqByIdQuery request, CancellationToken cancellationToken)
     {
         var rfq = await _unitOfWork.Repository<Rfq>().Query()
-            .Include(r => r.PurchaseRequisition)
+            .Include(r => r.PurchaseRequisition).ThenInclude(pr => pr.Project)
             .Include(r => r.RfqVendors).ThenInclude(v => v.Supplier)
             .Include(r => r.Details).ThenInclude(d => d.Material)
             .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);

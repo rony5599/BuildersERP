@@ -27,6 +27,7 @@ public class GetAllVendorQuotationsQueryHandler : IRequestHandler<GetAllVendorQu
             .Include(v => v.Supplier)
             .Include(v => v.Rfq)
             .ThenInclude(r => r.PurchaseRequisition)
+            .ThenInclude(pr => pr.Project)
             .Include(v => v.Details)
             .AsQueryable();
 

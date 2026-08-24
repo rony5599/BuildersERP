@@ -3,6 +3,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Rfqs;
 
@@ -12,16 +13,24 @@ public class CreateRfqCommandHandler : IRequestHandler<CreateRfqCommand, Guid>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IDocumentNumberGenerator _numberGenerator;
 
-    public CreateRfqCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreateRfqCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IDocumentNumberGenerator numberGenerator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<Guid> Handle(CreateRfqCommand request, CancellationToken cancellationToken)
     {
+        var projectId = await _unitOfWork.Repository<PurchaseRequisition>().Query()
+            .Where(r => r.Id == request.Dto.PurchaseRequisitionId)
+            .Select(r => r.ProjectId)
+            .SingleAsync(cancellationToken);
+
         var rfq = _mapper.Map<Rfq>(request.Dto);
+        rfq.RfqNumber = await _numberGenerator.GenerateAsync(projectId, "RFQ", cancellationToken);
 
         foreach (var supplierId in request.Dto.SupplierIds.Distinct())
         {

@@ -1,4 +1,5 @@
 using BuilderERP.Application.Common;
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
@@ -9,7 +10,14 @@ using Microsoft.Extensions.Options;
 
 namespace BuilderERP.Application.Features.GoodsReceives;
 
-public record UpdateGoodsReceiveCommand(UpdateGoodsReceiveDto Dto) : IRequest<UpdateGoodsReceiveResult>;
+public record UpdateGoodsReceiveCommand(UpdateGoodsReceiveDto Dto) : IRequest<UpdateGoodsReceiveResult>, IInvalidatesFeatures
+{
+    // Approving a GRN posts received quantities onto the PO's own line items (and can flip
+    // the PO's status to PartiallyReceived/Received) via GoodsReceivePostingService, which also
+    // upserts Stock and updates Material average/last purchase price - so all three features'
+    // cached queries must be invalidated too, not just GoodsReceives' own.
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["PurchaseOrders", "Stocks", "Materials"];
+}
 
 public enum UpdateGoodsReceiveResult
 {

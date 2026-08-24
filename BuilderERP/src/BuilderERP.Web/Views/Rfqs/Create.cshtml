@@ -12,11 +12,6 @@
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row col-md-8">
         <div class="mb-3 col-md-4">
-            <label asp-for="RfqNumber" class="form-label"></label>
-            <input asp-for="RfqNumber" class="form-control" />
-            <span asp-validation-for="RfqNumber" class="text-danger"></span>
-        </div>
-        <div class="mb-3 col-md-4">
             <label asp-for="PurchaseRequisitionId" class="form-label"></label>
             <select asp-for="PurchaseRequisitionId" asp-items="ViewBag.PurchaseRequisitions" class="form-select">
                 <option value="">-- Select Purchase Requisition --</option>

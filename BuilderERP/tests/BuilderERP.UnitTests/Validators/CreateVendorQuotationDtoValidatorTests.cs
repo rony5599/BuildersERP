@@ -16,17 +16,9 @@ public class CreateVendorQuotationDtoValidatorTests
     };
 
     [Fact]
-    public void Should_have_error_when_quotation_number_is_empty()
-    {
-        var model = new CreateVendorQuotationDto { QuotationNumber = "", DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.NewGuid(), Details = ValidDetails() };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.QuotationNumber);
-    }
-
-    [Fact]
     public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreateVendorQuotationDto { QuotationNumber = "VQ-001", DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.NewGuid(), Details = new() };
+        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.NewGuid(), Details = new() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Details);
     }
@@ -34,7 +26,7 @@ public class CreateVendorQuotationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_rfq_id_is_empty()
     {
-        var model = new CreateVendorQuotationDto { QuotationNumber = "VQ-001", DeliveryDays = 5, RfqId = Guid.Empty, SupplierId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = Guid.Empty, SupplierId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.RfqId);
     }
@@ -42,7 +34,7 @@ public class CreateVendorQuotationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_supplier_id_is_empty()
     {
-        var model = new CreateVendorQuotationDto { QuotationNumber = "VQ-001", DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.Empty, Details = ValidDetails() };
+        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.Empty, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SupplierId);
     }
@@ -52,7 +44,6 @@ public class CreateVendorQuotationDtoValidatorTests
     {
         var model = new CreateVendorQuotationDto
         {
-            QuotationNumber = "VQ-001",
             DeliveryDays = 5,
             RfqId = Guid.NewGuid(),
             SupplierId = Guid.NewGuid(),

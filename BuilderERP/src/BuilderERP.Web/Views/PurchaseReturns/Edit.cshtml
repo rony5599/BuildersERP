@@ -62,9 +62,9 @@
                     <td>
                         <input type="hidden" name="Details[@i].GoodsReceiveDetailId" class="grn-detail-id" value="@Model.Details[i].GoodsReceiveDetailId" />
                         <input type="hidden" name="Details[@i].MaterialId" class="material-id" value="@Model.Details[i].MaterialId" />
-                        <span class="grn-line-label text-muted small">line</span>
+                        <span class="grn-line-label text-muted small">@ViewBag.DetailMaterialNames[i]</span>
                     </td>
-                    <td><span class="material-name"></span></td>
+                    <td><span class="material-name">@ViewBag.DetailMaterialNames[i]</span></td>
                     <td><input name="Details[@i].ReturnQuantity" type="number" step="0.001" value="@Model.Details[i].ReturnQuantity" class="form-control form-control-sm" /></td>
                     <td>
                         <select asp-for="Details[i].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
@@ -128,6 +128,7 @@
                         clone.querySelector('.material-id').value = line.materialId;
                         clone.querySelector('.grn-line-label').textContent = line.materialName + ' (received ' + line.receivedQuantity + ')';
                         clone.querySelector('.material-name').textContent = line.materialName;
+                        clone.querySelector('select[name*="UnitOfMeasure"]').value = line.unitOfMeasure;
                         clone.querySelector('input[name*="UnitPrice"]').value = line.unitPrice;
                         tbody.appendChild(clone);
                     });

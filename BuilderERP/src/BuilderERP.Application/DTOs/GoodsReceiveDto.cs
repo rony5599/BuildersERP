@@ -15,6 +15,8 @@ public class GoodsReceiveDto
     public string PONumber { get; set; } = string.Empty;
     public Guid WarehouseId { get; set; }
     public string WarehouseName { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public List<GoodsReceiveDetailDto> Details { get; set; } = new();
 }
 
@@ -51,7 +53,6 @@ public class CreateGoodsReceiveDetailDto
 
 public class CreateGoodsReceiveDto
 {
-    public string GrnNumber { get; set; } = string.Empty;
     public DateTime ReceivedDate { get; set; } = DateTime.UtcNow;
     public string? Remarks { get; set; }
     public Guid PurchaseOrderId { get; set; }

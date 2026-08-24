@@ -26,6 +26,7 @@ public class GetVendorQuotationsByRequisitionIdQueryHandler : IRequestHandler<Ge
             .Include(v => v.Supplier)
             .Include(v => v.Rfq)
             .ThenInclude(r => r.PurchaseRequisition)
+            .ThenInclude(pr => pr.Project)
             .Include(v => v.Details)
             .Where(v => v.Rfq.PurchaseRequisitionId == request.PurchaseRequisitionId)
             .ToListAsync(cancellationToken);

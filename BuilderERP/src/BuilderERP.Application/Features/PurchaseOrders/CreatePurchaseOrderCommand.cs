@@ -4,6 +4,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseOrders;
 
@@ -13,16 +14,24 @@ public class CreatePurchaseOrderCommandHandler : IRequestHandler<CreatePurchaseO
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IDocumentNumberGenerator _numberGenerator;
 
-    public CreatePurchaseOrderCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreatePurchaseOrderCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IDocumentNumberGenerator numberGenerator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<Guid> Handle(CreatePurchaseOrderCommand request, CancellationToken cancellationToken)
     {
+        var projectId = await _unitOfWork.Repository<VendorQuotation>().Query()
+            .Where(q => q.Id == request.Dto.VendorQuotationId)
+            .Select(q => q.Rfq.PurchaseRequisition.ProjectId)
+            .SingleAsync(cancellationToken);
+
         var order = _mapper.Map<PurchaseOrder>(request.Dto);
+        order.PONumber = await _numberGenerator.GenerateAsync(projectId, "PO", cancellationToken);
 
         decimal totalAmount = 0;
         foreach (var detail in request.Dto.Details)

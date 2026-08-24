@@ -15,17 +15,9 @@ public class CreatePurchaseRequisitionDtoValidatorTests
     };
 
     [Fact]
-    public void Should_have_error_when_requisition_number_is_empty()
-    {
-        var model = new CreatePurchaseRequisitionDto { RequisitionNumber = string.Empty, RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.NewGuid(), Details = ValidDetails() };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.RequisitionNumber);
-    }
-
-    [Fact]
     public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreatePurchaseRequisitionDto { RequisitionNumber = "REQ-001", RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.NewGuid(), Details = new() };
+        var model = new CreatePurchaseRequisitionDto { RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.NewGuid(), Details = new() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Details);
     }
@@ -33,7 +25,7 @@ public class CreatePurchaseRequisitionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_department_id_is_empty()
     {
-        var model = new CreatePurchaseRequisitionDto { RequisitionNumber = "REQ-001", RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.Empty, Details = ValidDetails() };
+        var model = new CreatePurchaseRequisitionDto { RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.Empty, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DepartmentId);
     }
@@ -41,7 +33,7 @@ public class CreatePurchaseRequisitionDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreatePurchaseRequisitionDto { RequisitionNumber = "REQ-001", RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreatePurchaseRequisitionDto { RequiredByDate = DateTime.UtcNow.AddDays(7), DepartmentId = Guid.NewGuid(), ProjectId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

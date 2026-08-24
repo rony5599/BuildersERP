@@ -14,6 +14,8 @@ public class PurchaseRequisitionDto
     public bool IsActive { get; set; }
     public Guid DepartmentId { get; set; }
     public string DepartmentName { get; set; } = string.Empty;
+    public Guid ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public List<PurchaseRequisitionDetailDto> Details { get; set; } = new();
 }
 
@@ -40,12 +42,12 @@ public class CreatePurchaseRequisitionDetailDto
 
 public class CreatePurchaseRequisitionDto
 {
-    public string RequisitionNumber { get; set; } = string.Empty;
     public DateTime RequestDate { get; set; } = DateTime.UtcNow;
     public DateTime RequiredByDate { get; set; }
     public string? Description { get; set; }
     public RequisitionStatus Status { get; set; } = RequisitionStatus.Draft;
     public Guid DepartmentId { get; set; }
+    public Guid ProjectId { get; set; }
     public List<CreatePurchaseRequisitionDetailDto> Details { get; set; } = new();
 }
 
@@ -58,5 +60,6 @@ public class UpdatePurchaseRequisitionDto
     public string? Description { get; set; }
     public RequisitionStatus Status { get; set; }
     public Guid DepartmentId { get; set; }
+    public Guid ProjectId { get; set; }
     public List<CreatePurchaseRequisitionDetailDto> Details { get; set; } = new();
 }

@@ -4,6 +4,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
@@ -13,16 +14,24 @@ public class CreateVendorQuotationCommandHandler : IRequestHandler<CreateVendorQ
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IDocumentNumberGenerator _numberGenerator;
 
-    public CreateVendorQuotationCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreateVendorQuotationCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IDocumentNumberGenerator numberGenerator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<Guid> Handle(CreateVendorQuotationCommand request, CancellationToken cancellationToken)
     {
+        var projectId = await _unitOfWork.Repository<Rfq>().Query()
+            .Where(r => r.Id == request.Dto.RfqId)
+            .Select(r => r.PurchaseRequisition.ProjectId)
+            .SingleAsync(cancellationToken);
+
         var quotation = _mapper.Map<VendorQuotation>(request.Dto);
+        quotation.QuotationNumber = await _numberGenerator.GenerateAsync(projectId, "VQ", cancellationToken);
 
         decimal quotedAmount = 0;
         foreach (var detail in request.Dto.Details)

@@ -7,7 +7,6 @@ public class CreatePurchaseOrderDtoValidator : AbstractValidator<CreatePurchaseO
 {
     public CreatePurchaseOrderDtoValidator()
     {
-        RuleFor(x => x.PONumber).NotEmpty().MaximumLength(50);
         RuleFor(x => x.DeliveryDate).NotEmpty();
         RuleFor(x => x.VendorQuotationId).NotEmpty();
         RuleFor(x => x.Status).IsInEnum();

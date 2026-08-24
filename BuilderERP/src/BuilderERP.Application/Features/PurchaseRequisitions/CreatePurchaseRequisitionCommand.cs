@@ -12,16 +12,19 @@ public class CreatePurchaseRequisitionCommandHandler : IRequestHandler<CreatePur
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IDocumentNumberGenerator _numberGenerator;
 
-    public CreatePurchaseRequisitionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreatePurchaseRequisitionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IDocumentNumberGenerator numberGenerator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<Guid> Handle(CreatePurchaseRequisitionCommand request, CancellationToken cancellationToken)
     {
         var requisition = _mapper.Map<PurchaseRequisition>(request.Dto);
+        requisition.RequisitionNumber = await _numberGenerator.GenerateAsync(request.Dto.ProjectId, "PR", cancellationToken);
 
         decimal estimatedAmount = 0;
         foreach (var detail in request.Dto.Details)

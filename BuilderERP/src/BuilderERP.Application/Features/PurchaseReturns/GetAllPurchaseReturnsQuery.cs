@@ -24,7 +24,7 @@ public class GetAllPurchaseReturnsQueryHandler : IRequestHandler<GetAllPurchaseR
     public async Task<PagedResult<PurchaseReturnDto>> Handle(GetAllPurchaseReturnsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<PurchaseReturn>().Query()
-            .Include(r => r.GoodsReceive)
+            .Include(r => r.GoodsReceive).ThenInclude(g => g.PurchaseOrder).ThenInclude(o => o.VendorQuotation).ThenInclude(v => v.Rfq).ThenInclude(rfq => rfq.PurchaseRequisition).ThenInclude(pr => pr.Project)
             .Include(r => r.Details)
             .AsQueryable();
 
