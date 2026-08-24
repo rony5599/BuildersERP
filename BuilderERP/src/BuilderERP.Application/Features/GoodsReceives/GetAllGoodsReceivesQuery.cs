@@ -25,6 +25,8 @@ public class GetAllGoodsReceivesQueryHandler : IRequestHandler<GetAllGoodsReceiv
     {
         var query = _unitOfWork.Repository<GoodsReceive>().Query()
             .Include(g => g.PurchaseOrder)
+            .Include(g => g.Warehouse)
+            .Include(g => g.Details)
             .AsQueryable();
 
         var page = request.Page < 1 ? 1 : request.Page;

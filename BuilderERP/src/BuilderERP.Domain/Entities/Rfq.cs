@@ -13,8 +13,7 @@ public class Rfq : BaseEntity
     public Guid PurchaseRequisitionId { get; set; }
     public PurchaseRequisition PurchaseRequisition { get; set; } = null!;
 
-    public Guid SupplierId { get; set; }
-    public Supplier Supplier { get; set; } = null!;
-
+    public ICollection<RfqVendor> RfqVendors { get; set; } = new List<RfqVendor>();
+    public ICollection<RfqDetail> Details { get; set; } = new List<RfqDetail>();
     public ICollection<VendorQuotation> VendorQuotations { get; set; } = new List<VendorQuotation>();
 }

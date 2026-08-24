@@ -10,26 +10,31 @@ public class CreatePurchaseOrderDtoValidatorTests
 {
     private readonly CreatePurchaseOrderDtoValidator _validator = new();
 
+    private static List<CreatePurchaseOrderDetailDto> ValidDetails() => new()
+    {
+        new CreatePurchaseOrderDetailDto { MaterialId = Guid.NewGuid(), OrderedQuantity = 10, UnitPrice = 100 }
+    };
+
     [Fact]
     public void Should_have_error_when_po_number_is_empty()
     {
-        var model = new CreatePurchaseOrderDto { PONumber = "", TotalAmount = 1000, DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.NewGuid() };
+        var model = new CreatePurchaseOrderDto { PONumber = "", DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PONumber);
     }
 
     [Fact]
-    public void Should_have_error_when_total_amount_is_zero()
+    public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreatePurchaseOrderDto { PONumber = "PO-001", TotalAmount = 0, DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.NewGuid() };
+        var model = new CreatePurchaseOrderDto { PONumber = "PO-001", DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.NewGuid(), Details = new() };
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.TotalAmount);
+        result.ShouldHaveValidationErrorFor(x => x.Details);
     }
 
     [Fact]
     public void Should_have_error_when_vendor_quotation_id_is_empty()
     {
-        var model = new CreatePurchaseOrderDto { PONumber = "PO-001", TotalAmount = 1000, DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.Empty };
+        var model = new CreatePurchaseOrderDto { PONumber = "PO-001", DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.Empty, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.VendorQuotationId);
     }
@@ -40,10 +45,10 @@ public class CreatePurchaseOrderDtoValidatorTests
         var model = new CreatePurchaseOrderDto
         {
             PONumber = "PO-001",
-            TotalAmount = 1000,
             DeliveryDate = DateTime.UtcNow.AddDays(10),
             VendorQuotationId = Guid.NewGuid(),
-            Status = PurchaseOrderStatus.Draft
+            Status = PurchaseOrderStatus.Draft,
+            Details = ValidDetails()
         };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

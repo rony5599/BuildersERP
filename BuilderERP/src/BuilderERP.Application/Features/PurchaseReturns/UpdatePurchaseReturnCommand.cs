@@ -1,13 +1,24 @@
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
-public record UpdatePurchaseReturnCommand(UpdatePurchaseReturnDto Dto) : IRequest<bool>;
+public record UpdatePurchaseReturnCommand(UpdatePurchaseReturnDto Dto) : IRequest<UpdatePurchaseReturnResult>;
 
-public class UpdatePurchaseReturnCommandHandler : IRequestHandler<UpdatePurchaseReturnCommand, bool>
+public enum UpdatePurchaseReturnResult
+{
+    Success,
+    NotFound,
+    Locked,
+    OverReturn
+}
+
+public class UpdatePurchaseReturnCommandHandler : IRequestHandler<UpdatePurchaseReturnCommand, UpdatePurchaseReturnResult>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -16,24 +27,82 @@ public class UpdatePurchaseReturnCommandHandler : IRequestHandler<UpdatePurchase
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<bool> Handle(UpdatePurchaseReturnCommand request, CancellationToken cancellationToken)
+    public async Task<UpdatePurchaseReturnResult> Handle(UpdatePurchaseReturnCommand request, CancellationToken cancellationToken)
     {
         var repository = _unitOfWork.Repository<PurchaseReturn>();
-        var purchaseReturn = await repository.GetByIdAsync(request.Dto.Id);
+        var purchaseReturn = await repository.Query()
+            .Include(r => r.Details)
+            .FirstOrDefaultAsync(r => r.Id == request.Dto.Id, cancellationToken);
+
         if (purchaseReturn is null)
         {
-            return false;
+            return UpdatePurchaseReturnResult.NotFound;
         }
+
+        if (purchaseReturn.Status is PurchaseReturnStatus.Approved or PurchaseReturnStatus.Completed)
+        {
+            return UpdatePurchaseReturnResult.Locked;
+        }
+
+        var isApproving = request.Dto.Status is PurchaseReturnStatus.Approved or PurchaseReturnStatus.Completed;
 
         purchaseReturn.ReturnNumber = request.Dto.ReturnNumber;
         purchaseReturn.ReturnDate = request.Dto.ReturnDate;
-        purchaseReturn.ReturnAmount = request.Dto.ReturnAmount;
         purchaseReturn.Reason = request.Dto.Reason;
-        purchaseReturn.Status = request.Dto.Status;
         purchaseReturn.GoodsReceiveId = request.Dto.GoodsReceiveId;
 
+        var detailRepository = _unitOfWork.Repository<PurchaseReturnDetail>();
+        foreach (var detail in purchaseReturn.Details.ToList())
+        {
+            detailRepository.Remove(detail);
+        }
+
+        purchaseReturn.Details.Clear();
+
+        var newDetails = new List<PurchaseReturnDetail>();
+        decimal returnAmount = 0;
+        foreach (var detail in request.Dto.Details)
+        {
+            var amounts = LineItemCalculator.Calculate(detail.ReturnQuantity, detail.UnitPrice, 0, detail.VatPercent, detail.TaxPercent);
+            var newDetail = new PurchaseReturnDetail
+            {
+                PurchaseReturnId = purchaseReturn.Id,
+                GoodsReceiveDetailId = detail.GoodsReceiveDetailId,
+                MaterialId = detail.MaterialId,
+                ReturnQuantity = detail.ReturnQuantity,
+                UnitOfMeasure = detail.UnitOfMeasure,
+                UnitPrice = detail.UnitPrice,
+                VatPercent = detail.VatPercent,
+                VatAmount = amounts.VatAmount,
+                TaxPercent = detail.TaxPercent,
+                TaxAmount = amounts.TaxAmount,
+                LineTotal = amounts.NetAmount
+            };
+            await detailRepository.AddAsync(newDetail);
+            newDetails.Add(newDetail);
+            returnAmount += amounts.NetAmount;
+        }
+
+        purchaseReturn.ReturnAmount = returnAmount;
+
+        if (isApproving)
+        {
+            var isValid = await PurchaseReturnPostingService.ValidateAsync(_unitOfWork, purchaseReturn, newDetails, cancellationToken);
+            if (!isValid)
+            {
+                return UpdatePurchaseReturnResult.OverReturn;
+            }
+        }
+
+        purchaseReturn.Status = request.Dto.Status;
         repository.Update(purchaseReturn);
+
+        if (isApproving)
+        {
+            await PurchaseReturnPostingService.ApplyAsync(_unitOfWork, purchaseReturn, newDetails, cancellationToken);
+        }
+
         await _unitOfWork.SaveChangesAsync();
-        return true;
+        return UpdatePurchaseReturnResult.Success;
     }
 }

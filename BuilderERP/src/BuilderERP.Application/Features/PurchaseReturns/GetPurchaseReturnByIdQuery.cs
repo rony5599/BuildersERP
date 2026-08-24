@@ -3,6 +3,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
@@ -21,7 +22,10 @@ public class GetPurchaseReturnByIdQueryHandler : IRequestHandler<GetPurchaseRetu
 
     public async Task<PurchaseReturnDto?> Handle(GetPurchaseReturnByIdQuery request, CancellationToken cancellationToken)
     {
-        var purchaseReturn = await _unitOfWork.Repository<PurchaseReturn>().GetByIdAsync(request.Id);
+        var purchaseReturn = await _unitOfWork.Repository<PurchaseReturn>().Query()
+            .Include(r => r.GoodsReceive)
+            .Include(r => r.Details).ThenInclude(d => d.Material)
+            .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
         return purchaseReturn is null ? null : _mapper.Map<PurchaseReturnDto>(purchaseReturn);
     }
 }

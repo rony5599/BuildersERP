@@ -15,16 +15,47 @@ public class PurchaseOrderDto
     public Guid VendorQuotationId { get; set; }
     public string QuotationNumber { get; set; } = string.Empty;
     public string SupplierName { get; set; } = string.Empty;
+    public List<PurchaseOrderDetailDto> Details { get; set; } = new();
+}
+
+public class PurchaseOrderDetailDto
+{
+    public Guid Id { get; set; }
+    public Guid MaterialId { get; set; }
+    public string MaterialName { get; set; } = string.Empty;
+    public decimal OrderedQuantity { get; set; }
+    public UnitOfMeasure UnitOfMeasure { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal DiscountPercent { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public decimal VatPercent { get; set; }
+    public decimal VatAmount { get; set; }
+    public decimal TaxPercent { get; set; }
+    public decimal TaxAmount { get; set; }
+    public decimal LineTotal { get; set; }
+    public decimal ReceivedQuantity { get; set; }
+    public decimal RemainingQuantity => OrderedQuantity - ReceivedQuantity;
+}
+
+public class CreatePurchaseOrderDetailDto
+{
+    public Guid MaterialId { get; set; }
+    public decimal OrderedQuantity { get; set; }
+    public UnitOfMeasure UnitOfMeasure { get; set; } = UnitOfMeasure.Piece;
+    public decimal UnitPrice { get; set; }
+    public decimal DiscountPercent { get; set; }
+    public decimal VatPercent { get; set; }
+    public decimal TaxPercent { get; set; }
 }
 
 public class CreatePurchaseOrderDto
 {
     public string PONumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
-    public decimal TotalAmount { get; set; }
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;
     public Guid VendorQuotationId { get; set; }
+    public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }
 
 public class UpdatePurchaseOrderDto
@@ -32,8 +63,8 @@ public class UpdatePurchaseOrderDto
     public Guid Id { get; set; }
     public string PONumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; }
-    public decimal TotalAmount { get; set; }
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
     public Guid VendorQuotationId { get; set; }
+    public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }

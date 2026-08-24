@@ -2,6 +2,7 @@ using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Stocks;
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
@@ -25,8 +26,8 @@ public class CreateStockTransferCommandHandler : IRequestHandler<CreateStockTran
         var transfer = _mapper.Map<StockTransfer>(request.Dto);
         await _unitOfWork.Repository<StockTransfer>().AddAsync(transfer);
 
-        await StockSync.ApplyQuantityDeltaAsync(_unitOfWork, transfer.MaterialId, transfer.FromWarehouseId, -transfer.Quantity);
-        await StockSync.ApplyQuantityDeltaAsync(_unitOfWork, transfer.MaterialId, transfer.ToWarehouseId, transfer.Quantity);
+        await StockSync.ApplyQuantityDeltaAsync(_unitOfWork, transfer.MaterialId, transfer.FromWarehouseId, -transfer.Quantity, InventoryTransactionType.StockTransfer, transfer.TransferNumber);
+        await StockSync.ApplyQuantityDeltaAsync(_unitOfWork, transfer.MaterialId, transfer.ToWarehouseId, transfer.Quantity, InventoryTransactionType.StockTransfer, transfer.TransferNumber);
 
         await _unitOfWork.SaveChangesAsync();
 

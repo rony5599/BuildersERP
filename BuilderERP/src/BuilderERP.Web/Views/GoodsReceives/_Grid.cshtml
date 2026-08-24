@@ -8,8 +8,10 @@
         <tr>
             <th>GRN #</th>
             <th>Purchase Order</th>
+            <th>Warehouse</th>
             <th>Received Amount</th>
             <th>Received Date</th>
+            <th>Status</th>
             <th>Remarks</th>
             <th>Active</th>
             <th></th>
@@ -21,8 +23,10 @@
             <tr>
                 <td>@receive.GrnNumber</td>
                 <td>@receive.PONumber</td>
+                <td>@receive.WarehouseName</td>
                 <td>@receive.ReceivedAmount</td>
                 <td>@receive.ReceivedDate.ToString("yyyy-MM-dd")</td>
+                <td>@receive.Status</td>
                 <td>@receive.Remarks</td>
                 <td>
                     <span class="badge @(receive.IsActive ? "bg-success" : "bg-secondary")">
@@ -45,7 +49,7 @@
         @if (Model.Items.Count == 0)
         {
             <tr>
-                <td colspan="7" class="text-center text-muted">No goods receives found.</td>
+                <td colspan="9" class="text-center text-muted">No goods receives found.</td>
             </tr>
         }
     </tbody>

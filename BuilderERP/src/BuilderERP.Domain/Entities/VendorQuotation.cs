@@ -13,4 +13,9 @@ public class VendorQuotation : BaseEntity
 
     public Guid RfqId { get; set; }
     public Rfq Rfq { get; set; } = null!;
+
+    public Guid SupplierId { get; set; }
+    public Supplier Supplier { get; set; } = null!;
+
+    public ICollection<VendorQuotationDetail> Details { get; set; } = new List<VendorQuotationDetail>();
 }

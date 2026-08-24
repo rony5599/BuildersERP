@@ -1,7 +1,7 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
-using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
@@ -23,35 +23,35 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
     public async Task<Guid> Handle(CreateGoodsReceiveCommand request, CancellationToken cancellationToken)
     {
         var receive = _mapper.Map<GoodsReceive>(request.Dto);
+
+        decimal receivedAmount = 0;
+        foreach (var detail in request.Dto.Details)
+        {
+            var amounts = LineItemCalculator.Calculate(detail.ReceivedQuantity, detail.UnitPrice, 0, detail.VatPercent, detail.TaxPercent);
+            receive.Details.Add(new GoodsReceiveDetail
+            {
+                GoodsReceiveId = receive.Id,
+                PurchaseOrderDetailId = detail.PurchaseOrderDetailId,
+                MaterialId = detail.MaterialId,
+                ReceivedQuantity = detail.ReceivedQuantity,
+                UnitOfMeasure = detail.UnitOfMeasure,
+                UnitPrice = detail.UnitPrice,
+                BatchNo = detail.BatchNo,
+                SerialNo = detail.SerialNo,
+                VatPercent = detail.VatPercent,
+                VatAmount = amounts.VatAmount,
+                TaxPercent = detail.TaxPercent,
+                TaxAmount = amounts.TaxAmount,
+                LineTotal = amounts.NetAmount
+            });
+            receivedAmount += amounts.NetAmount;
+        }
+
+        receive.ReceivedAmount = receivedAmount;
+
         await _unitOfWork.Repository<GoodsReceive>().AddAsync(receive);
-
-        await GoodsReceivePurchaseOrderSync.ApplyAsync(_unitOfWork, receive.PurchaseOrderId, receive.ReceivedAmount);
-
         await _unitOfWork.SaveChangesAsync();
 
         return receive.Id;
-    }
-}
-
-internal static class GoodsReceivePurchaseOrderSync
-{
-    public static async Task ApplyAsync(IUnitOfWork unitOfWork, Guid purchaseOrderId, decimal receivedAmountDelta)
-    {
-        var repository = unitOfWork.Repository<PurchaseOrder>();
-        var order = await repository.GetByIdAsync(purchaseOrderId);
-        if (order is null)
-        {
-            return;
-        }
-
-        order.ReceivedAmount += receivedAmountDelta;
-
-        order.Status = order.ReceivedAmount >= order.TotalAmount
-            ? PurchaseOrderStatus.Received
-            : order.ReceivedAmount > 0
-                ? PurchaseOrderStatus.PartiallyReceived
-                : order.Status;
-
-        repository.Update(order);
     }
 }

@@ -1,4 +1,5 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.ItemCategories;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -41,8 +42,9 @@ public class MaterialsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.MaterialManage)]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
+        await PopulateDropdownsAsync();
         return View(new CreateMaterialDto());
     }
 
@@ -55,6 +57,7 @@ public class MaterialsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
+            await PopulateDropdownsAsync();
             return View(dto);
         }
 
@@ -79,9 +82,22 @@ public class MaterialsController : Controller
             Description = material.Description,
             UnitOfMeasure = material.UnitOfMeasure,
             ReorderLevel = material.ReorderLevel,
-            Barcode = material.Barcode
+            Barcode = material.Barcode,
+            CategoryId = material.CategoryId,
+            Brand = material.Brand,
+            PurchaseUnit = material.PurchaseUnit,
+            UnitConversionFactor = material.UnitConversionFactor,
+            MinStockLevel = material.MinStockLevel,
+            MaxStockLevel = material.MaxStockLevel,
+            StandardPurchasePrice = material.StandardPurchasePrice,
+            VatPercent = material.VatPercent,
+            TaxPercent = material.TaxPercent,
+            DiscountPercent = material.DiscountPercent,
+            IsBatchTracked = material.IsBatchTracked,
+            IsSerialTracked = material.IsSerialTracked
         };
 
+        await PopulateDropdownsAsync();
         return View(dto);
     }
 
@@ -94,6 +110,7 @@ public class MaterialsController : Controller
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
+            await PopulateDropdownsAsync();
             return View(dto);
         }
 
@@ -113,5 +130,11 @@ public class MaterialsController : Controller
     {
         await _mediator.Send(new SetMaterialActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task PopulateDropdownsAsync()
+    {
+        var categories = await _mediator.Send(new GetAllItemCategoriesQuery(PageSize: int.MaxValue));
+        ViewBag.Categories = new SelectList(categories.Items, "Id", "Name");
     }
 }

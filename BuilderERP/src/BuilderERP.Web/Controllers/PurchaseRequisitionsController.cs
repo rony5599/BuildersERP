@@ -1,5 +1,6 @@
 ﻿using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Departments;
+using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.PurchaseRequisitions;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -77,9 +78,16 @@ public class PurchaseRequisitionsController : Controller
             RequestDate = requisition.RequestDate,
             RequiredByDate = requisition.RequiredByDate,
             Description = requisition.Description,
-            EstimatedAmount = requisition.EstimatedAmount,
             Status = requisition.Status,
-            DepartmentId = requisition.DepartmentId
+            DepartmentId = requisition.DepartmentId,
+            Details = requisition.Details.Select(d => new CreatePurchaseRequisitionDetailDto
+            {
+                MaterialId = d.MaterialId,
+                Quantity = d.Quantity,
+                UnitOfMeasure = d.UnitOfMeasure,
+                EstimatedUnitPrice = d.EstimatedUnitPrice,
+                Remarks = d.Remarks
+            }).ToList()
         };
 
         await PopulateDropdownsAsync();
@@ -99,10 +107,17 @@ public class PurchaseRequisitionsController : Controller
             return View(dto);
         }
 
-        var success = await _mediator.Send(new UpdatePurchaseRequisitionCommand(dto));
-        if (!success)
+        var result = await _mediator.Send(new UpdatePurchaseRequisitionCommand(dto));
+        if (result == UpdatePurchaseRequisitionResult.NotFound)
         {
             return NotFound();
+        }
+
+        if (result == UpdatePurchaseRequisitionResult.Locked)
+        {
+            ModelState.AddModelError(string.Empty, "This requisition has already been approved, rejected, or converted and cannot be edited.");
+            await PopulateDropdownsAsync();
+            return View(dto);
         }
 
         return RedirectToAction(nameof(Index));
@@ -121,5 +136,8 @@ public class PurchaseRequisitionsController : Controller
     {
         var departments = await _mediator.Send(new GetAllDepartmentsQuery(PageSize: int.MaxValue));
         ViewBag.Departments = new SelectList(departments.Items, "Id", "Name");
+
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
     }
 }

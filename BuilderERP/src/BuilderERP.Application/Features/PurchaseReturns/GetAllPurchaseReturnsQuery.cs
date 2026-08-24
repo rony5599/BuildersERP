@@ -25,6 +25,7 @@ public class GetAllPurchaseReturnsQueryHandler : IRequestHandler<GetAllPurchaseR
     {
         var query = _unitOfWork.Repository<PurchaseReturn>().Query()
             .Include(r => r.GoodsReceive)
+            .Include(r => r.Details)
             .AsQueryable();
 
         var page = request.Page < 1 ? 1 : request.Page;

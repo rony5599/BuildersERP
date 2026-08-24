@@ -10,8 +10,14 @@ public class UpdatePurchaseRequisitionDtoValidator : AbstractValidator<UpdatePur
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.RequisitionNumber).NotEmpty().MaximumLength(50);
         RuleFor(x => x.RequiredByDate).NotEmpty();
-        RuleFor(x => x.EstimatedAmount).GreaterThan(0);
         RuleFor(x => x.DepartmentId).NotEmpty();
         RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.Details).NotEmpty().WithMessage("At least one line item is required.");
+        RuleForEach(x => x.Details).ChildRules(detail =>
+        {
+            detail.RuleFor(d => d.MaterialId).NotEmpty();
+            detail.RuleFor(d => d.Quantity).GreaterThan(0);
+            detail.RuleFor(d => d.EstimatedUnitPrice).GreaterThanOrEqualTo(0);
+        });
     }
 }

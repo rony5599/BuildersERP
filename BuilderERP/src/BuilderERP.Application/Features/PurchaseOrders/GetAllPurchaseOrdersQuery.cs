@@ -25,8 +25,8 @@ public class GetAllPurchaseOrdersQueryHandler : IRequestHandler<GetAllPurchaseOr
     {
         var query = _unitOfWork.Repository<PurchaseOrder>().Query()
             .Include(o => o.VendorQuotation)
-            .ThenInclude(v => v.Rfq)
-            .ThenInclude(r => r.Supplier)
+            .ThenInclude(v => v.Supplier)
+            .Include(o => o.Details)
             .AsQueryable();
 
         var page = request.Page < 1 ? 1 : request.Page;

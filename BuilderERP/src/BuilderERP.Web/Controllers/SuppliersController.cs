@@ -74,7 +74,17 @@ public class SuppliersController : Controller
             ContactPerson = supplier.ContactPerson,
             Phone = supplier.Phone,
             Email = supplier.Email,
-            Address = supplier.Address
+            Address = supplier.Address,
+            TaxRegistrationNumber = supplier.TaxRegistrationNumber,
+            VatRegistrationNumber = supplier.VatRegistrationNumber,
+            PaymentTerms = supplier.PaymentTerms,
+            CreditLimit = supplier.CreditLimit,
+            BankName = supplier.BankName,
+            BankAccountNumber = supplier.BankAccountNumber,
+            BankBranch = supplier.BankBranch,
+            BankRoutingOrSwiftCode = supplier.BankRoutingOrSwiftCode,
+            VendorCategory = supplier.VendorCategory,
+            Rating = supplier.Rating
         };
 
         return View(dto);

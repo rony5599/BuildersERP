@@ -23,10 +23,10 @@ public class GetVendorQuotationsByRequisitionIdQueryHandler : IRequestHandler<Ge
     public async Task<IReadOnlyList<VendorQuotationDto>> Handle(GetVendorQuotationsByRequisitionIdQuery request, CancellationToken cancellationToken)
     {
         var quotations = await _unitOfWork.Repository<VendorQuotation>().Query()
-            .Include(v => v.Rfq)
-            .ThenInclude(r => r.Supplier)
+            .Include(v => v.Supplier)
             .Include(v => v.Rfq)
             .ThenInclude(r => r.PurchaseRequisition)
+            .Include(v => v.Details)
             .Where(v => v.Rfq.PurchaseRequisitionId == request.PurchaseRequisitionId)
             .ToListAsync(cancellationToken);
         return _mapper.Map<IReadOnlyList<VendorQuotationDto>>(quotations);

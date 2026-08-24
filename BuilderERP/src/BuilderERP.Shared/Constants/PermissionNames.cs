@@ -114,6 +114,11 @@ public static class PermissionNames
     public const string MaterialView = "Material.View";
     public const string MaterialManage = "Material.Manage";
 
+    public const string ItemCategoryView = "ItemCategory.View";
+    public const string ItemCategoryManage = "ItemCategory.Manage";
+
+    public const string ItemPriceHistoryView = "ItemPriceHistory.View";
+
     public const string StockView = "Stock.View";
     public const string StockManage = "Stock.Manage";
 
@@ -329,6 +334,8 @@ public static class PermissionNames
         (PurchaseReturnView, "PurchaseReturn"), (PurchaseReturnManage, "PurchaseReturn"),
         (WarehouseView, "Warehouse"), (WarehouseManage, "Warehouse"),
         (MaterialView, "Material"), (MaterialManage, "Material"),
+        (ItemCategoryView, "ItemCategory"), (ItemCategoryManage, "ItemCategory"),
+        (ItemPriceHistoryView, "ItemPriceHistory"),
         (StockView, "Stock"), (StockManage, "Stock"),
         (StockTransferView, "StockTransfer"), (StockTransferManage, "StockTransfer"),
         (StockIssueView, "StockIssue"), (StockIssueManage, "StockIssue"),
@@ -437,6 +444,8 @@ public static class PermissionNames
         PurchaseReturnView, PurchaseReturnManage,
         WarehouseView, WarehouseManage,
         MaterialView, MaterialManage,
+        ItemCategoryView, ItemCategoryManage,
+        ItemPriceHistoryView,
         StockView, StockManage,
         StockTransferView, StockTransferManage,
         StockIssueView, StockIssueManage,

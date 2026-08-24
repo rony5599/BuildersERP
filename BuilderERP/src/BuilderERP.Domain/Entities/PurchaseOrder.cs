@@ -15,5 +15,6 @@ public class PurchaseOrder : BaseEntity
     public Guid VendorQuotationId { get; set; }
     public VendorQuotation VendorQuotation { get; set; } = null!;
 
+    public ICollection<PurchaseOrderDetail> Details { get; set; } = new List<PurchaseOrderDetail>();
     public ICollection<GoodsReceive> GoodsReceives { get; set; } = new List<GoodsReceive>();
 }

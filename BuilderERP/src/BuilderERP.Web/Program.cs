@@ -1,4 +1,5 @@
 using BuilderERP.Application;
+using BuilderERP.Application.Common;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Infrastructure;
 using BuilderERP.Infrastructure.Identity;
@@ -24,6 +25,7 @@ try
 
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.Configure<ProcurementSettings>(builder.Configuration.GetSection("ProcurementSettings"));
 
     builder.Services.ConfigureApplicationCookie(options =>
     {

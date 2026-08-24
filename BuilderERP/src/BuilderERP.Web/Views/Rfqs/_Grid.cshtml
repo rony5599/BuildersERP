@@ -8,7 +8,7 @@
         <tr>
             <th>RFQ #</th>
             <th>Requisition #</th>
-            <th>Supplier</th>
+            <th>Vendors</th>
             <th>Closing Date</th>
             <th>Status</th>
             <th>Active</th>
@@ -21,7 +21,7 @@
             <tr>
                 <td>@rfq.RfqNumber</td>
                 <td>@rfq.RequisitionNumber</td>
-                <td>@rfq.SupplierName</td>
+                <td>@string.Join(", ", rfq.Vendors.Select(v => v.SupplierName))</td>
                 <td>@rfq.ClosingDate.ToString("yyyy-MM-dd")</td>
                 <td>@rfq.Status</td>
                 <td>

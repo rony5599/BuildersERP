@@ -1,4 +1,5 @@
 using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.PurchaseOrders;
 using BuilderERP.Application.Features.VendorQuotations;
 using BuilderERP.Shared.Authorization;
@@ -75,10 +76,19 @@ public class PurchaseOrdersController : Controller
             Id = order.Id,
             PONumber = order.PONumber,
             OrderDate = order.OrderDate,
-            TotalAmount = order.TotalAmount,
             DeliveryDate = order.DeliveryDate,
             Status = order.Status,
-            VendorQuotationId = order.VendorQuotationId
+            VendorQuotationId = order.VendorQuotationId,
+            Details = order.Details.Select(d => new CreatePurchaseOrderDetailDto
+            {
+                MaterialId = d.MaterialId,
+                OrderedQuantity = d.OrderedQuantity,
+                UnitOfMeasure = d.UnitOfMeasure,
+                UnitPrice = d.UnitPrice,
+                DiscountPercent = d.DiscountPercent,
+                VatPercent = d.VatPercent,
+                TaxPercent = d.TaxPercent
+            }).ToList()
         };
 
         await PopulateDropdownsAsync();
@@ -98,10 +108,17 @@ public class PurchaseOrdersController : Controller
             return View(dto);
         }
 
-        var success = await _mediator.Send(new UpdatePurchaseOrderCommand(dto));
-        if (!success)
+        var result = await _mediator.Send(new UpdatePurchaseOrderCommand(dto));
+        if (result == UpdatePurchaseOrderResult.NotFound)
         {
             return NotFound();
+        }
+
+        if (result == UpdatePurchaseOrderResult.Locked)
+        {
+            ModelState.AddModelError(string.Empty, "This purchase order is no longer in Draft status and cannot be edited.");
+            await PopulateDropdownsAsync();
+            return View(dto);
         }
 
         return RedirectToAction(nameof(Index));
@@ -120,5 +137,8 @@ public class PurchaseOrdersController : Controller
     {
         var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery(PageSize: int.MaxValue));
         ViewBag.VendorQuotations = new SelectList(quotations.Items, "Id", "QuotationNumber");
+
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
     }
 }

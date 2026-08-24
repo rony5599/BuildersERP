@@ -9,10 +9,15 @@ public class CreatePurchaseReturnDtoValidatorTests
 {
     private readonly CreatePurchaseReturnDtoValidator _validator = new();
 
+    private static List<CreatePurchaseReturnDetailDto> ValidDetails() => new()
+    {
+        new CreatePurchaseReturnDetailDto { GoodsReceiveDetailId = Guid.NewGuid(), MaterialId = Guid.NewGuid(), ReturnQuantity = 5, UnitPrice = 100 }
+    };
+
     [Fact]
     public void Should_have_error_when_return_number_is_empty()
     {
-        var model = new CreatePurchaseReturnDto { ReturnNumber = "", ReturnAmount = 200, Reason = "Damaged", GoodsReceiveId = Guid.NewGuid() };
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "", Reason = "Damaged", GoodsReceiveId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ReturnNumber);
     }
@@ -20,7 +25,7 @@ public class CreatePurchaseReturnDtoValidatorTests
     [Fact]
     public void Should_have_error_when_reason_is_empty()
     {
-        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", ReturnAmount = 200, Reason = "", GoodsReceiveId = Guid.NewGuid() };
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", Reason = "", GoodsReceiveId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Reason);
     }
@@ -28,15 +33,23 @@ public class CreatePurchaseReturnDtoValidatorTests
     [Fact]
     public void Should_have_error_when_goods_receive_id_is_empty()
     {
-        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", ReturnAmount = 200, Reason = "Damaged", GoodsReceiveId = Guid.Empty };
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", Reason = "Damaged", GoodsReceiveId = Guid.Empty, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.GoodsReceiveId);
     }
 
     [Fact]
+    public void Should_have_error_when_details_is_empty()
+    {
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", Reason = "Damaged", GoodsReceiveId = Guid.NewGuid(), Details = new() };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Details);
+    }
+
+    [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", ReturnAmount = 200, Reason = "Damaged", GoodsReceiveId = Guid.NewGuid() };
+        var model = new CreatePurchaseReturnDto { ReturnNumber = "PR-001", Reason = "Damaged", GoodsReceiveId = Guid.NewGuid(), Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

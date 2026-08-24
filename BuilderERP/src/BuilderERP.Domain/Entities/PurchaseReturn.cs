@@ -13,4 +13,6 @@ public class PurchaseReturn : BaseEntity
 
     public Guid GoodsReceiveId { get; set; }
     public GoodsReceive GoodsReceive { get; set; } = null!;
+
+    public ICollection<PurchaseReturnDetail> Details { get; set; } = new List<PurchaseReturnDetail>();
 }

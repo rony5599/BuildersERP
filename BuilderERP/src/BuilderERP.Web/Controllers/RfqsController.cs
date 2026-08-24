@@ -1,4 +1,5 @@
 using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.PurchaseRequisitions;
 using BuilderERP.Application.Features.Rfqs;
 using BuilderERP.Application.Features.Suppliers;
@@ -79,7 +80,14 @@ public class RfqsController : Controller
             ClosingDate = rfq.ClosingDate,
             Status = rfq.Status,
             PurchaseRequisitionId = rfq.PurchaseRequisitionId,
-            SupplierId = rfq.SupplierId
+            SupplierIds = rfq.Vendors.Select(v => v.SupplierId).ToList(),
+            Details = rfq.Details.Select(d => new CreateRfqDetailDto
+            {
+                MaterialId = d.MaterialId,
+                Quantity = d.Quantity,
+                UnitOfMeasure = d.UnitOfMeasure,
+                Specification = d.Specification
+            }).ToList()
         };
 
         await PopulateDropdownsAsync();
@@ -99,10 +107,17 @@ public class RfqsController : Controller
             return View(dto);
         }
 
-        var success = await _mediator.Send(new UpdateRfqCommand(dto));
-        if (!success)
+        var result = await _mediator.Send(new UpdateRfqCommand(dto));
+        if (result == UpdateRfqResult.NotFound)
         {
             return NotFound();
+        }
+
+        if (result == UpdateRfqResult.Locked)
+        {
+            ModelState.AddModelError(string.Empty, "This RFQ is closed and cannot be edited.");
+            await PopulateDropdownsAsync();
+            return View(dto);
         }
 
         return RedirectToAction(nameof(Index));
@@ -123,6 +138,9 @@ public class RfqsController : Controller
         ViewBag.PurchaseRequisitions = new SelectList(requisitions.Items, "Id", "RequisitionNumber");
 
         var suppliers = await _mediator.Send(new GetAllSuppliersQuery(PageSize: int.MaxValue));
-        ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name");
+        ViewBag.Suppliers = suppliers.Items;
+
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
     }
 }

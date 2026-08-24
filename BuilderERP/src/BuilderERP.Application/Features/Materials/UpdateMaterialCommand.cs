@@ -31,6 +31,18 @@ public class UpdateMaterialCommandHandler : IRequestHandler<UpdateMaterialComman
         material.UnitOfMeasure = request.Dto.UnitOfMeasure;
         material.ReorderLevel = request.Dto.ReorderLevel;
         material.Barcode = request.Dto.Barcode;
+        material.CategoryId = request.Dto.CategoryId;
+        material.Brand = request.Dto.Brand;
+        material.PurchaseUnit = request.Dto.PurchaseUnit;
+        material.UnitConversionFactor = request.Dto.UnitConversionFactor;
+        material.MinStockLevel = request.Dto.MinStockLevel;
+        material.MaxStockLevel = request.Dto.MaxStockLevel;
+        material.StandardPurchasePrice = request.Dto.StandardPurchasePrice;
+        material.VatPercent = request.Dto.VatPercent;
+        material.TaxPercent = request.Dto.TaxPercent;
+        material.DiscountPercent = request.Dto.DiscountPercent;
+        material.IsBatchTracked = request.Dto.IsBatchTracked;
+        material.IsSerialTracked = request.Dto.IsSerialTracked;
 
         repository.Update(material);
         await _unitOfWork.SaveChangesAsync();

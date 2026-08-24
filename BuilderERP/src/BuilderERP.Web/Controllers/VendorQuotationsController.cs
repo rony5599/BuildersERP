@@ -1,5 +1,7 @@
 using BuilderERP.Application.DTOs;
+using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Rfqs;
+using BuilderERP.Application.Features.Suppliers;
 using BuilderERP.Application.Features.VendorQuotations;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -75,10 +77,21 @@ public class VendorQuotationsController : Controller
             Id = quotation.Id,
             QuotationNumber = quotation.QuotationNumber,
             QuotationDate = quotation.QuotationDate,
-            QuotedAmount = quotation.QuotedAmount,
             DeliveryDays = quotation.DeliveryDays,
             Status = quotation.Status,
-            RfqId = quotation.RfqId
+            RfqId = quotation.RfqId,
+            SupplierId = quotation.SupplierId,
+            Details = quotation.Details.Select(d => new CreateVendorQuotationDetailDto
+            {
+                MaterialId = d.MaterialId,
+                Quantity = d.Quantity,
+                UnitOfMeasure = d.UnitOfMeasure,
+                UnitPrice = d.UnitPrice,
+                DiscountPercent = d.DiscountPercent,
+                VatPercent = d.VatPercent,
+                TaxPercent = d.TaxPercent,
+                DeliveryDays = d.DeliveryDays
+            }).ToList()
         };
 
         await PopulateDropdownsAsync();
@@ -98,10 +111,17 @@ public class VendorQuotationsController : Controller
             return View(dto);
         }
 
-        var success = await _mediator.Send(new UpdateVendorQuotationCommand(dto));
-        if (!success)
+        var result = await _mediator.Send(new UpdateVendorQuotationCommand(dto));
+        if (result == UpdateVendorQuotationResult.NotFound)
         {
             return NotFound();
+        }
+
+        if (result == UpdateVendorQuotationResult.Locked)
+        {
+            ModelState.AddModelError(string.Empty, "This quotation has already been selected or rejected and cannot be edited.");
+            await PopulateDropdownsAsync();
+            return View(dto);
         }
 
         return RedirectToAction(nameof(Index));
@@ -136,5 +156,11 @@ public class VendorQuotationsController : Controller
     {
         var rfqs = await _mediator.Send(new GetAllRfqsQuery(PageSize: int.MaxValue));
         ViewBag.Rfqs = new SelectList(rfqs.Items, "Id", "RfqNumber");
+
+        var suppliers = await _mediator.Send(new GetAllSuppliersQuery(PageSize: int.MaxValue));
+        ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name");
+
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
     }
 }

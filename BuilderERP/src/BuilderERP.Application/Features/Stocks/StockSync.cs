@@ -1,4 +1,5 @@
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,5 +35,33 @@ internal static class StockSync
         // so mutating it here is enough - calling repository.Update() on a still-Added
         // entity would flip it to Modified and drop the pending insert.
         stock.QuantityOnHand += quantityDelta;
+    }
+
+    public static async Task ApplyQuantityDeltaAsync(
+        IUnitOfWork unitOfWork,
+        Guid materialId,
+        Guid warehouseId,
+        decimal quantityDelta,
+        InventoryTransactionType transactionType,
+        string documentNumber)
+    {
+        var stock = await GetOrCreateStockAsync(unitOfWork, materialId, warehouseId);
+        stock.QuantityOnHand += quantityDelta;
+
+        var material = await unitOfWork.Repository<Material>().GetByIdAsync(materialId);
+        var unitCost = material?.AveragePurchasePrice ?? 0;
+
+        await unitOfWork.Repository<InventoryTransaction>().AddAsync(new InventoryTransaction
+        {
+            TransactionType = transactionType,
+            DocumentNumber = documentNumber,
+            MaterialId = materialId,
+            WarehouseId = warehouseId,
+            QuantityIn = quantityDelta > 0 ? quantityDelta : 0,
+            QuantityOut = quantityDelta < 0 ? -quantityDelta : 0,
+            BalanceQuantity = stock.QuantityOnHand,
+            UnitCost = unitCost,
+            TotalCost = Math.Abs(quantityDelta) * unitCost
+        });
     }
 }

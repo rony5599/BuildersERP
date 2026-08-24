@@ -10,10 +10,13 @@ public class VendorQuotationMappingProfile : Profile
     {
         CreateMap<VendorQuotation, VendorQuotationDto>()
             .ForMember(dest => dest.RfqNumber, opt => opt.MapFrom(src => src.Rfq != null ? src.Rfq.RfqNumber : string.Empty))
-            .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Rfq != null && src.Rfq.Supplier != null ? src.Rfq.Supplier.Name : string.Empty))
+            .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Supplier != null ? src.Supplier.Name : string.Empty))
             .ForMember(dest => dest.PurchaseRequisitionId, opt => opt.MapFrom(src => src.Rfq != null ? src.Rfq.PurchaseRequisitionId : Guid.Empty))
-            .ForMember(dest => dest.RequisitionNumber, opt => opt.MapFrom(src => src.Rfq != null && src.Rfq.PurchaseRequisition != null ? src.Rfq.PurchaseRequisition.RequisitionNumber : string.Empty));
-        CreateMap<CreateVendorQuotationDto, VendorQuotation>();
-        CreateMap<UpdateVendorQuotationDto, VendorQuotation>();
+            .ForMember(dest => dest.RequisitionNumber, opt => opt.MapFrom(src => src.Rfq != null && src.Rfq.PurchaseRequisition != null ? src.Rfq.PurchaseRequisition.RequisitionNumber : string.Empty))
+            .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details));
+        CreateMap<VendorQuotationDetail, VendorQuotationDetailDto>()
+            .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material != null ? src.Material.Name : string.Empty));
+        CreateMap<CreateVendorQuotationDto, VendorQuotation>()
+            .ForMember(dest => dest.Details, opt => opt.Ignore());
     }
 }

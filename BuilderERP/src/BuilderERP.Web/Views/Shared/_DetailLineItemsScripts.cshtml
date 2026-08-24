@@ -1,0 +1,60 @@
+<script>
+    (function () {
+        function renumberRows(tbody, prefix) {
+            var rows = tbody.querySelectorAll('tr.detail-row');
+            rows.forEach(function (row, index) {
+                row.querySelectorAll('[name], [id]').forEach(function (el) {
+                    if (el.name) {
+                        el.name = el.name.replace(/__index__/g, index).replace(new RegExp('^' + prefix + '\\[\\d+\\]'), prefix + '[' + index + ']');
+                    }
+                    if (el.id) {
+                        el.id = el.id.replace(/__index__/g, index).replace(new RegExp('^' + prefix + '_\\d+_'), prefix + '_' + index + '_');
+                    }
+                });
+            });
+        }
+
+        function initDetailTable(tableId, prefix) {
+            var table = document.getElementById(tableId);
+            if (!table) return;
+            var tbody = table.querySelector('tbody');
+            var template = tbody.querySelector('tr.detail-row-template');
+            if (template) {
+                template.classList.remove('detail-row-template');
+                template.classList.add('d-none');
+            }
+
+            var addBtn = document.querySelector('[data-add-row-for="' + tableId + '"]');
+            if (addBtn) {
+                addBtn.addEventListener('click', function () {
+                    var clone = template.cloneNode(true);
+                    clone.classList.remove('d-none');
+                    clone.classList.add('detail-row');
+                    tbody.appendChild(clone);
+                    renumberRows(tbody, prefix);
+                });
+            }
+
+            tbody.addEventListener('click', function (e) {
+                var btn = e.target.closest('[data-remove-row]');
+                if (!btn) return;
+                var row = btn.closest('tr');
+                if (row) {
+                    row.remove();
+                    renumberRows(tbody, prefix);
+                }
+            });
+
+            if (tbody.querySelectorAll('tr.detail-row').length === 0 && template) {
+                var initialRow = template.cloneNode(true);
+                initialRow.classList.remove('d-none');
+                initialRow.classList.add('detail-row');
+                tbody.appendChild(initialRow);
+            }
+
+            renumberRows(tbody, prefix);
+        }
+
+        window.initDetailTable = initDetailTable;
+    })();
+</script>

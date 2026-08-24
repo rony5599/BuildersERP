@@ -25,7 +25,8 @@ public class GetAllRfqsQueryHandler : IRequestHandler<GetAllRfqsQuery, PagedResu
     {
         var query = _unitOfWork.Repository<Rfq>().Query()
             .Include(r => r.PurchaseRequisition)
-            .Include(r => r.Supplier)
+            .Include(r => r.RfqVendors).ThenInclude(v => v.Supplier)
+            .Include(r => r.Details)
             .AsQueryable();
 
         var page = request.Page < 1 ? 1 : request.Page;

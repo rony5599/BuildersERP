@@ -8,7 +8,8 @@ public class MaterialMappingProfile : Profile
 {
     public MaterialMappingProfile()
     {
-        CreateMap<Material, MaterialDto>();
+        CreateMap<Material, MaterialDto>()
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty));
         CreateMap<CreateMaterialDto, Material>();
         CreateMap<UpdateMaterialDto, Material>();
     }

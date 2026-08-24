@@ -3,6 +3,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
@@ -21,7 +22,11 @@ public class GetVendorQuotationByIdQueryHandler : IRequestHandler<GetVendorQuota
 
     public async Task<VendorQuotationDto?> Handle(GetVendorQuotationByIdQuery request, CancellationToken cancellationToken)
     {
-        var quotation = await _unitOfWork.Repository<VendorQuotation>().GetByIdAsync(request.Id);
+        var quotation = await _unitOfWork.Repository<VendorQuotation>().Query()
+            .Include(v => v.Supplier)
+            .Include(v => v.Rfq).ThenInclude(r => r.PurchaseRequisition)
+            .Include(v => v.Details).ThenInclude(d => d.Material)
+            .FirstOrDefaultAsync(v => v.Id == request.Id, cancellationToken);
         return quotation is null ? null : _mapper.Map<VendorQuotationDto>(quotation);
     }
 }

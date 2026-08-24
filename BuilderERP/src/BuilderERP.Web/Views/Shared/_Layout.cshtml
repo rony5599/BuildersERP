@@ -561,6 +561,14 @@
                         {
                             <li class="nav-item"><a asp-controller="Materials" asp-action="Index" class="@NavClass("Materials")"><i class="bi bi-boxes"></i> Materials</a></li>
                         }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ItemCategoryView))
+                        {
+                            <li class="nav-item"><a asp-controller="ItemCategories" asp-action="Index" class="@NavClass("ItemCategories")"><i class="bi bi-tags"></i> Item Categories</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ItemPriceHistoryView))
+                        {
+                            <li class="nav-item"><a asp-controller="ItemPriceHistories" asp-action="Index" class="@NavClass("ItemPriceHistories")"><i class="bi bi-graph-up"></i> Item Price History</a></li>
+                        }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.StockView))
                         {
                             <li class="nav-item"><a asp-controller="Stocks" asp-action="Index" class="@NavClass("Stocks")"><i class="bi bi-clipboard-data"></i> Stock</a></li>

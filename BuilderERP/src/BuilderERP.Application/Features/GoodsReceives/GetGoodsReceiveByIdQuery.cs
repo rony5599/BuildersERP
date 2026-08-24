@@ -3,6 +3,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.GoodsReceives;
 
@@ -21,7 +22,11 @@ public class GetGoodsReceiveByIdQueryHandler : IRequestHandler<GetGoodsReceiveBy
 
     public async Task<GoodsReceiveDto?> Handle(GetGoodsReceiveByIdQuery request, CancellationToken cancellationToken)
     {
-        var receive = await _unitOfWork.Repository<GoodsReceive>().GetByIdAsync(request.Id);
+        var receive = await _unitOfWork.Repository<GoodsReceive>().Query()
+            .Include(g => g.PurchaseOrder)
+            .Include(g => g.Warehouse)
+            .Include(g => g.Details).ThenInclude(d => d.Material)
+            .FirstOrDefaultAsync(g => g.Id == request.Id, cancellationToken);
         return receive is null ? null : _mapper.Map<GoodsReceiveDto>(receive);
     }
 }

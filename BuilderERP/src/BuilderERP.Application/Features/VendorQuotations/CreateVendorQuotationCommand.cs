@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -22,6 +23,32 @@ public class CreateVendorQuotationCommandHandler : IRequestHandler<CreateVendorQ
     public async Task<Guid> Handle(CreateVendorQuotationCommand request, CancellationToken cancellationToken)
     {
         var quotation = _mapper.Map<VendorQuotation>(request.Dto);
+
+        decimal quotedAmount = 0;
+        foreach (var detail in request.Dto.Details)
+        {
+            var amounts = LineItemCalculator.Calculate(detail.Quantity, detail.UnitPrice, detail.DiscountPercent, detail.VatPercent, detail.TaxPercent);
+            quotation.Details.Add(new VendorQuotationDetail
+            {
+                VendorQuotationId = quotation.Id,
+                MaterialId = detail.MaterialId,
+                Quantity = detail.Quantity,
+                UnitOfMeasure = detail.UnitOfMeasure,
+                UnitPrice = detail.UnitPrice,
+                DiscountPercent = detail.DiscountPercent,
+                DiscountAmount = amounts.DiscountAmount,
+                VatPercent = detail.VatPercent,
+                VatAmount = amounts.VatAmount,
+                TaxPercent = detail.TaxPercent,
+                TaxAmount = amounts.TaxAmount,
+                NetAmount = amounts.NetAmount,
+                DeliveryDays = detail.DeliveryDays
+            });
+            quotedAmount += amounts.NetAmount;
+        }
+
+        quotation.QuotedAmount = quotedAmount;
+
         await _unitOfWork.Repository<VendorQuotation>().AddAsync(quotation);
         await _unitOfWork.SaveChangesAsync();
         return quotation.Id;

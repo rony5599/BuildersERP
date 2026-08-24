@@ -6,40 +6,100 @@
 
 <h1 class="h3 mb-4">Edit Purchase Order</h1>
 
-<form asp-action="Edit" method="post" class="col-md-6">
+<form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-    <div class="mb-3">
-        <label asp-for="PONumber" class="form-label"></label>
-        <input asp-for="PONumber" class="form-control" />
-        <span asp-validation-for="PONumber" class="text-danger"></span>
+    <div class="row col-md-8">
+        <div class="mb-3 col-md-4">
+            <label asp-for="PONumber" class="form-label"></label>
+            <input asp-for="PONumber" class="form-control" />
+            <span asp-validation-for="PONumber" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="VendorQuotationId" class="form-label"></label>
+            <select asp-for="VendorQuotationId" asp-items="ViewBag.VendorQuotations" class="form-select">
+                <option value="">-- Select Vendor Quotation --</option>
+            </select>
+            <span asp-validation-for="VendorQuotationId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<PurchaseOrderStatus>()" class="form-select"></select>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="OrderDate" class="form-label"></label>
+            <input asp-for="OrderDate" type="date" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="DeliveryDate" class="form-label"></label>
+            <input asp-for="DeliveryDate" type="date" class="form-control" />
+            <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="VendorQuotationId" class="form-label"></label>
-        <select asp-for="VendorQuotationId" asp-items="ViewBag.VendorQuotations" class="form-select">
-            <option value="">-- Select Vendor Quotation --</option>
-        </select>
-        <span asp-validation-for="VendorQuotationId" class="text-danger"></span>
+
+    <h5 class="mt-4">Line Items</h5>
+    <table class="table table-sm" id="po-details-table">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Unit Price</th>
+                <th>Disc %</th>
+                <th>VAT %</th>
+                <th>Tax %</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Details.Count; i++)
+            {
+                <tr class="detail-row">
+                    <td>
+                        <select name="Details[@i].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
+                            <option value="">-- Material --</option>
+                        </select>
+                    </td>
+                    <td><input name="Details[@i].OrderedQuantity" type="number" step="0.001" value="@Model.Details[i].OrderedQuantity" class="form-control form-control-sm" /></td>
+                    <td>
+                        <select name="Details[@i].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
+                    </td>
+                    <td><input name="Details[@i].UnitPrice" type="number" step="0.01" value="@Model.Details[i].UnitPrice" class="form-control form-control-sm" /></td>
+                    <td><input name="Details[@i].DiscountPercent" type="number" step="0.01" value="@Model.Details[i].DiscountPercent" class="form-control form-control-sm" /></td>
+                    <td><input name="Details[@i].VatPercent" type="number" step="0.01" value="@Model.Details[i].VatPercent" class="form-control form-control-sm" /></td>
+                    <td><input name="Details[@i].TaxPercent" type="number" step="0.01" value="@Model.Details[i].TaxPercent" class="form-control form-control-sm" /></td>
+                    <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-row>Remove</button></td>
+                </tr>
+            }
+            <tr class="detail-row-template">
+                <td>
+                    <select name="Details[__index__].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
+                        <option value="">-- Material --</option>
+                    </select>
+                </td>
+                <td><input name="Details[__index__].OrderedQuantity" type="number" step="0.001" class="form-control form-control-sm" /></td>
+                <td>
+                    <select name="Details[__index__].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
+                </td>
+                <td><input name="Details[__index__].UnitPrice" type="number" step="0.01" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].DiscountPercent" type="number" step="0.01" value="0" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].VatPercent" type="number" step="0.01" value="0" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].TaxPercent" type="number" step="0.01" value="0" class="form-control form-control-sm" /></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-row>Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-sm btn-outline-primary mb-3" data-add-row-for="po-details-table">Add Row</button>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
     </div>
-    <div class="mb-3">
-        <label asp-for="OrderDate" class="form-label"></label>
-        <input asp-for="OrderDate" type="date" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="TotalAmount" class="form-label"></label>
-        <input asp-for="TotalAmount" class="form-control" />
-        <span asp-validation-for="TotalAmount" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="DeliveryDate" class="form-label"></label>
-        <input asp-for="DeliveryDate" type="date" class="form-control" />
-        <span asp-validation-for="DeliveryDate" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<PurchaseOrderStatus>()" class="form-select"></select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+<partial name="_DetailLineItemsScripts" />
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        initDetailTable('po-details-table', 'Details');
+    });
+</script>

@@ -6,37 +6,98 @@
 
 <h1 class="h3 mb-4">New Material</h1>
 
-<form asp-action="Create" method="post" class="col-md-6">
+<form asp-action="Create" method="post" class="col-md-8">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-    <div class="mb-3">
-        <label asp-for="MaterialCode" class="form-label"></label>
-        <input asp-for="MaterialCode" class="form-control" />
-        <span asp-validation-for="MaterialCode" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="UnitOfMeasure" class="form-label"></label>
-        <select asp-for="UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select"></select>
-        <span asp-validation-for="UnitOfMeasure" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="ReorderLevel" class="form-label"></label>
-        <input asp-for="ReorderLevel" class="form-control" />
-        <span asp-validation-for="ReorderLevel" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Barcode" class="form-label"></label>
-        <input asp-for="Barcode" class="form-control" />
-        <span asp-validation-for="Barcode" class="text-danger"></span>
+    <div class="row">
+        <div class="mb-3 col-md-4">
+            <label asp-for="MaterialCode" class="form-label"></label>
+            <input asp-for="MaterialCode" class="form-control" />
+            <span asp-validation-for="MaterialCode" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Brand" class="form-label"></label>
+            <input asp-for="Brand" class="form-control" />
+            <span asp-validation-for="Brand" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="CategoryId" class="form-label"></label>
+            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                <option value="">-- Select Category --</option>
+            </select>
+        </div>
+        <div class="mb-3 col-md-8">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="UnitOfMeasure" class="form-label">Stock Unit</label>
+            <select asp-for="UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select"></select>
+            <span asp-validation-for="UnitOfMeasure" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="PurchaseUnit" class="form-label"></label>
+            <select asp-for="PurchaseUnit" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select"></select>
+            <span asp-validation-for="PurchaseUnit" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="UnitConversionFactor" class="form-label"></label>
+            <input asp-for="UnitConversionFactor" class="form-control" />
+            <span asp-validation-for="UnitConversionFactor" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="Barcode" class="form-label"></label>
+            <input asp-for="Barcode" class="form-control" />
+            <span asp-validation-for="Barcode" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="MinStockLevel" class="form-label"></label>
+            <input asp-for="MinStockLevel" class="form-control" />
+            <span asp-validation-for="MinStockLevel" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="MaxStockLevel" class="form-label"></label>
+            <input asp-for="MaxStockLevel" class="form-control" />
+            <span asp-validation-for="MaxStockLevel" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="ReorderLevel" class="form-label"></label>
+            <input asp-for="ReorderLevel" class="form-control" />
+            <span asp-validation-for="ReorderLevel" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="StandardPurchasePrice" class="form-label"></label>
+            <input asp-for="StandardPurchasePrice" class="form-control" />
+            <span asp-validation-for="StandardPurchasePrice" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="VatPercent" class="form-label"></label>
+            <input asp-for="VatPercent" class="form-control" />
+            <span asp-validation-for="VatPercent" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="TaxPercent" class="form-label"></label>
+            <input asp-for="TaxPercent" class="form-control" />
+            <span asp-validation-for="TaxPercent" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="DiscountPercent" class="form-label"></label>
+            <input asp-for="DiscountPercent" class="form-control" />
+            <span asp-validation-for="DiscountPercent" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3 form-check pt-4">
+            <input asp-for="IsBatchTracked" class="form-check-input" />
+            <label asp-for="IsBatchTracked" class="form-check-label"></label>
+        </div>
+        <div class="mb-3 col-md-3 form-check pt-4">
+            <input asp-for="IsSerialTracked" class="form-check-input" />
+            <label asp-for="IsSerialTracked" class="form-check-label"></label>
+        </div>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>

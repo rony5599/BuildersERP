@@ -2,6 +2,7 @@ using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Stocks;
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
@@ -25,7 +26,7 @@ public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAd
         var adjustment = _mapper.Map<StockAdjustment>(request.Dto);
         await _unitOfWork.Repository<StockAdjustment>().AddAsync(adjustment);
 
-        await StockSync.ApplyQuantityDeltaAsync(_unitOfWork, adjustment.MaterialId, adjustment.WarehouseId, adjustment.QuantityDelta);
+        await StockSync.ApplyQuantityDeltaAsync(_unitOfWork, adjustment.MaterialId, adjustment.WarehouseId, adjustment.QuantityDelta, InventoryTransactionType.StockAdjustment, adjustment.AdjustmentNumber);
 
         await _unitOfWork.SaveChangesAsync();
 

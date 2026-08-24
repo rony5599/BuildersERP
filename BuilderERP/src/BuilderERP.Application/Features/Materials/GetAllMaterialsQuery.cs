@@ -23,7 +23,7 @@ public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery,
 
     public async Task<PagedResult<MaterialDto>> Handle(GetAllMaterialsQuery request, CancellationToken cancellationToken)
     {
-        var query = _unitOfWork.Repository<Material>().Query().AsQueryable();
+        var query = _unitOfWork.Repository<Material>().Query().Include(m => m.Category).AsQueryable();
 
         if (request.ProjectId.HasValue)
         {

@@ -24,10 +24,10 @@ public class GetAllVendorQuotationsQueryHandler : IRequestHandler<GetAllVendorQu
     public async Task<PagedResult<VendorQuotationDto>> Handle(GetAllVendorQuotationsQuery request, CancellationToken cancellationToken)
     {
         var query = _unitOfWork.Repository<VendorQuotation>().Query()
-            .Include(v => v.Rfq)
-            .ThenInclude(r => r.Supplier)
+            .Include(v => v.Supplier)
             .Include(v => v.Rfq)
             .ThenInclude(r => r.PurchaseRequisition)
+            .Include(v => v.Details)
             .AsQueryable();
 
         var page = request.Page < 1 ? 1 : request.Page;

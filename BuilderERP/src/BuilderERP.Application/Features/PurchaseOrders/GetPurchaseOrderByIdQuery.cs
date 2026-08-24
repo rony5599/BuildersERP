@@ -3,6 +3,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseOrders;
 
@@ -21,7 +22,10 @@ public class GetPurchaseOrderByIdQueryHandler : IRequestHandler<GetPurchaseOrder
 
     public async Task<PurchaseOrderDto?> Handle(GetPurchaseOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        var order = await _unitOfWork.Repository<PurchaseOrder>().GetByIdAsync(request.Id);
+        var order = await _unitOfWork.Repository<PurchaseOrder>().Query()
+            .Include(o => o.VendorQuotation).ThenInclude(v => v.Supplier)
+            .Include(o => o.Details).ThenInclude(d => d.Material)
+            .FirstOrDefaultAsync(o => o.Id == request.Id, cancellationToken);
         return order is null ? null : _mapper.Map<PurchaseOrderDto>(order);
     }
 }

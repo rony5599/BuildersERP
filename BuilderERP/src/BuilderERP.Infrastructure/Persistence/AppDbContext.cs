@@ -52,6 +52,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<StockIssue> StockIssues => Set<StockIssue>();
     public DbSet<StockReturn> StockReturns => Set<StockReturn>();
     public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
+    public DbSet<ItemCategory> ItemCategories => Set<ItemCategory>();
+    public DbSet<ItemPriceHistory> ItemPriceHistories => Set<ItemPriceHistory>();
+    public DbSet<PurchaseRequisitionDetail> PurchaseRequisitionDetails => Set<PurchaseRequisitionDetail>();
+    public DbSet<RfqVendor> RfqVendors => Set<RfqVendor>();
+    public DbSet<RfqDetail> RfqDetails => Set<RfqDetail>();
+    public DbSet<VendorQuotationDetail> VendorQuotationDetails => Set<VendorQuotationDetail>();
+    public DbSet<PurchaseOrderDetail> PurchaseOrderDetails => Set<PurchaseOrderDetail>();
+    public DbSet<GoodsReceiveDetail> GoodsReceiveDetails => Set<GoodsReceiveDetail>();
+    public DbSet<PurchaseReturnDetail> PurchaseReturnDetails => Set<PurchaseReturnDetail>();
+    public DbSet<InventoryTransaction> InventoryTransactions => Set<InventoryTransaction>();
     public DbSet<WbsTask> WbsTasks => Set<WbsTask>();
     public DbSet<Milestone> Milestones => Set<Milestone>();
     public DbSet<BoqItem> BoqItems => Set<BoqItem>();
@@ -386,11 +396,49 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(q => q.PurchaseRequisitionId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<Rfq>()
-            .HasOne(q => q.Supplier)
+        builder.Entity<RfqVendor>()
+            .HasOne(v => v.Rfq)
+            .WithMany(q => q.RfqVendors)
+            .HasForeignKey(v => v.RfqId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<RfqVendor>()
+            .HasOne(v => v.Supplier)
             .WithMany()
-            .HasForeignKey(q => q.SupplierId)
+            .HasForeignKey(v => v.SupplierId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<RfqVendor>().HasIndex(v => new { v.RfqId, v.SupplierId }).IsUnique();
+
+        builder.Entity<RfqDetail>()
+            .HasOne(d => d.Rfq)
+            .WithMany(q => q.Details)
+            .HasForeignKey(d => d.RfqId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<RfqDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<RfqDetail>().Property(d => d.Quantity).HasPrecision(18, 3);
+
+        builder.Entity<PurchaseRequisitionDetail>()
+            .HasOne(d => d.PurchaseRequisition)
+            .WithMany(r => r.Details)
+            .HasForeignKey(d => d.PurchaseRequisitionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<PurchaseRequisitionDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseRequisitionDetail>().Property(d => d.Quantity).HasPrecision(18, 3);
+        builder.Entity<PurchaseRequisitionDetail>().Property(d => d.EstimatedUnitPrice).HasPrecision(18, 2);
+        builder.Entity<PurchaseRequisitionDetail>().Property(d => d.EstimatedAmount).HasPrecision(18, 2);
 
         builder.Entity<VendorQuotation>()
             .HasOne(v => v.Rfq)
@@ -398,7 +446,35 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(v => v.RfqId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<VendorQuotation>()
+            .HasOne(v => v.Supplier)
+            .WithMany()
+            .HasForeignKey(v => v.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<VendorQuotation>().Property(v => v.QuotedAmount).HasPrecision(18, 2);
+
+        builder.Entity<VendorQuotationDetail>()
+            .HasOne(d => d.VendorQuotation)
+            .WithMany(v => v.Details)
+            .HasForeignKey(d => d.VendorQuotationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<VendorQuotationDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<VendorQuotationDetail>().Property(d => d.Quantity).HasPrecision(18, 3);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.DiscountPercent).HasPrecision(5, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.DiscountAmount).HasPrecision(18, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.VatPercent).HasPrecision(5, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.VatAmount).HasPrecision(18, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
+        builder.Entity<VendorQuotationDetail>().Property(d => d.NetAmount).HasPrecision(18, 2);
 
         builder.Entity<PurchaseOrder>()
             .HasOne(o => o.VendorQuotation)
@@ -409,13 +485,68 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<PurchaseOrder>().Property(o => o.TotalAmount).HasPrecision(18, 2);
         builder.Entity<PurchaseOrder>().Property(o => o.ReceivedAmount).HasPrecision(18, 2);
 
+        builder.Entity<PurchaseOrderDetail>()
+            .HasOne(d => d.PurchaseOrder)
+            .WithMany(o => o.Details)
+            .HasForeignKey(d => d.PurchaseOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<PurchaseOrderDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.OrderedQuantity).HasPrecision(18, 3);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.ReceivedQuantity).HasPrecision(18, 3);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.DiscountPercent).HasPrecision(5, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.DiscountAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.VatPercent).HasPrecision(5, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.VatAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseOrderDetail>().Property(d => d.LineTotal).HasPrecision(18, 2);
+
         builder.Entity<GoodsReceive>()
             .HasOne(g => g.PurchaseOrder)
             .WithMany(o => o.GoodsReceives)
             .HasForeignKey(g => g.PurchaseOrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<GoodsReceive>()
+            .HasOne(g => g.Warehouse)
+            .WithMany()
+            .HasForeignKey(g => g.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<GoodsReceive>().Property(g => g.ReceivedAmount).HasPrecision(18, 2);
+
+        builder.Entity<GoodsReceiveDetail>()
+            .HasOne(d => d.GoodsReceive)
+            .WithMany(g => g.Details)
+            .HasForeignKey(d => d.GoodsReceiveId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<GoodsReceiveDetail>()
+            .HasOne(d => d.PurchaseOrderDetail)
+            .WithMany()
+            .HasForeignKey(d => d.PurchaseOrderDetailId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceiveDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.ReceivedQuantity).HasPrecision(18, 3);
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.VatPercent).HasPrecision(5, 2);
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.VatAmount).HasPrecision(18, 2);
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
+        builder.Entity<GoodsReceiveDetail>().Property(d => d.LineTotal).HasPrecision(18, 2);
 
         builder.Entity<PurchaseReturn>()
             .HasOne(r => r.GoodsReceive)
@@ -424,6 +555,96 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<PurchaseReturn>().Property(r => r.ReturnAmount).HasPrecision(18, 2);
+
+        builder.Entity<PurchaseReturnDetail>()
+            .HasOne(d => d.PurchaseReturn)
+            .WithMany(r => r.Details)
+            .HasForeignKey(d => d.PurchaseReturnId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<PurchaseReturnDetail>()
+            .HasOne(d => d.GoodsReceiveDetail)
+            .WithMany()
+            .HasForeignKey(d => d.GoodsReceiveDetailId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseReturnDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.ReturnQuantity).HasPrecision(18, 3);
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.VatPercent).HasPrecision(5, 2);
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.VatAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseReturnDetail>().Property(d => d.LineTotal).HasPrecision(18, 2);
+
+        builder.Entity<ItemCategory>().HasIndex(c => c.Code).IsUnique();
+
+        builder.Entity<ItemCategory>()
+            .HasOne(c => c.ParentCategory)
+            .WithMany()
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Material>()
+            .HasOne(m => m.Category)
+            .WithMany()
+            .HasForeignKey(m => m.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Material>().Property(m => m.UnitConversionFactor).HasPrecision(18, 4);
+        builder.Entity<Material>().Property(m => m.MinStockLevel).HasPrecision(18, 3);
+        builder.Entity<Material>().Property(m => m.MaxStockLevel).HasPrecision(18, 3);
+        builder.Entity<Material>().Property(m => m.AveragePurchasePrice).HasPrecision(18, 2);
+        builder.Entity<Material>().Property(m => m.LastPurchasePrice).HasPrecision(18, 2);
+        builder.Entity<Material>().Property(m => m.StandardPurchasePrice).HasPrecision(18, 2);
+        builder.Entity<Material>().Property(m => m.VatPercent).HasPrecision(5, 2);
+        builder.Entity<Material>().Property(m => m.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<Material>().Property(m => m.DiscountPercent).HasPrecision(5, 2);
+
+        builder.Entity<Supplier>().Property(s => s.CreditLimit).HasPrecision(18, 2);
+        builder.Entity<Supplier>().Property(s => s.Rating).HasPrecision(3, 1);
+
+        builder.Entity<ItemPriceHistory>()
+            .HasOne(h => h.Material)
+            .WithMany()
+            .HasForeignKey(h => h.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ItemPriceHistory>()
+            .HasOne(h => h.Supplier)
+            .WithMany()
+            .HasForeignKey(h => h.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ItemPriceHistory>().Property(h => h.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<ItemPriceHistory>().Property(h => h.VatPercent).HasPrecision(5, 2);
+        builder.Entity<ItemPriceHistory>().Property(h => h.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<ItemPriceHistory>().Property(h => h.DiscountPercent).HasPrecision(5, 2);
+        builder.Entity<ItemPriceHistory>().Property(h => h.NetPrice).HasPrecision(18, 2);
+        builder.Entity<ItemPriceHistory>().Property(h => h.MinimumOrderQuantity).HasPrecision(18, 3);
+
+        builder.Entity<InventoryTransaction>()
+            .HasOne(t => t.Material)
+            .WithMany()
+            .HasForeignKey(t => t.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<InventoryTransaction>()
+            .HasOne(t => t.Warehouse)
+            .WithMany()
+            .HasForeignKey(t => t.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<InventoryTransaction>().Property(t => t.QuantityIn).HasPrecision(18, 3);
+        builder.Entity<InventoryTransaction>().Property(t => t.QuantityOut).HasPrecision(18, 3);
+        builder.Entity<InventoryTransaction>().Property(t => t.BalanceQuantity).HasPrecision(18, 3);
+        builder.Entity<InventoryTransaction>().Property(t => t.UnitCost).HasPrecision(18, 2);
+        builder.Entity<InventoryTransaction>().Property(t => t.TotalCost).HasPrecision(18, 2);
 
         builder.Entity<Warehouse>().HasIndex(w => w.WarehouseCode).IsUnique();
 
@@ -1062,6 +1283,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
             typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
+            typeof(ItemCategory), typeof(ItemPriceHistory), typeof(PurchaseRequisitionDetail),
+            typeof(RfqVendor), typeof(RfqDetail), typeof(VendorQuotationDetail),
+            typeof(PurchaseOrderDetail), typeof(GoodsReceiveDetail), typeof(PurchaseReturnDetail),
+            typeof(InventoryTransaction),
             typeof(WbsTask), typeof(Milestone), typeof(BoqItem), typeof(DailyProgress),
             typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),
             typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),

@@ -75,10 +75,19 @@ public class PurchaseReturnsController : Controller
             Id = purchaseReturn.Id,
             ReturnNumber = purchaseReturn.ReturnNumber,
             ReturnDate = purchaseReturn.ReturnDate,
-            ReturnAmount = purchaseReturn.ReturnAmount,
             Reason = purchaseReturn.Reason,
             Status = purchaseReturn.Status,
-            GoodsReceiveId = purchaseReturn.GoodsReceiveId
+            GoodsReceiveId = purchaseReturn.GoodsReceiveId,
+            Details = purchaseReturn.Details.Select(d => new CreatePurchaseReturnDetailDto
+            {
+                GoodsReceiveDetailId = d.GoodsReceiveDetailId,
+                MaterialId = d.MaterialId,
+                ReturnQuantity = d.ReturnQuantity,
+                UnitOfMeasure = d.UnitOfMeasure,
+                UnitPrice = d.UnitPrice,
+                VatPercent = d.VatPercent,
+                TaxPercent = d.TaxPercent
+            }).ToList()
         };
 
         await PopulateDropdownsAsync();
@@ -98,10 +107,24 @@ public class PurchaseReturnsController : Controller
             return View(dto);
         }
 
-        var success = await _mediator.Send(new UpdatePurchaseReturnCommand(dto));
-        if (!success)
+        var result = await _mediator.Send(new UpdatePurchaseReturnCommand(dto));
+        if (result == UpdatePurchaseReturnResult.NotFound)
         {
             return NotFound();
+        }
+
+        if (result == UpdatePurchaseReturnResult.Locked)
+        {
+            ModelState.AddModelError(string.Empty, "This return is already approved or completed and cannot be edited.");
+            await PopulateDropdownsAsync();
+            return View(dto);
+        }
+
+        if (result == UpdatePurchaseReturnResult.OverReturn)
+        {
+            ModelState.AddModelError(string.Empty, "One or more lines exceed the received quantity minus quantity already returned.");
+            await PopulateDropdownsAsync();
+            return View(dto);
         }
 
         return RedirectToAction(nameof(Index));
@@ -114,6 +137,29 @@ public class PurchaseReturnsController : Controller
     {
         await _mediator.Send(new SetPurchaseReturnActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    [PermissionAuthorize(PermissionNames.PurchaseReturnView)]
+    public async Task<IActionResult> GetReceivedLines(Guid goodsReceiveId)
+    {
+        var receive = await _mediator.Send(new GetGoodsReceiveByIdQuery(goodsReceiveId));
+        if (receive is null)
+        {
+            return NotFound();
+        }
+
+        var lines = receive.Details.Select(d => new
+        {
+            goodsReceiveDetailId = d.Id,
+            materialId = d.MaterialId,
+            materialName = d.MaterialName,
+            unitOfMeasure = d.UnitOfMeasure.ToString(),
+            receivedQuantity = d.ReceivedQuantity,
+            unitPrice = d.UnitPrice
+        });
+
+        return Json(lines);
     }
 
     private async Task PopulateDropdownsAsync()

@@ -31,6 +31,16 @@ public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierComman
         supplier.Phone = request.Dto.Phone;
         supplier.Email = request.Dto.Email;
         supplier.Address = request.Dto.Address;
+        supplier.TaxRegistrationNumber = request.Dto.TaxRegistrationNumber;
+        supplier.VatRegistrationNumber = request.Dto.VatRegistrationNumber;
+        supplier.PaymentTerms = request.Dto.PaymentTerms;
+        supplier.CreditLimit = request.Dto.CreditLimit;
+        supplier.BankName = request.Dto.BankName;
+        supplier.BankAccountNumber = request.Dto.BankAccountNumber;
+        supplier.BankBranch = request.Dto.BankBranch;
+        supplier.BankRoutingOrSwiftCode = request.Dto.BankRoutingOrSwiftCode;
+        supplier.VendorCategory = request.Dto.VendorCategory;
+        supplier.Rating = request.Dto.Rating;
 
         repository.Update(supplier);
         await _unitOfWork.SaveChangesAsync();
