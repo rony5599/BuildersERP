@@ -813,7 +813,7 @@
                 var wasOpen = openTitles.indexOf(titleOf(section)) !== -1;
                 var hasSavedState = sessionStorage.getItem(storageKey) !== null;
 
-                var shouldOpen = hasActive || (hasSavedState ? wasOpen : true);
+                var shouldOpen = hasActive || (hasSavedState ? wasOpen : false);
                 section.classList.toggle('collapsed', !shouldOpen);
 
                 section.querySelector('.nav-section-title').addEventListener('click', function () {

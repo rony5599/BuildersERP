@@ -67,7 +67,7 @@
                     <td><span class="material-name"></span></td>
                     <td><input name="Details[@i].ReturnQuantity" type="number" step="0.001" value="@Model.Details[i].ReturnQuantity" class="form-control form-control-sm" /></td>
                     <td>
-                        <select name="Details[@i].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
+                        <select asp-for="Details[i].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
                     </td>
                     <td><input name="Details[@i].UnitPrice" type="number" step="0.01" value="@Model.Details[i].UnitPrice" class="form-control form-control-sm" /></td>
                     <td><input name="Details[@i].VatPercent" type="number" step="0.01" value="@Model.Details[i].VatPercent" class="form-control form-control-sm" /></td>
