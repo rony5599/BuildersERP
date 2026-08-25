@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.OperatorAssignments;
 
-public record GetOperatorAssignmentByIdQuery(Guid Id) : IRequest<OperatorAssignmentDto?>;
+public record GetOperatorAssignmentByIdQuery(long Id) : IRequest<OperatorAssignmentDto?>;
 
 public class GetOperatorAssignmentByIdQueryHandler : IRequestHandler<GetOperatorAssignmentByIdQuery, OperatorAssignmentDto?>
 {

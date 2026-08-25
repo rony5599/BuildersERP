@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.DailyProgresses;
 
-public record CreateDailyProgressCommand(CreateDailyProgressDto Dto) : IRequest<Guid>;
+public record CreateDailyProgressCommand(CreateDailyProgressDto Dto) : IRequest<long>;
 
-public class CreateDailyProgressCommandHandler : IRequestHandler<CreateDailyProgressCommand, Guid>
+public class CreateDailyProgressCommandHandler : IRequestHandler<CreateDailyProgressCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateDailyProgressCommandHandler : IRequestHandler<CreateDailyProg
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateDailyProgressCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateDailyProgressCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<DailyProgress>(request.Dto);
         await _unitOfWork.Repository<DailyProgress>().AddAsync(item);

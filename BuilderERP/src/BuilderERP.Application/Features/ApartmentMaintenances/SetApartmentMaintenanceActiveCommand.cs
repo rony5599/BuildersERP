@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.ApartmentMaintenances;
 
-public record SetApartmentMaintenanceActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetApartmentMaintenanceActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetApartmentMaintenanceActiveCommandHandler : IRequestHandler<SetApartmentMaintenanceActiveCommand, bool>
 {

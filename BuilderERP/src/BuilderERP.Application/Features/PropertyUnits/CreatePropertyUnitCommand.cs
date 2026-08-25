@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PropertyUnits;
 
-public record CreatePropertyUnitCommand(CreatePropertyUnitDto Dto) : IRequest<Guid>;
+public record CreatePropertyUnitCommand(CreatePropertyUnitDto Dto) : IRequest<long>;
 
-public class CreatePropertyUnitCommandHandler : IRequestHandler<CreatePropertyUnitCommand, Guid>
+public class CreatePropertyUnitCommandHandler : IRequestHandler<CreatePropertyUnitCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreatePropertyUnitCommandHandler : IRequestHandler<CreatePropertyUn
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreatePropertyUnitCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePropertyUnitCommand request, CancellationToken cancellationToken)
     {
         var unit = _mapper.Map<PropertyUnit>(request.Dto);
         await _unitOfWork.Repository<PropertyUnit>().AddAsync(unit);

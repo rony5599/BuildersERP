@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.WorkOrders;
 
-public record SetWorkOrderActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetWorkOrderActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetWorkOrderActiveCommandHandler : IRequestHandler<SetWorkOrderActiveCommand, bool>
 {

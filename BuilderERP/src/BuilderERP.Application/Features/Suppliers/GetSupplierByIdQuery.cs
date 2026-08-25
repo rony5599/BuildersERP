@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Suppliers;
 
-public record GetSupplierByIdQuery(Guid Id) : IRequest<SupplierDto?>;
+public record GetSupplierByIdQuery(long Id) : IRequest<SupplierDto?>;
 
 public class GetSupplierByIdQueryHandler : IRequestHandler<GetSupplierByIdQuery, SupplierDto?>
 {

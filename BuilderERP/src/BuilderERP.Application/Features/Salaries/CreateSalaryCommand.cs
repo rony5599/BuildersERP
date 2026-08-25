@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Salaries;
 
-public record CreateSalaryCommand(CreateSalaryDto Dto) : IRequest<Guid>;
+public record CreateSalaryCommand(CreateSalaryDto Dto) : IRequest<long>;
 
-public class CreateSalaryCommandHandler : IRequestHandler<CreateSalaryCommand, Guid>
+public class CreateSalaryCommandHandler : IRequestHandler<CreateSalaryCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateSalaryCommandHandler : IRequestHandler<CreateSalaryCommand, G
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateSalaryCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateSalaryCommand request, CancellationToken cancellationToken)
     {
         var salary = _mapper.Map<Salary>(request.Dto);
         salary.NetAmount = salary.BasicAmount + salary.OvertimeAmount - salary.DeductionAmount;

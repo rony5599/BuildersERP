@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class SalaryDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public DateTime PeriodStart { get; set; }
     public DateTime PeriodEnd { get; set; }
     public decimal DaysWorked { get; set; }
@@ -15,7 +15,7 @@ public class SalaryDto
     public SalaryStatus Status { get; set; }
     public DateTime? PaymentDate { get; set; }
     public bool IsActive { get; set; }
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
     public string WorkerName { get; set; } = string.Empty;
 }
 
@@ -29,12 +29,12 @@ public class CreateSalaryDto
     public decimal DeductionAmount { get; set; }
     public SalaryStatus Status { get; set; } = SalaryStatus.Pending;
     public DateTime? PaymentDate { get; set; }
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
 }
 
 public class UpdateSalaryDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public DateTime PeriodStart { get; set; }
     public DateTime PeriodEnd { get; set; }
     public decimal DaysWorked { get; set; }
@@ -43,5 +43,5 @@ public class UpdateSalaryDto
     public decimal DeductionAmount { get; set; }
     public SalaryStatus Status { get; set; }
     public DateTime? PaymentDate { get; set; }
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
 }

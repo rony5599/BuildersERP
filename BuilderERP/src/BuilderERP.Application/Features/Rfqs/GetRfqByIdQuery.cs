@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Rfqs;
 
-public record GetRfqByIdQuery(Guid Id) : IRequest<RfqDto?>;
+public record GetRfqByIdQuery(long Id) : IRequest<RfqDto?>;
 
 public class GetRfqByIdQueryHandler : IRequestHandler<GetRfqByIdQuery, RfqDto?>
 {

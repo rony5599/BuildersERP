@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.OperatorAssignments;
 
-public record GetAllOperatorAssignmentsQuery(Guid? EquipmentId = null, Guid? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<OperatorAssignmentDto>>;
+public record GetAllOperatorAssignmentsQuery(long? EquipmentId = null, long? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<OperatorAssignmentDto>>;
 
 public class GetAllOperatorAssignmentsQueryHandler : IRequestHandler<GetAllOperatorAssignmentsQuery, PagedResult<OperatorAssignmentDto>>
 {

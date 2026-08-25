@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.Features.Projects;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Stocks;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -19,7 +19,7 @@ public class StocksController : Controller
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var stock = await _mediator.Send(new GetAllStockQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -37,7 +37,7 @@ public class StocksController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.StockManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetStockActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

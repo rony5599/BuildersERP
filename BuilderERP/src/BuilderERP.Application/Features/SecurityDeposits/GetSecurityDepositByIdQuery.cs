@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SecurityDeposits;
 
-public record GetSecurityDepositByIdQuery(Guid Id) : IRequest<SecurityDepositDto?>;
+public record GetSecurityDepositByIdQuery(long Id) : IRequest<SecurityDepositDto?>;
 
 public class GetSecurityDepositByIdQueryHandler : IRequestHandler<GetSecurityDepositByIdQuery, SecurityDepositDto?>
 {

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.BudgetLines;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,7 +24,7 @@ public class BudgetLinesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var budgetLines = await _mediator.Send(new GetAllBudgetLinesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -38,7 +38,7 @@ public class BudgetLinesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.BudgetLineView)]
-    public async Task<IActionResult> Report(Guid? projectId)
+    public async Task<IActionResult> Report(long? projectId)
     {
         var projects = await _mediator.Send(new BuilderERP.Application.Features.Projects.GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
@@ -72,7 +72,7 @@ public class BudgetLinesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.BudgetLineManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var budgetLine = await _mediator.Send(new GetBudgetLineByIdQuery(id));
         if (budgetLine is null)
@@ -120,7 +120,7 @@ public class BudgetLinesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.BudgetLineManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetBudgetLineActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

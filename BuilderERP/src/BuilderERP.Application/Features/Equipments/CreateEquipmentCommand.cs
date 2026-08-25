@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Equipments;
 
-public record CreateEquipmentCommand(CreateEquipmentDto Dto) : IRequest<Guid>;
+public record CreateEquipmentCommand(CreateEquipmentDto Dto) : IRequest<long>;
 
-public class CreateEquipmentCommandHandler : IRequestHandler<CreateEquipmentCommand, Guid>
+public class CreateEquipmentCommandHandler : IRequestHandler<CreateEquipmentCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateEquipmentCommandHandler : IRequestHandler<CreateEquipmentComm
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateEquipmentCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateEquipmentCommand request, CancellationToken cancellationToken)
     {
         var equipment = _mapper.Map<Equipment>(request.Dto);
         await _unitOfWork.Repository<Equipment>().AddAsync(equipment);

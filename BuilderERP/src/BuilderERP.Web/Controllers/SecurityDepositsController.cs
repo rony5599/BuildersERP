@@ -24,7 +24,7 @@ public class SecurityDepositsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? contractorId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? contractorId, int page = 1, int pageSize = 25)
     {
         var deposits = await _mediator.Send(new GetAllSecurityDepositsQuery(contractorId, page, pageSize));
         ViewBag.SelectedContractorId = contractorId;
@@ -62,7 +62,7 @@ public class SecurityDepositsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SecurityDepositManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var deposit = await _mediator.Send(new GetSecurityDepositByIdQuery(id));
         if (deposit is null)
@@ -110,7 +110,7 @@ public class SecurityDepositsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SecurityDepositManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSecurityDepositActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PurchaseRequisitions;
 
-public record CreatePurchaseRequisitionCommand(CreatePurchaseRequisitionDto Dto) : IRequest<Guid>;
+public record CreatePurchaseRequisitionCommand(CreatePurchaseRequisitionDto Dto) : IRequest<long>;
 
-public class CreatePurchaseRequisitionCommandHandler : IRequestHandler<CreatePurchaseRequisitionCommand, Guid>
+public class CreatePurchaseRequisitionCommandHandler : IRequestHandler<CreatePurchaseRequisitionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ public class CreatePurchaseRequisitionCommandHandler : IRequestHandler<CreatePur
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreatePurchaseRequisitionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePurchaseRequisitionCommand request, CancellationToken cancellationToken)
     {
         var requisition = _mapper.Map<PurchaseRequisition>(request.Dto);
         requisition.RequisitionNumber = await _numberGenerator.GenerateAsync(request.Dto.ProjectId, "PR", cancellationToken);

@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -12,7 +12,7 @@ public class PurchaseOrder : BaseEntity
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;
     public bool IsActive { get; set; } = true;
 
-    public Guid VendorQuotationId { get; set; }
+    public long VendorQuotationId { get; set; }
     public VendorQuotation VendorQuotation { get; set; } = null!;
 
     public ICollection<PurchaseOrderDetail> Details { get; set; } = new List<PurchaseOrderDetail>();

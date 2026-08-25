@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PpeTrackings;
 
-public record GetAllPpeTrackingsQuery(Guid? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PpeTrackingDto>>;
+public record GetAllPpeTrackingsQuery(long? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PpeTrackingDto>>;
 
 public class GetAllPpeTrackingsQueryHandler : IRequestHandler<GetAllPpeTrackingsQuery, PagedResult<PpeTrackingDto>>
 {

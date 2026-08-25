@@ -4,8 +4,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class RiskAssessmentDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public DateTime AssessmentDate { get; set; }
     public string AssessedBy { get; set; } = string.Empty;
@@ -18,7 +18,7 @@ public class RiskAssessmentDto
 
 public class CreateRiskAssessmentDto
 {
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public DateTime AssessmentDate { get; set; } = DateTime.UtcNow;
     public string AssessedBy { get; set; } = string.Empty;
     public string HazardDescription { get; set; } = string.Empty;
@@ -29,8 +29,8 @@ public class CreateRiskAssessmentDto
 
 public class UpdateRiskAssessmentDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public DateTime AssessmentDate { get; set; }
     public string AssessedBy { get; set; } = string.Empty;
     public string HazardDescription { get; set; } = string.Empty;

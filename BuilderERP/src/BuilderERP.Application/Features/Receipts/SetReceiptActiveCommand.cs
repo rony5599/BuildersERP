@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Receipts;
 
-public record SetReceiptActiveCommand(Guid Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
+public record SetReceiptActiveCommand(long Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["Installments", "CollectionForecast"];
 }

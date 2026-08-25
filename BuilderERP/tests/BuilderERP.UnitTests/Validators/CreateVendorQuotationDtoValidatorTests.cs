@@ -12,13 +12,13 @@ public class CreateVendorQuotationDtoValidatorTests
 
     private static List<CreateVendorQuotationDetailDto> ValidDetails() => new()
     {
-        new CreateVendorQuotationDetailDto { MaterialId = Guid.NewGuid(), Quantity = 10, UnitPrice = 100 }
+        new CreateVendorQuotationDetailDto { MaterialId = 1L, Quantity = 10, UnitPrice = 100 }
     };
 
     [Fact]
     public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.NewGuid(), Details = new() };
+        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = 1L, SupplierId = 2L, Details = new() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Details);
     }
@@ -26,7 +26,7 @@ public class CreateVendorQuotationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_rfq_id_is_empty()
     {
-        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = Guid.Empty, SupplierId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = 0L, SupplierId = 1L, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.RfqId);
     }
@@ -34,7 +34,7 @@ public class CreateVendorQuotationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_supplier_id_is_empty()
     {
-        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = Guid.NewGuid(), SupplierId = Guid.Empty, Details = ValidDetails() };
+        var model = new CreateVendorQuotationDto { DeliveryDays = 5, RfqId = 1L, SupplierId = 0L, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SupplierId);
     }
@@ -45,8 +45,8 @@ public class CreateVendorQuotationDtoValidatorTests
         var model = new CreateVendorQuotationDto
         {
             DeliveryDays = 5,
-            RfqId = Guid.NewGuid(),
-            SupplierId = Guid.NewGuid(),
+            RfqId = 1L,
+            SupplierId = 2L,
             Status = VendorQuotationStatus.Received,
             Details = ValidDetails()
         };

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RunningBills;
 
-public record SetRunningBillActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetRunningBillActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetRunningBillActiveCommandHandler : IRequestHandler<SetRunningBillActiveCommand, bool>
 {

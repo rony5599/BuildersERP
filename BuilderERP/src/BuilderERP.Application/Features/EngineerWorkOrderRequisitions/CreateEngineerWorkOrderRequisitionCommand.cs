@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrderRequisitions;
 
-public record CreateEngineerWorkOrderRequisitionCommand(CreateEngineerWorkOrderRequisitionDto Dto) : IRequest<Guid>;
+public record CreateEngineerWorkOrderRequisitionCommand(CreateEngineerWorkOrderRequisitionDto Dto) : IRequest<long>;
 
-public class CreateEngineerWorkOrderRequisitionCommandHandler : IRequestHandler<CreateEngineerWorkOrderRequisitionCommand, Guid>
+public class CreateEngineerWorkOrderRequisitionCommandHandler : IRequestHandler<CreateEngineerWorkOrderRequisitionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ public class CreateEngineerWorkOrderRequisitionCommandHandler : IRequestHandler<
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreateEngineerWorkOrderRequisitionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateEngineerWorkOrderRequisitionCommand request, CancellationToken cancellationToken)
     {
         var requisition = _mapper.Map<EngineerWorkOrderRequisition>(request.Dto);
         requisition.RequisitionNumber = await _numberGenerator.GenerateAsync(request.Dto.ProjectId, "EWR", cancellationToken);

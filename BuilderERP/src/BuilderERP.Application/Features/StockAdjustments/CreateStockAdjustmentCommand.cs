@@ -8,9 +8,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.StockAdjustments;
 
-public record CreateStockAdjustmentCommand(CreateStockAdjustmentDto Dto) : IRequest<Guid>;
+public record CreateStockAdjustmentCommand(CreateStockAdjustmentDto Dto) : IRequest<long>;
 
-public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAdjustmentCommand, Guid>
+public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAdjustmentCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAd
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateStockAdjustmentCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateStockAdjustmentCommand request, CancellationToken cancellationToken)
     {
         var adjustment = _mapper.Map<StockAdjustment>(request.Dto);
         await _unitOfWork.Repository<StockAdjustment>().AddAsync(adjustment);

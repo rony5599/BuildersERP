@@ -12,7 +12,7 @@ public class CreateStockReturnDtoValidatorTests
     [Fact]
     public void Should_have_error_when_return_number_is_empty()
     {
-        var model = new CreateStockReturnDto { ReturnNumber = "", Quantity = 30, Reason = "Unused", MaterialId = Guid.NewGuid(), WarehouseId = Guid.NewGuid() };
+        var model = new CreateStockReturnDto { ReturnNumber = "", Quantity = 30, Reason = "Unused", MaterialId = 1L, WarehouseId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ReturnNumber);
     }
@@ -20,7 +20,7 @@ public class CreateStockReturnDtoValidatorTests
     [Fact]
     public void Should_have_error_when_quantity_is_zero()
     {
-        var model = new CreateStockReturnDto { ReturnNumber = "RET-001", Quantity = 0, Reason = "Unused", MaterialId = Guid.NewGuid(), WarehouseId = Guid.NewGuid() };
+        var model = new CreateStockReturnDto { ReturnNumber = "RET-001", Quantity = 0, Reason = "Unused", MaterialId = 1L, WarehouseId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Quantity);
     }
@@ -28,7 +28,7 @@ public class CreateStockReturnDtoValidatorTests
     [Fact]
     public void Should_have_error_when_reason_is_empty()
     {
-        var model = new CreateStockReturnDto { ReturnNumber = "RET-001", Quantity = 30, Reason = "", MaterialId = Guid.NewGuid(), WarehouseId = Guid.NewGuid() };
+        var model = new CreateStockReturnDto { ReturnNumber = "RET-001", Quantity = 30, Reason = "", MaterialId = 1L, WarehouseId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Reason);
     }
@@ -36,7 +36,7 @@ public class CreateStockReturnDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateStockReturnDto { ReturnNumber = "RET-001", Quantity = 30, Reason = "Unused", MaterialId = Guid.NewGuid(), WarehouseId = Guid.NewGuid() };
+        var model = new CreateStockReturnDto { ReturnNumber = "RET-001", Quantity = 30, Reason = "Unused", MaterialId = 1L, WarehouseId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

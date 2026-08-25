@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class PurchaseOrderDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string PONumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
@@ -12,7 +12,7 @@ public class PurchaseOrderDto
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
     public bool IsActive { get; set; }
-    public Guid VendorQuotationId { get; set; }
+    public long VendorQuotationId { get; set; }
     public string QuotationNumber { get; set; } = string.Empty;
     public string SupplierName { get; set; } = string.Empty;
     public List<PurchaseOrderDetailDto> Details { get; set; } = new();
@@ -20,8 +20,8 @@ public class PurchaseOrderDto
 
 public class PurchaseOrderDetailDto
 {
-    public Guid Id { get; set; }
-    public Guid MaterialId { get; set; }
+    public long Id { get; set; }
+    public long MaterialId { get; set; }
     public string MaterialName { get; set; } = string.Empty;
     public decimal OrderedQuantity { get; set; }
     public UnitOfMeasure UnitOfMeasure { get; set; }
@@ -39,7 +39,7 @@ public class PurchaseOrderDetailDto
 
 public class CreatePurchaseOrderDetailDto
 {
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public decimal OrderedQuantity { get; set; }
     public UnitOfMeasure UnitOfMeasure { get; set; } = UnitOfMeasure.Piece;
     public decimal UnitPrice { get; set; }
@@ -53,17 +53,17 @@ public class CreatePurchaseOrderDto
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;
-    public Guid VendorQuotationId { get; set; }
+    public long VendorQuotationId { get; set; }
     public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }
 
 public class UpdatePurchaseOrderDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string PONumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; }
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
-    public Guid VendorQuotationId { get; set; }
+    public long VendorQuotationId { get; set; }
     public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }

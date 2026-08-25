@@ -2,10 +2,10 @@ namespace BuilderERP.Application.DTOs;
 
 public class ItemPriceHistoryDto
 {
-    public Guid Id { get; set; }
-    public Guid MaterialId { get; set; }
+    public long Id { get; set; }
+    public long MaterialId { get; set; }
     public string MaterialName { get; set; } = string.Empty;
-    public Guid SupplierId { get; set; }
+    public long SupplierId { get; set; }
     public string SupplierName { get; set; } = string.Empty;
     public DateTime EffectiveDate { get; set; }
     public decimal UnitPrice { get; set; }

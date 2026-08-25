@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class WbsTask : BaseEntity
 {
@@ -11,12 +11,12 @@ public class WbsTask : BaseEntity
     public int Sequence { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid? ParentId { get; set; }
+    public long? ParentId { get; set; }
     public WbsTask? Parent { get; set; }
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
-    public Guid? PropertyUnitId { get; set; }
+    public long? PropertyUnitId { get; set; }
     public PropertyUnit? PropertyUnit { get; set; }
 }

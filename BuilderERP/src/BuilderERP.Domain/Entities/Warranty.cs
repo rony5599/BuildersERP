@@ -13,6 +13,6 @@ public class Warranty : BaseEntity
     public string? Remarks { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
     public PropertyUnit PropertyUnit { get; set; } = null!;
 }

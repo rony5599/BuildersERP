@@ -13,7 +13,7 @@ public class CreateSafetyInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateSafetyInspectionDto { ProjectId = Guid.Empty, InspectedBy = "John Doe" };
+        var model = new CreateSafetyInspectionDto { ProjectId = 0L, InspectedBy = "John Doe" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -21,7 +21,7 @@ public class CreateSafetyInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_inspected_by_is_empty()
     {
-        var model = new CreateSafetyInspectionDto { ProjectId = Guid.NewGuid(), InspectedBy = "" };
+        var model = new CreateSafetyInspectionDto { ProjectId = 1L, InspectedBy = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.InspectedBy);
     }
@@ -29,7 +29,7 @@ public class CreateSafetyInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_result_is_invalid()
     {
-        var model = new CreateSafetyInspectionDto { ProjectId = Guid.NewGuid(), InspectedBy = "John Doe", Result = (QcResult)999 };
+        var model = new CreateSafetyInspectionDto { ProjectId = 1L, InspectedBy = "John Doe", Result = (QcResult)999 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Result);
     }
@@ -39,7 +39,7 @@ public class CreateSafetyInspectionDtoValidatorTests
     {
         var model = new CreateSafetyInspectionDto
         {
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             InspectedBy = "John Doe",
             Location = "Site A",
             Result = QcResult.Pending

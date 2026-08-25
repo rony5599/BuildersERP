@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PerformanceEvaluations;
 
-public record GetAllPerformanceEvaluationsQuery(Guid? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PerformanceEvaluationDto>>;
+public record GetAllPerformanceEvaluationsQuery(long? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PerformanceEvaluationDto>>;
 
 public class GetAllPerformanceEvaluationsQueryHandler : IRequestHandler<GetAllPerformanceEvaluationsQuery, PagedResult<PerformanceEvaluationDto>>
 {

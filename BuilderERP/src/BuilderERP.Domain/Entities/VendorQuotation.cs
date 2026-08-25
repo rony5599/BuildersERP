@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -11,10 +11,10 @@ public class VendorQuotation : BaseEntity
     public VendorQuotationStatus Status { get; set; } = VendorQuotationStatus.Received;
     public bool IsActive { get; set; } = true;
 
-    public Guid RfqId { get; set; }
+    public long RfqId { get; set; }
     public Rfq Rfq { get; set; } = null!;
 
-    public Guid SupplierId { get; set; }
+    public long SupplierId { get; set; }
     public Supplier Supplier { get; set; } = null!;
 
     public ICollection<VendorQuotationDetail> Details { get; set; } = new List<VendorQuotationDetail>();

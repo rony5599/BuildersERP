@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class MaterialDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string MaterialCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
@@ -12,7 +12,7 @@ public class MaterialDto
     public decimal ReorderLevel { get; set; }
     public string? Barcode { get; set; }
     public bool IsActive { get; set; }
-    public Guid? CategoryId { get; set; }
+    public long? CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public string? Brand { get; set; }
     public UnitOfMeasure PurchaseUnit { get; set; }
@@ -37,7 +37,7 @@ public class CreateMaterialDto
     public UnitOfMeasure UnitOfMeasure { get; set; } = UnitOfMeasure.Piece;
     public decimal ReorderLevel { get; set; }
     public string? Barcode { get; set; }
-    public Guid? CategoryId { get; set; }
+    public long? CategoryId { get; set; }
     public string? Brand { get; set; }
     public UnitOfMeasure PurchaseUnit { get; set; } = UnitOfMeasure.Piece;
     public decimal UnitConversionFactor { get; set; } = 1;
@@ -53,14 +53,14 @@ public class CreateMaterialDto
 
 public class UpdateMaterialDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string MaterialCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public UnitOfMeasure UnitOfMeasure { get; set; }
     public decimal ReorderLevel { get; set; }
     public string? Barcode { get; set; }
-    public Guid? CategoryId { get; set; }
+    public long? CategoryId { get; set; }
     public string? Brand { get; set; }
     public UnitOfMeasure PurchaseUnit { get; set; }
     public decimal UnitConversionFactor { get; set; }

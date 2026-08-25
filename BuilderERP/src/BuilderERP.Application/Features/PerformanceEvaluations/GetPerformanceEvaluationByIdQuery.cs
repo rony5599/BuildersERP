@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PerformanceEvaluations;
 
-public record GetPerformanceEvaluationByIdQuery(Guid Id) : IRequest<PerformanceEvaluationDto?>;
+public record GetPerformanceEvaluationByIdQuery(long Id) : IRequest<PerformanceEvaluationDto?>;
 
 public class GetPerformanceEvaluationByIdQueryHandler : IRequestHandler<GetPerformanceEvaluationByIdQuery, PerformanceEvaluationDto?>
 {

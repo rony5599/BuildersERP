@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.TestReports;
 
-public record GetTestReportByIdQuery(Guid Id) : IRequest<TestReportDto?>;
+public record GetTestReportByIdQuery(long Id) : IRequest<TestReportDto?>;
 
 public class GetTestReportByIdQueryHandler : IRequestHandler<GetTestReportByIdQuery, TestReportDto?>
 {

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Milestones;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -25,7 +25,7 @@ public class MilestonesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var milestones = await _mediator.Send(new GetAllMilestonesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -63,7 +63,7 @@ public class MilestonesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.MilestoneManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var milestone = await _mediator.Send(new GetMilestoneByIdQuery(id));
         if (milestone is null)
@@ -111,7 +111,7 @@ public class MilestonesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.MilestoneManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetMilestoneActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

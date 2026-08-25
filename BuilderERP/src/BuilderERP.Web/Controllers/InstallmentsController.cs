@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.Installments;
 using BuilderERP.Application.Features.Projects;
@@ -27,7 +27,7 @@ public class InstallmentsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId, Guid? customerId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, long? propertyUnitId, long? customerId, int page = 1, int pageSize = 25)
     {
         var installments = await _mediator.Send(new GetAllInstallmentsQuery(projectId, propertyUnitId, customerId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -68,7 +68,7 @@ public class InstallmentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.InstallmentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var installment = await _mediator.Send(new GetInstallmentByIdQuery(id));
         if (installment is null)
@@ -117,14 +117,14 @@ public class InstallmentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.InstallmentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetInstallmentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
     }
 
     [PermissionAuthorize(PermissionNames.InstallmentManage)]
-    public async Task<IActionResult> Reschedule(Guid id)
+    public async Task<IActionResult> Reschedule(long id)
     {
         var installment = await _mediator.Send(new GetInstallmentByIdQuery(id));
         if (installment is null)
@@ -138,7 +138,7 @@ public class InstallmentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.InstallmentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Reschedule(Guid id, DateTime newDueDate, string reason)
+    public async Task<IActionResult> Reschedule(long id, DateTime newDueDate, string reason)
     {
         await _mediator.Send(new RescheduleInstallmentCommand(id, newDueDate, reason));
         return RedirectToAction(nameof(Index));
@@ -150,7 +150,7 @@ public class InstallmentsController : Controller
         ViewBag.InstallmentPlans = plans.Items;
     }
 
-    private async Task PopulateFiltersAsync(Guid? projectId, Guid? propertyUnitId, Guid? customerId)
+    private async Task PopulateFiltersAsync(long? projectId, long? propertyUnitId, long? customerId)
     {
         var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);

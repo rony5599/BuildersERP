@@ -4,10 +4,10 @@ namespace BuilderERP.Application.DTOs;
 
 public class MaterialInspectionDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public string MaterialName { get; set; } = string.Empty;
     public DateTime InspectionDate { get; set; }
     public string InspectedBy { get; set; } = string.Empty;
@@ -19,8 +19,8 @@ public class MaterialInspectionDto
 
 public class CreateMaterialInspectionDto
 {
-    public Guid ProjectId { get; set; }
-    public Guid MaterialId { get; set; }
+    public long ProjectId { get; set; }
+    public long MaterialId { get; set; }
     public DateTime InspectionDate { get; set; } = DateTime.UtcNow;
     public string InspectedBy { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
@@ -30,9 +30,9 @@ public class CreateMaterialInspectionDto
 
 public class UpdateMaterialInspectionDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
-    public Guid MaterialId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
+    public long MaterialId { get; set; }
     public DateTime InspectionDate { get; set; }
     public string InspectedBy { get; set; } = string.Empty;
     public decimal Quantity { get; set; }

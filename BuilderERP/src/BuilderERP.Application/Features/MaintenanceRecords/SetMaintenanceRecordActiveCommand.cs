@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.MaintenanceRecords;
 
-public record SetMaintenanceRecordActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetMaintenanceRecordActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetMaintenanceRecordActiveCommandHandler : IRequestHandler<SetMaintenanceRecordActiveCommand, bool>
 {

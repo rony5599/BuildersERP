@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DrawingApprovals;
 
-public record GetDrawingApprovalByIdQuery(Guid Id) : IRequest<DrawingApprovalDto?>;
+public record GetDrawingApprovalByIdQuery(long Id) : IRequest<DrawingApprovalDto?>;
 
 public class GetDrawingApprovalByIdQueryHandler : IRequestHandler<GetDrawingApprovalByIdQuery, DrawingApprovalDto?>
 {

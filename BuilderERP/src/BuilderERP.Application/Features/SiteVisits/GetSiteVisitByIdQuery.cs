@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SiteVisits;
 
-public record GetSiteVisitByIdQuery(Guid Id) : IRequest<SiteVisitDto?>;
+public record GetSiteVisitByIdQuery(long Id) : IRequest<SiteVisitDto?>;
 
 public class GetSiteVisitByIdQueryHandler : IRequestHandler<GetSiteVisitByIdQuery, SiteVisitDto?>
 {

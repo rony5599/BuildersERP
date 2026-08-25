@@ -58,7 +58,7 @@ public class ContractorsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ContractorManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var contractor = await _mediator.Send(new GetContractorByIdQuery(id));
         if (contractor is null)
@@ -106,7 +106,7 @@ public class ContractorsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ContractorManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetContractorActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

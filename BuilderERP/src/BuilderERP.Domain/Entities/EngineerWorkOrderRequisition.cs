@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -12,7 +12,7 @@ public class EngineerWorkOrderRequisition : BaseEntity
     public RequisitionStatus Status { get; set; } = RequisitionStatus.Draft;
     public bool IsActive { get; set; } = true;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
     public ICollection<EngineerWorkOrderRequisitionDetail> Details { get; set; } = new List<EngineerWorkOrderRequisitionDetail>();

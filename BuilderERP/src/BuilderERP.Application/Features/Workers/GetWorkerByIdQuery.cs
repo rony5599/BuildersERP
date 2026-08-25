@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Workers;
 
-public record GetWorkerByIdQuery(Guid Id) : IRequest<WorkerDto?>;
+public record GetWorkerByIdQuery(long Id) : IRequest<WorkerDto?>;
 
 public class GetWorkerByIdQueryHandler : IRequestHandler<GetWorkerByIdQuery, WorkerDto?>
 {

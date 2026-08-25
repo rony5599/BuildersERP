@@ -13,7 +13,7 @@ public class DocumentNumberGenerator : IDocumentNumberGenerator
         _context = context;
     }
 
-    public async Task<string> GenerateAsync(Guid projectId, string documentType, CancellationToken cancellationToken = default)
+    public async Task<string> GenerateAsync(long projectId, string documentType, CancellationToken cancellationToken = default)
     {
         var projectCode = await _context.Projects
             .Where(p => p.Id == projectId)
@@ -30,7 +30,7 @@ MERGE INTO DocumentSequences WITH (HOLDLOCK) AS target
 USING (SELECT {projectId} AS ProjectId, {documentType} AS DocumentType) AS src
 ON target.ProjectId = src.ProjectId AND target.DocumentType = src.DocumentType
 WHEN MATCHED THEN UPDATE SET target.LastNumber = target.LastNumber + 1
-WHEN NOT MATCHED THEN INSERT (Id, ProjectId, DocumentType, LastNumber) VALUES (NEWID(), src.ProjectId, src.DocumentType, 1)
+WHEN NOT MATCHED THEN INSERT (Guid, ProjectId, DocumentType, LastNumber) VALUES (NEWID(), src.ProjectId, src.DocumentType, 1)
 OUTPUT INSERTED.LastNumber;")
             .ToListAsync(cancellationToken);
         var nextNumber = results.Single();

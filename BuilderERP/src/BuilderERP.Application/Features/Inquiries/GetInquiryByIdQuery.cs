@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Inquiries;
 
-public record GetInquiryByIdQuery(Guid Id) : IRequest<InquiryDto?>;
+public record GetInquiryByIdQuery(long Id) : IRequest<InquiryDto?>;
 
 public class GetInquiryByIdQueryHandler : IRequestHandler<GetInquiryByIdQuery, InquiryDto?>
 {

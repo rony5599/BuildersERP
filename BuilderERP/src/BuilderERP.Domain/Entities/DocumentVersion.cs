@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class DocumentVersion : BaseEntity
 {
@@ -9,6 +9,6 @@ public class DocumentVersion : BaseEntity
     public bool IsCurrent { get; set; } = true;
     public bool IsActive { get; set; } = true;
 
-    public Guid DocumentId { get; set; }
+    public long DocumentId { get; set; }
     public Document Document { get; set; } = null!;
 }

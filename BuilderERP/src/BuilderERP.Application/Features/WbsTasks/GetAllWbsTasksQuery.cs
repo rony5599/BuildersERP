@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.WbsTasks;
 
-public record GetAllWbsTasksQuery(Guid? ProjectId = null, Guid? PropertyUnitId = null) : IRequest<IReadOnlyList<WbsTaskDto>>;
+public record GetAllWbsTasksQuery(long? ProjectId = null, long? PropertyUnitId = null) : IRequest<IReadOnlyList<WbsTaskDto>>;
 
 public class GetAllWbsTasksQueryHandler : IRequestHandler<GetAllWbsTasksQuery, IReadOnlyList<WbsTaskDto>>
 {

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.FuelLogs;
 
-public record GetFuelLogByIdQuery(Guid Id) : IRequest<FuelLogDto?>;
+public record GetFuelLogByIdQuery(long Id) : IRequest<FuelLogDto?>;
 
 public class GetFuelLogByIdQueryHandler : IRequestHandler<GetFuelLogByIdQuery, FuelLogDto?>
 {

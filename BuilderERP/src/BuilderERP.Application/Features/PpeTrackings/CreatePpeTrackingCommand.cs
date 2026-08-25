@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PpeTrackings;
 
-public record CreatePpeTrackingCommand(CreatePpeTrackingDto Dto) : IRequest<Guid>;
+public record CreatePpeTrackingCommand(CreatePpeTrackingDto Dto) : IRequest<long>;
 
-public class CreatePpeTrackingCommandHandler : IRequestHandler<CreatePpeTrackingCommand, Guid>
+public class CreatePpeTrackingCommandHandler : IRequestHandler<CreatePpeTrackingCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreatePpeTrackingCommandHandler : IRequestHandler<CreatePpeTracking
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreatePpeTrackingCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePpeTrackingCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<PpeTracking>(request.Dto);
         await _unitOfWork.Repository<PpeTracking>().AddAsync(item);

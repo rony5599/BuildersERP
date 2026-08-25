@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.MaintenanceRequests;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class MaintenanceRequestsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.MaintenanceRequestManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetMaintenanceRequestByIdQuery(id));
         if (item is null)
@@ -114,7 +114,7 @@ public class MaintenanceRequestsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.MaintenanceRequestManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetMaintenanceRequestActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

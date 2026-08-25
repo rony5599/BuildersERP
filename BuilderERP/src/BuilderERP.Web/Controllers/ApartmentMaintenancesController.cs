@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.ApartmentMaintenances;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class ApartmentMaintenancesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ApartmentMaintenanceManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetApartmentMaintenanceByIdQuery(id));
         if (item is null)
@@ -113,7 +113,7 @@ public class ApartmentMaintenancesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ApartmentMaintenanceManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetApartmentMaintenanceActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

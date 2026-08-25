@@ -1,8 +1,8 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class ContractorLedger : BaseEntity
 {
-    public Guid ContractorId { get; set; }
+    public long ContractorId { get; set; }
     public Contractor Contractor { get; set; } = null!;
 
     public DateTime TransactionDate { get; set; } = DateTime.UtcNow;

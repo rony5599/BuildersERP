@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockAdjustments;
 
-public record GetAllStockAdjustmentsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockAdjustmentDto>>;
+public record GetAllStockAdjustmentsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockAdjustmentDto>>;
 
 public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdjustmentsQuery, PagedResult<StockAdjustmentDto>>
 {

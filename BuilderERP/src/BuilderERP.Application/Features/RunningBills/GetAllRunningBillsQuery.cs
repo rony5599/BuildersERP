@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.RunningBills;
 
-public record GetAllRunningBillsQuery(Guid? WorkOrderId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RunningBillDto>>;
+public record GetAllRunningBillsQuery(long? WorkOrderId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RunningBillDto>>;
 
 public class GetAllRunningBillsQueryHandler : IRequestHandler<GetAllRunningBillsQuery, PagedResult<RunningBillDto>>
 {

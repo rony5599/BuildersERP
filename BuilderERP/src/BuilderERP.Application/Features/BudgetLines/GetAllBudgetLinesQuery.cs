@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BudgetLines;
 
-public record GetAllBudgetLinesQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BudgetLineDto>>;
+public record GetAllBudgetLinesQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BudgetLineDto>>;
 
 public class GetAllBudgetLinesQueryHandler : IRequestHandler<GetAllBudgetLinesQuery, PagedResult<BudgetLineDto>>
 {

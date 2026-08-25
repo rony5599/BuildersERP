@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PaymentReminders;
 
-public record CancelReminderCommand(Guid Id) : IRequest<bool>;
+public record CancelReminderCommand(long Id) : IRequest<bool>;
 
 public class CancelReminderCommandHandler : IRequestHandler<CancelReminderCommand, bool>
 {

@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SafetyAudits;
 
-public record CreateSafetyAuditCommand(CreateSafetyAuditDto Dto) : IRequest<Guid>;
+public record CreateSafetyAuditCommand(CreateSafetyAuditDto Dto) : IRequest<long>;
 
-public class CreateSafetyAuditCommandHandler : IRequestHandler<CreateSafetyAuditCommand, Guid>
+public class CreateSafetyAuditCommandHandler : IRequestHandler<CreateSafetyAuditCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateSafetyAuditCommandHandler : IRequestHandler<CreateSafetyAudit
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateSafetyAuditCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateSafetyAuditCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<SafetyAudit>(request.Dto);
         await _unitOfWork.Repository<SafetyAudit>().AddAsync(item);

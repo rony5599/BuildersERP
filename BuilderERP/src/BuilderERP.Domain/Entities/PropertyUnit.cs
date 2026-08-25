@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -11,6 +11,6 @@ public class PropertyUnit : BaseEntity
     public BookingStatus BookingStatus { get; set; } = BookingStatus.Available;
     public bool IsActive { get; set; } = true;
 
-    public Guid FloorId { get; set; }
+    public long FloorId { get; set; }
     public Floor Floor { get; set; } = null!;
 }

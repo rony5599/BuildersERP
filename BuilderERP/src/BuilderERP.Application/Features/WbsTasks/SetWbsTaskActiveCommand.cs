@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.WbsTasks;
 
-public record SetWbsTaskActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetWbsTaskActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetWbsTaskActiveCommandHandler : IRequestHandler<SetWbsTaskActiveCommand, bool>
 {

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Branches;
 
-public record GetBranchByIdQuery(Guid Id) : IRequest<BranchDto?>;
+public record GetBranchByIdQuery(long Id) : IRequest<BranchDto?>;
 
 public class GetBranchByIdQueryHandler : IRequestHandler<GetBranchByIdQuery, BranchDto?>
 {

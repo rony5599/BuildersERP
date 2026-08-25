@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CustomerCommunications;
 
-public record SetCustomerCommunicationActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetCustomerCommunicationActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetCustomerCommunicationActiveCommandHandler : IRequestHandler<SetCustomerCommunicationActiveCommand, bool>
 {

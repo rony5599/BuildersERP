@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.Warranties;
 
-public record SetWarrantyActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetWarrantyActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetWarrantyActiveCommandHandler : IRequestHandler<SetWarrantyActiveCommand, bool>
 {

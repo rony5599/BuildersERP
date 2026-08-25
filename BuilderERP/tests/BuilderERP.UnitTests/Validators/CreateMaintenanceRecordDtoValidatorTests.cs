@@ -13,7 +13,7 @@ public class CreateMaintenanceRecordDtoValidatorTests
     [Fact]
     public void Should_have_error_when_equipment_id_is_empty()
     {
-        var model = new CreateMaintenanceRecordDto { EquipmentId = Guid.Empty, Description = "Oil change", Cost = 100 };
+        var model = new CreateMaintenanceRecordDto { EquipmentId = 0L, Description = "Oil change", Cost = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.EquipmentId);
     }
@@ -21,7 +21,7 @@ public class CreateMaintenanceRecordDtoValidatorTests
     [Fact]
     public void Should_have_error_when_description_is_empty()
     {
-        var model = new CreateMaintenanceRecordDto { EquipmentId = Guid.NewGuid(), Description = "", Cost = 100 };
+        var model = new CreateMaintenanceRecordDto { EquipmentId = 1L, Description = "", Cost = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
@@ -29,7 +29,7 @@ public class CreateMaintenanceRecordDtoValidatorTests
     [Fact]
     public void Should_have_error_when_cost_is_negative()
     {
-        var model = new CreateMaintenanceRecordDto { EquipmentId = Guid.NewGuid(), Description = "Oil change", Cost = -50 };
+        var model = new CreateMaintenanceRecordDto { EquipmentId = 1L, Description = "Oil change", Cost = -50 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Cost);
     }
@@ -39,7 +39,7 @@ public class CreateMaintenanceRecordDtoValidatorTests
     {
         var model = new CreateMaintenanceRecordDto
         {
-            EquipmentId = Guid.NewGuid(),
+            EquipmentId = 1L,
             Description = "Routine oil change and inspection",
             Cost = 100,
             MaintenanceType = MaintenanceType.Routine,

@@ -62,7 +62,7 @@ public class WorkersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.WorkerManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var worker = await _mediator.Send(new GetWorkerByIdQuery(id));
         if (worker is null)
@@ -112,7 +112,7 @@ public class WorkersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.WorkerManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetWorkerActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Departments;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -61,7 +61,7 @@ public class DepartmentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DepartmentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var department = await _mediator.Send(new GetDepartmentByIdQuery(id));
         if (department is null)
@@ -106,7 +106,7 @@ public class DepartmentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DepartmentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDepartmentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

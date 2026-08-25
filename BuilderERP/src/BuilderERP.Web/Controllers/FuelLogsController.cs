@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Equipments;
 using BuilderERP.Application.Features.FuelLogs;
 using BuilderERP.Shared.Authorization;
@@ -25,7 +25,7 @@ public class FuelLogsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? equipmentId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? equipmentId, int page = 1, int pageSize = 25)
     {
         var logs = await _mediator.Send(new GetAllFuelLogsQuery(equipmentId, page, pageSize));
 
@@ -62,7 +62,7 @@ public class FuelLogsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.FuelLogManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var log = await _mediator.Send(new GetFuelLogByIdQuery(id));
         if (log is null)
@@ -110,7 +110,7 @@ public class FuelLogsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.FuelLogManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetFuelLogActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

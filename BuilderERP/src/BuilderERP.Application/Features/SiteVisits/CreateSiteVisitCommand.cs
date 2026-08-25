@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SiteVisits;
 
-public record CreateSiteVisitCommand(CreateSiteVisitDto Dto) : IRequest<Guid>;
+public record CreateSiteVisitCommand(CreateSiteVisitDto Dto) : IRequest<long>;
 
-public class CreateSiteVisitCommandHandler : IRequestHandler<CreateSiteVisitCommand, Guid>
+public class CreateSiteVisitCommandHandler : IRequestHandler<CreateSiteVisitCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateSiteVisitCommandHandler : IRequestHandler<CreateSiteVisitComm
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateSiteVisitCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateSiteVisitCommand request, CancellationToken cancellationToken)
     {
         var visit = _mapper.Map<SiteVisit>(request.Dto);
         await _unitOfWork.Repository<SiteVisit>().AddAsync(visit);

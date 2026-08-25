@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record GetMaterialByIdQuery(Guid Id) : IRequest<MaterialDto?>;
+public record GetMaterialByIdQuery(long Id) : IRequest<MaterialDto?>;
 
 public class GetMaterialByIdQueryHandler : IRequestHandler<GetMaterialByIdQuery, MaterialDto?>
 {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.IncidentReports;
 
-public record GetAllIncidentReportsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<IncidentReportDto>>;
+public record GetAllIncidentReportsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<IncidentReportDto>>;
 
 public class GetAllIncidentReportsQueryHandler : IRequestHandler<GetAllIncidentReportsQuery, PagedResult<IncidentReportDto>>
 {

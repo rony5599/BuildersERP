@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SecurityDeposits;
 
-public record GetAllSecurityDepositsQuery(Guid? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SecurityDepositDto>>;
+public record GetAllSecurityDepositsQuery(long? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SecurityDepositDto>>;
 
 public class GetAllSecurityDepositsQueryHandler : IRequestHandler<GetAllSecurityDepositsQuery, PagedResult<SecurityDepositDto>>
 {

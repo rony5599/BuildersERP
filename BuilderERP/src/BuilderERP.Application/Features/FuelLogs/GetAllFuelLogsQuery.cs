@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.FuelLogs;
 
-public record GetAllFuelLogsQuery(Guid? EquipmentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<FuelLogDto>>;
+public record GetAllFuelLogsQuery(long? EquipmentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<FuelLogDto>>;
 
 public class GetAllFuelLogsQueryHandler : IRequestHandler<GetAllFuelLogsQuery, PagedResult<FuelLogDto>>
 {

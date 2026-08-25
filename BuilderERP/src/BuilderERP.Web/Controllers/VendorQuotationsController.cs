@@ -64,7 +64,7 @@ public class VendorQuotationsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.VendorQuotationManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var quotation = await _mediator.Send(new GetVendorQuotationByIdQuery(id));
         if (quotation is null)
@@ -130,13 +130,13 @@ public class VendorQuotationsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.VendorQuotationManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetVendorQuotationActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> Compare(Guid requisitionId)
+    public async Task<IActionResult> Compare(long requisitionId)
     {
         var quotations = await _mediator.Send(new GetVendorQuotationsByRequisitionIdQuery(requisitionId));
         ViewBag.PurchaseRequisitionId = requisitionId;
@@ -146,7 +146,7 @@ public class VendorQuotationsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.VendorQuotationManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SelectWinner(Guid id, Guid requisitionId)
+    public async Task<IActionResult> SelectWinner(long id, long requisitionId)
     {
         await _mediator.Send(new SelectWinnerVendorQuotationCommand(id));
         return RedirectToAction(nameof(Compare), new { requisitionId });

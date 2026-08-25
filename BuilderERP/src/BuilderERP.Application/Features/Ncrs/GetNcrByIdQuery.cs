@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Ncrs;
 
-public record GetNcrByIdQuery(Guid Id) : IRequest<NcrDto?>;
+public record GetNcrByIdQuery(long Id) : IRequest<NcrDto?>;
 
 public class GetNcrByIdQueryHandler : IRequestHandler<GetNcrByIdQuery, NcrDto?>
 {

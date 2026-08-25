@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.LandRegistrations;
 
-public record SetLandRegistrationActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetLandRegistrationActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetLandRegistrationActiveCommandHandler : IRequestHandler<SetLandRegistrationActiveCommand, bool>
 {

@@ -70,7 +70,7 @@ public class CollectionTargetsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CollectionTargetManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var target = await _mediator.Send(new GetCollectionTargetByIdQuery(id));
         if (target is null)
@@ -116,7 +116,7 @@ public class CollectionTargetsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CollectionTargetManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCollectionTargetActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

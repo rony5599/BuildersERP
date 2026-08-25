@@ -12,7 +12,7 @@ public class CreateContractorLedgerDtoValidatorTests
     [Fact]
     public void Should_have_error_when_contractor_id_is_empty()
     {
-        var model = new CreateContractorLedgerDto { ContractorId = Guid.Empty, Description = "Payment" };
+        var model = new CreateContractorLedgerDto { ContractorId = 0L, Description = "Payment" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ContractorId);
     }
@@ -20,7 +20,7 @@ public class CreateContractorLedgerDtoValidatorTests
     [Fact]
     public void Should_have_error_when_description_is_empty()
     {
-        var model = new CreateContractorLedgerDto { ContractorId = Guid.NewGuid(), Description = "" };
+        var model = new CreateContractorLedgerDto { ContractorId = 1L, Description = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
@@ -28,7 +28,7 @@ public class CreateContractorLedgerDtoValidatorTests
     [Fact]
     public void Should_have_error_when_debit_amount_is_negative()
     {
-        var model = new CreateContractorLedgerDto { ContractorId = Guid.NewGuid(), Description = "Payment", DebitAmount = -100 };
+        var model = new CreateContractorLedgerDto { ContractorId = 1L, Description = "Payment", DebitAmount = -100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DebitAmount);
     }
@@ -38,7 +38,7 @@ public class CreateContractorLedgerDtoValidatorTests
     {
         var model = new CreateContractorLedgerDto
         {
-            ContractorId = Guid.NewGuid(),
+            ContractorId = 1L,
             Description = "Advance payment",
             DebitAmount = 5000,
             CreditAmount = 0

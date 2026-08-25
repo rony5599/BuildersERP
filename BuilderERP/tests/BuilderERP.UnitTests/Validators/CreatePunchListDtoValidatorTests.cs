@@ -13,7 +13,7 @@ public class CreatePunchListDtoValidatorTests
     [Fact]
     public void Should_have_error_when_item_number_is_empty()
     {
-        var model = new CreatePunchListDto { ItemNumber = "", Description = "Paint touch-up", ProjectId = Guid.NewGuid() };
+        var model = new CreatePunchListDto { ItemNumber = "", Description = "Paint touch-up", ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ItemNumber);
     }
@@ -21,7 +21,7 @@ public class CreatePunchListDtoValidatorTests
     [Fact]
     public void Should_have_error_when_description_is_empty()
     {
-        var model = new CreatePunchListDto { ItemNumber = "PL-001", Description = "", ProjectId = Guid.NewGuid() };
+        var model = new CreatePunchListDto { ItemNumber = "PL-001", Description = "", ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
@@ -29,7 +29,7 @@ public class CreatePunchListDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreatePunchListDto { ItemNumber = "PL-001", Description = "Paint touch-up", ProjectId = Guid.Empty };
+        var model = new CreatePunchListDto { ItemNumber = "PL-001", Description = "Paint touch-up", ProjectId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -41,7 +41,7 @@ public class CreatePunchListDtoValidatorTests
         {
             ItemNumber = "PL-001",
             Description = "Paint touch-up",
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             Status = PunchListStatus.Open
         };
         var result = _validator.TestValidate(model);

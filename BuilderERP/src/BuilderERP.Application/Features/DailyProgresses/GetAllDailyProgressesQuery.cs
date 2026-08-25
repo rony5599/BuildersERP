@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DailyProgresses;
 
-public record GetAllDailyProgressesQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DailyProgressDto>>;
+public record GetAllDailyProgressesQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DailyProgressDto>>;
 
 public class GetAllDailyProgressesQueryHandler : IRequestHandler<GetAllDailyProgressesQuery, PagedResult<DailyProgressDto>>
 {

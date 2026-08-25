@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PunchLists;
 
-public record SetPunchListActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetPunchListActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetPunchListActiveCommandHandler : IRequestHandler<SetPunchListActiveCommand, bool>
 {

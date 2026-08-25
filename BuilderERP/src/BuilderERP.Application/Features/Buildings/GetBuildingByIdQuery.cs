@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Buildings;
 
-public record GetBuildingByIdQuery(Guid Id) : IRequest<BuildingDto?>;
+public record GetBuildingByIdQuery(long Id) : IRequest<BuildingDto?>;
 
 public class GetBuildingByIdQueryHandler : IRequestHandler<GetBuildingByIdQuery, BuildingDto?>
 {

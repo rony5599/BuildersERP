@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.MaintenanceRequests;
 
-public record GetMaintenanceRequestByIdQuery(Guid Id) : IRequest<MaintenanceRequestDto?>;
+public record GetMaintenanceRequestByIdQuery(long Id) : IRequest<MaintenanceRequestDto?>;
 
 public class GetMaintenanceRequestByIdQueryHandler : IRequestHandler<GetMaintenanceRequestByIdQuery, MaintenanceRequestDto?>
 {

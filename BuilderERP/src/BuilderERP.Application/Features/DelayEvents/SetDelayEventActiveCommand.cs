@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.DelayEvents;
 
-public record SetDelayEventActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDelayEventActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDelayEventActiveCommandHandler : IRequestHandler<SetDelayEventActiveCommand, bool>
 {

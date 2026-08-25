@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Floors;
 
-public record GetFloorByIdQuery(Guid Id) : IRequest<FloorDto?>;
+public record GetFloorByIdQuery(long Id) : IRequest<FloorDto?>;
 
 public class GetFloorByIdQueryHandler : IRequestHandler<GetFloorByIdQuery, FloorDto?>
 {

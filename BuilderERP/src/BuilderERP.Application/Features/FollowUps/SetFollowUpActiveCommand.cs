@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.FollowUps;
 
-public record SetFollowUpActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetFollowUpActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetFollowUpActiveCommandHandler : IRequestHandler<SetFollowUpActiveCommand, bool>
 {

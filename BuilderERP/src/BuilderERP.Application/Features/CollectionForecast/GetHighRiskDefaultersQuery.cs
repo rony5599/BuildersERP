@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CollectionForecast;
 
-public record GetHighRiskDefaultersQuery(Guid? ProjectId = null) : IRequest<IReadOnlyList<CustomerCollectionRiskDto>>;
+public record GetHighRiskDefaultersQuery(long? ProjectId = null) : IRequest<IReadOnlyList<CustomerCollectionRiskDto>>;
 
 public class GetHighRiskDefaultersQueryHandler : IRequestHandler<GetHighRiskDefaultersQuery, IReadOnlyList<CustomerCollectionRiskDto>>
 {

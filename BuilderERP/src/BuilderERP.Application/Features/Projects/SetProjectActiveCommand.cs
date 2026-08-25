@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Projects;
 
-public record SetProjectActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetProjectActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetProjectActiveCommandHandler : IRequestHandler<SetProjectActiveCommand, bool>
 {

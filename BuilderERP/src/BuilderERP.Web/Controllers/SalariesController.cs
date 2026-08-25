@@ -61,7 +61,7 @@ public class SalariesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SalaryManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var salary = await _mediator.Send(new GetSalaryByIdQuery(id));
         if (salary is null)
@@ -112,7 +112,7 @@ public class SalariesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SalaryManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSalaryActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

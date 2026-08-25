@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Inquiries;
 
-public record SetInquiryActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetInquiryActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetInquiryActiveCommandHandler : IRequestHandler<SetInquiryActiveCommand, bool>
 {

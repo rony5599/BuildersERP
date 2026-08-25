@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.DelayEvents;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -24,7 +24,7 @@ public class DelayEventsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var delayEvents = await _mediator.Send(new GetAllDelayEventsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -62,7 +62,7 @@ public class DelayEventsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DelayEventManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var delayEvent = await _mediator.Send(new GetDelayEventByIdQuery(id));
         if (delayEvent is null)
@@ -110,7 +110,7 @@ public class DelayEventsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DelayEventManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDelayEventActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

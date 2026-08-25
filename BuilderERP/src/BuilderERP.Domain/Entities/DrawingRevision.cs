@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class DrawingRevision : BaseEntity
 {
@@ -9,6 +9,6 @@ public class DrawingRevision : BaseEntity
     public bool IsCurrent { get; set; } = true;
     public bool IsActive { get; set; } = true;
 
-    public Guid DrawingId { get; set; }
+    public long DrawingId { get; set; }
     public Drawing Drawing { get; set; } = null!;
 }

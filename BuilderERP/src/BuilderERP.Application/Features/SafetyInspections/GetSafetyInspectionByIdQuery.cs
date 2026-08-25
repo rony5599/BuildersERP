@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SafetyInspections;
 
-public record GetSafetyInspectionByIdQuery(Guid Id) : IRequest<SafetyInspectionDto?>;
+public record GetSafetyInspectionByIdQuery(long Id) : IRequest<SafetyInspectionDto?>;
 
 public class GetSafetyInspectionByIdQueryHandler : IRequestHandler<GetSafetyInspectionByIdQuery, SafetyInspectionDto?>
 {

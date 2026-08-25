@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Floors;
 
-public record SetFloorActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetFloorActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetFloorActiveCommandHandler : IRequestHandler<SetFloorActiveCommand, bool>
 {

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Branches;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Warehouses;
@@ -26,7 +26,7 @@ public class WarehousesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var warehouses = await _mediator.Send(new GetAllWarehousesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -66,7 +66,7 @@ public class WarehousesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.WarehouseManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var warehouse = await _mediator.Send(new GetWarehouseByIdQuery(id));
         if (warehouse is null)
@@ -113,7 +113,7 @@ public class WarehousesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.WarehouseManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetWarehouseActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Departments;
 
-public record GetDepartmentByIdQuery(Guid Id) : IRequest<DepartmentDto?>;
+public record GetDepartmentByIdQuery(long Id) : IRequest<DepartmentDto?>;
 
 public class GetDepartmentByIdQueryHandler : IRequestHandler<GetDepartmentByIdQuery, DepartmentDto?>
 {

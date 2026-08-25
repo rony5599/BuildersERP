@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Projects;
 
-public record GetProjectByIdQuery(Guid Id) : IRequest<ProjectDto?>;
+public record GetProjectByIdQuery(long Id) : IRequest<ProjectDto?>;
 
 public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, ProjectDto?>
 {

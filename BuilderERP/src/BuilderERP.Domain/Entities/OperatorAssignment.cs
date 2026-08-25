@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class OperatorAssignment : BaseEntity
 {
@@ -6,12 +6,12 @@ public class OperatorAssignment : BaseEntity
     public DateTime? AssignmentEndDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid EquipmentId { get; set; }
+    public long EquipmentId { get; set; }
     public Equipment Equipment { get; set; } = null!;
 
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
     public Worker Worker { get; set; } = null!;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 }

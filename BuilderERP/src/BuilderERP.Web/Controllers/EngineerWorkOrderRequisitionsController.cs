@@ -63,7 +63,7 @@ public class EngineerWorkOrderRequisitionsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderRequisitionManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var requisition = await _mediator.Send(new GetEngineerWorkOrderRequisitionByIdQuery(id));
         if (requisition is null)
@@ -126,7 +126,7 @@ public class EngineerWorkOrderRequisitionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderRequisitionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetEngineerWorkOrderRequisitionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

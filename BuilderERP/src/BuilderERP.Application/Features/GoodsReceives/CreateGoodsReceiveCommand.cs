@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.GoodsReceives;
 
-public record CreateGoodsReceiveCommand(CreateGoodsReceiveDto Dto) : IRequest<Guid>;
+public record CreateGoodsReceiveCommand(CreateGoodsReceiveDto Dto) : IRequest<long>;
 
-public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsReceiveCommand, Guid>
+public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsReceiveCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreateGoodsReceiveCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateGoodsReceiveCommand request, CancellationToken cancellationToken)
     {
         var projectId = await _unitOfWork.Repository<PurchaseOrder>().Query()
             .Where(o => o.Id == request.Dto.PurchaseOrderId)

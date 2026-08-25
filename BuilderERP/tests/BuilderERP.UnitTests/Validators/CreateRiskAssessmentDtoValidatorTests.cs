@@ -13,7 +13,7 @@ public class CreateRiskAssessmentDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateRiskAssessmentDto { ProjectId = Guid.Empty, AssessedBy = "Jane Doe", HazardDescription = "Falling debris" };
+        var model = new CreateRiskAssessmentDto { ProjectId = 0L, AssessedBy = "Jane Doe", HazardDescription = "Falling debris" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -21,7 +21,7 @@ public class CreateRiskAssessmentDtoValidatorTests
     [Fact]
     public void Should_have_error_when_assessed_by_is_empty()
     {
-        var model = new CreateRiskAssessmentDto { ProjectId = Guid.NewGuid(), AssessedBy = "", HazardDescription = "Falling debris" };
+        var model = new CreateRiskAssessmentDto { ProjectId = 1L, AssessedBy = "", HazardDescription = "Falling debris" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.AssessedBy);
     }
@@ -29,7 +29,7 @@ public class CreateRiskAssessmentDtoValidatorTests
     [Fact]
     public void Should_have_error_when_hazard_description_is_empty()
     {
-        var model = new CreateRiskAssessmentDto { ProjectId = Guid.NewGuid(), AssessedBy = "Jane Doe", HazardDescription = "" };
+        var model = new CreateRiskAssessmentDto { ProjectId = 1L, AssessedBy = "Jane Doe", HazardDescription = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.HazardDescription);
     }
@@ -39,7 +39,7 @@ public class CreateRiskAssessmentDtoValidatorTests
     {
         var model = new CreateRiskAssessmentDto
         {
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             AssessedBy = "Jane Doe",
             HazardDescription = "Falling debris near the crane zone",
             RiskLevel = RiskLevel.High

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.DefectRecords;
 
-public record CreateDefectRecordCommand(CreateDefectRecordDto Dto) : IRequest<Guid>;
+public record CreateDefectRecordCommand(CreateDefectRecordDto Dto) : IRequest<long>;
 
-public class CreateDefectRecordCommandHandler : IRequestHandler<CreateDefectRecordCommand, Guid>
+public class CreateDefectRecordCommandHandler : IRequestHandler<CreateDefectRecordCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateDefectRecordCommandHandler : IRequestHandler<CreateDefectReco
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateDefectRecordCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateDefectRecordCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DefectRecord>(request.Dto);
         var repository = _unitOfWork.Repository<DefectRecord>();

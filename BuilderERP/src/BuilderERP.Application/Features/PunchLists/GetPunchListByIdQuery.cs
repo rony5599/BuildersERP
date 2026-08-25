@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PunchLists;
 
-public record GetPunchListByIdQuery(Guid Id) : IRequest<PunchListDto?>;
+public record GetPunchListByIdQuery(long Id) : IRequest<PunchListDto?>;
 
 public class GetPunchListByIdQueryHandler : IRequestHandler<GetPunchListByIdQuery, PunchListDto?>
 {

@@ -27,7 +27,7 @@ public class StockReturnsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var returns = await _mediator.Send(new GetAllStockReturnsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -67,7 +67,7 @@ public class StockReturnsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.StockReturnManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var stockReturn = await _mediator.Send(new GetStockReturnByIdQuery(id));
         if (stockReturn is null)
@@ -115,7 +115,7 @@ public class StockReturnsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.StockReturnManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetStockReturnActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

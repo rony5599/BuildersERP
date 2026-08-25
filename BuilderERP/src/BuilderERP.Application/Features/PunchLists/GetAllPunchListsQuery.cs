@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PunchLists;
 
-public record GetAllPunchListsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PunchListDto>>;
+public record GetAllPunchListsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PunchListDto>>;
 
 public class GetAllPunchListsQueryHandler : IRequestHandler<GetAllPunchListsQuery, PagedResult<PunchListDto>>
 {

@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -11,10 +11,10 @@ public class GoodsReceive : BaseEntity
     public GrnStatus Status { get; set; } = GrnStatus.Draft;
     public bool IsActive { get; set; } = true;
 
-    public Guid PurchaseOrderId { get; set; }
+    public long PurchaseOrderId { get; set; }
     public PurchaseOrder PurchaseOrder { get; set; } = null!;
 
-    public Guid WarehouseId { get; set; }
+    public long WarehouseId { get; set; }
     public Warehouse Warehouse { get; set; } = null!;
 
     public ICollection<GoodsReceiveDetail> Details { get; set; } = new List<GoodsReceiveDetail>();

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.StockReturns;
 
-public record GetStockReturnByIdQuery(Guid Id) : IRequest<StockReturnDto?>;
+public record GetStockReturnByIdQuery(long Id) : IRequest<StockReturnDto?>;
 
 public class GetStockReturnByIdQueryHandler : IRequestHandler<GetStockReturnByIdQuery, StockReturnDto?>
 {

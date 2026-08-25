@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class Project : BaseEntity
 {
@@ -9,7 +9,7 @@ public class Project : BaseEntity
     public DateTime? EndDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid BranchId { get; set; }
+    public long BranchId { get; set; }
     public Branch Branch { get; set; } = null!;
 
     public ICollection<CostCenter> CostCenters { get; set; } = new List<CostCenter>();

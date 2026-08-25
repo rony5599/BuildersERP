@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BudgetLines;
 
-public record GetBudgetLineByIdQuery(Guid Id) : IRequest<BudgetLineDto?>;
+public record GetBudgetLineByIdQuery(long Id) : IRequest<BudgetLineDto?>;
 
 public class GetBudgetLineByIdQueryHandler : IRequestHandler<GetBudgetLineByIdQuery, BudgetLineDto?>
 {

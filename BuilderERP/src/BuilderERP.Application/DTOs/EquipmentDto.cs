@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class EquipmentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string EquipmentCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public EquipmentType Type { get; set; }
@@ -28,7 +28,7 @@ public class CreateEquipmentDto
 
 public class UpdateEquipmentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string EquipmentCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public EquipmentType Type { get; set; }

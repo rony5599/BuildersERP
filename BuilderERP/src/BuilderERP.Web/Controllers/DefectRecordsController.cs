@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.DefectRecords;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class DefectRecordsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DefectRecordManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetDefectRecordByIdQuery(id));
         if (item is null)
@@ -114,7 +114,7 @@ public class DefectRecordsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DefectRecordManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDefectRecordActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.IncidentReports;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class IncidentReportsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.IncidentReportManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var report = await _mediator.Send(new GetIncidentReportByIdQuery(id));
         if (report is null)
@@ -114,7 +114,7 @@ public class IncidentReportsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.IncidentReportManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetIncidentReportActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

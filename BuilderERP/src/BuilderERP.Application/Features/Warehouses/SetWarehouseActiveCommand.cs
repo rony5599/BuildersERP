@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Warehouses;
 
-public record SetWarehouseActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetWarehouseActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetWarehouseActiveCommandHandler : IRequestHandler<SetWarehouseActiveCommand, bool>
 {

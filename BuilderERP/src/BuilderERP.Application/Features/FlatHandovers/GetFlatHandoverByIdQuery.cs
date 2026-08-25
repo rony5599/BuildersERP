@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.FlatHandovers;
 
-public record GetFlatHandoverByIdQuery(Guid Id) : IRequest<FlatHandoverDto?>;
+public record GetFlatHandoverByIdQuery(long Id) : IRequest<FlatHandoverDto?>;
 
 public class GetFlatHandoverByIdQueryHandler : IRequestHandler<GetFlatHandoverByIdQuery, FlatHandoverDto?>
 {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SitePhotos;
 
-public record GetSitePhotoByIdQuery(Guid Id) : IRequest<SitePhotoDto?>;
+public record GetSitePhotoByIdQuery(long Id) : IRequest<SitePhotoDto?>;
 
 public class GetSitePhotoByIdQueryHandler : IRequestHandler<GetSitePhotoByIdQuery, SitePhotoDto?>
 {

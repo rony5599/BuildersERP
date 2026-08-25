@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -16,9 +16,9 @@ public class PurchaseOrderDetail : BaseEntity
     public decimal LineTotal { get; set; }
     public decimal ReceivedQuantity { get; set; }
 
-    public Guid PurchaseOrderId { get; set; }
+    public long PurchaseOrderId { get; set; }
     public PurchaseOrder PurchaseOrder { get; set; } = null!;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 }

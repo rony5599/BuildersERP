@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Installments;
 
-public record RescheduleInstallmentCommand(Guid Id, DateTime NewDueDate, string Reason) : IRequest<bool>, IInvalidatesFeatures
+public record RescheduleInstallmentCommand(long Id, DateTime NewDueDate, string Reason) : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CollectionForecast"];
 }

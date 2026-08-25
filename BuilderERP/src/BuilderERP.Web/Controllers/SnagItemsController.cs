@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.SnagItems;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class SnagItemsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SnagItemManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetSnagItemByIdQuery(id));
         if (item is null)
@@ -113,7 +113,7 @@ public class SnagItemsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SnagItemManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSnagItemActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

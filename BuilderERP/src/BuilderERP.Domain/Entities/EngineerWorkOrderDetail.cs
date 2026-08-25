@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -10,9 +10,9 @@ public class EngineerWorkOrderDetail : BaseEntity
     public decimal Amount { get; set; }
     public string? Remarks { get; set; }
 
-    public Guid EngineerWorkOrderId { get; set; }
+    public long EngineerWorkOrderId { get; set; }
     public EngineerWorkOrder EngineerWorkOrder { get; set; } = null!;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 }

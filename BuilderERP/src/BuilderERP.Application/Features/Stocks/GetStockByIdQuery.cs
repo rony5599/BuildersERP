@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Stocks;
 
-public record GetStockByIdQuery(Guid Id) : IRequest<StockDto?>;
+public record GetStockByIdQuery(long Id) : IRequest<StockDto?>;
 
 public class GetStockByIdQueryHandler : IRequestHandler<GetStockByIdQuery, StockDto?>
 {

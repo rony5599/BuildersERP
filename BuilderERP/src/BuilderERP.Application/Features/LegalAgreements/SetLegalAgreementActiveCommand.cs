@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.LegalAgreements;
 
-public record SetLegalAgreementActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetLegalAgreementActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetLegalAgreementActiveCommandHandler : IRequestHandler<SetLegalAgreementActiveCommand, bool>
 {

@@ -63,7 +63,7 @@ public class RunningBillsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.RunningBillManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var bill = await _mediator.Send(new GetRunningBillByIdQuery(id));
         if (bill is null)
@@ -112,14 +112,14 @@ public class RunningBillsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.RunningBillManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetRunningBillActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
     }
 
     [PermissionAuthorize(PermissionNames.RunningBillManage)]
-    public async Task<IActionResult> Certify(Guid id)
+    public async Task<IActionResult> Certify(long id)
     {
         var bill = await _mediator.Send(new GetRunningBillByIdQuery(id));
         if (bill is null)

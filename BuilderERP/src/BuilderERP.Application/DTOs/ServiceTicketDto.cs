@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class ServiceTicketDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string TicketNumber { get; set; } = string.Empty;
     public string Subject { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -15,7 +15,7 @@ public class ServiceTicketDto
     public DateTime? ClosedDate { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
     public bool IsActive { get; set; }
     public string PropertyUnitName { get; set; } = string.Empty;
 }
@@ -32,12 +32,12 @@ public class CreateServiceTicketDto
     public DateTime? ClosedDate { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }
 
 public class UpdateServiceTicketDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string TicketNumber { get; set; } = string.Empty;
     public string Subject { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -48,5 +48,5 @@ public class UpdateServiceTicketDto
     public DateTime? ClosedDate { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }

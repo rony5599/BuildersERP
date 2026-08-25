@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Commissions;
 
-public record CreateCommissionCommand(CreateCommissionDto Dto) : IRequest<Guid>;
+public record CreateCommissionCommand(CreateCommissionDto Dto) : IRequest<long>;
 
-public class CreateCommissionCommandHandler : IRequestHandler<CreateCommissionCommand, Guid>
+public class CreateCommissionCommandHandler : IRequestHandler<CreateCommissionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateCommissionCommandHandler : IRequestHandler<CreateCommissionCo
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateCommissionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCommissionCommand request, CancellationToken cancellationToken)
     {
         var commission = _mapper.Map<Commission>(request.Dto);
         commission.CommissionAmount = await CommissionCalculator.ResolveAmountAsync(_unitOfWork, request.Dto.BookingId, request.Dto.CommissionRate, request.Dto.CommissionAmount);
@@ -33,7 +33,7 @@ public class CreateCommissionCommandHandler : IRequestHandler<CreateCommissionCo
 
 internal static class CommissionCalculator
 {
-    public static async Task<decimal> ResolveAmountAsync(IUnitOfWork unitOfWork, Guid bookingId, decimal commissionRate, decimal? explicitAmount)
+    public static async Task<decimal> ResolveAmountAsync(IUnitOfWork unitOfWork, long bookingId, decimal commissionRate, decimal? explicitAmount)
     {
         if (explicitAmount.HasValue)
         {

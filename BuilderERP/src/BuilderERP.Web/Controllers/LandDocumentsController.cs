@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.LandDocuments;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class LandDocumentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.LandDocumentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetLandDocumentByIdQuery(id));
         if (item is null)
@@ -115,7 +115,7 @@ public class LandDocumentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.LandDocumentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetLandDocumentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

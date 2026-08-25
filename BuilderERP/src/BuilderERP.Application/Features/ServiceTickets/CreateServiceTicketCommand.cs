@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ServiceTickets;
 
-public record CreateServiceTicketCommand(CreateServiceTicketDto Dto) : IRequest<Guid>;
+public record CreateServiceTicketCommand(CreateServiceTicketDto Dto) : IRequest<long>;
 
-public class CreateServiceTicketCommandHandler : IRequestHandler<CreateServiceTicketCommand, Guid>
+public class CreateServiceTicketCommandHandler : IRequestHandler<CreateServiceTicketCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateServiceTicketCommandHandler : IRequestHandler<CreateServiceTi
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateServiceTicketCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateServiceTicketCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<ServiceTicket>(request.Dto);
         var repository = _unitOfWork.Repository<ServiceTicket>();

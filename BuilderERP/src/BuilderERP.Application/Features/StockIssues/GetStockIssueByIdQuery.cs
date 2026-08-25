@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.StockIssues;
 
-public record GetStockIssueByIdQuery(Guid Id) : IRequest<StockIssueDto?>;
+public record GetStockIssueByIdQuery(long Id) : IRequest<StockIssueDto?>;
 
 public class GetStockIssueByIdQueryHandler : IRequestHandler<GetStockIssueByIdQuery, StockIssueDto?>
 {

@@ -64,7 +64,7 @@ public class RfqsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.RfqManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var rfq = await _mediator.Send(new GetRfqByIdQuery(id));
         if (rfq is null)
@@ -126,7 +126,7 @@ public class RfqsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.RfqManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetRfqActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

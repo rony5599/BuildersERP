@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Overtimes;
 
-public record GetAllOvertimesQuery(Guid? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<OvertimeDto>>;
+public record GetAllOvertimesQuery(long? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<OvertimeDto>>;
 
 public class GetAllOvertimesQueryHandler : IRequestHandler<GetAllOvertimesQuery, PagedResult<OvertimeDto>>
 {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DocumentVersions;
 
-public record GetDocumentVersionByIdQuery(Guid Id) : IRequest<DocumentVersionDto?>;
+public record GetDocumentVersionByIdQuery(long Id) : IRequest<DocumentVersionDto?>;
 
 public class GetDocumentVersionByIdQueryHandler : IRequestHandler<GetDocumentVersionByIdQuery, DocumentVersionDto?>
 {

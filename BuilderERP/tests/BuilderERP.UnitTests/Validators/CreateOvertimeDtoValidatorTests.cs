@@ -12,7 +12,7 @@ public class CreateOvertimeDtoValidatorTests
     [Fact]
     public void Should_have_error_when_worker_id_is_empty()
     {
-        var model = new CreateOvertimeDto { WorkerId = Guid.Empty, Hours = 2, RatePerHour = 100 };
+        var model = new CreateOvertimeDto { WorkerId = 0L, Hours = 2, RatePerHour = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkerId);
     }
@@ -20,7 +20,7 @@ public class CreateOvertimeDtoValidatorTests
     [Fact]
     public void Should_have_error_when_hours_is_negative()
     {
-        var model = new CreateOvertimeDto { WorkerId = Guid.NewGuid(), Hours = -1, RatePerHour = 100 };
+        var model = new CreateOvertimeDto { WorkerId = 1L, Hours = -1, RatePerHour = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Hours);
     }
@@ -28,7 +28,7 @@ public class CreateOvertimeDtoValidatorTests
     [Fact]
     public void Should_have_error_when_rate_per_hour_is_negative()
     {
-        var model = new CreateOvertimeDto { WorkerId = Guid.NewGuid(), Hours = 2, RatePerHour = -1 };
+        var model = new CreateOvertimeDto { WorkerId = 1L, Hours = 2, RatePerHour = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.RatePerHour);
     }
@@ -38,7 +38,7 @@ public class CreateOvertimeDtoValidatorTests
     {
         var model = new CreateOvertimeDto
         {
-            WorkerId = Guid.NewGuid(),
+            WorkerId = 1L,
             Hours = 3,
             RatePerHour = 150,
             OvertimeDate = DateTime.UtcNow

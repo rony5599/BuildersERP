@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ItemCategories;
 
-public record SetItemCategoryActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetItemCategoryActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetItemCategoryActiveCommandHandler : IRequestHandler<SetItemCategoryActiveCommand, bool>
 {

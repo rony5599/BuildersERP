@@ -4,8 +4,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class SiteInspectionDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public DateTime InspectionDate { get; set; }
     public string InspectedBy { get; set; } = string.Empty;
@@ -17,7 +17,7 @@ public class SiteInspectionDto
 
 public class CreateSiteInspectionDto
 {
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public DateTime InspectionDate { get; set; } = DateTime.UtcNow;
     public string InspectedBy { get; set; } = string.Empty;
     public string? Location { get; set; }
@@ -27,8 +27,8 @@ public class CreateSiteInspectionDto
 
 public class UpdateSiteInspectionDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public DateTime InspectionDate { get; set; }
     public string InspectedBy { get; set; } = string.Empty;
     public string? Location { get; set; }

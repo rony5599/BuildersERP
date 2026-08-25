@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.QualityChecklists;
 
-public record SetQualityChecklistActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetQualityChecklistActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetQualityChecklistActiveCommandHandler : IRequestHandler<SetQualityChecklistActiveCommand, bool>
 {

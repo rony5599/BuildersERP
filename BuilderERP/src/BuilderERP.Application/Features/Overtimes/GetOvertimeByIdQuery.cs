@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Overtimes;
 
-public record GetOvertimeByIdQuery(Guid Id) : IRequest<OvertimeDto?>;
+public record GetOvertimeByIdQuery(long Id) : IRequest<OvertimeDto?>;
 
 public class GetOvertimeByIdQueryHandler : IRequestHandler<GetOvertimeByIdQuery, OvertimeDto?>
 {

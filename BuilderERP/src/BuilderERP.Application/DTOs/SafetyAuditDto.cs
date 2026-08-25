@@ -4,8 +4,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class SafetyAuditDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public DateTime AuditDate { get; set; }
     public string AuditedBy { get; set; } = string.Empty;
@@ -17,7 +17,7 @@ public class SafetyAuditDto
 
 public class CreateSafetyAuditDto
 {
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public DateTime AuditDate { get; set; } = DateTime.UtcNow;
     public string AuditedBy { get; set; } = string.Empty;
     public decimal Score { get; set; }
@@ -27,8 +27,8 @@ public class CreateSafetyAuditDto
 
 public class UpdateSafetyAuditDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public DateTime AuditDate { get; set; }
     public string AuditedBy { get; set; } = string.Empty;
     public decimal Score { get; set; }

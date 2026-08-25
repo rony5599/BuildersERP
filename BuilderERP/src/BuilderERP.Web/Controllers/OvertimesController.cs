@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Overtimes;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -61,7 +61,7 @@ public class OvertimesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.OvertimeManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var overtime = await _mediator.Send(new GetOvertimeByIdQuery(id));
         if (overtime is null)
@@ -108,7 +108,7 @@ public class OvertimesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.OvertimeManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetOvertimeActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PropertyUnits;
 
-public record GetAllPropertyUnitsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PropertyUnitDto>>;
+public record GetAllPropertyUnitsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<PropertyUnitDto>>;
 
 public class GetAllPropertyUnitsQueryHandler : IRequestHandler<GetAllPropertyUnitsQuery, PagedResult<PropertyUnitDto>>
 {

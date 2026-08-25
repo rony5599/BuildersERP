@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.Features.CollectionForecast;
+using BuilderERP.Application.Features.CollectionForecast;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
@@ -25,7 +25,7 @@ public class CollectionForecastController : Controller
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId, Guid? customerId, Guid? collectionOfficerId, string granularity = "Monthly")
+    public async Task<IActionResult> Index(long? projectId, long? propertyUnitId, long? customerId, Guid? collectionOfficerId, string granularity = "Monthly")
     {
         var summary = await _mediator.Send(new GetDueCollectionForecastSummaryQuery(projectId, propertyUnitId, customerId, collectionOfficerId));
         var buckets = await _mediator.Send(new GetDueCollectionForecastBucketsQuery(granularity, projectId, propertyUnitId, customerId, collectionOfficerId));
@@ -41,7 +41,7 @@ public class CollectionForecastController : Controller
         return View(summary);
     }
 
-    public async Task<IActionResult> HighRiskDefaulters(Guid? projectId)
+    public async Task<IActionResult> HighRiskDefaulters(long? projectId)
     {
         var defaulters = await _mediator.Send(new GetHighRiskDefaultersQuery(projectId));
 
@@ -52,7 +52,7 @@ public class CollectionForecastController : Controller
         return View(defaulters);
     }
 
-    private async Task PopulateFiltersAsync(Guid? projectId)
+    private async Task PopulateFiltersAsync(long? projectId)
     {
         var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");

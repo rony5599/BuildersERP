@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.DocumentVersions;
 
-public record SetDocumentVersionActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDocumentVersionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDocumentVersionActiveCommandHandler : IRequestHandler<SetDocumentVersionActiveCommand, bool>
 {

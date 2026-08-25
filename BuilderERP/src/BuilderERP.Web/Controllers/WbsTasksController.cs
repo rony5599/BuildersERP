@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Application.Features.WbsTasks;
@@ -26,7 +26,7 @@ public class WbsTasksController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId)
+    public async Task<IActionResult> Index(long? projectId, long? propertyUnitId)
     {
         var wbsTasks = await _mediator.Send(new GetAllWbsTasksQuery(projectId, propertyUnitId));
         ViewBag.Projects = new SelectList((await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name", projectId);
@@ -36,14 +36,14 @@ public class WbsTasksController : Controller
         return View(wbsTasks);
     }
 
-    public async Task<IActionResult> Gantt(Guid? projectId)
+    public async Task<IActionResult> Gantt(long? projectId)
     {
         ViewBag.Projects = new SelectList((await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name", projectId);
         var wbsTasks = await _mediator.Send(new GetAllWbsTasksQuery(projectId));
         return View(wbsTasks);
     }
 
-    public async Task<IActionResult> GanttByUnit(Guid? projectId, Guid? propertyUnitId)
+    public async Task<IActionResult> GanttByUnit(long? projectId, long? propertyUnitId)
     {
         ViewBag.Projects = new SelectList((await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue))).Items, "Id", "Name", projectId);
         ViewBag.PropertyUnits = new SelectList((await _mediator.Send(new GetAllPropertyUnitsQuery(projectId, PageSize: int.MaxValue))).Items, "Id", "UnitNumber", propertyUnitId);
@@ -82,7 +82,7 @@ public class WbsTasksController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.WbsTaskManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var wbsTask = await _mediator.Send(new GetWbsTaskByIdQuery(id));
         if (wbsTask is null)
@@ -134,7 +134,7 @@ public class WbsTasksController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.WbsTaskManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetWbsTaskActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

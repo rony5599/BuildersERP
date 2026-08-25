@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.ServiceTickets;
 
-public record SetServiceTicketActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetServiceTicketActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetServiceTicketActiveCommandHandler : IRequestHandler<SetServiceTicketActiveCommand, bool>
 {

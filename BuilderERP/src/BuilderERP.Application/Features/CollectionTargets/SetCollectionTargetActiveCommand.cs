@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CollectionTargets;
 
-public record SetCollectionTargetActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetCollectionTargetActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetCollectionTargetActiveCommandHandler : IRequestHandler<SetCollectionTargetActiveCommand, bool>
 {

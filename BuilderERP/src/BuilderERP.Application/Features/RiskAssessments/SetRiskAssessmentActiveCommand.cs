@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RiskAssessments;
 
-public record SetRiskAssessmentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetRiskAssessmentActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetRiskAssessmentActiveCommandHandler : IRequestHandler<SetRiskAssessmentActiveCommand, bool>
 {

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ServiceTickets;
 
-public record GetServiceTicketByIdQuery(Guid Id) : IRequest<ServiceTicketDto?>;
+public record GetServiceTicketByIdQuery(long Id) : IRequest<ServiceTicketDto?>;
 
 public class GetServiceTicketByIdQueryHandler : IRequestHandler<GetServiceTicketByIdQuery, ServiceTicketDto?>
 {

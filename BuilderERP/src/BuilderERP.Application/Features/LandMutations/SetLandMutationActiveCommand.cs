@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.LandMutations;
 
-public record SetLandMutationActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetLandMutationActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetLandMutationActiveCommandHandler : IRequestHandler<SetLandMutationActiveCommand, bool>
 {

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SafetyTrainings;
 
-public record SetSafetyTrainingActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSafetyTrainingActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSafetyTrainingActiveCommandHandler : IRequestHandler<SetSafetyTrainingActiveCommand, bool>
 {

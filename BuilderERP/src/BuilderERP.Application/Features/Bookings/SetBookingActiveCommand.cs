@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Bookings;
 
-public record SetBookingActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetBookingActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetBookingActiveCommandHandler : IRequestHandler<SetBookingActiveCommand, bool>
 {

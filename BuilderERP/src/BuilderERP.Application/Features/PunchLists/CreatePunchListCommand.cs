@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PunchLists;
 
-public record CreatePunchListCommand(CreatePunchListDto Dto) : IRequest<Guid>;
+public record CreatePunchListCommand(CreatePunchListDto Dto) : IRequest<long>;
 
-public class CreatePunchListCommandHandler : IRequestHandler<CreatePunchListCommand, Guid>
+public class CreatePunchListCommandHandler : IRequestHandler<CreatePunchListCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreatePunchListCommandHandler : IRequestHandler<CreatePunchListComm
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreatePunchListCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePunchListCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<PunchList>(request.Dto);
         await _unitOfWork.Repository<PunchList>().AddAsync(item);

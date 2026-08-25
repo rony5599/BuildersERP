@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Drawings;
 
-public record CreateDrawingCommand(CreateDrawingDto Dto) : IRequest<Guid>;
+public record CreateDrawingCommand(CreateDrawingDto Dto) : IRequest<long>;
 
-public class CreateDrawingCommandHandler : IRequestHandler<CreateDrawingCommand, Guid>
+public class CreateDrawingCommandHandler : IRequestHandler<CreateDrawingCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateDrawingCommandHandler : IRequestHandler<CreateDrawingCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateDrawingCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateDrawingCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<Drawing>(request.Dto);
         await _unitOfWork.Repository<Drawing>().AddAsync(item);

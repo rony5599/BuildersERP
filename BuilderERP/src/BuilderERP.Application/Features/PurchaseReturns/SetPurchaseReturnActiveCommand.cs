@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
-public record SetPurchaseReturnActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetPurchaseReturnActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetPurchaseReturnActiveCommandHandler : IRequestHandler<SetPurchaseReturnActiveCommand, bool>
 {

@@ -12,7 +12,7 @@ public class CreateOperatorAssignmentDtoValidatorTests
     [Fact]
     public void Should_have_error_when_equipment_id_is_empty()
     {
-        var model = new CreateOperatorAssignmentDto { EquipmentId = Guid.Empty, WorkerId = Guid.NewGuid(), ProjectId = Guid.NewGuid() };
+        var model = new CreateOperatorAssignmentDto { EquipmentId = 0L, WorkerId = 1L, ProjectId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.EquipmentId);
     }
@@ -20,7 +20,7 @@ public class CreateOperatorAssignmentDtoValidatorTests
     [Fact]
     public void Should_have_error_when_worker_id_is_empty()
     {
-        var model = new CreateOperatorAssignmentDto { EquipmentId = Guid.NewGuid(), WorkerId = Guid.Empty, ProjectId = Guid.NewGuid() };
+        var model = new CreateOperatorAssignmentDto { EquipmentId = 1L, WorkerId = 0L, ProjectId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkerId);
     }
@@ -28,7 +28,7 @@ public class CreateOperatorAssignmentDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateOperatorAssignmentDto { EquipmentId = Guid.NewGuid(), WorkerId = Guid.NewGuid(), ProjectId = Guid.Empty };
+        var model = new CreateOperatorAssignmentDto { EquipmentId = 1L, WorkerId = 2L, ProjectId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -38,9 +38,9 @@ public class CreateOperatorAssignmentDtoValidatorTests
     {
         var model = new CreateOperatorAssignmentDto
         {
-            EquipmentId = Guid.NewGuid(),
-            WorkerId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid()
+            EquipmentId = 1L,
+            WorkerId = 2L,
+            ProjectId = 3L
         };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

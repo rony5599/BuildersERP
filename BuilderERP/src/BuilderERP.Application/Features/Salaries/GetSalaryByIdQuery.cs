@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Salaries;
 
-public record GetSalaryByIdQuery(Guid Id) : IRequest<SalaryDto?>;
+public record GetSalaryByIdQuery(long Id) : IRequest<SalaryDto?>;
 
 public class GetSalaryByIdQueryHandler : IRequestHandler<GetSalaryByIdQuery, SalaryDto?>
 {

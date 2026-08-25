@@ -33,7 +33,7 @@ public class DocumentsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? customerId, Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? customerId, long? projectId, int page = 1, int pageSize = 25)
     {
         var items = await _mediator.Send(new GetAllDocumentsQuery(customerId, projectId, page, pageSize));
         ViewBag.SelectedCustomerId = customerId;
@@ -89,7 +89,7 @@ public class DocumentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DocumentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetDocumentByIdQuery(id));
         if (item is null)
@@ -163,7 +163,7 @@ public class DocumentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DocumentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDocumentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

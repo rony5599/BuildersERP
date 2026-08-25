@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CostCenters;
 
-public record GetCostCenterByIdQuery(Guid Id) : IRequest<CostCenterDto?>;
+public record GetCostCenterByIdQuery(long Id) : IRequest<CostCenterDto?>;
 
 public class GetCostCenterByIdQueryHandler : IRequestHandler<GetCostCenterByIdQuery, CostCenterDto?>
 {

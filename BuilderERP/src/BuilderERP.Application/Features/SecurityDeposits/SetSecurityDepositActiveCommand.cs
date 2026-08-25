@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SecurityDeposits;
 
-public record SetSecurityDepositActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSecurityDepositActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSecurityDepositActiveCommandHandler : IRequestHandler<SetSecurityDepositActiveCommand, bool>
 {

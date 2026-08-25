@@ -11,9 +11,9 @@ internal static class CollectionForecastQueries
 
     public static async Task<List<Installment>> GetFilteredOutstandingInstallmentsAsync(
         IUnitOfWork unitOfWork,
-        Guid? projectId,
-        Guid? propertyUnitId,
-        Guid? customerId,
+        long? projectId,
+        long? propertyUnitId,
+        long? customerId,
         Guid? collectionOfficerId,
         CancellationToken cancellationToken)
     {
@@ -48,15 +48,15 @@ internal static class CollectionForecastQueries
         return installments.Where(i => i.DueAmount + i.PenaltyAmount - i.PaidAmount > 0).ToList();
     }
 
-    public static async Task<Dictionary<Guid, decimal>> GetCustomerCollectionProbabilitiesAsync(
+    public static async Task<Dictionary<long, decimal>> GetCustomerCollectionProbabilitiesAsync(
         IUnitOfWork unitOfWork,
-        IReadOnlyCollection<Guid> customerIds,
+        IReadOnlyCollection<long> customerIds,
         DateTime today,
         CancellationToken cancellationToken)
     {
         if (customerIds.Count == 0)
         {
-            return new Dictionary<Guid, decimal>();
+            return new Dictionary<long, decimal>();
         }
 
         var pastDueInstallments = await unitOfWork.Repository<Installment>().Query()
@@ -64,7 +64,7 @@ internal static class CollectionForecastQueries
             .Where(i => i.DueDate < today && customerIds.Contains(i.InstallmentPlan.SaleAgreement.Booking.CustomerId))
             .ToListAsync(cancellationToken);
 
-        var result = new Dictionary<Guid, decimal>();
+        var result = new Dictionary<long, decimal>();
         foreach (var group in pastDueInstallments.GroupBy(i => i.InstallmentPlan.SaleAgreement.Booking.CustomerId))
         {
             var total = group.Count();
@@ -87,9 +87,9 @@ internal static class CollectionForecastQueries
         IUnitOfWork unitOfWork,
         DateTime from,
         DateTime to,
-        Guid? projectId,
-        Guid? propertyUnitId,
-        Guid? customerId,
+        long? projectId,
+        long? propertyUnitId,
+        long? customerId,
         Guid? collectionOfficerId,
         CancellationToken cancellationToken)
     {

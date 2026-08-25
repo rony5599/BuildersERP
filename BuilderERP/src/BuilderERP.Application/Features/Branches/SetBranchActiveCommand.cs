@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Branches;
 
-public record SetBranchActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetBranchActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetBranchActiveCommandHandler : IRequestHandler<SetBranchActiveCommand, bool>
 {

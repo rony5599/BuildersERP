@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CustomerCommunications;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class CustomerCommunicationsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CustomerCommunicationManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var communication = await _mediator.Send(new GetCustomerCommunicationByIdQuery(id));
         if (communication is null)
@@ -109,7 +109,7 @@ public class CustomerCommunicationsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CustomerCommunicationManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCustomerCommunicationActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

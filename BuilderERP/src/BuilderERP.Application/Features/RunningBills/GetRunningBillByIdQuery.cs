@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RunningBills;
 
-public record GetRunningBillByIdQuery(Guid Id) : IRequest<RunningBillDto?>;
+public record GetRunningBillByIdQuery(long Id) : IRequest<RunningBillDto?>;
 
 public class GetRunningBillByIdQueryHandler : IRequestHandler<GetRunningBillByIdQuery, RunningBillDto?>
 {

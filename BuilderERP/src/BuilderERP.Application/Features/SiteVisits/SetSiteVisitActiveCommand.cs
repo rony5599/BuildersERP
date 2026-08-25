@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SiteVisits;
 
-public record SetSiteVisitActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSiteVisitActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSiteVisitActiveCommandHandler : IRequestHandler<SetSiteVisitActiveCommand, bool>
 {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Drawings;
 
-public record GetDrawingByIdQuery(Guid Id) : IRequest<DrawingDto?>;
+public record GetDrawingByIdQuery(long Id) : IRequest<DrawingDto?>;
 
 public class GetDrawingByIdQueryHandler : IRequestHandler<GetDrawingByIdQuery, DrawingDto?>
 {

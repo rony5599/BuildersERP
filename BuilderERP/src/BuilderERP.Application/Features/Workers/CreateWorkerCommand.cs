@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Workers;
 
-public record CreateWorkerCommand(CreateWorkerDto Dto) : IRequest<Guid>;
+public record CreateWorkerCommand(CreateWorkerDto Dto) : IRequest<long>;
 
-public class CreateWorkerCommandHandler : IRequestHandler<CreateWorkerCommand, Guid>
+public class CreateWorkerCommandHandler : IRequestHandler<CreateWorkerCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateWorkerCommandHandler : IRequestHandler<CreateWorkerCommand, G
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateWorkerCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateWorkerCommand request, CancellationToken cancellationToken)
     {
         var worker = _mapper.Map<Worker>(request.Dto);
         await _unitOfWork.Repository<Worker>().AddAsync(worker);

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Contractors;
 
-public record SetContractorActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetContractorActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetContractorActiveCommandHandler : IRequestHandler<SetContractorActiveCommand, bool>
 {

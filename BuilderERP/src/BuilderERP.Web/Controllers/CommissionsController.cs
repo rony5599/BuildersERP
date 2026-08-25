@@ -63,7 +63,7 @@ public class CommissionsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CommissionManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var commission = await _mediator.Send(new GetCommissionByIdQuery(id));
         if (commission is null)
@@ -112,7 +112,7 @@ public class CommissionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CommissionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCommissionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

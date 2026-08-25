@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class SitePhoto : BaseEntity
 {
@@ -7,9 +7,9 @@ public class SitePhoto : BaseEntity
     public DateTime TakenDate { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = true;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
-    public Guid? DailyProgressId { get; set; }
+    public long? DailyProgressId { get; set; }
     public DailyProgress? DailyProgress { get; set; }
 }

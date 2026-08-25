@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RunningBills;
 
-public record CreateRunningBillCommand(CreateRunningBillDto Dto) : IRequest<Guid>;
+public record CreateRunningBillCommand(CreateRunningBillDto Dto) : IRequest<long>;
 
-public class CreateRunningBillCommandHandler : IRequestHandler<CreateRunningBillCommand, Guid>
+public class CreateRunningBillCommandHandler : IRequestHandler<CreateRunningBillCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateRunningBillCommandHandler : IRequestHandler<CreateRunningBill
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateRunningBillCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateRunningBillCommand request, CancellationToken cancellationToken)
     {
         var bill = _mapper.Map<RunningBill>(request.Dto);
         bill.NetPayableAmount = bill.WorkDoneAmount - bill.PreviousBillAmount - bill.DeductionAmount;

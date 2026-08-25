@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Brokers;
 
-public record GetBrokerByIdQuery(Guid Id) : IRequest<BrokerDto?>;
+public record GetBrokerByIdQuery(long Id) : IRequest<BrokerDto?>;
 
 public class GetBrokerByIdQueryHandler : IRequestHandler<GetBrokerByIdQuery, BrokerDto?>
 {

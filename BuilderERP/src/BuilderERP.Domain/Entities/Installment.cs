@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -15,6 +15,6 @@ public class Installment : BaseEntity
     public string? RescheduleReason { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid InstallmentPlanId { get; set; }
+    public long InstallmentPlanId { get; set; }
     public InstallmentPlan InstallmentPlan { get; set; } = null!;
 }

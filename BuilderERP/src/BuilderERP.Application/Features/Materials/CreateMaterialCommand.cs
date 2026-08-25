@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record CreateMaterialCommand(CreateMaterialDto Dto) : IRequest<Guid>;
+public record CreateMaterialCommand(CreateMaterialDto Dto) : IRequest<long>;
 
-public class CreateMaterialCommandHandler : IRequestHandler<CreateMaterialCommand, Guid>
+public class CreateMaterialCommandHandler : IRequestHandler<CreateMaterialCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateMaterialCommandHandler : IRequestHandler<CreateMaterialComman
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateMaterialCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateMaterialCommand request, CancellationToken cancellationToken)
     {
         var material = _mapper.Map<Material>(request.Dto);
         await _unitOfWork.Repository<Material>().AddAsync(material);

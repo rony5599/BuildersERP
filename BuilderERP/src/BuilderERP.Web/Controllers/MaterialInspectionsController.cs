@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.MaterialInspections;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
@@ -63,7 +63,7 @@ public class MaterialInspectionsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.MaterialInspectionManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var inspection = await _mediator.Send(new GetMaterialInspectionByIdQuery(id));
         if (inspection is null)
@@ -112,7 +112,7 @@ public class MaterialInspectionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.MaterialInspectionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetMaterialInspectionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

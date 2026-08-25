@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ItemCategories;
 
-public record GetItemCategoryByIdQuery(Guid Id) : IRequest<ItemCategoryDto?>;
+public record GetItemCategoryByIdQuery(long Id) : IRequest<ItemCategoryDto?>;
 
 public class GetItemCategoryByIdQueryHandler : IRequestHandler<GetItemCategoryByIdQuery, ItemCategoryDto?>
 {

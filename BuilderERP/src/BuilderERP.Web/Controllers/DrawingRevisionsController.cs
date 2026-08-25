@@ -32,7 +32,7 @@ public class DrawingRevisionsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? drawingId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? drawingId, int page = 1, int pageSize = 25)
     {
         var items = await _mediator.Send(new GetAllDrawingRevisionsQuery(drawingId, page, pageSize));
         ViewBag.SelectedDrawingId = drawingId;
@@ -87,7 +87,7 @@ public class DrawingRevisionsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DrawingRevisionManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetDrawingRevisionByIdQuery(id));
         if (item is null)
@@ -158,7 +158,7 @@ public class DrawingRevisionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DrawingRevisionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDrawingRevisionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

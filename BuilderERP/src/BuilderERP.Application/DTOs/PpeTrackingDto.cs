@@ -4,8 +4,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class PpeTrackingDto
 {
-    public Guid Id { get; set; }
-    public Guid WorkerId { get; set; }
+    public long Id { get; set; }
+    public long WorkerId { get; set; }
     public string WorkerName { get; set; } = string.Empty;
     public PpeType PpeType { get; set; }
     public DateTime IssueDate { get; set; }
@@ -17,7 +17,7 @@ public class PpeTrackingDto
 
 public class CreatePpeTrackingDto
 {
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
     public PpeType PpeType { get; set; } = PpeType.Helmet;
     public DateTime IssueDate { get; set; } = DateTime.UtcNow;
     public DateTime? ExpiryDate { get; set; }
@@ -27,8 +27,8 @@ public class CreatePpeTrackingDto
 
 public class UpdatePpeTrackingDto
 {
-    public Guid Id { get; set; }
-    public Guid WorkerId { get; set; }
+    public long Id { get; set; }
+    public long WorkerId { get; set; }
     public PpeType PpeType { get; set; }
     public DateTime IssueDate { get; set; }
     public DateTime? ExpiryDate { get; set; }

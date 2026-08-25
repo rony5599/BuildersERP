@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DelayEvents;
 
-public record GetDelayEventByIdQuery(Guid Id) : IRequest<DelayEventDto?>;
+public record GetDelayEventByIdQuery(long Id) : IRequest<DelayEventDto?>;
 
 public class GetDelayEventByIdQueryHandler : IRequestHandler<GetDelayEventByIdQuery, DelayEventDto?>
 {

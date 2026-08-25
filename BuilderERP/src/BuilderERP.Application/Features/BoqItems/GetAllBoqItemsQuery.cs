@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BoqItems;
 
-public record GetAllBoqItemsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BoqItemDto>>;
+public record GetAllBoqItemsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BoqItemDto>>;
 
 public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, PagedResult<BoqItemDto>>
 {

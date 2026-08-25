@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Buildings;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Towers;
@@ -26,7 +26,7 @@ public class TowersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var towers = await _mediator.Send(new GetAllTowersQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -46,7 +46,7 @@ public class TowersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.TowerManage)]
-    public async Task<IActionResult> Create(Guid? projectId)
+    public async Task<IActionResult> Create(long? projectId)
     {
         await PopulateBuildingsAsync(projectId);
         return View(new CreateTowerDto());
@@ -70,7 +70,7 @@ public class TowersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.TowerManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var tower = await _mediator.Send(new GetTowerByIdQuery(id));
         if (tower is null)
@@ -115,13 +115,13 @@ public class TowersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.TowerManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetTowerActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateBuildingsAsync(Guid? projectId)
+    private async Task PopulateBuildingsAsync(long? projectId)
     {
         var buildings = await _mediator.Send(new GetAllBuildingsQuery(projectId, PageSize: int.MaxValue));
         ViewBag.Buildings = new SelectList(buildings.Items, "Id", "Name");

@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.ParkingSlots;
 
-public record SetParkingSlotActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetParkingSlotActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetParkingSlotActiveCommandHandler : IRequestHandler<SetParkingSlotActiveCommand, bool>
 {

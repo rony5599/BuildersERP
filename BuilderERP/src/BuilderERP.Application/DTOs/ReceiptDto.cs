@@ -4,14 +4,14 @@ namespace BuilderERP.Application.DTOs;
 
 public class ReceiptDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string ReceiptNumber { get; set; } = string.Empty;
     public DateTime PaymentDate { get; set; }
     public decimal AmountPaid { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public string? Notes { get; set; }
     public bool IsActive { get; set; }
-    public Guid InstallmentId { get; set; }
+    public long InstallmentId { get; set; }
     public int InstallmentNumber { get; set; }
     public string AgreementNumber { get; set; } = string.Empty;
     public string UnitNumber { get; set; } = string.Empty;
@@ -25,16 +25,16 @@ public class CreateReceiptDto
     public decimal AmountPaid { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public string? Notes { get; set; }
-    public Guid InstallmentId { get; set; }
+    public long InstallmentId { get; set; }
 }
 
 public class UpdateReceiptDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string ReceiptNumber { get; set; } = string.Empty;
     public DateTime PaymentDate { get; set; }
     public decimal AmountPaid { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public string? Notes { get; set; }
-    public Guid InstallmentId { get; set; }
+    public long InstallmentId { get; set; }
 }

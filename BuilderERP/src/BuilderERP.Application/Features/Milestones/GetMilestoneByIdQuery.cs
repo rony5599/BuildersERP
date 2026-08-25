@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Milestones;
 
-public record GetMilestoneByIdQuery(Guid Id) : IRequest<MilestoneDto?>;
+public record GetMilestoneByIdQuery(long Id) : IRequest<MilestoneDto?>;
 
 public class GetMilestoneByIdQueryHandler : IRequestHandler<GetMilestoneByIdQuery, MilestoneDto?>
 {

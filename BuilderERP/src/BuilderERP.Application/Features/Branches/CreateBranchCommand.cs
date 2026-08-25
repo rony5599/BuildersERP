@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Branches;
 
-public record CreateBranchCommand(CreateBranchDto Dto) : IRequest<Guid>;
+public record CreateBranchCommand(CreateBranchDto Dto) : IRequest<long>;
 
-public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, Guid>
+public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, G
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateBranchCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateBranchCommand request, CancellationToken cancellationToken)
     {
         var branch = _mapper.Map<Branch>(request.Dto);
         await _unitOfWork.Repository<Branch>().AddAsync(branch);

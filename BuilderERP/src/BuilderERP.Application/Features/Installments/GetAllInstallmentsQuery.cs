@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 namespace BuilderERP.Application.Features.Installments;
 
 public record GetAllInstallmentsQuery(
-    Guid? ProjectId = null,
-    Guid? PropertyUnitId = null,
-    Guid? CustomerId = null,
+    long? ProjectId = null,
+    long? PropertyUnitId = null,
+    long? CustomerId = null,
     int Page = 1,
     int PageSize = 25) : IRequest<PagedResult<InstallmentDto>>;
 

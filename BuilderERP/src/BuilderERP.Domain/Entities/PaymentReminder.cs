@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -11,9 +11,9 @@ public class PaymentReminder : BaseEntity
     public DateTime? SentDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid CustomerId { get; set; }
+    public long CustomerId { get; set; }
     public Customer Customer { get; set; } = null!;
 
-    public Guid? InstallmentId { get; set; }
+    public long? InstallmentId { get; set; }
     public Installment? Installment { get; set; }
 }

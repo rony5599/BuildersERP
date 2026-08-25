@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PpeTrackings;
 
-public record SetPpeTrackingActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetPpeTrackingActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetPpeTrackingActiveCommandHandler : IRequestHandler<SetPpeTrackingActiveCommand, bool>
 {

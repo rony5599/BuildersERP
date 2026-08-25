@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.GoodsReceives;
 
-public record SetGoodsReceiveActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetGoodsReceiveActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetGoodsReceiveActiveCommandHandler : IRequestHandler<SetGoodsReceiveActiveCommand, bool>
 {

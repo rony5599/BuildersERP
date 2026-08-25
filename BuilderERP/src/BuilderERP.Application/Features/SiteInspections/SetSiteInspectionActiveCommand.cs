@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SiteInspections;
 
-public record SetSiteInspectionActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSiteInspectionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSiteInspectionActiveCommandHandler : IRequestHandler<SetSiteInspectionActiveCommand, bool>
 {

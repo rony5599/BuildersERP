@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.IncidentReports;
 
-public record GetIncidentReportByIdQuery(Guid Id) : IRequest<IncidentReportDto?>;
+public record GetIncidentReportByIdQuery(long Id) : IRequest<IncidentReportDto?>;
 
 public class GetIncidentReportByIdQueryHandler : IRequestHandler<GetIncidentReportByIdQuery, IncidentReportDto?>
 {

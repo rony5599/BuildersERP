@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.EquipmentRentals;
 
-public record GetAllEquipmentRentalsQuery(Guid? EquipmentId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<EquipmentRentalDto>>;
+public record GetAllEquipmentRentalsQuery(long? EquipmentId = null, long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<EquipmentRentalDto>>;
 
 public class GetAllEquipmentRentalsQueryHandler : IRequestHandler<GetAllEquipmentRentalsQuery, PagedResult<EquipmentRentalDto>>
 {

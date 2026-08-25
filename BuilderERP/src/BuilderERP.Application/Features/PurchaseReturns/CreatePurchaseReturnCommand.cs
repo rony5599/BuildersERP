@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
-public record CreatePurchaseReturnCommand(CreatePurchaseReturnDto Dto) : IRequest<Guid>;
+public record CreatePurchaseReturnCommand(CreatePurchaseReturnDto Dto) : IRequest<long>;
 
-public class CreatePurchaseReturnCommandHandler : IRequestHandler<CreatePurchaseReturnCommand, Guid>
+public class CreatePurchaseReturnCommandHandler : IRequestHandler<CreatePurchaseReturnCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ public class CreatePurchaseReturnCommandHandler : IRequestHandler<CreatePurchase
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreatePurchaseReturnCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePurchaseReturnCommand request, CancellationToken cancellationToken)
     {
         var projectId = await _unitOfWork.Repository<GoodsReceive>().Query()
             .Where(g => g.Id == request.Dto.GoodsReceiveId)

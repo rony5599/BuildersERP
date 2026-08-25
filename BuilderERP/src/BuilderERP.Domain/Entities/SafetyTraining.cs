@@ -1,8 +1,8 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class SafetyTraining : BaseEntity
 {
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
     public Worker Worker { get; set; } = null!;
 
     public string TrainingTitle { get; set; } = string.Empty;

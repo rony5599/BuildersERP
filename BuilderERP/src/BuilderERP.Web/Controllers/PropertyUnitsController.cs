@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -25,7 +25,7 @@ public class PropertyUnitsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var units = await _mediator.Send(new GetAllPropertyUnitsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -41,7 +41,7 @@ public class PropertyUnitsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.PropertyUnitManage)]
-    public async Task<IActionResult> Create(Guid? projectId)
+    public async Task<IActionResult> Create(long? projectId)
     {
         await PopulateFloorsAsync(projectId);
         return View(new CreatePropertyUnitDto());
@@ -65,7 +65,7 @@ public class PropertyUnitsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.PropertyUnitManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var unit = await _mediator.Send(new GetPropertyUnitByIdQuery(id));
         if (unit is null)
@@ -113,13 +113,13 @@ public class PropertyUnitsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PropertyUnitManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetPropertyUnitActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateFloorsAsync(Guid? projectId)
+    private async Task PopulateFloorsAsync(long? projectId)
     {
         var floors = await _mediator.Send(new BuilderERP.Application.Features.Floors.GetAllFloorsQuery(projectId, PageSize: int.MaxValue));
         ViewBag.Floors = new SelectList(floors.Items, "Id", "Name");

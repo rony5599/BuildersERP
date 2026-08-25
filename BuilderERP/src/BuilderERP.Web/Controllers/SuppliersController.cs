@@ -58,7 +58,7 @@ public class SuppliersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SupplierManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var supplier = await _mediator.Send(new GetSupplierByIdQuery(id));
         if (supplier is null)
@@ -114,7 +114,7 @@ public class SuppliersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SupplierManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSupplierActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

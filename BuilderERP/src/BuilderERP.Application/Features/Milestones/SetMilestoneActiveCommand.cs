@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Milestones;
 
-public record SetMilestoneActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetMilestoneActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetMilestoneActiveCommandHandler : IRequestHandler<SetMilestoneActiveCommand, bool>
 {

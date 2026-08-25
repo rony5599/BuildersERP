@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Attendances;
 
-public record CreateAttendanceCommand(CreateAttendanceDto Dto) : IRequest<Guid>;
+public record CreateAttendanceCommand(CreateAttendanceDto Dto) : IRequest<long>;
 
-public class CreateAttendanceCommandHandler : IRequestHandler<CreateAttendanceCommand, Guid>
+public class CreateAttendanceCommandHandler : IRequestHandler<CreateAttendanceCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateAttendanceCommandHandler : IRequestHandler<CreateAttendanceCo
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateAttendanceCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateAttendanceCommand request, CancellationToken cancellationToken)
     {
         var attendance = _mapper.Map<Attendance>(request.Dto);
         await _unitOfWork.Repository<Attendance>().AddAsync(attendance);

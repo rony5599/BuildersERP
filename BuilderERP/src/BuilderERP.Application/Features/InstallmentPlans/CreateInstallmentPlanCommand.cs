@@ -7,12 +7,12 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.InstallmentPlans;
 
-public record CreateInstallmentPlanCommand(CreateInstallmentPlanDto Dto) : IRequest<Guid>, IInvalidatesFeatures
+public record CreateInstallmentPlanCommand(CreateInstallmentPlanDto Dto) : IRequest<long>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["Installments", "CollectionForecast"];
 }
 
-public class CreateInstallmentPlanCommandHandler : IRequestHandler<CreateInstallmentPlanCommand, Guid>
+public class CreateInstallmentPlanCommandHandler : IRequestHandler<CreateInstallmentPlanCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ public class CreateInstallmentPlanCommandHandler : IRequestHandler<CreateInstall
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateInstallmentPlanCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateInstallmentPlanCommand request, CancellationToken cancellationToken)
     {
         var plan = _mapper.Map<InstallmentPlan>(request.Dto);
         await _unitOfWork.Repository<InstallmentPlan>().AddAsync(plan);
@@ -50,7 +50,7 @@ public class CreateInstallmentPlanCommandHandler : IRequestHandler<CreateInstall
         {
             var installment = new Installment
             {
-                InstallmentPlanId = plan.Id,
+                InstallmentPlan = plan,
                 InstallmentNumber = i,
                 DueDate = plan.StartDate.AddMonths(i - 1),
                 DueAmount = i == plan.NumberOfInstallments ? lastAmount : baseAmount

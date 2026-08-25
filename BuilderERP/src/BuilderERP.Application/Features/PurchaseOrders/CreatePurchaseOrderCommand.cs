@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseOrders;
 
-public record CreatePurchaseOrderCommand(CreatePurchaseOrderDto Dto) : IRequest<Guid>;
+public record CreatePurchaseOrderCommand(CreatePurchaseOrderDto Dto) : IRequest<long>;
 
-public class CreatePurchaseOrderCommandHandler : IRequestHandler<CreatePurchaseOrderCommand, Guid>
+public class CreatePurchaseOrderCommandHandler : IRequestHandler<CreatePurchaseOrderCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ public class CreatePurchaseOrderCommandHandler : IRequestHandler<CreatePurchaseO
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreatePurchaseOrderCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePurchaseOrderCommand request, CancellationToken cancellationToken)
     {
         var projectId = await _unitOfWork.Repository<VendorQuotation>().Query()
             .Where(q => q.Id == request.Dto.VendorQuotationId)

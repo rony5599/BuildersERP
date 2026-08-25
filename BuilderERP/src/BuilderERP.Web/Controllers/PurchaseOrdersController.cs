@@ -63,7 +63,7 @@ public class PurchaseOrdersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var order = await _mediator.Send(new GetPurchaseOrderByIdQuery(id));
         if (order is null)
@@ -127,7 +127,7 @@ public class PurchaseOrdersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetPurchaseOrderActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

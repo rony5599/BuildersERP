@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Leads;
 
-public record SetLeadStatusCommand(Guid Id, LeadStatus Status) : IRequest<bool>;
+public record SetLeadStatusCommand(long Id, LeadStatus Status) : IRequest<bool>;
 
 public class SetLeadStatusCommandHandler : IRequestHandler<SetLeadStatusCommand, bool>
 {

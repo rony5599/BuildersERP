@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PaymentReminders;
 
-public record MarkReminderSentCommand(Guid Id, ReminderChannel Channel) : IRequest<bool>;
+public record MarkReminderSentCommand(long Id, ReminderChannel Channel) : IRequest<bool>;
 
 public class MarkReminderSentCommandHandler : IRequestHandler<MarkReminderSentCommand, bool>
 {

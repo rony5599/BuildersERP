@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Installments;
 
-public record SetInstallmentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
+public record SetInstallmentActiveCommand(long Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CollectionForecast"];
 }

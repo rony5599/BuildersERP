@@ -2,7 +2,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class SupplierDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string SupplierCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? ContactPerson { get; set; }
@@ -44,7 +44,7 @@ public class CreateSupplierDto
 
 public class UpdateSupplierDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string SupplierCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? ContactPerson { get; set; }

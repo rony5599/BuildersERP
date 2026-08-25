@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Quotations;
 
-public record GetQuotationByIdQuery(Guid Id) : IRequest<QuotationDto?>;
+public record GetQuotationByIdQuery(long Id) : IRequest<QuotationDto?>;
 
 public class GetQuotationByIdQueryHandler : IRequestHandler<GetQuotationByIdQuery, QuotationDto?>
 {

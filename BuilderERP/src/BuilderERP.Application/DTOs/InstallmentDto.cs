@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class InstallmentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public int InstallmentNumber { get; set; }
     public DateTime DueDate { get; set; }
     public decimal DueAmount { get; set; }
@@ -15,9 +15,9 @@ public class InstallmentDto
     public DateTime? OriginalDueDate { get; set; }
     public string? RescheduleReason { get; set; }
     public bool IsActive { get; set; }
-    public Guid InstallmentPlanId { get; set; }
+    public long InstallmentPlanId { get; set; }
     public string AgreementNumber { get; set; } = string.Empty;
-    public Guid? ProjectId { get; set; }
+    public long? ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public string UnitNumber { get; set; } = string.Empty;
     public string CustomerName { get; set; } = string.Empty;
@@ -30,17 +30,17 @@ public class CreateInstallmentDto
     public decimal DueAmount { get; set; }
     public decimal PenaltyAmount { get; set; } = 0;
     public InstallmentStatus Status { get; set; } = InstallmentStatus.Pending;
-    public Guid InstallmentPlanId { get; set; }
+    public long InstallmentPlanId { get; set; }
 }
 
 public class UpdateInstallmentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public int InstallmentNumber { get; set; }
     public DateTime DueDate { get; set; }
     public decimal DueAmount { get; set; }
     public decimal PenaltyAmount { get; set; }
     public decimal PaidAmount { get; set; }
     public InstallmentStatus Status { get; set; }
-    public Guid InstallmentPlanId { get; set; }
+    public long InstallmentPlanId { get; set; }
 }

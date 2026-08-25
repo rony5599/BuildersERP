@@ -27,7 +27,7 @@ public class StockIssuesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var issues = await _mediator.Send(new GetAllStockIssuesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -67,7 +67,7 @@ public class StockIssuesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.StockIssueManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var issue = await _mediator.Send(new GetStockIssueByIdQuery(id));
         if (issue is null)
@@ -119,7 +119,7 @@ public class StockIssuesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.StockIssueManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetStockIssueActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

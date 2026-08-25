@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SafetyTrainings;
 
-public record GetSafetyTrainingByIdQuery(Guid Id) : IRequest<SafetyTrainingDto?>;
+public record GetSafetyTrainingByIdQuery(long Id) : IRequest<SafetyTrainingDto?>;
 
 public class GetSafetyTrainingByIdQueryHandler : IRequestHandler<GetSafetyTrainingByIdQuery, SafetyTrainingDto?>
 {

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.TestReports;
@@ -33,7 +33,7 @@ public class TestReportsController : Controller
         _environment = environment;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var items = await _mediator.Send(new GetAllTestReportsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -88,7 +88,7 @@ public class TestReportsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.TestReportManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetTestReportByIdQuery(id));
         if (item is null)
@@ -161,7 +161,7 @@ public class TestReportsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.TestReportManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetTestReportActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

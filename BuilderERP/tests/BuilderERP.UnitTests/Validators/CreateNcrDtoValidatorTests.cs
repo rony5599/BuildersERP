@@ -13,7 +13,7 @@ public class CreateNcrDtoValidatorTests
     [Fact]
     public void Should_have_error_when_ncr_number_is_empty()
     {
-        var model = new CreateNcrDto { NcrNumber = "", Description = "Cracked slab", ProjectId = Guid.NewGuid() };
+        var model = new CreateNcrDto { NcrNumber = "", Description = "Cracked slab", ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.NcrNumber);
     }
@@ -21,7 +21,7 @@ public class CreateNcrDtoValidatorTests
     [Fact]
     public void Should_have_error_when_description_is_empty()
     {
-        var model = new CreateNcrDto { NcrNumber = "NCR-001", Description = "", ProjectId = Guid.NewGuid() };
+        var model = new CreateNcrDto { NcrNumber = "NCR-001", Description = "", ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
@@ -29,7 +29,7 @@ public class CreateNcrDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateNcrDto { NcrNumber = "NCR-001", Description = "Cracked slab", ProjectId = Guid.Empty };
+        var model = new CreateNcrDto { NcrNumber = "NCR-001", Description = "Cracked slab", ProjectId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -41,7 +41,7 @@ public class CreateNcrDtoValidatorTests
         {
             NcrNumber = "NCR-001",
             Description = "Cracked slab",
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             Severity = NcrSeverity.Major,
             Status = NcrStatus.Open
         };

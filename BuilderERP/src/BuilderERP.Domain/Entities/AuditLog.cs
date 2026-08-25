@@ -9,9 +9,10 @@ public enum AuditAction
 
 public class AuditLog
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public long Id { get; set; }
+    public Guid Guid { get; set; } = Guid.NewGuid();
     public string EntityName { get; set; } = string.Empty;
-    public Guid EntityId { get; set; }
+    public long EntityId { get; set; }
     public AuditAction Action { get; set; }
     public string? PropertyName { get; set; }
     public string? OldValue { get; set; }

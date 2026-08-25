@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.RiskAssessments;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class RiskAssessmentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.RiskAssessmentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var assessment = await _mediator.Send(new GetRiskAssessmentByIdQuery(id));
         if (assessment is null)
@@ -111,7 +111,7 @@ public class RiskAssessmentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.RiskAssessmentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetRiskAssessmentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

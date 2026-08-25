@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Warranties;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class WarrantiesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.WarrantyManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetWarrantyByIdQuery(id));
         if (item is null)
@@ -112,7 +112,7 @@ public class WarrantiesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.WarrantyManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetWarrantyActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

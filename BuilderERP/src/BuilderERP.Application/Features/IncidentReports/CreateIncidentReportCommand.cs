@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.IncidentReports;
 
-public record CreateIncidentReportCommand(CreateIncidentReportDto Dto) : IRequest<Guid>;
+public record CreateIncidentReportCommand(CreateIncidentReportDto Dto) : IRequest<long>;
 
-public class CreateIncidentReportCommandHandler : IRequestHandler<CreateIncidentReportCommand, Guid>
+public class CreateIncidentReportCommandHandler : IRequestHandler<CreateIncidentReportCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateIncidentReportCommandHandler : IRequestHandler<CreateIncident
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateIncidentReportCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateIncidentReportCommand request, CancellationToken cancellationToken)
     {
         var report = _mapper.Map<IncidentReport>(request.Dto);
         await _unitOfWork.Repository<IncidentReport>().AddAsync(report);

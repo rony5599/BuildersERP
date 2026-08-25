@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Departments;
 
-public record SetDepartmentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDepartmentActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDepartmentActiveCommandHandler : IRequestHandler<SetDepartmentActiveCommand, bool>
 {

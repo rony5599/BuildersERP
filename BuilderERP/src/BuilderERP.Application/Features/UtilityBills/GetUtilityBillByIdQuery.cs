@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.UtilityBills;
 
-public record GetUtilityBillByIdQuery(Guid Id) : IRequest<UtilityBillDto?>;
+public record GetUtilityBillByIdQuery(long Id) : IRequest<UtilityBillDto?>;
 
 public class GetUtilityBillByIdQueryHandler : IRequestHandler<GetUtilityBillByIdQuery, UtilityBillDto?>
 {

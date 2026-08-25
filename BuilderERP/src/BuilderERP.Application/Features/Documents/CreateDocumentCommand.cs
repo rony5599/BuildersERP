@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Documents;
 
-public record CreateDocumentCommand(CreateDocumentDto Dto) : IRequest<Guid>;
+public record CreateDocumentCommand(CreateDocumentDto Dto) : IRequest<long>;
 
-public class CreateDocumentCommandHandler : IRequestHandler<CreateDocumentCommand, Guid>
+public class CreateDocumentCommandHandler : IRequestHandler<CreateDocumentCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateDocumentCommandHandler : IRequestHandler<CreateDocumentComman
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<Document>(request.Dto);
         var repository = _unitOfWork.Repository<Document>();

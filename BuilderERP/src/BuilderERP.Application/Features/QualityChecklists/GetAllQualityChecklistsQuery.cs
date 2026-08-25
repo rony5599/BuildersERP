@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.QualityChecklists;
 
-public record GetAllQualityChecklistsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<QualityChecklistDto>>;
+public record GetAllQualityChecklistsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<QualityChecklistDto>>;
 
 public class GetAllQualityChecklistsQueryHandler : IRequestHandler<GetAllQualityChecklistsQuery, PagedResult<QualityChecklistDto>>
 {

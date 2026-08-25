@@ -63,7 +63,7 @@ public class SaleAgreementsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SaleAgreementManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var agreement = await _mediator.Send(new GetSaleAgreementByIdQuery(id));
         if (agreement is null)
@@ -110,7 +110,7 @@ public class SaleAgreementsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SaleAgreementManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSaleAgreementActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -61,7 +61,7 @@ public class MaintenanceRecordsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.MaintenanceRecordManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var record = await _mediator.Send(new GetMaintenanceRecordByIdQuery(id));
         if (record is null)
@@ -110,7 +110,7 @@ public class MaintenanceRecordsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.MaintenanceRecordManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetMaintenanceRecordActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DrawingRevisions;
 
-public record GetAllDrawingRevisionsQuery(Guid? DrawingId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DrawingRevisionDto>>;
+public record GetAllDrawingRevisionsQuery(long? DrawingId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DrawingRevisionDto>>;
 
 public class GetAllDrawingRevisionsQueryHandler : IRequestHandler<GetAllDrawingRevisionsQuery, PagedResult<DrawingRevisionDto>>
 {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.GoodsReceives;
 
-public record GetGoodsReceiveByIdQuery(Guid Id) : IRequest<GoodsReceiveDto?>;
+public record GetGoodsReceiveByIdQuery(long Id) : IRequest<GoodsReceiveDto?>;
 
 public class GetGoodsReceiveByIdQueryHandler : IRequestHandler<GetGoodsReceiveByIdQuery, GoodsReceiveDto?>
 {

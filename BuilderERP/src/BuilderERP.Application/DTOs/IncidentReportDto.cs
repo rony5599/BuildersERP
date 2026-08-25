@@ -4,8 +4,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class IncidentReportDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public DateTime IncidentDate { get; set; }
     public string ReportedBy { get; set; } = string.Empty;
@@ -21,7 +21,7 @@ public class IncidentReportDto
 
 public class CreateIncidentReportDto
 {
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public DateTime IncidentDate { get; set; } = DateTime.UtcNow;
     public string ReportedBy { get; set; } = string.Empty;
     public string? Location { get; set; }
@@ -35,8 +35,8 @@ public class CreateIncidentReportDto
 
 public class UpdateIncidentReportDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public DateTime IncidentDate { get; set; }
     public string ReportedBy { get; set; } = string.Empty;
     public string? Location { get; set; }

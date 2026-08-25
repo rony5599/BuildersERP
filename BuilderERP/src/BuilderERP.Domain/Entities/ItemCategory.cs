@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class ItemCategory : BaseEntity
 {
@@ -6,6 +6,6 @@ public class ItemCategory : BaseEntity
     public string Name { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 
-    public Guid? ParentCategoryId { get; set; }
+    public long? ParentCategoryId { get; set; }
     public ItemCategory? ParentCategory { get; set; }
 }

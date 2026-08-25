@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Bookings;
 
-public record GetBookingByIdQuery(Guid Id) : IRequest<BookingDto?>;
+public record GetBookingByIdQuery(long Id) : IRequest<BookingDto?>;
 
 public class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, BookingDto?>
 {

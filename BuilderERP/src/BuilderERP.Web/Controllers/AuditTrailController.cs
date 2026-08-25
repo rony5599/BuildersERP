@@ -29,7 +29,7 @@ public class AuditTrailController : Controller
 
     // Lets any module's Details/Edit page deep-link to that record's change history,
     // e.g. /AuditTrail/History?entityName=Material&entityId={id}
-    public async Task<IActionResult> History(string entityName, Guid entityId, int page = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> History(string entityName, long entityId, int page = 1, int pageSize = 25, CancellationToken cancellationToken = default)
     {
         var filter = new AuditLogFilter { EntityName = entityName, EntityId = entityId };
         var result = await _mediator.Send(new GetAuditLogsQuery(filter, page, pageSize), cancellationToken);

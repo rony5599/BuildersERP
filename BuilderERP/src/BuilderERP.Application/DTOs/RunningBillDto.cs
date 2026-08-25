@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class RunningBillDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string BillNumber { get; set; } = string.Empty;
     public DateTime BillDate { get; set; }
     public decimal WorkDoneAmount { get; set; }
@@ -16,13 +16,13 @@ public class RunningBillDto
     public string? CertifiedBy { get; set; }
     public DateTime? CertificationDate { get; set; }
     public bool IsActive { get; set; }
-    public Guid WorkOrderId { get; set; }
+    public long WorkOrderId { get; set; }
     public string WorkOrderNumber { get; set; } = string.Empty;
 }
 
 public class CertifyRunningBillDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string CertificateNumber { get; set; } = string.Empty;
     public string CertifiedBy { get; set; } = string.Empty;
 }
@@ -35,17 +35,17 @@ public class CreateRunningBillDto
     public decimal PreviousBillAmount { get; set; }
     public decimal DeductionAmount { get; set; }
     public RunningBillStatus Status { get; set; } = RunningBillStatus.Draft;
-    public Guid WorkOrderId { get; set; }
+    public long WorkOrderId { get; set; }
 }
 
 public class UpdateRunningBillDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string BillNumber { get; set; } = string.Empty;
     public DateTime BillDate { get; set; }
     public decimal WorkDoneAmount { get; set; }
     public decimal PreviousBillAmount { get; set; }
     public decimal DeductionAmount { get; set; }
     public RunningBillStatus Status { get; set; }
-    public Guid WorkOrderId { get; set; }
+    public long WorkOrderId { get; set; }
 }

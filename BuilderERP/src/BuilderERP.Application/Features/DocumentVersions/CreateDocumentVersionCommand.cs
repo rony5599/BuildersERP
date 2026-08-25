@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DocumentVersions;
 
-public record CreateDocumentVersionCommand(CreateDocumentVersionDto Dto) : IRequest<Guid>;
+public record CreateDocumentVersionCommand(CreateDocumentVersionDto Dto) : IRequest<long>;
 
-public class CreateDocumentVersionCommandHandler : IRequestHandler<CreateDocumentVersionCommand, Guid>
+public class CreateDocumentVersionCommandHandler : IRequestHandler<CreateDocumentVersionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ public class CreateDocumentVersionCommandHandler : IRequestHandler<CreateDocumen
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateDocumentVersionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateDocumentVersionCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DocumentVersion>(request.Dto);
         var repository = _unitOfWork.Repository<DocumentVersion>();

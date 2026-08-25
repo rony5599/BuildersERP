@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Inquiries;
 using BuilderERP.Application.Features.Leads;
 using BuilderERP.Application.Features.PropertyUnits;
@@ -63,7 +63,7 @@ public class InquiriesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.InquiryManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var inquiry = await _mediator.Send(new GetInquiryByIdQuery(id));
         if (inquiry is null)
@@ -109,7 +109,7 @@ public class InquiriesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.InquiryManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetInquiryActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

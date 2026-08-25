@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.LegalNotices;
 
-public record CreateLegalNoticeCommand(CreateLegalNoticeDto Dto) : IRequest<Guid>;
+public record CreateLegalNoticeCommand(CreateLegalNoticeDto Dto) : IRequest<long>;
 
-public class CreateLegalNoticeCommandHandler : IRequestHandler<CreateLegalNoticeCommand, Guid>
+public class CreateLegalNoticeCommandHandler : IRequestHandler<CreateLegalNoticeCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateLegalNoticeCommandHandler : IRequestHandler<CreateLegalNotice
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateLegalNoticeCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateLegalNoticeCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<LegalNotice>(request.Dto);
         var repository = _unitOfWork.Repository<LegalNotice>();

@@ -1,10 +1,10 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
 public class SafetyInspection : BaseEntity
 {
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
     public DateTime InspectionDate { get; set; } = DateTime.UtcNow;

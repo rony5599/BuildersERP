@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SafetyAudits;
 
-public record GetAllSafetyAuditsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyAuditDto>>;
+public record GetAllSafetyAuditsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyAuditDto>>;
 
 public class GetAllSafetyAuditsQueryHandler : IRequestHandler<GetAllSafetyAuditsQuery, PagedResult<SafetyAuditDto>>
 {

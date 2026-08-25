@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CustomerCommunications;
 
-public record CreateCustomerCommunicationCommand(CreateCustomerCommunicationDto Dto) : IRequest<Guid>;
+public record CreateCustomerCommunicationCommand(CreateCustomerCommunicationDto Dto) : IRequest<long>;
 
-public class CreateCustomerCommunicationCommandHandler : IRequestHandler<CreateCustomerCommunicationCommand, Guid>
+public class CreateCustomerCommunicationCommandHandler : IRequestHandler<CreateCustomerCommunicationCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateCustomerCommunicationCommandHandler : IRequestHandler<CreateC
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateCustomerCommunicationCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCustomerCommunicationCommand request, CancellationToken cancellationToken)
     {
         var communication = _mapper.Map<CustomerCommunication>(request.Dto);
         await _unitOfWork.Repository<CustomerCommunication>().AddAsync(communication);

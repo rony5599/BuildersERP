@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Warehouses;
 
-public record GetWarehouseByIdQuery(Guid Id) : IRequest<WarehouseDto?>;
+public record GetWarehouseByIdQuery(long Id) : IRequest<WarehouseDto?>;
 
 public class GetWarehouseByIdQueryHandler : IRequestHandler<GetWarehouseByIdQuery, WarehouseDto?>
 {

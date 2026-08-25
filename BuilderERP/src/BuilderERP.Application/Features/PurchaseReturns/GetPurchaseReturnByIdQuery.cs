@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseReturns;
 
-public record GetPurchaseReturnByIdQuery(Guid Id) : IRequest<PurchaseReturnDto?>;
+public record GetPurchaseReturnByIdQuery(long Id) : IRequest<PurchaseReturnDto?>;
 
 public class GetPurchaseReturnByIdQueryHandler : IRequestHandler<GetPurchaseReturnByIdQuery, PurchaseReturnDto?>
 {

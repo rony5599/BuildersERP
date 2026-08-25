@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Contractors;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.WorkOrders;
@@ -63,7 +63,7 @@ public class WorkOrdersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.WorkOrderManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var workOrder = await _mediator.Send(new GetWorkOrderByIdQuery(id));
         if (workOrder is null)
@@ -113,7 +113,7 @@ public class WorkOrdersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.WorkOrderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetWorkOrderActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

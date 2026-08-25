@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Equipments;
 using BuilderERP.Application.Features.EquipmentRentals;
 using BuilderERP.Application.Features.Projects;
@@ -64,7 +64,7 @@ public class EquipmentRentalsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.EquipmentRentalManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var rental = await _mediator.Send(new GetEquipmentRentalByIdQuery(id));
         if (rental is null)
@@ -113,7 +113,7 @@ public class EquipmentRentalsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.EquipmentRentalManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetEquipmentRentalActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

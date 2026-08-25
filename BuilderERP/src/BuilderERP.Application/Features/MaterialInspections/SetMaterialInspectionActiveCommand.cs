@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.MaterialInspections;
 
-public record SetMaterialInspectionActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetMaterialInspectionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetMaterialInspectionActiveCommandHandler : IRequestHandler<SetMaterialInspectionActiveCommand, bool>
 {

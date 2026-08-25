@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class Building : BaseEntity
 {
@@ -7,7 +7,7 @@ public class Building : BaseEntity
     public int? TotalFloors { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
     public ICollection<Tower> Towers { get; set; } = new List<Tower>();

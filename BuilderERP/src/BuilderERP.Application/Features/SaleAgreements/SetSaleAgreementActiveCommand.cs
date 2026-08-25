@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SaleAgreements;
 
-public record SetSaleAgreementActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSaleAgreementActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSaleAgreementActiveCommandHandler : IRequestHandler<SetSaleAgreementActiveCommand, bool>
 {

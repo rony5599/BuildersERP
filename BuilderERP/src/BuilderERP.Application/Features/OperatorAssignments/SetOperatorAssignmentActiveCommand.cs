@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.OperatorAssignments;
 
-public record SetOperatorAssignmentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetOperatorAssignmentActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetOperatorAssignmentActiveCommandHandler : IRequestHandler<SetOperatorAssignmentActiveCommand, bool>
 {

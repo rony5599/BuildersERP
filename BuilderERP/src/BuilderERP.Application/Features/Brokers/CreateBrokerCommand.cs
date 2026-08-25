@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Brokers;
 
-public record CreateBrokerCommand(CreateBrokerDto Dto) : IRequest<Guid>;
+public record CreateBrokerCommand(CreateBrokerDto Dto) : IRequest<long>;
 
-public class CreateBrokerCommandHandler : IRequestHandler<CreateBrokerCommand, Guid>
+public class CreateBrokerCommandHandler : IRequestHandler<CreateBrokerCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateBrokerCommandHandler : IRequestHandler<CreateBrokerCommand, G
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateBrokerCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateBrokerCommand request, CancellationToken cancellationToken)
     {
         var broker = _mapper.Map<Broker>(request.Dto);
         await _unitOfWork.Repository<Broker>().AddAsync(broker);

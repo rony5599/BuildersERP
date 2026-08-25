@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Branches;
 using BuilderERP.Application.Features.Companies;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class BranchesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.BranchManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var branch = await _mediator.Send(new GetBranchByIdQuery(id));
         if (branch is null)
@@ -108,7 +108,7 @@ public class BranchesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.BranchManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetBranchActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

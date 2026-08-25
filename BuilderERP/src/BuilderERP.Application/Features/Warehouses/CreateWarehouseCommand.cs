@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Warehouses;
 
-public record CreateWarehouseCommand(CreateWarehouseDto Dto) : IRequest<Guid>;
+public record CreateWarehouseCommand(CreateWarehouseDto Dto) : IRequest<long>;
 
-public class CreateWarehouseCommandHandler : IRequestHandler<CreateWarehouseCommand, Guid>
+public class CreateWarehouseCommandHandler : IRequestHandler<CreateWarehouseCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateWarehouseCommandHandler : IRequestHandler<CreateWarehouseComm
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
     {
         var warehouse = _mapper.Map<Warehouse>(request.Dto);
         await _unitOfWork.Repository<Warehouse>().AddAsync(warehouse);

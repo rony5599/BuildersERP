@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CollectionTargets;
 
-public record CreateCollectionTargetCommand(CreateCollectionTargetDto Dto) : IRequest<Guid>;
+public record CreateCollectionTargetCommand(CreateCollectionTargetDto Dto) : IRequest<long>;
 
-public class CreateCollectionTargetCommandHandler : IRequestHandler<CreateCollectionTargetCommand, Guid>
+public class CreateCollectionTargetCommandHandler : IRequestHandler<CreateCollectionTargetCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateCollectionTargetCommandHandler : IRequestHandler<CreateCollec
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateCollectionTargetCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCollectionTargetCommand request, CancellationToken cancellationToken)
     {
         var target = _mapper.Map<CollectionTarget>(request.Dto);
         await _unitOfWork.Repository<CollectionTarget>().AddAsync(target);

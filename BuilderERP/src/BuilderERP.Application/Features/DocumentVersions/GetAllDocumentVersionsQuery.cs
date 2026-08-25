@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DocumentVersions;
 
-public record GetAllDocumentVersionsQuery(Guid? DocumentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DocumentVersionDto>>;
+public record GetAllDocumentVersionsQuery(long? DocumentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DocumentVersionDto>>;
 
 public class GetAllDocumentVersionsQueryHandler : IRequestHandler<GetAllDocumentVersionsQuery, PagedResult<DocumentVersionDto>>
 {

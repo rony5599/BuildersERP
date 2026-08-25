@@ -58,7 +58,7 @@ public class BrokersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.BrokerManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var broker = await _mediator.Send(new GetBrokerByIdQuery(id));
         if (broker is null)
@@ -104,7 +104,7 @@ public class BrokersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.BrokerManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetBrokerActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -2,8 +2,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class FuelLogDto
 {
-    public Guid Id { get; set; }
-    public Guid EquipmentId { get; set; }
+    public long Id { get; set; }
+    public long EquipmentId { get; set; }
     public string EquipmentName { get; set; } = string.Empty;
     public DateTime LogDate { get; set; }
     public decimal FuelQuantity { get; set; }
@@ -15,7 +15,7 @@ public class FuelLogDto
 
 public class CreateFuelLogDto
 {
-    public Guid EquipmentId { get; set; }
+    public long EquipmentId { get; set; }
     public DateTime LogDate { get; set; } = DateTime.UtcNow;
     public decimal FuelQuantity { get; set; }
     public decimal FuelCost { get; set; }
@@ -25,8 +25,8 @@ public class CreateFuelLogDto
 
 public class UpdateFuelLogDto
 {
-    public Guid Id { get; set; }
-    public Guid EquipmentId { get; set; }
+    public long Id { get; set; }
+    public long EquipmentId { get; set; }
     public DateTime LogDate { get; set; }
     public decimal FuelQuantity { get; set; }
     public decimal FuelCost { get; set; }

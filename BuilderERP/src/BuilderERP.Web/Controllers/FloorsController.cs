@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Floors;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Towers;
@@ -26,7 +26,7 @@ public class FloorsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var floors = await _mediator.Send(new GetAllFloorsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -42,7 +42,7 @@ public class FloorsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.FloorManage)]
-    public async Task<IActionResult> Create(Guid? projectId)
+    public async Task<IActionResult> Create(long? projectId)
     {
         await PopulateTowersAsync(projectId);
         return View(new CreateFloorDto());
@@ -66,7 +66,7 @@ public class FloorsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.FloorManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var floor = await _mediator.Send(new GetFloorByIdQuery(id));
         if (floor is null)
@@ -111,13 +111,13 @@ public class FloorsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.FloorManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetFloorActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateTowersAsync(Guid? projectId)
+    private async Task PopulateTowersAsync(long? projectId)
     {
         var towers = await _mediator.Send(new GetAllTowersQuery(projectId, PageSize: int.MaxValue));
         ViewBag.Towers = new SelectList(towers.Items, "Id", "Name");

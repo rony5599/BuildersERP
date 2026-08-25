@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Contractors;
 
-public record GetContractorByIdQuery(Guid Id) : IRequest<ContractorDto?>;
+public record GetContractorByIdQuery(long Id) : IRequest<ContractorDto?>;
 
 public class GetContractorByIdQueryHandler : IRequestHandler<GetContractorByIdQuery, ContractorDto?>
 {

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.VisitorLogs;
 
-public record CreateVisitorLogCommand(CreateVisitorLogDto Dto) : IRequest<Guid>;
+public record CreateVisitorLogCommand(CreateVisitorLogDto Dto) : IRequest<long>;
 
-public class CreateVisitorLogCommandHandler : IRequestHandler<CreateVisitorLogCommand, Guid>
+public class CreateVisitorLogCommandHandler : IRequestHandler<CreateVisitorLogCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateVisitorLogCommandHandler : IRequestHandler<CreateVisitorLogCo
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateVisitorLogCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateVisitorLogCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<VisitorLog>(request.Dto);
         var repository = _unitOfWork.Repository<VisitorLog>();

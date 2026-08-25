@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.FollowUps;
 using BuilderERP.Application.Features.Leads;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class FollowUpsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.FollowUpManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var followUp = await _mediator.Send(new GetFollowUpByIdQuery(id));
         if (followUp is null)
@@ -109,7 +109,7 @@ public class FollowUpsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.FollowUpManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetFollowUpActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.RateContracts;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class RateContractsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.RateContractManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var contract = await _mediator.Send(new GetRateContractByIdQuery(id));
         if (contract is null)
@@ -112,7 +112,7 @@ public class RateContractsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.RateContractManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetRateContractActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

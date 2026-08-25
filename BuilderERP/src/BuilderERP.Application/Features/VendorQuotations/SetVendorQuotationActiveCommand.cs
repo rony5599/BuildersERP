@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
-public record SetVendorQuotationActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetVendorQuotationActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetVendorQuotationActiveCommandHandler : IRequestHandler<SetVendorQuotationActiveCommand, bool>
 {

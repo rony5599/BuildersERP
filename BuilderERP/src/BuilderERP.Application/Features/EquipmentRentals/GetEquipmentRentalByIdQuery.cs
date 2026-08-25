@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.EquipmentRentals;
 
-public record GetEquipmentRentalByIdQuery(Guid Id) : IRequest<EquipmentRentalDto?>;
+public record GetEquipmentRentalByIdQuery(long Id) : IRequest<EquipmentRentalDto?>;
 
 public class GetEquipmentRentalByIdQueryHandler : IRequestHandler<GetEquipmentRentalByIdQuery, EquipmentRentalDto?>
 {

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CostCenters;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -61,7 +61,7 @@ public class CostCentersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CostCenterManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var costCenter = await _mediator.Send(new GetCostCenterByIdQuery(id));
         if (costCenter is null)
@@ -106,7 +106,7 @@ public class CostCentersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CostCenterManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCostCenterActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

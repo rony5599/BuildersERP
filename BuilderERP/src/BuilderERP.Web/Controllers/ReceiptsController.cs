@@ -61,7 +61,7 @@ public class ReceiptsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ReceiptManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var receipt = await _mediator.Send(new GetReceiptByIdQuery(id));
         if (receipt is null)
@@ -109,7 +109,7 @@ public class ReceiptsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ReceiptManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetReceiptActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

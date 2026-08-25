@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DrawingRevisions;
 
-public record GetDrawingRevisionByIdQuery(Guid Id) : IRequest<DrawingRevisionDto?>;
+public record GetDrawingRevisionByIdQuery(long Id) : IRequest<DrawingRevisionDto?>;
 
 public class GetDrawingRevisionByIdQueryHandler : IRequestHandler<GetDrawingRevisionByIdQuery, DrawingRevisionDto?>
 {

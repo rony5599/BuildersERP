@@ -8,9 +8,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.StockTransfers;
 
-public record CreateStockTransferCommand(CreateStockTransferDto Dto) : IRequest<Guid>;
+public record CreateStockTransferCommand(CreateStockTransferDto Dto) : IRequest<long>;
 
-public class CreateStockTransferCommandHandler : IRequestHandler<CreateStockTransferCommand, Guid>
+public class CreateStockTransferCommandHandler : IRequestHandler<CreateStockTransferCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ public class CreateStockTransferCommandHandler : IRequestHandler<CreateStockTran
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateStockTransferCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateStockTransferCommand request, CancellationToken cancellationToken)
     {
         var transfer = _mapper.Map<StockTransfer>(request.Dto);
         await _unitOfWork.Repository<StockTransfer>().AddAsync(transfer);

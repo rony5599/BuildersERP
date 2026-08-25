@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -12,9 +12,9 @@ public class Customer : BaseEntity
     public KycStatus KycStatus { get; set; } = KycStatus.Pending;
     public bool IsActive { get; set; } = true;
 
-    public Guid CompanyId { get; set; }
+    public long CompanyId { get; set; }
     public Company Company { get; set; } = null!;
 
-    public Guid? LeadId { get; set; }
+    public long? LeadId { get; set; }
     public Lead? Lead { get; set; }
 }

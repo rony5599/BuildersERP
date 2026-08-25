@@ -130,6 +130,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
         base.OnModelCreating(builder);
 
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            if (entityType.ClrType.GetProperty("Guid")?.PropertyType == typeof(Guid))
+            {
+                builder.Entity(entityType.ClrType).HasIndex("Guid").IsUnique();
+            }
+        }
+
         builder.Entity<RolePermission>(entity =>
         {
             entity.HasKey(rp => new { rp.RoleId, rp.PermissionId });

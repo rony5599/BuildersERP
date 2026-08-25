@@ -20,7 +20,7 @@ public class ItemPriceHistoriesController : Controller
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> Index(Guid? materialId, Guid? supplierId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? materialId, long? supplierId, int page = 1, int pageSize = 25)
     {
         var history = await _mediator.Send(new GetAllItemPriceHistoriesQuery(materialId, supplierId, page, pageSize));
         ViewBag.SelectedMaterialId = materialId;

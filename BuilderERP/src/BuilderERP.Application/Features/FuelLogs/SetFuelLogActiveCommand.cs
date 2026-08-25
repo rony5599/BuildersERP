@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.FuelLogs;
 
-public record SetFuelLogActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetFuelLogActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetFuelLogActiveCommandHandler : IRequestHandler<SetFuelLogActiveCommand, bool>
 {

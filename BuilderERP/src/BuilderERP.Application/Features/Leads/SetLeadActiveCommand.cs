@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Leads;
 
-public record SetLeadActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetLeadActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetLeadActiveCommandHandler : IRequestHandler<SetLeadActiveCommand, bool>
 {

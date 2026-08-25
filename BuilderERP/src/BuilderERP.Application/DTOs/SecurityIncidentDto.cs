@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class SecurityIncidentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string IncidentNumber { get; set; } = string.Empty;
     public SecurityIncidentType IncidentType { get; set; }
     public string? Location { get; set; }
@@ -14,7 +14,7 @@ public class SecurityIncidentDto
     public SecurityIncidentStatus Status { get; set; }
     public string? ActionTaken { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public bool IsActive { get; set; }
     public string ProjectName { get; set; } = string.Empty;
 }
@@ -30,12 +30,12 @@ public class CreateSecurityIncidentDto
     public SecurityIncidentStatus Status { get; set; }
     public string? ActionTaken { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
 }
 
 public class UpdateSecurityIncidentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string IncidentNumber { get; set; } = string.Empty;
     public SecurityIncidentType IncidentType { get; set; }
     public string? Location { get; set; }
@@ -45,5 +45,5 @@ public class UpdateSecurityIncidentDto
     public SecurityIncidentStatus Status { get; set; }
     public string? ActionTaken { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
 }

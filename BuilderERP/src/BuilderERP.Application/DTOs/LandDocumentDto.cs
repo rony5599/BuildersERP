@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class LandDocumentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string DocumentNumber { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public LandDocumentType LandDocumentType { get; set; }
@@ -15,7 +15,7 @@ public class LandDocumentDto
     public decimal AreaInDecimal { get; set; }
     public DateTime? AcquisitionDate { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public bool IsActive { get; set; }
     public string ProjectName { get; set; } = string.Empty;
 }
@@ -32,12 +32,12 @@ public class CreateLandDocumentDto
     public decimal AreaInDecimal { get; set; }
     public DateTime? AcquisitionDate { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
 }
 
 public class UpdateLandDocumentDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string DocumentNumber { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public LandDocumentType LandDocumentType { get; set; }
@@ -48,5 +48,5 @@ public class UpdateLandDocumentDto
     public decimal AreaInDecimal { get; set; }
     public DateTime? AcquisitionDate { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
 }

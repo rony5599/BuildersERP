@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -10,6 +10,6 @@ public class FollowUp : BaseEntity
     public FollowUpOutcome? Outcome { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid LeadId { get; set; }
+    public long LeadId { get; set; }
     public Lead Lead { get; set; } = null!;
 }

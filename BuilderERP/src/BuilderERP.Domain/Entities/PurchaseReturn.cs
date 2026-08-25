@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -11,7 +11,7 @@ public class PurchaseReturn : BaseEntity
     public PurchaseReturnStatus Status { get; set; } = PurchaseReturnStatus.Pending;
     public bool IsActive { get; set; } = true;
 
-    public Guid GoodsReceiveId { get; set; }
+    public long GoodsReceiveId { get; set; }
     public GoodsReceive GoodsReceive { get; set; } = null!;
 
     public ICollection<PurchaseReturnDetail> Details { get; set; } = new List<PurchaseReturnDetail>();

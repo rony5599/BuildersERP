@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ItemCategories;
 
-public record CreateItemCategoryCommand(CreateItemCategoryDto Dto) : IRequest<Guid>;
+public record CreateItemCategoryCommand(CreateItemCategoryDto Dto) : IRequest<long>;
 
-public class CreateItemCategoryCommandHandler : IRequestHandler<CreateItemCategoryCommand, Guid>
+public class CreateItemCategoryCommandHandler : IRequestHandler<CreateItemCategoryCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateItemCategoryCommandHandler : IRequestHandler<CreateItemCatego
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateItemCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateItemCategoryCommand request, CancellationToken cancellationToken)
     {
         var category = _mapper.Map<ItemCategory>(request.Dto);
         await _unitOfWork.Repository<ItemCategory>().AddAsync(category);

@@ -7,7 +7,7 @@ namespace BuilderERP.Application.Features.Stocks;
 
 internal static class StockSync
 {
-    public static async Task<Stock> GetOrCreateStockAsync(IUnitOfWork unitOfWork, Guid materialId, Guid warehouseId)
+    public static async Task<Stock> GetOrCreateStockAsync(IUnitOfWork unitOfWork, long materialId, long warehouseId)
     {
         var repository = unitOfWork.Repository<Stock>();
         var stock = await repository.Query()
@@ -27,7 +27,7 @@ internal static class StockSync
         return stock;
     }
 
-    public static async Task ApplyQuantityDeltaAsync(IUnitOfWork unitOfWork, Guid materialId, Guid warehouseId, decimal quantityDelta)
+    public static async Task ApplyQuantityDeltaAsync(IUnitOfWork unitOfWork, long materialId, long warehouseId, decimal quantityDelta)
     {
         var stock = await GetOrCreateStockAsync(unitOfWork, materialId, warehouseId);
 
@@ -39,8 +39,8 @@ internal static class StockSync
 
     public static async Task ApplyQuantityDeltaAsync(
         IUnitOfWork unitOfWork,
-        Guid materialId,
-        Guid warehouseId,
+        long materialId,
+        long warehouseId,
         decimal quantityDelta,
         InventoryTransactionType transactionType,
         string documentNumber)

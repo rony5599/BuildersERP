@@ -7,9 +7,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Bookings;
 
-public record CreateBookingCommand(CreateBookingDto Dto) : IRequest<Guid>;
+public record CreateBookingCommand(CreateBookingDto Dto) : IRequest<long>;
 
-public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Guid>
+public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         var booking = _mapper.Map<Booking>(request.Dto);
         if (booking.Status != BookingRequestStatus.Cancelled)
@@ -40,7 +40,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
 
 internal static class BookingUnitStatusSync
 {
-    public static async Task ApplyAsync(IUnitOfWork unitOfWork, Guid propertyUnitId, BookingRequestStatus status)
+    public static async Task ApplyAsync(IUnitOfWork unitOfWork, long propertyUnitId, BookingRequestStatus status)
     {
         BookingStatus? newStatus = status switch
         {

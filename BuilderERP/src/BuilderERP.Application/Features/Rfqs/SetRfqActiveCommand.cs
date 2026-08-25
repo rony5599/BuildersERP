@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Rfqs;
 
-public record SetRfqActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetRfqActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetRfqActiveCommandHandler : IRequestHandler<SetRfqActiveCommand, bool>
 {

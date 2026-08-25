@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -61,7 +61,7 @@ public class ProjectsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ProjectManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var project = await _mediator.Send(new GetProjectByIdQuery(id));
         if (project is null)
@@ -109,7 +109,7 @@ public class ProjectsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ProjectManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetProjectActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

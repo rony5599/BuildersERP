@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PpeTrackings;
 
-public record GetPpeTrackingByIdQuery(Guid Id) : IRequest<PpeTrackingDto?>;
+public record GetPpeTrackingByIdQuery(long Id) : IRequest<PpeTrackingDto?>;
 
 public class GetPpeTrackingByIdQueryHandler : IRequestHandler<GetPpeTrackingByIdQuery, PpeTrackingDto?>
 {

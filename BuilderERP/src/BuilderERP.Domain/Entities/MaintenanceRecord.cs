@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -12,6 +12,6 @@ public class MaintenanceRecord : BaseEntity
     public DateTime? NextServiceDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid EquipmentId { get; set; }
+    public long EquipmentId { get; set; }
     public Equipment Equipment { get; set; } = null!;
 }

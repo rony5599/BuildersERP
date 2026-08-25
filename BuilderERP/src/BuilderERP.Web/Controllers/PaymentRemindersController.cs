@@ -44,7 +44,7 @@ public class PaymentRemindersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PaymentReminderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> MarkSent(Guid id, ReminderChannel channel)
+    public async Task<IActionResult> MarkSent(long id, ReminderChannel channel)
     {
         await _mediator.Send(new MarkReminderSentCommand(id, channel));
         return RedirectToAction(nameof(Index));
@@ -53,7 +53,7 @@ public class PaymentRemindersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PaymentReminderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Cancel(Guid id)
+    public async Task<IActionResult> Cancel(long id)
     {
         await _mediator.Send(new CancelReminderCommand(id));
         return RedirectToAction(nameof(Index));

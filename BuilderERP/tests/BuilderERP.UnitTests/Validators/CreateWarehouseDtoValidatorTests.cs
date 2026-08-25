@@ -12,7 +12,7 @@ public class CreateWarehouseDtoValidatorTests
     [Fact]
     public void Should_have_error_when_warehouse_code_is_empty()
     {
-        var model = new CreateWarehouseDto { WarehouseCode = "", Name = "Main Yard", BranchId = Guid.NewGuid() };
+        var model = new CreateWarehouseDto { WarehouseCode = "", Name = "Main Yard", BranchId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WarehouseCode);
     }
@@ -20,7 +20,7 @@ public class CreateWarehouseDtoValidatorTests
     [Fact]
     public void Should_have_error_when_name_is_empty()
     {
-        var model = new CreateWarehouseDto { WarehouseCode = "WH-01", Name = "", BranchId = Guid.NewGuid() };
+        var model = new CreateWarehouseDto { WarehouseCode = "WH-01", Name = "", BranchId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
@@ -28,7 +28,7 @@ public class CreateWarehouseDtoValidatorTests
     [Fact]
     public void Should_have_error_when_branch_id_is_empty()
     {
-        var model = new CreateWarehouseDto { WarehouseCode = "WH-01", Name = "Main Yard", BranchId = Guid.Empty };
+        var model = new CreateWarehouseDto { WarehouseCode = "WH-01", Name = "Main Yard", BranchId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.BranchId);
     }
@@ -36,7 +36,7 @@ public class CreateWarehouseDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateWarehouseDto { WarehouseCode = "WH-01", Name = "Main Yard", BranchId = Guid.NewGuid() };
+        var model = new CreateWarehouseDto { WarehouseCode = "WH-01", Name = "Main Yard", BranchId = 1L, ProjectId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

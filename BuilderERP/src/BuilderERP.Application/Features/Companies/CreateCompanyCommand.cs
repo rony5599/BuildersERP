@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Companies;
 
-public record CreateCompanyCommand(CreateCompanyDto Dto) : IRequest<Guid>;
+public record CreateCompanyCommand(CreateCompanyDto Dto) : IRequest<long>;
 
-public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, Guid>
+public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var company = _mapper.Map<Company>(request.Dto);
         await _unitOfWork.Repository<Company>().AddAsync(company);

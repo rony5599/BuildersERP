@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Attendances;
 
-public record SetAttendanceActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetAttendanceActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetAttendanceActiveCommandHandler : IRequestHandler<SetAttendanceActiveCommand, bool>
 {

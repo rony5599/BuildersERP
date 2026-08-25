@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SecurityIncidents;
 
-public record GetSecurityIncidentByIdQuery(Guid Id) : IRequest<SecurityIncidentDto?>;
+public record GetSecurityIncidentByIdQuery(long Id) : IRequest<SecurityIncidentDto?>;
 
 public class GetSecurityIncidentByIdQueryHandler : IRequestHandler<GetSecurityIncidentByIdQuery, SecurityIncidentDto?>
 {

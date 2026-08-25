@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -26,6 +26,6 @@ public class Material : BaseEntity
     public bool IsBatchTracked { get; set; }
     public bool IsSerialTracked { get; set; }
 
-    public Guid? CategoryId { get; set; }
+    public long? CategoryId { get; set; }
     public ItemCategory? Category { get; set; }
 }

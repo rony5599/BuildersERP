@@ -59,7 +59,7 @@ public class EquipmentController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.EquipmentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var equipment = await _mediator.Send(new GetEquipmentByIdQuery(id));
         if (equipment is null)
@@ -106,7 +106,7 @@ public class EquipmentController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.EquipmentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetEquipmentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

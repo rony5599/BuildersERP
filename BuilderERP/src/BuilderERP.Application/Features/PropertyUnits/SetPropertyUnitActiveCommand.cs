@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PropertyUnits;
 
-public record SetPropertyUnitActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetPropertyUnitActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetPropertyUnitActiveCommandHandler : IRequestHandler<SetPropertyUnitActiveCommand, bool>
 {

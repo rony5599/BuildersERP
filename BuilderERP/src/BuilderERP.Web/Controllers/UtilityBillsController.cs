@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.UtilityBills;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class UtilityBillsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.UtilityBillManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetUtilityBillByIdQuery(id));
         if (item is null)
@@ -113,7 +113,7 @@ public class UtilityBillsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.UtilityBillManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetUtilityBillActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

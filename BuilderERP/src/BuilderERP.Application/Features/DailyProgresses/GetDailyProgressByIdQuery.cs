@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DailyProgresses;
 
-public record GetDailyProgressByIdQuery(Guid Id) : IRequest<DailyProgressDto?>;
+public record GetDailyProgressByIdQuery(long Id) : IRequest<DailyProgressDto?>;
 
 public class GetDailyProgressByIdQueryHandler : IRequestHandler<GetDailyProgressByIdQuery, DailyProgressDto?>
 {

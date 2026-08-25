@@ -4,9 +4,9 @@ namespace BuilderERP.Application.Features.AuditTrail;
 
 public class AuditLogDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string EntityName { get; set; } = string.Empty;
-    public Guid EntityId { get; set; }
+    public long EntityId { get; set; }
     public AuditAction Action { get; set; }
     public string? PropertyName { get; set; }
     public string? OldValue { get; set; }

@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Leads;
 
-public record CreateLeadCommand(CreateLeadDto Dto) : IRequest<Guid>;
+public record CreateLeadCommand(CreateLeadDto Dto) : IRequest<long>;
 
-public class CreateLeadCommandHandler : IRequestHandler<CreateLeadCommand, Guid>
+public class CreateLeadCommandHandler : IRequestHandler<CreateLeadCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateLeadCommandHandler : IRequestHandler<CreateLeadCommand, Guid>
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateLeadCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateLeadCommand request, CancellationToken cancellationToken)
     {
         var lead = _mapper.Map<Lead>(request.Dto);
         await _unitOfWork.Repository<Lead>().AddAsync(lead);

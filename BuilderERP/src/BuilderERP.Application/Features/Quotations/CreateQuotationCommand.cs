@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Quotations;
 
-public record CreateQuotationCommand(CreateQuotationDto Dto) : IRequest<Guid>;
+public record CreateQuotationCommand(CreateQuotationDto Dto) : IRequest<long>;
 
-public class CreateQuotationCommandHandler : IRequestHandler<CreateQuotationCommand, Guid>
+public class CreateQuotationCommandHandler : IRequestHandler<CreateQuotationCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateQuotationCommandHandler : IRequestHandler<CreateQuotationComm
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateQuotationCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateQuotationCommand request, CancellationToken cancellationToken)
     {
         var quotation = _mapper.Map<Quotation>(request.Dto);
         await _unitOfWork.Repository<Quotation>().AddAsync(quotation);

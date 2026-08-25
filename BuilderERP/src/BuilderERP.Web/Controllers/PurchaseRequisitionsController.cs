@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Departments;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
@@ -64,7 +64,7 @@ public class PurchaseRequisitionsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.PurchaseRequisitionManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var requisition = await _mediator.Send(new GetPurchaseRequisitionByIdQuery(id));
         if (requisition is null)
@@ -128,7 +128,7 @@ public class PurchaseRequisitionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PurchaseRequisitionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetPurchaseRequisitionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -11,7 +11,7 @@ public class InstallmentPlan : BaseEntity
     public InstallmentPlanStatus Status { get; set; } = InstallmentPlanStatus.Active;
     public bool IsActive { get; set; } = true;
 
-    public Guid SaleAgreementId { get; set; }
+    public long SaleAgreementId { get; set; }
     public SaleAgreement SaleAgreement { get; set; } = null!;
 
     public ICollection<Installment> Installments { get; set; } = new List<Installment>();

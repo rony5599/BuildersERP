@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SiteInspections;
 
-public record CreateSiteInspectionCommand(CreateSiteInspectionDto Dto) : IRequest<Guid>;
+public record CreateSiteInspectionCommand(CreateSiteInspectionDto Dto) : IRequest<long>;
 
-public class CreateSiteInspectionCommandHandler : IRequestHandler<CreateSiteInspectionCommand, Guid>
+public class CreateSiteInspectionCommandHandler : IRequestHandler<CreateSiteInspectionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateSiteInspectionCommandHandler : IRequestHandler<CreateSiteInsp
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateSiteInspectionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateSiteInspectionCommand request, CancellationToken cancellationToken)
     {
         var inspection = _mapper.Map<SiteInspection>(request.Dto);
         await _unitOfWork.Repository<SiteInspection>().AddAsync(inspection);

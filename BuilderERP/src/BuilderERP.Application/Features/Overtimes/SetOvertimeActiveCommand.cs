@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Overtimes;
 
-public record SetOvertimeActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetOvertimeActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetOvertimeActiveCommandHandler : IRequestHandler<SetOvertimeActiveCommand, bool>
 {

@@ -13,7 +13,7 @@ public class CreateRateContractDtoValidatorTests
     [Fact]
     public void Should_have_error_when_contract_number_is_empty()
     {
-        var model = new CreateRateContractDto { ContractNumber = "", ItemDescription = "Cement bags", ContractorId = Guid.NewGuid(), Rate = 100 };
+        var model = new CreateRateContractDto { ContractNumber = "", ItemDescription = "Cement bags", ContractorId = 1L, Rate = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ContractNumber);
     }
@@ -21,7 +21,7 @@ public class CreateRateContractDtoValidatorTests
     [Fact]
     public void Should_have_error_when_item_description_is_empty()
     {
-        var model = new CreateRateContractDto { ContractNumber = "RC-001", ItemDescription = "", ContractorId = Guid.NewGuid(), Rate = 100 };
+        var model = new CreateRateContractDto { ContractNumber = "RC-001", ItemDescription = "", ContractorId = 1L, Rate = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ItemDescription);
     }
@@ -29,7 +29,7 @@ public class CreateRateContractDtoValidatorTests
     [Fact]
     public void Should_have_error_when_contractor_id_is_empty()
     {
-        var model = new CreateRateContractDto { ContractNumber = "RC-001", ItemDescription = "Cement bags", ContractorId = Guid.Empty, Rate = 100 };
+        var model = new CreateRateContractDto { ContractNumber = "RC-001", ItemDescription = "Cement bags", ContractorId = 0L, Rate = 100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ContractorId);
     }
@@ -37,7 +37,7 @@ public class CreateRateContractDtoValidatorTests
     [Fact]
     public void Should_have_error_when_rate_is_negative()
     {
-        var model = new CreateRateContractDto { ContractNumber = "RC-001", ItemDescription = "Cement bags", ContractorId = Guid.NewGuid(), Rate = -1 };
+        var model = new CreateRateContractDto { ContractNumber = "RC-001", ItemDescription = "Cement bags", ContractorId = 1L, Rate = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Rate);
     }
@@ -49,7 +49,7 @@ public class CreateRateContractDtoValidatorTests
         {
             ContractNumber = "RC-001",
             ItemDescription = "Cement bags",
-            ContractorId = Guid.NewGuid(),
+            ContractorId = 1L,
             UnitOfMeasure = UnitOfMeasure.Bag,
             Rate = 100
         };

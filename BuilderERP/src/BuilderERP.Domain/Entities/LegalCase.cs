@@ -16,6 +16,6 @@ public class LegalCase : BaseEntity
     public string? Remarks { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 }

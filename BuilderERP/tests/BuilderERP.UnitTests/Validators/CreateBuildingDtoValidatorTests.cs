@@ -12,7 +12,7 @@ public class CreateBuildingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_is_not_selected()
     {
-        var model = new CreateBuildingDto { Name = "Tower A", Code = "TA", ProjectId = Guid.Empty };
+        var model = new CreateBuildingDto { Name = "Tower A", Code = "TA", ProjectId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -20,7 +20,7 @@ public class CreateBuildingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_total_floors_is_zero_or_negative()
     {
-        var model = new CreateBuildingDto { Name = "Tower A", Code = "TA", ProjectId = Guid.NewGuid(), TotalFloors = 0 };
+        var model = new CreateBuildingDto { Name = "Tower A", Code = "TA", ProjectId = 1L, TotalFloors = 0 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TotalFloors);
     }
@@ -28,7 +28,7 @@ public class CreateBuildingDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateBuildingDto { Name = "Tower A", Code = "TA", ProjectId = Guid.NewGuid(), TotalFloors = 20 };
+        var model = new CreateBuildingDto { Name = "Tower A", Code = "TA", ProjectId = 1L, TotalFloors = 20 };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DrawingRevisions;
 
-public record CreateDrawingRevisionCommand(CreateDrawingRevisionDto Dto) : IRequest<Guid>;
+public record CreateDrawingRevisionCommand(CreateDrawingRevisionDto Dto) : IRequest<long>;
 
-public class CreateDrawingRevisionCommandHandler : IRequestHandler<CreateDrawingRevisionCommand, Guid>
+public class CreateDrawingRevisionCommandHandler : IRequestHandler<CreateDrawingRevisionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ public class CreateDrawingRevisionCommandHandler : IRequestHandler<CreateDrawing
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateDrawingRevisionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateDrawingRevisionCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DrawingRevision>(request.Dto);
         var repository = _unitOfWork.Repository<DrawingRevision>();

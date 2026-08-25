@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Brokers;
 
-public record SetBrokerActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetBrokerActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetBrokerActiveCommandHandler : IRequestHandler<SetBrokerActiveCommand, bool>
 {

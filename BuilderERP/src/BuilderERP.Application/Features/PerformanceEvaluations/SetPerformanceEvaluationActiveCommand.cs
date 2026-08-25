@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PerformanceEvaluations;
 
-public record SetPerformanceEvaluationActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetPerformanceEvaluationActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetPerformanceEvaluationActiveCommandHandler : IRequestHandler<SetPerformanceEvaluationActiveCommand, bool>
 {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrders;
 
-public record GetEngineerWorkOrderByIdQuery(Guid Id) : IRequest<EngineerWorkOrderDto?>;
+public record GetEngineerWorkOrderByIdQuery(long Id) : IRequest<EngineerWorkOrderDto?>;
 
 public class GetEngineerWorkOrderByIdQueryHandler : IRequestHandler<GetEngineerWorkOrderByIdQuery, EngineerWorkOrderDto?>
 {

@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -13,6 +13,6 @@ public class PunchList : BaseEntity
     public DateTime? CompletedDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 }

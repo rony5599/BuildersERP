@@ -13,7 +13,7 @@ public class CreateMaterialInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateMaterialInspectionDto { ProjectId = Guid.Empty, MaterialId = Guid.NewGuid(), InspectedBy = "John Doe", Quantity = 10 };
+        var model = new CreateMaterialInspectionDto { ProjectId = 0L, MaterialId = 1L, InspectedBy = "John Doe", Quantity = 10 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -21,7 +21,7 @@ public class CreateMaterialInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_material_id_is_empty()
     {
-        var model = new CreateMaterialInspectionDto { ProjectId = Guid.NewGuid(), MaterialId = Guid.Empty, InspectedBy = "John Doe", Quantity = 10 };
+        var model = new CreateMaterialInspectionDto { ProjectId = 1L, MaterialId = 0L, InspectedBy = "John Doe", Quantity = 10 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.MaterialId);
     }
@@ -29,7 +29,7 @@ public class CreateMaterialInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_inspected_by_is_empty()
     {
-        var model = new CreateMaterialInspectionDto { ProjectId = Guid.NewGuid(), MaterialId = Guid.NewGuid(), InspectedBy = "", Quantity = 10 };
+        var model = new CreateMaterialInspectionDto { ProjectId = 1L, MaterialId = 2L, InspectedBy = "", Quantity = 10 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.InspectedBy);
     }
@@ -37,7 +37,7 @@ public class CreateMaterialInspectionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_quantity_is_negative()
     {
-        var model = new CreateMaterialInspectionDto { ProjectId = Guid.NewGuid(), MaterialId = Guid.NewGuid(), InspectedBy = "John Doe", Quantity = -1 };
+        var model = new CreateMaterialInspectionDto { ProjectId = 1L, MaterialId = 2L, InspectedBy = "John Doe", Quantity = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Quantity);
     }
@@ -47,8 +47,8 @@ public class CreateMaterialInspectionDtoValidatorTests
     {
         var model = new CreateMaterialInspectionDto
         {
-            ProjectId = Guid.NewGuid(),
-            MaterialId = Guid.NewGuid(),
+            ProjectId = 1L,
+            MaterialId = 2L,
             InspectedBy = "John Doe",
             Quantity = 10,
             Result = QcResult.Pending

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
-public record GetVendorQuotationByIdQuery(Guid Id) : IRequest<VendorQuotationDto?>;
+public record GetVendorQuotationByIdQuery(long Id) : IRequest<VendorQuotationDto?>;
 
 public class GetVendorQuotationByIdQueryHandler : IRequestHandler<GetVendorQuotationByIdQuery, VendorQuotationDto?>
 {

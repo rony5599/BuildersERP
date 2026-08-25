@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RiskAssessments;
 
-public record GetRiskAssessmentByIdQuery(Guid Id) : IRequest<RiskAssessmentDto?>;
+public record GetRiskAssessmentByIdQuery(long Id) : IRequest<RiskAssessmentDto?>;
 
 public class GetRiskAssessmentByIdQueryHandler : IRequestHandler<GetRiskAssessmentByIdQuery, RiskAssessmentDto?>
 {

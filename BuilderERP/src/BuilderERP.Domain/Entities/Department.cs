@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class Department : BaseEntity
 {
@@ -6,6 +6,6 @@ public class Department : BaseEntity
     public string Code { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 
-    public Guid BranchId { get; set; }
+    public long BranchId { get; set; }
     public Branch Branch { get; set; } = null!;
 }

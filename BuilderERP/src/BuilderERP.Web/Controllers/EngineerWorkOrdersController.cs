@@ -64,7 +64,7 @@ public class EngineerWorkOrdersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var workOrder = await _mediator.Send(new GetEngineerWorkOrderByIdQuery(id));
         if (workOrder is null)
@@ -124,7 +124,7 @@ public class EngineerWorkOrdersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
-    public async Task<IActionResult> Revise(Guid id)
+    public async Task<IActionResult> Revise(long id)
     {
         var workOrder = await _mediator.Send(new GetEngineerWorkOrderByIdQuery(id));
         if (workOrder is null)
@@ -163,7 +163,7 @@ public class EngineerWorkOrdersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Revise(Guid previousWorkOrderId, CreateEngineerWorkOrderDto dto)
+    public async Task<IActionResult> Revise(long previousWorkOrderId, CreateEngineerWorkOrderDto dto)
     {
         var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
@@ -196,7 +196,7 @@ public class EngineerWorkOrdersController : Controller
 
     [HttpGet]
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
-    public async Task<IActionResult> RequisitionItems(Guid requisitionId)
+    public async Task<IActionResult> RequisitionItems(long requisitionId)
     {
         var requisition = await _mediator.Send(new GetEngineerWorkOrderRequisitionByIdQuery(requisitionId));
         if (requisition is null)

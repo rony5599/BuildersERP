@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.DelayEvents;
 
-public record GetAllDelayEventsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DelayEventDto>>;
+public record GetAllDelayEventsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DelayEventDto>>;
 
 public class GetAllDelayEventsQueryHandler : IRequestHandler<GetAllDelayEventsQuery, PagedResult<DelayEventDto>>
 {

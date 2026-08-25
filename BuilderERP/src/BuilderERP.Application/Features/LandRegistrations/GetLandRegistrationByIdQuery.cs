@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.LandRegistrations;
 
-public record GetLandRegistrationByIdQuery(Guid Id) : IRequest<LandRegistrationDto?>;
+public record GetLandRegistrationByIdQuery(long Id) : IRequest<LandRegistrationDto?>;
 
 public class GetLandRegistrationByIdQueryHandler : IRequestHandler<GetLandRegistrationByIdQuery, LandRegistrationDto?>
 {

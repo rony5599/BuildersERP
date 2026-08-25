@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ContractorLedgers;
 
-public record SetContractorLedgerActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetContractorLedgerActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetContractorLedgerActiveCommandHandler : IRequestHandler<SetContractorLedgerActiveCommand, bool>
 {

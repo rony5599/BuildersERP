@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.CommonAreaBookings;
 
-public record GetCommonAreaBookingByIdQuery(Guid Id) : IRequest<CommonAreaBookingDto?>;
+public record GetCommonAreaBookingByIdQuery(long Id) : IRequest<CommonAreaBookingDto?>;
 
 public class GetCommonAreaBookingByIdQueryHandler : IRequestHandler<GetCommonAreaBookingByIdQuery, CommonAreaBookingDto?>
 {

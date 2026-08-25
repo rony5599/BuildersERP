@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class ApartmentMaintenanceDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string MaintenanceNumber { get; set; } = string.Empty;
     public FacilityMaintenanceType MaintenanceType { get; set; }
     public DateTime ScheduledDate { get; set; }
@@ -13,7 +13,7 @@ public class ApartmentMaintenanceDto
     public FacilityMaintenanceStatus Status { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
     public bool IsActive { get; set; }
     public string PropertyUnitName { get; set; } = string.Empty;
 }
@@ -28,12 +28,12 @@ public class CreateApartmentMaintenanceDto
     public FacilityMaintenanceStatus Status { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }
 
 public class UpdateApartmentMaintenanceDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string MaintenanceNumber { get; set; } = string.Empty;
     public FacilityMaintenanceType MaintenanceType { get; set; }
     public DateTime ScheduledDate { get; set; }
@@ -42,5 +42,5 @@ public class UpdateApartmentMaintenanceDto
     public FacilityMaintenanceStatus Status { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }

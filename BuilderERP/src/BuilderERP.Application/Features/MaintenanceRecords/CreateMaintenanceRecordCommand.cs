@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.MaintenanceRecords;
 
-public record CreateMaintenanceRecordCommand(CreateMaintenanceRecordDto Dto) : IRequest<Guid>;
+public record CreateMaintenanceRecordCommand(CreateMaintenanceRecordDto Dto) : IRequest<long>;
 
-public class CreateMaintenanceRecordCommandHandler : IRequestHandler<CreateMaintenanceRecordCommand, Guid>
+public class CreateMaintenanceRecordCommandHandler : IRequestHandler<CreateMaintenanceRecordCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateMaintenanceRecordCommandHandler : IRequestHandler<CreateMaint
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateMaintenanceRecordCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateMaintenanceRecordCommand request, CancellationToken cancellationToken)
     {
         var record = _mapper.Map<MaintenanceRecord>(request.Dto);
         await _unitOfWork.Repository<MaintenanceRecord>().AddAsync(record);

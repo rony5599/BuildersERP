@@ -11,7 +11,7 @@ public class StockIssueMappingProfile : Profile
         CreateMap<StockIssue, StockIssueDto>()
             .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material != null ? src.Material.Name : string.Empty))
             .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(src => src.Warehouse != null ? src.Warehouse.Name : string.Empty))
-            .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.Warehouse != null ? src.Warehouse.ProjectId : Guid.Empty))
+            .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.Warehouse != null ? src.Warehouse.ProjectId : 0L))
             .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Warehouse != null && src.Warehouse.Project != null ? src.Warehouse.Project.Name : string.Empty));
         CreateMap<CreateStockIssueDto, StockIssue>();
         CreateMap<UpdateStockIssueDto, StockIssue>();

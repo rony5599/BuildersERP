@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
-public record SelectWinnerVendorQuotationCommand(Guid Id) : IRequest<bool>;
+public record SelectWinnerVendorQuotationCommand(long Id) : IRequest<bool>;
 
 public class SelectWinnerVendorQuotationCommandHandler : IRequestHandler<SelectWinnerVendorQuotationCommand, bool>
 {

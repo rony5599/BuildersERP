@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.SecurityIncidents;
 
-public record SetSecurityIncidentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSecurityIncidentActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSecurityIncidentActiveCommandHandler : IRequestHandler<SetSecurityIncidentActiveCommand, bool>
 {

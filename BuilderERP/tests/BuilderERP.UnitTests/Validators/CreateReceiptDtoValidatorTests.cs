@@ -13,7 +13,7 @@ public class CreateReceiptDtoValidatorTests
     [Fact]
     public void Should_have_error_when_amount_paid_is_zero_or_negative()
     {
-        var model = new CreateReceiptDto { ReceiptNumber = "RCT-1", AmountPaid = 0, InstallmentId = Guid.NewGuid(), PaymentMethod = PaymentMethod.Cash };
+        var model = new CreateReceiptDto { ReceiptNumber = "RCT-1", AmountPaid = 0, InstallmentId = 1L, PaymentMethod = PaymentMethod.Cash };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.AmountPaid);
     }
@@ -21,7 +21,7 @@ public class CreateReceiptDtoValidatorTests
     [Fact]
     public void Should_have_error_when_receipt_number_is_empty()
     {
-        var model = new CreateReceiptDto { ReceiptNumber = "", AmountPaid = 5000, InstallmentId = Guid.NewGuid(), PaymentMethod = PaymentMethod.Cash };
+        var model = new CreateReceiptDto { ReceiptNumber = "", AmountPaid = 5000, InstallmentId = 1L, PaymentMethod = PaymentMethod.Cash };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ReceiptNumber);
     }
@@ -29,7 +29,7 @@ public class CreateReceiptDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateReceiptDto { ReceiptNumber = "RCT-1", AmountPaid = 5000, InstallmentId = Guid.NewGuid(), PaymentMethod = PaymentMethod.Cash };
+        var model = new CreateReceiptDto { ReceiptNumber = "RCT-1", AmountPaid = 5000, InstallmentId = 1L, PaymentMethod = PaymentMethod.Cash };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

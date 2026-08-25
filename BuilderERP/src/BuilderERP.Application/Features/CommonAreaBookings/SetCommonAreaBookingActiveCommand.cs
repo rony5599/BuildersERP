@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.CommonAreaBookings;
 
-public record SetCommonAreaBookingActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetCommonAreaBookingActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetCommonAreaBookingActiveCommandHandler : IRequestHandler<SetCommonAreaBookingActiveCommand, bool>
 {

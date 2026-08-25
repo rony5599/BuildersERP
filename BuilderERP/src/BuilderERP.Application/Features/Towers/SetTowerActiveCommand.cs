@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Towers;
 
-public record SetTowerActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetTowerActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetTowerActiveCommandHandler : IRequestHandler<SetTowerActiveCommand, bool>
 {

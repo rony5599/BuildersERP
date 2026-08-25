@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Documents;
 
-public record GetDocumentByIdQuery(Guid Id) : IRequest<DocumentDto?>;
+public record GetDocumentByIdQuery(long Id) : IRequest<DocumentDto?>;
 
 public class GetDocumentByIdQueryHandler : IRequestHandler<GetDocumentByIdQuery, DocumentDto?>
 {

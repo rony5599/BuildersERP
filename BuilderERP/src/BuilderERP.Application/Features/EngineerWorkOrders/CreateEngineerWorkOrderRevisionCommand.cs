@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrders;
 
-public record CreateEngineerWorkOrderRevisionCommand(Guid PreviousWorkOrderId, CreateEngineerWorkOrderDto Dto) : IRequest<CreateEngineerWorkOrderRevisionResult>;
+public record CreateEngineerWorkOrderRevisionCommand(long PreviousWorkOrderId, CreateEngineerWorkOrderDto Dto) : IRequest<CreateEngineerWorkOrderRevisionResult>;
 
 public enum CreateEngineerWorkOrderRevisionResult
 {

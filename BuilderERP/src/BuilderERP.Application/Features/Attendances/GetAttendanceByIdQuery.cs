@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Attendances;
 
-public record GetAttendanceByIdQuery(Guid Id) : IRequest<AttendanceDto?>;
+public record GetAttendanceByIdQuery(long Id) : IRequest<AttendanceDto?>;
 
 public class GetAttendanceByIdQueryHandler : IRequestHandler<GetAttendanceByIdQuery, AttendanceDto?>
 {

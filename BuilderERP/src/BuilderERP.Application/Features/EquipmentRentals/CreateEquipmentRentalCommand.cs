@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.EquipmentRentals;
 
-public record CreateEquipmentRentalCommand(CreateEquipmentRentalDto Dto) : IRequest<Guid>;
+public record CreateEquipmentRentalCommand(CreateEquipmentRentalDto Dto) : IRequest<long>;
 
-public class CreateEquipmentRentalCommandHandler : IRequestHandler<CreateEquipmentRentalCommand, Guid>
+public class CreateEquipmentRentalCommandHandler : IRequestHandler<CreateEquipmentRentalCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateEquipmentRentalCommandHandler : IRequestHandler<CreateEquipme
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateEquipmentRentalCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateEquipmentRentalCommand request, CancellationToken cancellationToken)
     {
         var rental = _mapper.Map<EquipmentRental>(request.Dto);
         rental.TotalAmount = rental.RentalEndDate.HasValue

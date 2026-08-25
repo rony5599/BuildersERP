@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ApartmentMaintenances;
 
-public record CreateApartmentMaintenanceCommand(CreateApartmentMaintenanceDto Dto) : IRequest<Guid>;
+public record CreateApartmentMaintenanceCommand(CreateApartmentMaintenanceDto Dto) : IRequest<long>;
 
-public class CreateApartmentMaintenanceCommandHandler : IRequestHandler<CreateApartmentMaintenanceCommand, Guid>
+public class CreateApartmentMaintenanceCommandHandler : IRequestHandler<CreateApartmentMaintenanceCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateApartmentMaintenanceCommandHandler : IRequestHandler<CreateAp
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateApartmentMaintenanceCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateApartmentMaintenanceCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<ApartmentMaintenance>(request.Dto);
         var repository = _unitOfWork.Repository<ApartmentMaintenance>();

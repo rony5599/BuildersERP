@@ -15,7 +15,7 @@ public class CreateSalaryDtoValidatorTests
     {
         var model = new CreateSalaryDto
         {
-            WorkerId = Guid.Empty,
+            WorkerId = 0L,
             PeriodStart = DateTime.UtcNow,
             PeriodEnd = DateTime.UtcNow.AddDays(30),
             DaysWorked = 22,
@@ -30,7 +30,7 @@ public class CreateSalaryDtoValidatorTests
     {
         var model = new CreateSalaryDto
         {
-            WorkerId = Guid.NewGuid(),
+            WorkerId = 1L,
             PeriodStart = DateTime.UtcNow,
             PeriodEnd = DateTime.UtcNow.AddDays(-5),
             DaysWorked = 22,
@@ -45,7 +45,7 @@ public class CreateSalaryDtoValidatorTests
     {
         var model = new CreateSalaryDto
         {
-            WorkerId = Guid.NewGuid(),
+            WorkerId = 1L,
             PeriodStart = DateTime.UtcNow,
             PeriodEnd = DateTime.UtcNow.AddDays(30),
             DaysWorked = 22,
@@ -60,7 +60,7 @@ public class CreateSalaryDtoValidatorTests
     {
         var model = new CreateSalaryDto
         {
-            WorkerId = Guid.NewGuid(),
+            WorkerId = 1L,
             PeriodStart = DateTime.UtcNow,
             PeriodEnd = DateTime.UtcNow.AddDays(30),
             DaysWorked = 22.5m,

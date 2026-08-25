@@ -6,9 +6,9 @@ namespace BuilderERP.Application.Features.CollectionForecast;
 
 public record GetDueCollectionForecastBucketsQuery(
     string Granularity = "Monthly",
-    Guid? ProjectId = null,
-    Guid? PropertyUnitId = null,
-    Guid? CustomerId = null,
+    long? ProjectId = null,
+    long? PropertyUnitId = null,
+    long? CustomerId = null,
     Guid? CollectionOfficerId = null) : IRequest<IReadOnlyList<DueCollectionForecastBucketDto>>;
 
 public class GetDueCollectionForecastBucketsQueryHandler : IRequestHandler<GetDueCollectionForecastBucketsQuery, IReadOnlyList<DueCollectionForecastBucketDto>>

@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RiskAssessments;
 
-public record CreateRiskAssessmentCommand(CreateRiskAssessmentDto Dto) : IRequest<Guid>;
+public record CreateRiskAssessmentCommand(CreateRiskAssessmentDto Dto) : IRequest<long>;
 
-public class CreateRiskAssessmentCommandHandler : IRequestHandler<CreateRiskAssessmentCommand, Guid>
+public class CreateRiskAssessmentCommandHandler : IRequestHandler<CreateRiskAssessmentCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateRiskAssessmentCommandHandler : IRequestHandler<CreateRiskAsse
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateRiskAssessmentCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateRiskAssessmentCommand request, CancellationToken cancellationToken)
     {
         var assessment = _mapper.Map<RiskAssessment>(request.Dto);
         await _unitOfWork.Repository<RiskAssessment>().AddAsync(assessment);

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.ParkingSlots;
 
-public record CreateParkingSlotCommand(CreateParkingSlotDto Dto) : IRequest<Guid>;
+public record CreateParkingSlotCommand(CreateParkingSlotDto Dto) : IRequest<long>;
 
-public class CreateParkingSlotCommandHandler : IRequestHandler<CreateParkingSlotCommand, Guid>
+public class CreateParkingSlotCommandHandler : IRequestHandler<CreateParkingSlotCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateParkingSlotCommandHandler : IRequestHandler<CreateParkingSlot
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateParkingSlotCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateParkingSlotCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<ParkingSlot>(request.Dto);
         var repository = _unitOfWork.Repository<ParkingSlot>();

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CommonAreaBookings;
 
-public record CreateCommonAreaBookingCommand(CreateCommonAreaBookingDto Dto) : IRequest<Guid>;
+public record CreateCommonAreaBookingCommand(CreateCommonAreaBookingDto Dto) : IRequest<long>;
 
-public class CreateCommonAreaBookingCommandHandler : IRequestHandler<CreateCommonAreaBookingCommand, Guid>
+public class CreateCommonAreaBookingCommandHandler : IRequestHandler<CreateCommonAreaBookingCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateCommonAreaBookingCommandHandler : IRequestHandler<CreateCommo
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateCommonAreaBookingCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCommonAreaBookingCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<CommonAreaBooking>(request.Dto);
         var repository = _unitOfWork.Repository<CommonAreaBooking>();

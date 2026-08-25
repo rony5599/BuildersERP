@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.PpeTrackings;
 using BuilderERP.Application.Features.Workers;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class PpeTrackingsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.PpeTrackingManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetPpeTrackingByIdQuery(id));
         if (item is null)
@@ -110,7 +110,7 @@ public class PpeTrackingsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PpeTrackingManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetPpeTrackingActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

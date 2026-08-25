@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.SnagItems;
 
-public record SetSnagItemActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSnagItemActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSnagItemActiveCommandHandler : IRequestHandler<SetSnagItemActiveCommand, bool>
 {

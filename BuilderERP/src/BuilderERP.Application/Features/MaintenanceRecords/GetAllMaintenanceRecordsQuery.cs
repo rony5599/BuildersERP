@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.MaintenanceRecords;
 
-public record GetAllMaintenanceRecordsQuery(Guid? EquipmentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaintenanceRecordDto>>;
+public record GetAllMaintenanceRecordsQuery(long? EquipmentId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaintenanceRecordDto>>;
 
 public class GetAllMaintenanceRecordsQueryHandler : IRequestHandler<GetAllMaintenanceRecordsQuery, PagedResult<MaintenanceRecordDto>>
 {

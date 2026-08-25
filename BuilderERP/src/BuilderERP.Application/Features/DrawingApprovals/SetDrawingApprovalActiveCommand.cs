@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.DrawingApprovals;
 
-public record SetDrawingApprovalActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDrawingApprovalActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDrawingApprovalActiveCommandHandler : IRequestHandler<SetDrawingApprovalActiveCommand, bool>
 {

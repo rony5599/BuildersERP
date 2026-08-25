@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ContractorLedgers;
 
-public record GetAllContractorLedgersQuery(Guid? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<ContractorLedgerDto>>;
+public record GetAllContractorLedgersQuery(long? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<ContractorLedgerDto>>;
 
 public class GetAllContractorLedgersQueryHandler : IRequestHandler<GetAllContractorLedgersQuery, PagedResult<ContractorLedgerDto>>
 {

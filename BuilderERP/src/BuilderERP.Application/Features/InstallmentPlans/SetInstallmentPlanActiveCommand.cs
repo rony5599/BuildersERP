@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.InstallmentPlans;
 
-public record SetInstallmentPlanActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetInstallmentPlanActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetInstallmentPlanActiveCommandHandler : IRequestHandler<SetInstallmentPlanActiveCommand, bool>
 {

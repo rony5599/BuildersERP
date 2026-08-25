@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.LandMutations;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class LandMutationsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.LandMutationManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetLandMutationByIdQuery(id));
         if (item is null)
@@ -112,7 +112,7 @@ public class LandMutationsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.LandMutationManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetLandMutationActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

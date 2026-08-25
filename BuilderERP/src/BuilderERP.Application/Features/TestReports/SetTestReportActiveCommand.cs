@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.TestReports;
 
-public record SetTestReportActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetTestReportActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetTestReportActiveCommandHandler : IRequestHandler<SetTestReportActiveCommand, bool>
 {

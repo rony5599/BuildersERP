@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.Features.Leads;
+using BuilderERP.Application.Features.Leads;
 using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -26,7 +26,7 @@ public class SalesPipelineController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.LeadManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> MoveStage(Guid id, LeadStatus status)
+    public async Task<IActionResult> MoveStage(long id, LeadStatus status)
     {
         await _mediator.Send(new SetLeadStatusCommand(id, status));
         return RedirectToAction(nameof(Index));

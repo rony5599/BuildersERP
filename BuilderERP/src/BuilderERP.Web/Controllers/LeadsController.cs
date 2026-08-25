@@ -70,7 +70,7 @@ public class LeadsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.LeadManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var lead = await _mediator.Send(new GetLeadByIdQuery(id));
         if (lead is null)
@@ -119,7 +119,7 @@ public class LeadsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.LeadManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetLeadActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

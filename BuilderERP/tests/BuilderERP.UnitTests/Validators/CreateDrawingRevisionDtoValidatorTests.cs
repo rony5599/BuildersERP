@@ -12,7 +12,7 @@ public class CreateDrawingRevisionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_revision_code_is_empty()
     {
-        var model = new CreateDrawingRevisionDto { RevisionCode = "", FilePath = "/uploads/drawing-revisions/a.pdf", DrawingId = Guid.NewGuid() };
+        var model = new CreateDrawingRevisionDto { RevisionCode = "", FilePath = "/uploads/drawing-revisions/a.pdf", DrawingId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.RevisionCode);
     }
@@ -20,7 +20,7 @@ public class CreateDrawingRevisionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_file_path_is_empty()
     {
-        var model = new CreateDrawingRevisionDto { RevisionCode = "Rev A", FilePath = "", DrawingId = Guid.NewGuid() };
+        var model = new CreateDrawingRevisionDto { RevisionCode = "Rev A", FilePath = "", DrawingId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FilePath);
     }
@@ -28,7 +28,7 @@ public class CreateDrawingRevisionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_drawing_id_is_empty()
     {
-        var model = new CreateDrawingRevisionDto { RevisionCode = "Rev A", FilePath = "/uploads/drawing-revisions/a.pdf", DrawingId = Guid.Empty };
+        var model = new CreateDrawingRevisionDto { RevisionCode = "Rev A", FilePath = "/uploads/drawing-revisions/a.pdf", DrawingId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DrawingId);
     }
@@ -40,7 +40,7 @@ public class CreateDrawingRevisionDtoValidatorTests
         {
             RevisionCode = "Rev A",
             FilePath = "/uploads/drawing-revisions/a.pdf",
-            DrawingId = Guid.NewGuid()
+            DrawingId = 1L
         };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

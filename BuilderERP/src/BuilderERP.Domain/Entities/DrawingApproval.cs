@@ -1,13 +1,13 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
 public class DrawingApproval : BaseEntity
 {
-    public Guid DrawingId { get; set; }
+    public long DrawingId { get; set; }
     public Drawing Drawing { get; set; } = null!;
 
-    public Guid? DrawingRevisionId { get; set; }
+    public long? DrawingRevisionId { get; set; }
     public DrawingRevision? DrawingRevision { get; set; }
 
     public string ApproverName { get; set; } = string.Empty;

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Ncrs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -25,7 +25,7 @@ public class NcrsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var items = await _mediator.Send(new GetAllNcrsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -63,7 +63,7 @@ public class NcrsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.NcrManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetNcrByIdQuery(id));
         if (item is null)
@@ -113,7 +113,7 @@ public class NcrsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.NcrManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetNcrActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

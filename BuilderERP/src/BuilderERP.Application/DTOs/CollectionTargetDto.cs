@@ -2,7 +2,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class CollectionTargetDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public int Year { get; set; }
     public int Month { get; set; }
     public decimal TargetAmount { get; set; }
@@ -23,7 +23,7 @@ public class CreateCollectionTargetDto
 
 public class UpdateCollectionTargetDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public int Year { get; set; }
     public int Month { get; set; }
     public decimal TargetAmount { get; set; }

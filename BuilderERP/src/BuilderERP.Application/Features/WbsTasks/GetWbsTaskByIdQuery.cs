@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.WbsTasks;
 
-public record GetWbsTaskByIdQuery(Guid Id) : IRequest<WbsTaskDto?>;
+public record GetWbsTaskByIdQuery(long Id) : IRequest<WbsTaskDto?>;
 
 public class GetWbsTaskByIdQueryHandler : IRequestHandler<GetWbsTaskByIdQuery, WbsTaskDto?>
 {

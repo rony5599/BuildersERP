@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class StockReturn : BaseEntity
 {
@@ -8,9 +8,9 @@ public class StockReturn : BaseEntity
     public string Reason { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 
-    public Guid WarehouseId { get; set; }
+    public long WarehouseId { get; set; }
     public Warehouse Warehouse { get; set; } = null!;
 }

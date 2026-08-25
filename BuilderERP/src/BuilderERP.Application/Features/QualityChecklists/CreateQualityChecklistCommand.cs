@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.QualityChecklists;
 
-public record CreateQualityChecklistCommand(CreateQualityChecklistDto Dto) : IRequest<Guid>;
+public record CreateQualityChecklistCommand(CreateQualityChecklistDto Dto) : IRequest<long>;
 
-public class CreateQualityChecklistCommandHandler : IRequestHandler<CreateQualityChecklistCommand, Guid>
+public class CreateQualityChecklistCommandHandler : IRequestHandler<CreateQualityChecklistCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateQualityChecklistCommandHandler : IRequestHandler<CreateQualit
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateQualityChecklistCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateQualityChecklistCommand request, CancellationToken cancellationToken)
     {
         var checklist = _mapper.Map<QualityChecklist>(request.Dto);
         await _unitOfWork.Repository<QualityChecklist>().AddAsync(checklist);

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.LegalNotices;
 
-public record GetLegalNoticeByIdQuery(Guid Id) : IRequest<LegalNoticeDto?>;
+public record GetLegalNoticeByIdQuery(long Id) : IRequest<LegalNoticeDto?>;
 
 public class GetLegalNoticeByIdQueryHandler : IRequestHandler<GetLegalNoticeByIdQuery, LegalNoticeDto?>
 {

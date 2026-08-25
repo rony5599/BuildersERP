@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrderRequisitions;
 
-public record SetEngineerWorkOrderRequisitionActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetEngineerWorkOrderRequisitionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetEngineerWorkOrderRequisitionActiveCommandHandler : IRequestHandler<SetEngineerWorkOrderRequisitionActiveCommand, bool>
 {

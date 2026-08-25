@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockTransfers;
 
-public record GetAllStockTransfersQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockTransferDto>>;
+public record GetAllStockTransfersQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockTransferDto>>;
 
 public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTransfersQuery, PagedResult<StockTransferDto>>
 {

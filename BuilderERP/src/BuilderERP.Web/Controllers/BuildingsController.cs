@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Buildings;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -25,7 +25,7 @@ public class BuildingsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var buildings = await _mediator.Send(new GetAllBuildingsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -65,7 +65,7 @@ public class BuildingsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.BuildingManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var building = await _mediator.Send(new GetBuildingByIdQuery(id));
         if (building is null)
@@ -111,7 +111,7 @@ public class BuildingsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.BuildingManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetBuildingActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

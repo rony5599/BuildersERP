@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SaleAgreements;
 
-public record GetSaleAgreementByIdQuery(Guid Id) : IRequest<SaleAgreementDto?>;
+public record GetSaleAgreementByIdQuery(long Id) : IRequest<SaleAgreementDto?>;
 
 public class GetSaleAgreementByIdQueryHandler : IRequestHandler<GetSaleAgreementByIdQuery, SaleAgreementDto?>
 {

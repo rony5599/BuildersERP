@@ -24,8 +24,8 @@ public class DueCollectionForecastSummaryDto
 
 public class InstallmentDueRowDto
 {
-    public Guid InstallmentId { get; set; }
-    public Guid CustomerId { get; set; }
+    public long InstallmentId { get; set; }
+    public long CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
     public string CustomerPhone { get; set; } = string.Empty;
     public string ProjectName { get; set; } = string.Empty;
@@ -50,7 +50,7 @@ public class DueCollectionForecastBucketDto
 
 public class CustomerCollectionRiskDto
 {
-    public Guid CustomerId { get; set; }
+    public long CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string ProjectName { get; set; } = string.Empty;

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Warranties;
 
-public record GetWarrantyByIdQuery(Guid Id) : IRequest<WarrantyDto?>;
+public record GetWarrantyByIdQuery(long Id) : IRequest<WarrantyDto?>;
 
 public class GetWarrantyByIdQueryHandler : IRequestHandler<GetWarrantyByIdQuery, WarrantyDto?>
 {

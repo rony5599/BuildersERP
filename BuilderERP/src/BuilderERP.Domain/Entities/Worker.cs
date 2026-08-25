@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class Worker : BaseEntity
 {
@@ -11,6 +11,6 @@ public class Worker : BaseEntity
     public DateTime JoinDate { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = true;
 
-    public Guid? ContractorId { get; set; }
+    public long? ContractorId { get; set; }
     public Contractor? Contractor { get; set; }
 }

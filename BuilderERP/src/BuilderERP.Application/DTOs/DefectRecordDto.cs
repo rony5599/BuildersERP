@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class DefectRecordDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string DefectNumber { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DefectCategory Category { get; set; }
@@ -14,7 +14,7 @@ public class DefectRecordDto
     public DateTime? ResolvedDate { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
     public bool IsActive { get; set; }
     public string PropertyUnitName { get; set; } = string.Empty;
 }
@@ -30,12 +30,12 @@ public class CreateDefectRecordDto
     public DateTime? ResolvedDate { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }
 
 public class UpdateDefectRecordDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string DefectNumber { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DefectCategory Category { get; set; }
@@ -45,5 +45,5 @@ public class UpdateDefectRecordDto
     public DateTime? ResolvedDate { get; set; }
     public string? AssignedTo { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }

@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class WarrantyDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string WarrantyNumber { get; set; } = string.Empty;
     public string ItemCovered { get; set; } = string.Empty;
     public WarrantyType WarrantyType { get; set; }
@@ -12,7 +12,7 @@ public class WarrantyDto
     public DateTime EndDate { get; set; }
     public WarrantyStatus Status { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
     public bool IsActive { get; set; }
     public string PropertyUnitName { get; set; } = string.Empty;
 }
@@ -26,12 +26,12 @@ public class CreateWarrantyDto
     public DateTime EndDate { get; set; }
     public WarrantyStatus Status { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }
 
 public class UpdateWarrantyDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string WarrantyNumber { get; set; } = string.Empty;
     public string ItemCovered { get; set; } = string.Empty;
     public WarrantyType WarrantyType { get; set; }
@@ -39,5 +39,5 @@ public class UpdateWarrantyDto
     public DateTime EndDate { get; set; }
     public WarrantyStatus Status { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }

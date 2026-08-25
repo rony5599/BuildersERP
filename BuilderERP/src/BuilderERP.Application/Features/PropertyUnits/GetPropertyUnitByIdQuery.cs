@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PropertyUnits;
 
-public record GetPropertyUnitByIdQuery(Guid Id) : IRequest<PropertyUnitDto?>;
+public record GetPropertyUnitByIdQuery(long Id) : IRequest<PropertyUnitDto?>;
 
 public class GetPropertyUnitByIdQueryHandler : IRequestHandler<GetPropertyUnitByIdQuery, PropertyUnitDto?>
 {

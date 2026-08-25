@@ -8,12 +8,12 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Receipts;
 
-public record CreateReceiptCommand(CreateReceiptDto Dto) : IRequest<Guid>, IInvalidatesFeatures
+public record CreateReceiptCommand(CreateReceiptDto Dto) : IRequest<long>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["Installments", "CollectionForecast"];
 }
 
-public class CreateReceiptCommandHandler : IRequestHandler<CreateReceiptCommand, Guid>
+public class CreateReceiptCommandHandler : IRequestHandler<CreateReceiptCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ public class CreateReceiptCommandHandler : IRequestHandler<CreateReceiptCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateReceiptCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateReceiptCommand request, CancellationToken cancellationToken)
     {
         var receipt = _mapper.Map<Receipt>(request.Dto);
         await _unitOfWork.Repository<Receipt>().AddAsync(receipt);
@@ -39,7 +39,7 @@ public class CreateReceiptCommandHandler : IRequestHandler<CreateReceiptCommand,
 
 internal static class ReceiptInstallmentSync
 {
-    public static async Task ApplyAsync(IUnitOfWork unitOfWork, Guid installmentId, decimal amountPaid)
+    public static async Task ApplyAsync(IUnitOfWork unitOfWork, long installmentId, decimal amountPaid)
     {
         var repository = unitOfWork.Repository<Installment>();
         var installment = await repository.GetByIdAsync(installmentId);

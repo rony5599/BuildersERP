@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VisitorLogs;
 
-public record GetVisitorLogByIdQuery(Guid Id) : IRequest<VisitorLogDto?>;
+public record GetVisitorLogByIdQuery(long Id) : IRequest<VisitorLogDto?>;
 
 public class GetVisitorLogByIdQueryHandler : IRequestHandler<GetVisitorLogByIdQuery, VisitorLogDto?>
 {

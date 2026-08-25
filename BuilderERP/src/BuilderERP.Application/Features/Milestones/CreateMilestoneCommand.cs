@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Milestones;
 
-public record CreateMilestoneCommand(CreateMilestoneDto Dto) : IRequest<Guid>;
+public record CreateMilestoneCommand(CreateMilestoneDto Dto) : IRequest<long>;
 
-public class CreateMilestoneCommandHandler : IRequestHandler<CreateMilestoneCommand, Guid>
+public class CreateMilestoneCommandHandler : IRequestHandler<CreateMilestoneCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateMilestoneCommandHandler : IRequestHandler<CreateMilestoneComm
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateMilestoneCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateMilestoneCommand request, CancellationToken cancellationToken)
     {
         var milestone = _mapper.Map<Milestone>(request.Dto);
         await _unitOfWork.Repository<Milestone>().AddAsync(milestone);

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CostCenters;
 
-public record SetCostCenterActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetCostCenterActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetCostCenterActiveCommandHandler : IRequestHandler<SetCostCenterActiveCommand, bool>
 {

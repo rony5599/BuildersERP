@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Drawings;
 
-public record SetDrawingActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDrawingActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDrawingActiveCommandHandler : IRequestHandler<SetDrawingActiveCommand, bool>
 {

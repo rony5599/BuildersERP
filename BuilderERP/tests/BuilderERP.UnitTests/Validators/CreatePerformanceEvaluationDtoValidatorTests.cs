@@ -12,7 +12,7 @@ public class CreatePerformanceEvaluationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_contractor_id_is_empty()
     {
-        var model = new CreatePerformanceEvaluationDto { ContractorId = Guid.Empty, QualityScore = 3, TimelinessScore = 3, SafetyScore = 3 };
+        var model = new CreatePerformanceEvaluationDto { ContractorId = 0L, QualityScore = 3, TimelinessScore = 3, SafetyScore = 3 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ContractorId);
     }
@@ -20,7 +20,7 @@ public class CreatePerformanceEvaluationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_quality_score_is_out_of_range()
     {
-        var model = new CreatePerformanceEvaluationDto { ContractorId = Guid.NewGuid(), QualityScore = 6, TimelinessScore = 3, SafetyScore = 3 };
+        var model = new CreatePerformanceEvaluationDto { ContractorId = 1L, QualityScore = 6, TimelinessScore = 3, SafetyScore = 3 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.QualityScore);
     }
@@ -28,7 +28,7 @@ public class CreatePerformanceEvaluationDtoValidatorTests
     [Fact]
     public void Should_have_error_when_safety_score_is_zero()
     {
-        var model = new CreatePerformanceEvaluationDto { ContractorId = Guid.NewGuid(), QualityScore = 3, TimelinessScore = 3, SafetyScore = 0 };
+        var model = new CreatePerformanceEvaluationDto { ContractorId = 1L, QualityScore = 3, TimelinessScore = 3, SafetyScore = 0 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SafetyScore);
     }
@@ -38,7 +38,7 @@ public class CreatePerformanceEvaluationDtoValidatorTests
     {
         var model = new CreatePerformanceEvaluationDto
         {
-            ContractorId = Guid.NewGuid(),
+            ContractorId = 1L,
             QualityScore = 4,
             TimelinessScore = 5,
             SafetyScore = 3

@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.ServiceTickets;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class ServiceTicketsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ServiceTicketManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetServiceTicketByIdQuery(id));
         if (item is null)
@@ -115,7 +115,7 @@ public class ServiceTicketsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ServiceTicketManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetServiceTicketActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

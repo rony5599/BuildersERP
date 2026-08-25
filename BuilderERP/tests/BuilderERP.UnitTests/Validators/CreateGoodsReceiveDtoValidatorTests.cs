@@ -11,13 +11,13 @@ public class CreateGoodsReceiveDtoValidatorTests
 
     private static List<CreateGoodsReceiveDetailDto> ValidDetails() => new()
     {
-        new CreateGoodsReceiveDetailDto { PurchaseOrderDetailId = Guid.NewGuid(), MaterialId = Guid.NewGuid(), ReceivedQuantity = 10, UnitPrice = 50 }
+        new CreateGoodsReceiveDetailDto { PurchaseOrderDetailId = 1L, MaterialId = 2L, ReceivedQuantity = 10, UnitPrice = 50 }
     };
 
     [Fact]
     public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = new() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = 1L, WarehouseId = 2L, Details = new() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Details);
     }
@@ -25,7 +25,7 @@ public class CreateGoodsReceiveDtoValidatorTests
     [Fact]
     public void Should_have_error_when_purchase_order_id_is_empty()
     {
-        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.Empty, WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = 0L, WarehouseId = 1L, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PurchaseOrderId);
     }
@@ -33,7 +33,7 @@ public class CreateGoodsReceiveDtoValidatorTests
     [Fact]
     public void Should_have_error_when_warehouse_id_is_empty()
     {
-        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.Empty, Details = ValidDetails() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = 1L, WarehouseId = 0L, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WarehouseId);
     }
@@ -41,7 +41,7 @@ public class CreateGoodsReceiveDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateGoodsReceiveDto { PurchaseOrderId = Guid.NewGuid(), WarehouseId = Guid.NewGuid(), Details = ValidDetails() };
+        var model = new CreateGoodsReceiveDto { PurchaseOrderId = 1L, WarehouseId = 2L, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

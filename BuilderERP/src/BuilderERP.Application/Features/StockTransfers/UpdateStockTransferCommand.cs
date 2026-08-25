@@ -45,9 +45,9 @@ public class UpdateStockTransferCommandHandler : IRequestHandler<UpdateStockTran
         // pair rather than applied as separate calls - a pair touched twice before SaveChanges
         // (e.g. the "from" warehouse is unchanged) would otherwise cause GetOrCreateStockAsync's
         // second lookup to miss the still-unsaved row from the first and insert a duplicate.
-        var netDeltas = new Dictionary<(Guid MaterialId, Guid WarehouseId), decimal>();
+        var netDeltas = new Dictionary<(long MaterialId, long WarehouseId), decimal>();
 
-        void AddDelta(Guid materialId, Guid warehouseId, decimal delta)
+        void AddDelta(long materialId, long warehouseId, decimal delta)
         {
             var key = (materialId, warehouseId);
             netDeltas[key] = netDeltas.TryGetValue(key, out var existing) ? existing + delta : delta;

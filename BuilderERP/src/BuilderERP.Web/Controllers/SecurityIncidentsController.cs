@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.SecurityIncidents;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class SecurityIncidentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SecurityIncidentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetSecurityIncidentByIdQuery(id));
         if (item is null)
@@ -114,7 +114,7 @@ public class SecurityIncidentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SecurityIncidentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSecurityIncidentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

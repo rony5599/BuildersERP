@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record GetAllMaterialsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaterialDto>>;
+public record GetAllMaterialsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaterialDto>>;
 
 public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery, PagedResult<MaterialDto>>
 {

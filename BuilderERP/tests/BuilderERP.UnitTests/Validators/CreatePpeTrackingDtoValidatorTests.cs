@@ -13,7 +13,7 @@ public class CreatePpeTrackingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_worker_id_is_empty()
     {
-        var model = new CreatePpeTrackingDto { WorkerId = Guid.Empty, PpeType = PpeType.Helmet, Status = PpeStatus.Issued };
+        var model = new CreatePpeTrackingDto { WorkerId = 0L, PpeType = PpeType.Helmet, Status = PpeStatus.Issued };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkerId);
     }
@@ -21,7 +21,7 @@ public class CreatePpeTrackingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_ppe_type_is_invalid()
     {
-        var model = new CreatePpeTrackingDto { WorkerId = Guid.NewGuid(), PpeType = (PpeType)999, Status = PpeStatus.Issued };
+        var model = new CreatePpeTrackingDto { WorkerId = 1L, PpeType = (PpeType)999, Status = PpeStatus.Issued };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PpeType);
     }
@@ -29,7 +29,7 @@ public class CreatePpeTrackingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_status_is_invalid()
     {
-        var model = new CreatePpeTrackingDto { WorkerId = Guid.NewGuid(), PpeType = PpeType.Helmet, Status = (PpeStatus)999 };
+        var model = new CreatePpeTrackingDto { WorkerId = 1L, PpeType = PpeType.Helmet, Status = (PpeStatus)999 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Status);
     }
@@ -39,7 +39,7 @@ public class CreatePpeTrackingDtoValidatorTests
     {
         var model = new CreatePpeTrackingDto
         {
-            WorkerId = Guid.NewGuid(),
+            WorkerId = 1L,
             PpeType = PpeType.Helmet,
             IssueDate = DateTime.UtcNow,
             Status = PpeStatus.Issued

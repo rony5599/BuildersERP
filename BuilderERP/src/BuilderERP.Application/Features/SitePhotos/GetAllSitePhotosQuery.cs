@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SitePhotos;
 
-public record GetAllSitePhotosQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SitePhotoDto>>;
+public record GetAllSitePhotosQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SitePhotoDto>>;
 
 public class GetAllSitePhotosQueryHandler : IRequestHandler<GetAllSitePhotosQuery, PagedResult<SitePhotoDto>>
 {

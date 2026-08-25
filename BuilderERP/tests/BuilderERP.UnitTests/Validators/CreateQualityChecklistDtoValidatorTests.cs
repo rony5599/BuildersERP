@@ -13,7 +13,7 @@ public class CreateQualityChecklistDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateQualityChecklistDto { ProjectId = Guid.Empty, ChecklistName = "Concrete Pour", CheckedBy = "John Doe" };
+        var model = new CreateQualityChecklistDto { ProjectId = 0L, ChecklistName = "Concrete Pour", CheckedBy = "John Doe" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -21,7 +21,7 @@ public class CreateQualityChecklistDtoValidatorTests
     [Fact]
     public void Should_have_error_when_checklist_name_is_empty()
     {
-        var model = new CreateQualityChecklistDto { ProjectId = Guid.NewGuid(), ChecklistName = "", CheckedBy = "John Doe" };
+        var model = new CreateQualityChecklistDto { ProjectId = 1L, ChecklistName = "", CheckedBy = "John Doe" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ChecklistName);
     }
@@ -29,7 +29,7 @@ public class CreateQualityChecklistDtoValidatorTests
     [Fact]
     public void Should_have_error_when_checked_by_is_empty()
     {
-        var model = new CreateQualityChecklistDto { ProjectId = Guid.NewGuid(), ChecklistName = "Concrete Pour", CheckedBy = "" };
+        var model = new CreateQualityChecklistDto { ProjectId = 1L, ChecklistName = "Concrete Pour", CheckedBy = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.CheckedBy);
     }
@@ -39,7 +39,7 @@ public class CreateQualityChecklistDtoValidatorTests
     {
         var model = new CreateQualityChecklistDto
         {
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             ChecklistName = "Concrete Pour",
             Category = "Concrete Pour",
             CheckedBy = "John Doe",

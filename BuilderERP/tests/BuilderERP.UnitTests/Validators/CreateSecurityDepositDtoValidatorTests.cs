@@ -13,7 +13,7 @@ public class CreateSecurityDepositDtoValidatorTests
     [Fact]
     public void Should_have_error_when_contractor_id_is_empty()
     {
-        var model = new CreateSecurityDepositDto { ContractorId = Guid.Empty, DepositAmount = 1000 };
+        var model = new CreateSecurityDepositDto { ContractorId = 0L, DepositAmount = 1000 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ContractorId);
     }
@@ -21,7 +21,7 @@ public class CreateSecurityDepositDtoValidatorTests
     [Fact]
     public void Should_have_error_when_deposit_amount_is_negative()
     {
-        var model = new CreateSecurityDepositDto { ContractorId = Guid.NewGuid(), DepositAmount = -1 };
+        var model = new CreateSecurityDepositDto { ContractorId = 1L, DepositAmount = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DepositAmount);
     }
@@ -31,7 +31,7 @@ public class CreateSecurityDepositDtoValidatorTests
     {
         var model = new CreateSecurityDepositDto
         {
-            ContractorId = Guid.NewGuid(),
+            ContractorId = 1L,
             DepositAmount = 1000,
             DepositDate = DateTime.UtcNow,
             Status = SecurityDepositStatus.Held

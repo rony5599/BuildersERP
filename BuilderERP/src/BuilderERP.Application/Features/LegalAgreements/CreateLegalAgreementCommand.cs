@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.LegalAgreements;
 
-public record CreateLegalAgreementCommand(CreateLegalAgreementDto Dto) : IRequest<Guid>;
+public record CreateLegalAgreementCommand(CreateLegalAgreementDto Dto) : IRequest<long>;
 
-public class CreateLegalAgreementCommandHandler : IRequestHandler<CreateLegalAgreementCommand, Guid>
+public class CreateLegalAgreementCommandHandler : IRequestHandler<CreateLegalAgreementCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateLegalAgreementCommandHandler : IRequestHandler<CreateLegalAgr
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateLegalAgreementCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateLegalAgreementCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<LegalAgreement>(request.Dto);
         var repository = _unitOfWork.Repository<LegalAgreement>();

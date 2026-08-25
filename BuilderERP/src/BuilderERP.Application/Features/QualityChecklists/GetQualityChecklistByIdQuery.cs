@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.QualityChecklists;
 
-public record GetQualityChecklistByIdQuery(Guid Id) : IRequest<QualityChecklistDto?>;
+public record GetQualityChecklistByIdQuery(long Id) : IRequest<QualityChecklistDto?>;
 
 public class GetQualityChecklistByIdQueryHandler : IRequestHandler<GetQualityChecklistByIdQuery, QualityChecklistDto?>
 {

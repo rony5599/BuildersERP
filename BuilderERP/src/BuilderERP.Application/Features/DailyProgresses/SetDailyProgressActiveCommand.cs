@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.DailyProgresses;
 
-public record SetDailyProgressActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDailyProgressActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDailyProgressActiveCommandHandler : IRequestHandler<SetDailyProgressActiveCommand, bool>
 {

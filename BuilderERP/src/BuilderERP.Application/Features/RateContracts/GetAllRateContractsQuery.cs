@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.RateContracts;
 
-public record GetAllRateContractsQuery(Guid? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RateContractDto>>;
+public record GetAllRateContractsQuery(long? ContractorId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RateContractDto>>;
 
 public class GetAllRateContractsQueryHandler : IRequestHandler<GetAllRateContractsQuery, PagedResult<RateContractDto>>
 {

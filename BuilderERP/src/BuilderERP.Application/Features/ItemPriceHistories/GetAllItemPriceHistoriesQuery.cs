@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ItemPriceHistories;
 
-public record GetAllItemPriceHistoriesQuery(Guid? MaterialId = null, Guid? SupplierId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<ItemPriceHistoryDto>>;
+public record GetAllItemPriceHistoriesQuery(long? MaterialId = null, long? SupplierId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<ItemPriceHistoryDto>>;
 
 public class GetAllItemPriceHistoriesQueryHandler : IRequestHandler<GetAllItemPriceHistoriesQuery, PagedResult<ItemPriceHistoryDto>>
 {

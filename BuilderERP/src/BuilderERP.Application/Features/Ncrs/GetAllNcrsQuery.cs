@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Ncrs;
 
-public record GetAllNcrsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<NcrDto>>;
+public record GetAllNcrsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<NcrDto>>;
 
 public class GetAllNcrsQueryHandler : IRequestHandler<GetAllNcrsQuery, PagedResult<NcrDto>>
 {

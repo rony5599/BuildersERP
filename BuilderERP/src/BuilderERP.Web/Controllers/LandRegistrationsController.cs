@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.LandRegistrations;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class LandRegistrationsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.LandRegistrationManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetLandRegistrationByIdQuery(id));
         if (item is null)
@@ -112,7 +112,7 @@ public class LandRegistrationsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.LandRegistrationManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetLandRegistrationActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -4,10 +4,10 @@ namespace BuilderERP.Application.DTOs;
 
 public class SecurityDepositDto
 {
-    public Guid Id { get; set; }
-    public Guid ContractorId { get; set; }
+    public long Id { get; set; }
+    public long ContractorId { get; set; }
     public string ContractorName { get; set; } = string.Empty;
-    public Guid? WorkOrderId { get; set; }
+    public long? WorkOrderId { get; set; }
     public string? WorkOrderNumber { get; set; }
     public decimal DepositAmount { get; set; }
     public DateTime DepositDate { get; set; }
@@ -18,8 +18,8 @@ public class SecurityDepositDto
 
 public class CreateSecurityDepositDto
 {
-    public Guid ContractorId { get; set; }
-    public Guid? WorkOrderId { get; set; }
+    public long ContractorId { get; set; }
+    public long? WorkOrderId { get; set; }
     public decimal DepositAmount { get; set; }
     public DateTime DepositDate { get; set; } = DateTime.UtcNow;
     public DateTime? RefundDate { get; set; }
@@ -28,9 +28,9 @@ public class CreateSecurityDepositDto
 
 public class UpdateSecurityDepositDto
 {
-    public Guid Id { get; set; }
-    public Guid ContractorId { get; set; }
-    public Guid? WorkOrderId { get; set; }
+    public long Id { get; set; }
+    public long ContractorId { get; set; }
+    public long? WorkOrderId { get; set; }
     public decimal DepositAmount { get; set; }
     public DateTime DepositDate { get; set; }
     public DateTime? RefundDate { get; set; }

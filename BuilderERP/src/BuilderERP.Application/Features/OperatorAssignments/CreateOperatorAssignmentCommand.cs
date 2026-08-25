@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.OperatorAssignments;
 
-public record CreateOperatorAssignmentCommand(CreateOperatorAssignmentDto Dto) : IRequest<Guid>;
+public record CreateOperatorAssignmentCommand(CreateOperatorAssignmentDto Dto) : IRequest<long>;
 
-public class CreateOperatorAssignmentCommandHandler : IRequestHandler<CreateOperatorAssignmentCommand, Guid>
+public class CreateOperatorAssignmentCommandHandler : IRequestHandler<CreateOperatorAssignmentCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateOperatorAssignmentCommandHandler : IRequestHandler<CreateOper
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateOperatorAssignmentCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateOperatorAssignmentCommand request, CancellationToken cancellationToken)
     {
         var assignment = _mapper.Map<OperatorAssignment>(request.Dto);
         await _unitOfWork.Repository<OperatorAssignment>().AddAsync(assignment);

@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -10,7 +10,7 @@ public class Rfq : BaseEntity
     public RfqStatus Status { get; set; } = RfqStatus.Sent;
     public bool IsActive { get; set; } = true;
 
-    public Guid PurchaseRequisitionId { get; set; }
+    public long PurchaseRequisitionId { get; set; }
     public PurchaseRequisition PurchaseRequisition { get; set; } = null!;
 
     public ICollection<RfqVendor> RfqVendors { get; set; } = new List<RfqVendor>();

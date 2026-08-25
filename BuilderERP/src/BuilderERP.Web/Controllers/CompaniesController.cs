@@ -58,7 +58,7 @@ public class CompaniesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CompanyManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var company = await _mediator.Send(new GetCompanyByIdQuery(id));
         if (company is null)
@@ -104,7 +104,7 @@ public class CompaniesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CompanyManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCompanyActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

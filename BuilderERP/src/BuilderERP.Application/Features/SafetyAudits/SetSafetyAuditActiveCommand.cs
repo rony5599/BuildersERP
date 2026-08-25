@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SafetyAudits;
 
-public record SetSafetyAuditActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSafetyAuditActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSafetyAuditActiveCommandHandler : IRequestHandler<SetSafetyAuditActiveCommand, bool>
 {

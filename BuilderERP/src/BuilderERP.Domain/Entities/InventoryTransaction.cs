@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -15,9 +15,9 @@ public class InventoryTransaction : BaseEntity
     public decimal UnitCost { get; set; }
     public decimal TotalCost { get; set; }
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 
-    public Guid WarehouseId { get; set; }
+    public long WarehouseId { get; set; }
     public Warehouse Warehouse { get; set; } = null!;
 }

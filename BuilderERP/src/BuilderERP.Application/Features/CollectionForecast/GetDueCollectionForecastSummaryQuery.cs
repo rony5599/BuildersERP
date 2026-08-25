@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 namespace BuilderERP.Application.Features.CollectionForecast;
 
 public record GetDueCollectionForecastSummaryQuery(
-    Guid? ProjectId = null,
-    Guid? PropertyUnitId = null,
-    Guid? CustomerId = null,
+    long? ProjectId = null,
+    long? PropertyUnitId = null,
+    long? CustomerId = null,
     Guid? CollectionOfficerId = null) : IRequest<DueCollectionForecastSummaryDto>;
 
 public class GetDueCollectionForecastSummaryQueryHandler : IRequestHandler<GetDueCollectionForecastSummaryQuery, DueCollectionForecastSummaryDto>

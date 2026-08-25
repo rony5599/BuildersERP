@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.LegalNotices;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class LegalNoticesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.LegalNoticeManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetLegalNoticeByIdQuery(id));
         if (item is null)
@@ -113,7 +113,7 @@ public class LegalNoticesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.LegalNoticeManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetLegalNoticeActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

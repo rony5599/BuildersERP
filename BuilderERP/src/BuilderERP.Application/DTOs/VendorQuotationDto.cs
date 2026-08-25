@@ -4,28 +4,28 @@ namespace BuilderERP.Application.DTOs;
 
 public class VendorQuotationDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string QuotationNumber { get; set; } = string.Empty;
     public DateTime QuotationDate { get; set; }
     public decimal QuotedAmount { get; set; }
     public int DeliveryDays { get; set; }
     public VendorQuotationStatus Status { get; set; }
     public bool IsActive { get; set; }
-    public Guid RfqId { get; set; }
+    public long RfqId { get; set; }
     public string RfqNumber { get; set; } = string.Empty;
-    public Guid SupplierId { get; set; }
+    public long SupplierId { get; set; }
     public string SupplierName { get; set; } = string.Empty;
-    public Guid PurchaseRequisitionId { get; set; }
+    public long PurchaseRequisitionId { get; set; }
     public string RequisitionNumber { get; set; } = string.Empty;
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public List<VendorQuotationDetailDto> Details { get; set; } = new();
 }
 
 public class VendorQuotationDetailDto
 {
-    public Guid Id { get; set; }
-    public Guid MaterialId { get; set; }
+    public long Id { get; set; }
+    public long MaterialId { get; set; }
     public string MaterialName { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
     public UnitOfMeasure UnitOfMeasure { get; set; }
@@ -42,7 +42,7 @@ public class VendorQuotationDetailDto
 
 public class CreateVendorQuotationDetailDto
 {
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public decimal Quantity { get; set; }
     public UnitOfMeasure UnitOfMeasure { get; set; } = UnitOfMeasure.Piece;
     public decimal UnitPrice { get; set; }
@@ -57,19 +57,19 @@ public class CreateVendorQuotationDto
     public DateTime QuotationDate { get; set; } = DateTime.UtcNow;
     public int DeliveryDays { get; set; }
     public VendorQuotationStatus Status { get; set; } = VendorQuotationStatus.Received;
-    public Guid RfqId { get; set; }
-    public Guid SupplierId { get; set; }
+    public long RfqId { get; set; }
+    public long SupplierId { get; set; }
     public List<CreateVendorQuotationDetailDto> Details { get; set; } = new();
 }
 
 public class UpdateVendorQuotationDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string QuotationNumber { get; set; } = string.Empty;
     public DateTime QuotationDate { get; set; }
     public int DeliveryDays { get; set; }
     public VendorQuotationStatus Status { get; set; }
-    public Guid RfqId { get; set; }
-    public Guid SupplierId { get; set; }
+    public long RfqId { get; set; }
+    public long SupplierId { get; set; }
     public List<CreateVendorQuotationDetailDto> Details { get; set; } = new();
 }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Salaries;
 
-public record SetSalaryActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSalaryActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSalaryActiveCommandHandler : IRequestHandler<SetSalaryActiveCommand, bool>
 {

@@ -1,13 +1,13 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
 public class Attendance : BaseEntity
 {
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
     public Worker Worker { get; set; } = null!;
 
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
     public DateTime AttendanceDate { get; set; } = DateTime.UtcNow;

@@ -5,7 +5,7 @@ namespace BuilderERP.Application.Features.AuditTrail;
 public class AuditLogFilter
 {
     public string? EntityName { get; set; }
-    public Guid? EntityId { get; set; }
+    public long? EntityId { get; set; }
     public string? ChangedBy { get; set; }
     public DateTime? DateFrom { get; set; }
     public DateTime? DateTo { get; set; }

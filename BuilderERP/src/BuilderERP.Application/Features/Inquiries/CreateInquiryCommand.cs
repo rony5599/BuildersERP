@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Inquiries;
 
-public record CreateInquiryCommand(CreateInquiryDto Dto) : IRequest<Guid>;
+public record CreateInquiryCommand(CreateInquiryDto Dto) : IRequest<long>;
 
-public class CreateInquiryCommandHandler : IRequestHandler<CreateInquiryCommand, Guid>
+public class CreateInquiryCommandHandler : IRequestHandler<CreateInquiryCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateInquiryCommandHandler : IRequestHandler<CreateInquiryCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateInquiryCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateInquiryCommand request, CancellationToken cancellationToken)
     {
         var inquiry = _mapper.Map<Inquiry>(request.Dto);
         await _unitOfWork.Repository<Inquiry>().AddAsync(inquiry);

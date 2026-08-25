@@ -13,7 +13,7 @@ public class CreateTestReportDtoValidatorTests
     [Fact]
     public void Should_have_error_when_report_number_is_empty()
     {
-        var model = new CreateTestReportDto { ReportNumber = "", TestType = "Concrete Cube Test", ProjectId = Guid.NewGuid(), FilePath = "/uploads/test-reports/file.pdf" };
+        var model = new CreateTestReportDto { ReportNumber = "", TestType = "Concrete Cube Test", ProjectId = 1L, FilePath = "/uploads/test-reports/file.pdf" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ReportNumber);
     }
@@ -21,7 +21,7 @@ public class CreateTestReportDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateTestReportDto { ReportNumber = "TR-001", TestType = "Concrete Cube Test", ProjectId = Guid.Empty, FilePath = "/uploads/test-reports/file.pdf" };
+        var model = new CreateTestReportDto { ReportNumber = "TR-001", TestType = "Concrete Cube Test", ProjectId = 0L, FilePath = "/uploads/test-reports/file.pdf" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -29,7 +29,7 @@ public class CreateTestReportDtoValidatorTests
     [Fact]
     public void Should_have_error_when_file_path_is_empty()
     {
-        var model = new CreateTestReportDto { ReportNumber = "TR-001", TestType = "Concrete Cube Test", ProjectId = Guid.NewGuid(), FilePath = "" };
+        var model = new CreateTestReportDto { ReportNumber = "TR-001", TestType = "Concrete Cube Test", ProjectId = 1L, FilePath = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FilePath);
     }
@@ -41,7 +41,7 @@ public class CreateTestReportDtoValidatorTests
         {
             ReportNumber = "TR-001",
             TestType = "Concrete Cube Test",
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             FilePath = "/uploads/test-reports/file.pdf",
             Result = QcResult.Pending
         };

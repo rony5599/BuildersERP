@@ -63,7 +63,7 @@ public class GoodsReceivesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.GoodsReceiveManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var receive = await _mediator.Send(new GetGoodsReceiveByIdQuery(id));
         if (receive is null)
@@ -139,7 +139,7 @@ public class GoodsReceivesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.GoodsReceiveManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetGoodsReceiveActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
@@ -147,7 +147,7 @@ public class GoodsReceivesController : Controller
 
     [HttpGet]
     [PermissionAuthorize(PermissionNames.GoodsReceiveView)]
-    public async Task<IActionResult> GetOpenPurchaseOrderLines(Guid purchaseOrderId)
+    public async Task<IActionResult> GetOpenPurchaseOrderLines(long purchaseOrderId)
     {
         var order = await _mediator.Send(new GetPurchaseOrderByIdQuery(purchaseOrderId));
         if (order is null)

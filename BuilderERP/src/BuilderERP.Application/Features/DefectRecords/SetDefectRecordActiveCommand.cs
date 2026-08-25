@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.DefectRecords;
 
-public record SetDefectRecordActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDefectRecordActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDefectRecordActiveCommandHandler : IRequestHandler<SetDefectRecordActiveCommand, bool>
 {

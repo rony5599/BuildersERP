@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.WbsTasks;
 
-public record CreateWbsTaskCommand(CreateWbsTaskDto Dto) : IRequest<Guid>;
+public record CreateWbsTaskCommand(CreateWbsTaskDto Dto) : IRequest<long>;
 
-public class CreateWbsTaskCommandHandler : IRequestHandler<CreateWbsTaskCommand, Guid>
+public class CreateWbsTaskCommandHandler : IRequestHandler<CreateWbsTaskCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateWbsTaskCommandHandler : IRequestHandler<CreateWbsTaskCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateWbsTaskCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateWbsTaskCommand request, CancellationToken cancellationToken)
     {
         var wbsTask = _mapper.Map<WbsTask>(request.Dto);
         await _unitOfWork.Repository<WbsTask>().AddAsync(wbsTask);

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.PurchaseRequisitions;
 
-public record GetPurchaseRequisitionByIdQuery(Guid Id) : IRequest<PurchaseRequisitionDto?>;
+public record GetPurchaseRequisitionByIdQuery(long Id) : IRequest<PurchaseRequisitionDto?>;
 
 public class GetPurchaseRequisitionByIdQueryHandler : IRequestHandler<GetPurchaseRequisitionByIdQuery, PurchaseRequisitionDto?>
 {

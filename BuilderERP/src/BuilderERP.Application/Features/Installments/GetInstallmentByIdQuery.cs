@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Installments;
 
-public record GetInstallmentByIdQuery(Guid Id) : IRequest<InstallmentDto?>;
+public record GetInstallmentByIdQuery(long Id) : IRequest<InstallmentDto?>;
 
 public class GetInstallmentByIdQueryHandler : IRequestHandler<GetInstallmentByIdQuery, InstallmentDto?>
 {

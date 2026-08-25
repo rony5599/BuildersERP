@@ -24,7 +24,7 @@ public class DrawingApprovalsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? drawingId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? drawingId, int page = 1, int pageSize = 25)
     {
         var approvals = await _mediator.Send(new GetAllDrawingApprovalsQuery(drawingId, page, pageSize));
 
@@ -61,7 +61,7 @@ public class DrawingApprovalsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DrawingApprovalManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var approval = await _mediator.Send(new GetDrawingApprovalByIdQuery(id));
         if (approval is null)
@@ -110,7 +110,7 @@ public class DrawingApprovalsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DrawingApprovalManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDrawingApprovalActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

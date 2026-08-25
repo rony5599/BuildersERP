@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuilderERP.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260823103839_AddProcurementLineItemsAndInventoryLedger")]
-    partial class AddProcurementLineItemsAndInventoryLedger
+    [Migration("20260825093910_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ApartmentMaintenance", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AssignedTo")
                         .HasColumnType("nvarchar(max)");
@@ -45,6 +47,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -65,8 +70,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -78,6 +83,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("PropertyUnitId");
 
@@ -124,11 +132,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("BranchId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("BranchId")
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -200,9 +208,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Attendance", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("AttendanceDate")
                         .HasColumnType("datetime2");
@@ -212,6 +222,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("HoursWorked")
                         .HasPrecision(5, 2)
@@ -229,16 +242,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -249,9 +265,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.AuditLog", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Action")
                         .IsRequired()
@@ -265,13 +283,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<Guid>("EntityId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("EntityId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("EntityName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NewValue")
                         .HasColumnType("nvarchar(max)");
@@ -287,6 +308,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ChangedAt");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("EntityName", "EntityId");
 
                     b.ToTable("AuditLogs");
@@ -294,9 +318,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Booking", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("BookingAmount")
                         .HasPrecision(18, 2)
@@ -305,8 +331,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("BrokerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("BrokerId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("CancellationReason")
                         .HasColumnType("nvarchar(max)");
@@ -320,7 +346,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -335,8 +364,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -349,6 +378,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("Bookings");
@@ -356,9 +388,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.BoqItem", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
@@ -377,6 +411,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -393,8 +430,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
@@ -409,6 +446,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BoqItems");
@@ -416,9 +456,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Branch", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -427,14 +469,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -454,6 +499,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("CompanyId", "Code")
                         .IsUnique();
 
@@ -462,9 +510,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Broker", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -481,6 +531,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -507,14 +560,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Brokers");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.BudgetLine", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("ActualAmount")
                         .HasPrecision(18, 2)
@@ -534,6 +592,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -549,13 +610,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("PeriodStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -564,9 +628,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Building", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -577,6 +643,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -594,13 +663,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<int?>("TotalFloors")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -609,9 +681,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CollectionTarget", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<Guid>("CollectionOfficerId")
                         .HasColumnType("uniqueidentifier");
@@ -621,6 +695,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -646,6 +723,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("CollectionOfficerId", "Year", "Month")
                         .IsUnique();
 
@@ -654,15 +734,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Commission", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<Guid>("BrokerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("BookingId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BrokerId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("CommissionAmount")
                         .HasPrecision(18, 2)
@@ -677,6 +759,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -705,14 +790,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("BrokerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Commissions");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CommonAreaBooking", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
@@ -737,6 +827,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("Fee")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -749,8 +842,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -763,6 +856,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("CommonAreaBookings");
@@ -770,9 +866,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Company", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -789,6 +887,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -817,14 +918,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Contractor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -844,6 +950,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -873,21 +982,26 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Contractors");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ContractorLedger", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Balance")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("ContractorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ContractorId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -906,6 +1020,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -926,14 +1043,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ContractorId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("ContractorLedgers");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CostCenter", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -944,6 +1066,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -961,10 +1086,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -973,15 +1101,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -997,6 +1127,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1006,8 +1139,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("KycStatus")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("LeadId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("LeadId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -1026,6 +1159,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CompanyId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("LeadId");
 
                     b.ToTable("Customers");
@@ -1033,9 +1169,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CustomerCommunication", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CommunicationDate")
                         .HasColumnType("datetime2");
@@ -1046,7 +1184,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -1075,14 +1216,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("CustomerCommunications");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DailyProgress", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1093,6 +1239,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1116,13 +1265,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("ProgressDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -1131,9 +1283,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DefectRecord", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AssignedTo")
                         .HasColumnType("nvarchar(max)");
@@ -1155,6 +1309,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1167,8 +1324,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -1187,6 +1344,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("DefectRecords");
@@ -1194,9 +1354,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DelayEvent", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1211,6 +1373,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1223,8 +1388,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Reason")
                         .HasColumnType("int");
@@ -1232,10 +1397,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("ReportedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("WbsTaskId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("WbsTaskId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -1246,12 +1414,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Department", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BranchId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1262,6 +1432,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1283,14 +1456,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("BranchId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Document", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1298,8 +1476,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("CustomerId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("DocumentNumber")
                         .IsRequired()
@@ -1314,6 +1492,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1330,8 +1511,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -1344,16 +1525,53 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Documents");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.DocumentSequence", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("LastNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ProjectId", "DocumentType")
+                        .IsUnique();
+
+                    b.ToTable("DocumentSequences");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.DocumentVersion", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ChangeNotes")
                         .HasColumnType("nvarchar(max)");
@@ -1364,12 +1582,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DocumentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("DocumentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1397,14 +1618,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DocumentId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("DocumentVersions");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Drawing", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1423,6 +1649,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1435,8 +1664,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -1453,6 +1682,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Drawings");
@@ -1460,9 +1692,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DrawingApproval", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ActionDate")
                         .HasColumnType("datetime2");
@@ -1480,10 +1714,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DrawingId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("DrawingId")
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid?>("DrawingRevisionId")
+                    b.Property<long?>("DrawingRevisionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -1510,14 +1747,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DrawingRevisionId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("DrawingApprovals");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.DrawingRevision", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ChangeDescription")
                         .HasColumnType("nvarchar(max)");
@@ -1528,12 +1770,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DrawingId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("DrawingId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1561,14 +1806,282 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DrawingId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("DrawingRevisions");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrder", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EngineerWorkOrderRequisitionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLatestRevision")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("MotherWorkOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PreviousWorkOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("RevisionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RevisionNo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TermsAndCondition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("WorkOrderNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EngineerWorkOrderRequisitionId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("MotherWorkOrderId");
+
+                    b.HasIndex("PreviousWorkOrderId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("EngineerWorkOrders");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EngineerWorkOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Qty")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("Rate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UnitOfMeasure")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EngineerWorkOrderId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("EngineerWorkOrderDetails");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("EstimatedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RequiredByDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequisitionNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("EngineerWorkOrderRequisitions");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisitionDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EngineerWorkOrderRequisitionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("EstimatedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("EstimatedUnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UnitOfMeasure")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EngineerWorkOrderRequisitionId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("EngineerWorkOrderRequisitionDetails");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Equipment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1579,6 +2092,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("EquipmentCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1613,14 +2129,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Equipment");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.EquipmentRental", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1628,7 +2149,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EquipmentId")
+                    b.Property<long>("EquipmentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -1643,8 +2167,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("RatePerDay")
                         .HasPrecision(18, 2)
@@ -1659,8 +2183,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("SupplierId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("SupplierId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(18, 2)
@@ -1669,6 +2193,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -1679,9 +2206,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.FlatHandover", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1689,7 +2218,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("HandoverDate")
@@ -1714,8 +2246,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -1727,6 +2259,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("FlatHandovers");
@@ -1734,9 +2269,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Floor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1746,6 +2283,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<int?>("FloorNumber")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1763,10 +2303,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TowerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("TowerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("TowerId");
 
@@ -1775,9 +2318,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.FollowUp", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1788,14 +2333,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("FollowUpDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("LeadId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("LeadId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -1814,6 +2362,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("LeadId");
 
                     b.ToTable("FollowUps");
@@ -1821,9 +2372,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.FuelLog", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1831,8 +2384,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EquipmentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("EquipmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("FuelCost")
                         .HasPrecision(18, 2)
@@ -1841,6 +2394,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("FuelQuantity")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1868,14 +2424,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("EquipmentId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("FuelLogs");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.GoodsReceive", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1886,6 +2447,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("GrnNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1899,8 +2463,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PurchaseOrderId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PurchaseOrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("ReceivedAmount")
                         .HasPrecision(18, 2)
@@ -1915,10 +2479,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("PurchaseOrderId");
 
@@ -1929,9 +2496,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.GoodsReceiveDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("BatchNo")
                         .HasColumnType("nvarchar(max)");
@@ -1942,7 +2511,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GoodsReceiveId")
+                    b.Property<long>("GoodsReceiveId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -1952,8 +2524,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -1961,8 +2533,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PurchaseOrderDetailId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PurchaseOrderDetailId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("ReceivedQuantity")
                         .HasPrecision(18, 3)
@@ -1998,6 +2570,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("GoodsReceiveId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("PurchaseOrderDetailId");
@@ -2007,9 +2582,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.IncidentReport", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ClosedDate")
                         .HasColumnType("datetime2");
@@ -2026,6 +2603,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("IncidentDate")
                         .HasColumnType("datetime2");
@@ -2048,8 +2628,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ReportedBy")
                         .IsRequired()
@@ -2063,6 +2643,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("IncidentReports");
@@ -2070,15 +2653,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Inquiry", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("InquiryDate")
                         .HasColumnType("datetime2");
@@ -2089,8 +2677,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("LeadId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("LeadId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -2102,10 +2690,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("LeadId");
 
@@ -2116,9 +2707,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Installment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2133,11 +2726,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("InstallmentNumber")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("InstallmentPlanId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("InstallmentPlanId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2173,6 +2769,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("InstallmentPlanId");
 
                     b.ToTable("Installments");
@@ -2180,15 +2779,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.InstallmentPlan", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("InterestRatePercent")
                         .HasPrecision(5, 2)
@@ -2209,8 +2813,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("NumberOfInstallments")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("SaleAgreementId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("SaleAgreementId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -2224,6 +2828,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("SaleAgreementId");
 
                     b.ToTable("InstallmentPlans");
@@ -2231,9 +2838,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.InventoryTransaction", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("BalanceQuantity")
                         .HasPrecision(18, 3)
@@ -2252,11 +2861,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -2289,10 +2901,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("MaterialId");
 
@@ -2303,9 +2918,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ItemCategory", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -2316,6 +2933,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2333,12 +2953,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ParentCategoryId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ParentCategoryId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Guid")
                         .IsUnique();
 
                     b.HasIndex("ParentCategoryId");
@@ -2348,9 +2971,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ItemPriceHistory", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2369,6 +2994,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("EffectiveDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsContractPrice")
                         .HasColumnType("bit");
 
@@ -2378,8 +3006,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("LeadTimeDays")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("MinimumOrderQuantity")
                         .HasPrecision(18, 3)
@@ -2403,8 +3031,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("SupplierId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("TaxPercent")
                         .HasPrecision(5, 2)
@@ -2423,6 +3051,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("SupplierId");
@@ -2432,9 +3063,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LandDocument", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("AcquisitionDate")
                         .HasColumnType("datetime2");
@@ -2454,6 +3087,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("DocumentNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2479,8 +3115,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("MouzaName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2491,6 +3127,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LandDocuments");
@@ -2498,9 +3137,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LandMutation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ApplicantName")
                         .IsRequired()
@@ -2514,6 +3155,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("DagNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2537,8 +3181,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2548,6 +3192,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LandMutations");
@@ -2555,9 +3202,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LandRegistration", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2568,6 +3217,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("DeedNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2581,8 +3233,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
@@ -2605,6 +3257,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LandRegistrations");
@@ -2612,9 +3267,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Lead", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<Guid?>("AssignedToUserId")
                         .HasColumnType("uniqueidentifier");
@@ -2627,6 +3284,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2661,14 +3321,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AssignedToUserId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Leads");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LegalAgreement", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AgreementNumber")
                         .IsRequired()
@@ -2689,6 +3354,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2705,8 +3373,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2720,6 +3388,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LegalAgreements");
@@ -2727,9 +3398,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LegalCase", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CaseNumber")
                         .IsRequired()
@@ -2754,6 +3427,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("FilingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2775,8 +3451,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("OpposingParty")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2786,6 +3462,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LegalCases");
@@ -2793,15 +3472,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LegalNotice", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2829,8 +3513,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("NoticeType")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2847,6 +3531,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LegalNotices");
@@ -2854,9 +3541,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.MaintenanceRecord", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Cost")
                         .HasPrecision(18, 2)
@@ -2872,7 +3561,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EquipmentId")
+                    b.Property<long>("EquipmentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -2903,14 +3595,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("EquipmentId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("MaintenanceRecords");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.MaintenanceRequest", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AssignedTo")
                         .HasColumnType("nvarchar(max)");
@@ -2924,6 +3621,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -2940,8 +3640,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2964,6 +3664,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("MaintenanceRequests");
@@ -2971,9 +3674,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Material", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("AveragePurchasePrice")
                         .HasPrecision(18, 2)
@@ -2985,8 +3690,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("CategoryId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3000,6 +3705,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("DiscountPercent")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3069,6 +3777,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialCode")
                         .IsUnique();
 
@@ -3077,15 +3788,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.MaterialInspection", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InspectedBy")
                         .IsRequired()
@@ -3100,8 +3816,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -3109,8 +3825,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
@@ -3124,6 +3840,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("ProjectId");
@@ -3133,9 +3852,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Milestone", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ActualDate")
                         .HasColumnType("datetime2");
@@ -3145,6 +3866,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3162,8 +3886,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -3176,6 +3900,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Milestones");
@@ -3183,9 +3910,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Ncr", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ClosedDate")
                         .HasColumnType("datetime2");
@@ -3199,6 +3928,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3216,8 +3948,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("RaisedDate")
                         .HasColumnType("datetime2");
@@ -3233,6 +3965,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Ncrs");
@@ -3240,9 +3975,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.OperatorAssignment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("AssignmentEndDate")
                         .HasColumnType("datetime2");
@@ -3256,7 +3993,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EquipmentId")
+                    b.Property<long>("EquipmentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -3271,15 +4011,18 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -3290,9 +4033,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Overtime", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
@@ -3303,6 +4048,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Hours")
                         .HasPrecision(5, 2)
@@ -3323,17 +4071,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("OvertimeDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("RatePerHour")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -3344,9 +4095,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ParkingSlot", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AllocatedTo")
                         .HasColumnType("nvarchar(max)");
@@ -3356,6 +4109,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3369,8 +4125,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -3387,6 +4143,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ParkingSlots");
@@ -3394,9 +4153,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PaymentReminder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("Channel")
                         .HasColumnType("int");
@@ -3407,11 +4168,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("InstallmentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("InstallmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3442,6 +4206,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("InstallmentId");
 
                     b.ToTable("PaymentReminders");
@@ -3449,12 +4216,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PerformanceEvaluation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("ContractorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ContractorId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3464,6 +4233,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("EvaluationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3477,8 +4249,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("QualityScore")
                         .HasColumnType("int");
@@ -3496,6 +4268,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ContractorId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("PerformanceEvaluations");
@@ -3503,9 +4278,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Permission", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3515,6 +4292,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -3535,6 +4315,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("Name")
                         .IsUnique();
 
@@ -3543,9 +4326,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PpeTracking", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3555,6 +4340,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3580,10 +4368,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("WorkerId");
 
@@ -3592,12 +4383,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Project", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BranchId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -3611,6 +4404,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3638,14 +4434,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("BranchId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PropertyUnit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal?>("Area")
                         .HasPrecision(18, 2)
@@ -3660,7 +4461,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("FloorId")
+                    b.Property<long>("FloorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -3690,14 +4494,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FloorId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("PropertyUnits");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PunchList", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AssignedTo")
                         .HasColumnType("nvarchar(max)");
@@ -3718,6 +4527,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -3737,13 +4549,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -3752,9 +4567,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseOrder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3764,6 +4581,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3795,10 +4615,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("VendorQuotationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("VendorQuotationId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("VendorQuotationId");
 
@@ -3807,9 +4630,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseOrderDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3825,6 +4650,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -3832,8 +4660,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -3845,8 +4673,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<Guid>("PurchaseOrderId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PurchaseOrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("ReceivedQuantity")
                         .HasPrecision(18, 3)
@@ -3877,6 +4705,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("PurchaseOrderId");
@@ -3886,9 +4717,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseRequisition", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3896,8 +4729,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("DepartmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -3905,6 +4738,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("EstimatedAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3917,6 +4753,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
@@ -3935,14 +4774,21 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ProjectId");
+
                     b.ToTable("PurchaseRequisitions");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseRequisitionDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3958,11 +4804,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -3970,8 +4819,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PurchaseRequisitionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PurchaseRequisitionId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
@@ -3985,6 +4834,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("PurchaseRequisitionId");
@@ -3994,9 +4846,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseReturn", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4004,7 +4858,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GoodsReceiveId")
+                    b.Property<long>("GoodsReceiveId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -4041,14 +4898,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("GoodsReceiveId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("PurchaseReturns");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseReturnDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4056,7 +4918,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GoodsReceiveDetailId")
+                    b.Property<long>("GoodsReceiveDetailId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -4066,8 +4931,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -4075,8 +4940,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PurchaseReturnId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PurchaseReturnId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("ReturnQuantity")
                         .HasPrecision(18, 3)
@@ -4109,6 +4974,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("GoodsReceiveDetailId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("PurchaseReturnId");
@@ -4118,9 +4986,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.QualityChecklist", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
@@ -4142,6 +5012,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -4154,8 +5027,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -4165,6 +5038,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("QualityChecklists");
@@ -4172,9 +5048,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Quotation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4182,7 +5060,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -4197,8 +5078,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("QuotedPrice")
                         .HasPrecision(18, 2)
@@ -4214,6 +5095,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("Quotations");
@@ -4221,16 +5105,18 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.RateContract", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ContractNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ContractorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ContractorId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4243,6 +5129,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4260,8 +5149,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(18, 2)
@@ -4274,6 +5163,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ContractorId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("RateContracts");
@@ -4281,9 +5173,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Receipt", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("AmountPaid")
                         .HasPrecision(18, 2)
@@ -4295,8 +5189,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("InstallmentId")
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("InstallmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4325,6 +5222,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("InstallmentId");
 
                     b.ToTable("Receipts");
@@ -4332,9 +5232,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Rfq", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("ClosingDate")
                         .HasColumnType("datetime2");
@@ -4344,6 +5246,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4360,8 +5265,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PurchaseRequisitionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PurchaseRequisitionId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("RfqNumber")
                         .IsRequired()
@@ -4372,6 +5277,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PurchaseRequisitionId");
 
                     b.ToTable("Rfqs");
@@ -4379,9 +5287,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.RfqDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4389,11 +5299,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -4405,8 +5318,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<Guid>("RfqId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("RfqId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Specification")
                         .HasColumnType("nvarchar(max)");
@@ -4415,6 +5328,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("MaterialId");
 
@@ -4425,15 +5341,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.RfqVendor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("InvitedDate")
                         .HasColumnType("datetime2");
@@ -4447,16 +5368,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RfqId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("RfqId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("SupplierId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("SupplierId");
 
@@ -4468,9 +5392,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.RiskAssessment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AssessedBy")
                         .IsRequired()
@@ -4484,6 +5410,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("HazardDescription")
                         .IsRequired()
@@ -4504,8 +5433,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ReviewDate")
                         .HasColumnType("datetime2");
@@ -4514,6 +5443,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -4525,8 +5457,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PermissionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PermissionId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("RoleId", "PermissionId");
 
@@ -4537,9 +5469,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.RunningBill", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("BillDate")
                         .HasColumnType("datetime2");
@@ -4566,6 +5500,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("DeductionAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4594,10 +5531,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("WorkOrderId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkOrderId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("WorkOrderId");
 
@@ -4606,9 +5546,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SafetyAudit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("AuditDate")
                         .HasColumnType("datetime2");
@@ -4626,6 +5568,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Findings")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -4638,8 +5583,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Score")
                         .HasPrecision(5, 2)
@@ -4650,6 +5595,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("SafetyAudits");
@@ -4657,15 +5605,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SafetyInspection", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InspectedBy")
                         .IsRequired()
@@ -4689,8 +5642,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -4700,6 +5653,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("SafetyInspections");
@@ -4707,9 +5663,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SafetyTraining", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CertificateNumber")
                         .HasColumnType("nvarchar(max)");
@@ -4726,6 +5684,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4749,10 +5710,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("WorkerId");
 
@@ -4761,9 +5725,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Salary", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("BasicAmount")
                         .HasPrecision(18, 2)
@@ -4782,6 +5748,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("DeductionAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4815,10 +5784,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WorkerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("WorkerId");
 
@@ -4827,9 +5799,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SaleAgreement", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("AgreementDate")
                         .HasColumnType("datetime2");
@@ -4838,14 +5812,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("BookingId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4870,17 +5847,22 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("BookingId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("SaleAgreements");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SecurityDeposit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("ContractorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ContractorId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -4894,6 +5876,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("DepositDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -4913,12 +5898,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("WorkOrderId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("WorkOrderId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContractorId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("WorkOrderId");
 
@@ -4927,9 +5915,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SecurityIncident", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ActionTaken")
                         .HasColumnType("nvarchar(max)");
@@ -4939,6 +5929,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("IncidentDateTime")
                         .HasColumnType("datetime2");
@@ -4965,8 +5958,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -4982,6 +5975,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("SecurityIncidents");
@@ -4989,9 +5985,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ServiceTicket", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AssignedTo")
                         .HasColumnType("nvarchar(max)");
@@ -5012,6 +6010,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -5027,8 +6028,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("RaisedDate")
                         .HasColumnType("datetime2");
@@ -5049,6 +6050,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("ServiceTickets");
@@ -5056,15 +6060,20 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SiteInspection", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InspectedBy")
                         .IsRequired()
@@ -5088,8 +6097,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -5099,6 +6108,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("SiteInspections");
@@ -5106,9 +6118,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SitePhoto", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Caption")
                         .HasColumnType("nvarchar(max)");
@@ -5119,12 +6133,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DailyProgressId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("DailyProgressId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -5138,8 +6155,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("TakenDate")
                         .HasColumnType("datetime2");
@@ -5148,6 +6165,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DailyProgressId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("SitePhotos");
@@ -5155,9 +6175,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SiteVisit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<Guid?>("AssignedToUserId")
                         .HasColumnType("uniqueidentifier");
@@ -5171,14 +6193,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Feedback")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("LeadId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("LeadId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5186,8 +6211,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -5199,6 +6224,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AssignedToUserId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("LeadId");
 
                     b.HasIndex("PropertyUnitId");
@@ -5208,9 +6236,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SnagItem", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5221,6 +6251,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -5237,8 +6270,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -5261,6 +6294,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("SnagItems");
@@ -5268,9 +6304,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Stock", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5278,14 +6316,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5297,10 +6338,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("WarehouseId");
 
@@ -5312,9 +6356,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.StockAdjustment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("AdjustmentDate")
                         .HasColumnType("datetime2");
@@ -5329,14 +6375,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5352,10 +6401,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("MaterialId");
 
@@ -5366,9 +6418,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.StockIssue", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("ConsumedQuantity")
                         .HasPrecision(18, 3)
@@ -5379,6 +6433,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -5397,8 +6454,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5413,8 +6470,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("WastageQuantity")
                         .HasPrecision(18, 3)
@@ -5425,6 +6482,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("WarehouseId");
@@ -5434,9 +6494,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.StockReturn", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5444,14 +6506,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5474,10 +6539,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("MaterialId");
 
@@ -5488,9 +6556,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.StockTransfer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5498,7 +6568,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("FromWarehouseId")
+                    b.Property<long>("FromWarehouseId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -5507,8 +6580,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5523,8 +6596,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ToWarehouseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ToWarehouseId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("TransferDate")
                         .HasColumnType("datetime2");
@@ -5537,6 +6610,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FromWarehouseId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("ToWarehouseId");
@@ -5546,9 +6622,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Supplier", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -5580,6 +6658,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -5623,14 +6704,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.TestReport", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5642,6 +6728,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -5651,8 +6740,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("LabName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5660,8 +6749,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ReportNumber")
                         .IsRequired()
@@ -5679,6 +6768,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("ProjectId");
@@ -5688,12 +6780,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Tower", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("BuildingId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BuildingId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -5704,6 +6798,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -5725,14 +6822,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("BuildingId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("Towers");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.UtilityBill", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -5753,6 +6855,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -5768,8 +6873,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("PaidDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -5782,6 +6887,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("UtilityBills");
@@ -5789,9 +6897,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.VendorQuotation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5801,6 +6911,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("DeliveryDays")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -5825,16 +6938,19 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("RfqId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("RfqId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("SupplierId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("RfqId");
 
@@ -5845,9 +6961,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.VendorQuotationDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -5866,11 +6984,14 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -5909,10 +7030,13 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
-                    b.Property<Guid>("VendorQuotationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("VendorQuotationId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("MaterialId");
 
@@ -5923,9 +7047,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.VisitorLog", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CheckInTime")
                         .HasColumnType("datetime2");
@@ -5938,6 +7064,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("HostName")
                         .HasColumnType("nvarchar(max)");
@@ -5960,8 +7089,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PurposeOfVisit")
                         .HasColumnType("nvarchar(max)");
@@ -5978,6 +7107,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("VisitorLogs");
@@ -5985,18 +7117,23 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Warehouse", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BranchId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -6017,8 +7154,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("WarehouseCode")
                         .IsRequired()
@@ -6027,6 +7164,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ProjectId");
 
@@ -6038,9 +7178,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Warranty", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -6050,6 +7192,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -6067,8 +7212,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -6088,6 +7233,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("PropertyUnitId");
 
                     b.ToTable("Warranties");
@@ -6095,9 +7243,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.WbsTask", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -6115,6 +7265,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -6131,18 +7284,18 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("PercentComplete")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
-                    b.Property<Guid?>("PropertyUnitId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("PropertyUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
@@ -6151,6 +7304,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -6163,9 +7319,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.WorkOrder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
@@ -6174,8 +7332,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("CompletionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ContractorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ContractorId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -6186,6 +7344,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -6202,8 +7363,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -6216,6 +7377,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ContractorId");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("WorkOrders");
@@ -6223,15 +7387,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Worker", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ContractorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ContractorId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -6242,6 +7408,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("DailyWageRate")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -6276,6 +7445,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContractorId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.ToTable("Workers");
                 });
@@ -6716,6 +7888,88 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Drawing");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrder", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", "EngineerWorkOrderRequisition")
+                        .WithMany()
+                        .HasForeignKey("EngineerWorkOrderRequisitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "MotherWorkOrder")
+                        .WithMany("Revisions")
+                        .HasForeignKey("MotherWorkOrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "PreviousWorkOrder")
+                        .WithMany()
+                        .HasForeignKey("PreviousWorkOrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BuilderERP.Domain.Entities.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrderRequisition");
+
+                    b.Navigation("MotherWorkOrder");
+
+                    b.Navigation("PreviousWorkOrder");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderDetail", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "EngineerWorkOrder")
+                        .WithMany("Details")
+                        .HasForeignKey("EngineerWorkOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrder");
+
+                    b.Navigation("Material");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisitionDetail", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", "EngineerWorkOrderRequisition")
+                        .WithMany("Details")
+                        .HasForeignKey("EngineerWorkOrderRequisitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrderRequisition");
+
+                    b.Navigation("Material");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.EquipmentRental", b =>
@@ -7264,7 +8518,15 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Department");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.PurchaseRequisitionDetail", b =>
@@ -7980,6 +9242,18 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BuilderERP.Domain.Entities.Company", b =>
                 {
                     b.Navigation("Branches");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrder", b =>
+                {
+                    b.Navigation("Details");
+
+                    b.Navigation("Revisions");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", b =>
+                {
+                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Floor", b =>

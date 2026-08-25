@@ -13,7 +13,7 @@ public class CreateAttendanceDtoValidatorTests
     [Fact]
     public void Should_have_error_when_worker_id_is_empty()
     {
-        var model = new CreateAttendanceDto { WorkerId = Guid.Empty, ProjectId = Guid.NewGuid() };
+        var model = new CreateAttendanceDto { WorkerId = 0L, ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkerId);
     }
@@ -21,7 +21,7 @@ public class CreateAttendanceDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateAttendanceDto { WorkerId = Guid.NewGuid(), ProjectId = Guid.Empty };
+        var model = new CreateAttendanceDto { WorkerId = 1L, ProjectId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -29,7 +29,7 @@ public class CreateAttendanceDtoValidatorTests
     [Fact]
     public void Should_have_error_when_status_is_invalid()
     {
-        var model = new CreateAttendanceDto { WorkerId = Guid.NewGuid(), ProjectId = Guid.NewGuid(), Status = (AttendanceStatus)999 };
+        var model = new CreateAttendanceDto { WorkerId = 1L, ProjectId = 2L, Status = (AttendanceStatus)999 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Status);
     }
@@ -37,7 +37,7 @@ public class CreateAttendanceDtoValidatorTests
     [Fact]
     public void Should_have_error_when_hours_worked_is_negative()
     {
-        var model = new CreateAttendanceDto { WorkerId = Guid.NewGuid(), ProjectId = Guid.NewGuid(), HoursWorked = -1 };
+        var model = new CreateAttendanceDto { WorkerId = 1L, ProjectId = 2L, HoursWorked = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.HoursWorked);
     }
@@ -47,8 +47,8 @@ public class CreateAttendanceDtoValidatorTests
     {
         var model = new CreateAttendanceDto
         {
-            WorkerId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid(),
+            WorkerId = 1L,
+            ProjectId = 2L,
             AttendanceDate = DateTime.UtcNow,
             Status = AttendanceStatus.Present,
             HoursWorked = 8

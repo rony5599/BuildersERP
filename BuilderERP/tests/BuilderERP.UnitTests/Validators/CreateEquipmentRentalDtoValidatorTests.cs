@@ -13,7 +13,7 @@ public class CreateEquipmentRentalDtoValidatorTests
     [Fact]
     public void Should_have_error_when_equipment_id_is_empty()
     {
-        var model = new CreateEquipmentRentalDto { EquipmentId = Guid.Empty, ProjectId = Guid.NewGuid(), RatePerDay = 100, Status = RentalStatus.Active };
+        var model = new CreateEquipmentRentalDto { EquipmentId = 0L, ProjectId = 1L, RatePerDay = 100, Status = RentalStatus.Active };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.EquipmentId);
     }
@@ -21,7 +21,7 @@ public class CreateEquipmentRentalDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateEquipmentRentalDto { EquipmentId = Guid.NewGuid(), ProjectId = Guid.Empty, RatePerDay = 100, Status = RentalStatus.Active };
+        var model = new CreateEquipmentRentalDto { EquipmentId = 1L, ProjectId = 0L, RatePerDay = 100, Status = RentalStatus.Active };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -29,7 +29,7 @@ public class CreateEquipmentRentalDtoValidatorTests
     [Fact]
     public void Should_have_error_when_rate_per_day_is_negative()
     {
-        var model = new CreateEquipmentRentalDto { EquipmentId = Guid.NewGuid(), ProjectId = Guid.NewGuid(), RatePerDay = -1, Status = RentalStatus.Active };
+        var model = new CreateEquipmentRentalDto { EquipmentId = 1L, ProjectId = 2L, RatePerDay = -1, Status = RentalStatus.Active };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.RatePerDay);
     }
@@ -37,7 +37,7 @@ public class CreateEquipmentRentalDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateEquipmentRentalDto { EquipmentId = Guid.NewGuid(), ProjectId = Guid.NewGuid(), RatePerDay = 100, Status = RentalStatus.Active };
+        var model = new CreateEquipmentRentalDto { EquipmentId = 1L, ProjectId = 2L, RatePerDay = 100, Status = RentalStatus.Active };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

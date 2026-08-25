@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Warehouses;
 
-public record GetAllWarehousesQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<WarehouseDto>>;
+public record GetAllWarehousesQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<WarehouseDto>>;
 
 public class GetAllWarehousesQueryHandler : IRequestHandler<GetAllWarehousesQuery, PagedResult<WarehouseDto>>
 {

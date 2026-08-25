@@ -1,11 +1,11 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class PerformanceEvaluation : BaseEntity
 {
-    public Guid ContractorId { get; set; }
+    public long ContractorId { get; set; }
     public Contractor Contractor { get; set; } = null!;
 
-    public Guid? ProjectId { get; set; }
+    public long? ProjectId { get; set; }
     public Project? Project { get; set; }
 
     public DateTime EvaluationDate { get; set; } = DateTime.UtcNow;

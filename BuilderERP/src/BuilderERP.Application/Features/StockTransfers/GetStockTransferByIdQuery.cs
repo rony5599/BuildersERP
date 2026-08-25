@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.StockTransfers;
 
-public record GetStockTransferByIdQuery(Guid Id) : IRequest<StockTransferDto?>;
+public record GetStockTransferByIdQuery(long Id) : IRequest<StockTransferDto?>;
 
 public class GetStockTransferByIdQueryHandler : IRequestHandler<GetStockTransferByIdQuery, StockTransferDto?>
 {

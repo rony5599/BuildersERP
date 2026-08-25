@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ApartmentMaintenances;
 
-public record GetApartmentMaintenanceByIdQuery(Guid Id) : IRequest<ApartmentMaintenanceDto?>;
+public record GetApartmentMaintenanceByIdQuery(long Id) : IRequest<ApartmentMaintenanceDto?>;
 
 public class GetApartmentMaintenanceByIdQueryHandler : IRequestHandler<GetApartmentMaintenanceByIdQuery, ApartmentMaintenanceDto?>
 {

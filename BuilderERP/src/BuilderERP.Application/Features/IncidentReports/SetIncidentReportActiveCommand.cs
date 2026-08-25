@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.IncidentReports;
 
-public record SetIncidentReportActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetIncidentReportActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetIncidentReportActiveCommandHandler : IRequestHandler<SetIncidentReportActiveCommand, bool>
 {

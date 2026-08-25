@@ -12,7 +12,7 @@ public class CreateDailyProgressDtoValidatorTests
     [Fact]
     public void Should_have_error_when_description_is_empty()
     {
-        var model = new CreateDailyProgressDto { Description = "", PercentComplete = 50, ManpowerCount = 10, ProjectId = Guid.NewGuid() };
+        var model = new CreateDailyProgressDto { Description = "", PercentComplete = 50, ManpowerCount = 10, ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
@@ -20,7 +20,7 @@ public class CreateDailyProgressDtoValidatorTests
     [Fact]
     public void Should_have_error_when_percent_complete_is_out_of_range()
     {
-        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 150, ManpowerCount = 10, ProjectId = Guid.NewGuid() };
+        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 150, ManpowerCount = 10, ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PercentComplete);
     }
@@ -28,7 +28,7 @@ public class CreateDailyProgressDtoValidatorTests
     [Fact]
     public void Should_have_error_when_manpower_count_is_negative()
     {
-        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 50, ManpowerCount = -1, ProjectId = Guid.NewGuid() };
+        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 50, ManpowerCount = -1, ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ManpowerCount);
     }
@@ -36,7 +36,7 @@ public class CreateDailyProgressDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 50, ManpowerCount = 10, ProjectId = Guid.Empty };
+        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 50, ManpowerCount = 10, ProjectId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -44,7 +44,7 @@ public class CreateDailyProgressDtoValidatorTests
     [Fact]
     public void Should_not_have_error_for_valid_model()
     {
-        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 50, ManpowerCount = 10, ProjectId = Guid.NewGuid() };
+        var model = new CreateDailyProgressDto { Description = "Foundation work", PercentComplete = 50, ManpowerCount = 10, ProjectId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }

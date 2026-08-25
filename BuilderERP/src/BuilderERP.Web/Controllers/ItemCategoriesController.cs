@@ -61,7 +61,7 @@ public class ItemCategoriesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ItemCategoryManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var category = await _mediator.Send(new GetItemCategoryByIdQuery(id));
         if (category is null)
@@ -106,7 +106,7 @@ public class ItemCategoriesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ItemCategoryManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetItemCategoryActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.FuelLogs;
 
-public record CreateFuelLogCommand(CreateFuelLogDto Dto) : IRequest<Guid>;
+public record CreateFuelLogCommand(CreateFuelLogDto Dto) : IRequest<long>;
 
-public class CreateFuelLogCommandHandler : IRequestHandler<CreateFuelLogCommand, Guid>
+public class CreateFuelLogCommandHandler : IRequestHandler<CreateFuelLogCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateFuelLogCommandHandler : IRequestHandler<CreateFuelLogCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateFuelLogCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateFuelLogCommand request, CancellationToken cancellationToken)
     {
         var log = _mapper.Map<FuelLog>(request.Dto);
         await _unitOfWork.Repository<FuelLog>().AddAsync(log);

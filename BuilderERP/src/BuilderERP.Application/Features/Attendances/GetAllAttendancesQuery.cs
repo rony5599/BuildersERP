@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Attendances;
 
-public record GetAllAttendancesQuery(Guid? WorkerId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<AttendanceDto>>;
+public record GetAllAttendancesQuery(long? WorkerId = null, long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<AttendanceDto>>;
 
 public class GetAllAttendancesQueryHandler : IRequestHandler<GetAllAttendancesQuery, PagedResult<AttendanceDto>>
 {

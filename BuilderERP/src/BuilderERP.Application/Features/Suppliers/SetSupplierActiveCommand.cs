@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Suppliers;
 
-public record SetSupplierActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSupplierActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSupplierActiveCommandHandler : IRequestHandler<SetSupplierActiveCommand, bool>
 {

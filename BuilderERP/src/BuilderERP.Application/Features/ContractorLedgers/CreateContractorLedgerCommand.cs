@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ContractorLedgers;
 
-public record CreateContractorLedgerCommand(CreateContractorLedgerDto Dto) : IRequest<Guid>;
+public record CreateContractorLedgerCommand(CreateContractorLedgerDto Dto) : IRequest<long>;
 
-public class CreateContractorLedgerCommandHandler : IRequestHandler<CreateContractorLedgerCommand, Guid>
+public class CreateContractorLedgerCommandHandler : IRequestHandler<CreateContractorLedgerCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ public class CreateContractorLedgerCommandHandler : IRequestHandler<CreateContra
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateContractorLedgerCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateContractorLedgerCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<ContractorLedger>(request.Dto);
 

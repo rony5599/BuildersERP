@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.QualityChecklists;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class QualityChecklistsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.QualityChecklistManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var checklist = await _mediator.Send(new GetQualityChecklistByIdQuery(id));
         if (checklist is null)
@@ -111,7 +111,7 @@ public class QualityChecklistsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.QualityChecklistManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetQualityChecklistActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

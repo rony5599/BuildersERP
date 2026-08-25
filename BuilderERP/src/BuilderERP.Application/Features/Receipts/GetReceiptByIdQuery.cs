@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Receipts;
 
-public record GetReceiptByIdQuery(Guid Id) : IRequest<ReceiptDto?>;
+public record GetReceiptByIdQuery(long Id) : IRequest<ReceiptDto?>;
 
 public class GetReceiptByIdQueryHandler : IRequestHandler<GetReceiptByIdQuery, ReceiptDto?>
 {

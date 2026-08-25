@@ -12,7 +12,7 @@ public class CreateSafetyTrainingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_worker_id_is_empty()
     {
-        var model = new CreateSafetyTrainingDto { WorkerId = Guid.Empty, TrainingTitle = "Fire Safety" };
+        var model = new CreateSafetyTrainingDto { WorkerId = 0L, TrainingTitle = "Fire Safety" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkerId);
     }
@@ -20,7 +20,7 @@ public class CreateSafetyTrainingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_training_title_is_empty()
     {
-        var model = new CreateSafetyTrainingDto { WorkerId = Guid.NewGuid(), TrainingTitle = "" };
+        var model = new CreateSafetyTrainingDto { WorkerId = 1L, TrainingTitle = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TrainingTitle);
     }
@@ -28,7 +28,7 @@ public class CreateSafetyTrainingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_duration_hours_is_negative()
     {
-        var model = new CreateSafetyTrainingDto { WorkerId = Guid.NewGuid(), TrainingTitle = "Fire Safety", DurationHours = -1 };
+        var model = new CreateSafetyTrainingDto { WorkerId = 1L, TrainingTitle = "Fire Safety", DurationHours = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DurationHours);
     }
@@ -38,7 +38,7 @@ public class CreateSafetyTrainingDtoValidatorTests
     {
         var model = new CreateSafetyTrainingDto
         {
-            WorkerId = Guid.NewGuid(),
+            WorkerId = 1L,
             TrainingTitle = "Fire Safety",
             TrainingDate = DateTime.UtcNow,
             TrainerName = "Jane Smith",

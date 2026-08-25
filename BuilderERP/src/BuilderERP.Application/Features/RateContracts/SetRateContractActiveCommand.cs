@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.RateContracts;
 
-public record SetRateContractActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetRateContractActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetRateContractActiveCommandHandler : IRequestHandler<SetRateContractActiveCommand, bool>
 {

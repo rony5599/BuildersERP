@@ -7,9 +7,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SaleAgreements;
 
-public record CreateSaleAgreementCommand(CreateSaleAgreementDto Dto) : IRequest<Guid>;
+public record CreateSaleAgreementCommand(CreateSaleAgreementDto Dto) : IRequest<long>;
 
-public class CreateSaleAgreementCommandHandler : IRequestHandler<CreateSaleAgreementCommand, Guid>
+public class CreateSaleAgreementCommandHandler : IRequestHandler<CreateSaleAgreementCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ public class CreateSaleAgreementCommandHandler : IRequestHandler<CreateSaleAgree
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateSaleAgreementCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateSaleAgreementCommand request, CancellationToken cancellationToken)
     {
         var agreement = _mapper.Map<SaleAgreement>(request.Dto);
         await _unitOfWork.Repository<SaleAgreement>().AddAsync(agreement);
@@ -35,7 +35,7 @@ public class CreateSaleAgreementCommandHandler : IRequestHandler<CreateSaleAgree
 
 internal static class SaleAgreementUnitStatusSync
 {
-    public static async Task ApplyAsync(IUnitOfWork unitOfWork, Guid bookingId, AgreementStatus status)
+    public static async Task ApplyAsync(IUnitOfWork unitOfWork, long bookingId, AgreementStatus status)
     {
         BookingStatus? newStatus = status switch
         {

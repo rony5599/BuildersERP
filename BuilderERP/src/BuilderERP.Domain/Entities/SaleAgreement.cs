@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -10,6 +10,6 @@ public class SaleAgreement : BaseEntity
     public AgreementStatus Status { get; set; } = AgreementStatus.Draft;
     public bool IsActive { get; set; } = true;
 
-    public Guid BookingId { get; set; }
+    public long BookingId { get; set; }
     public Booking Booking { get; set; } = null!;
 }

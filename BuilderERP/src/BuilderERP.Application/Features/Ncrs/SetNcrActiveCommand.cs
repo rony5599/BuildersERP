@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Ncrs;
 
-public record SetNcrActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetNcrActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetNcrActiveCommandHandler : IRequestHandler<SetNcrActiveCommand, bool>
 {

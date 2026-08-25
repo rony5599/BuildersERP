@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Buildings;
 
-public record CreateBuildingCommand(CreateBuildingDto Dto) : IRequest<Guid>;
+public record CreateBuildingCommand(CreateBuildingDto Dto) : IRequest<long>;
 
-public class CreateBuildingCommandHandler : IRequestHandler<CreateBuildingCommand, Guid>
+public class CreateBuildingCommandHandler : IRequestHandler<CreateBuildingCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateBuildingCommandHandler : IRequestHandler<CreateBuildingComman
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateBuildingCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateBuildingCommand request, CancellationToken cancellationToken)
     {
         var building = _mapper.Map<Building>(request.Dto);
         await _unitOfWork.Repository<Building>().AddAsync(building);

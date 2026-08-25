@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class SnagItemDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string SnagNumber { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string? Location { get; set; }
@@ -13,7 +13,7 @@ public class SnagItemDto
     public DateTime ReportedDate { get; set; }
     public DateTime? ResolvedDate { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
     public bool IsActive { get; set; }
     public string PropertyUnitName { get; set; } = string.Empty;
 }
@@ -28,12 +28,12 @@ public class CreateSnagItemDto
     public DateTime ReportedDate { get; set; }
     public DateTime? ResolvedDate { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }
 
 public class UpdateSnagItemDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string SnagNumber { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string? Location { get; set; }
@@ -42,5 +42,5 @@ public class UpdateSnagItemDto
     public DateTime ReportedDate { get; set; }
     public DateTime? ResolvedDate { get; set; }
     public string? Remarks { get; set; }
-    public Guid PropertyUnitId { get; set; }
+    public long PropertyUnitId { get; set; }
 }

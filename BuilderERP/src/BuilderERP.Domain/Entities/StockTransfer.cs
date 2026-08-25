@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class StockTransfer : BaseEntity
 {
@@ -8,12 +8,12 @@ public class StockTransfer : BaseEntity
     public string? Remarks { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 
-    public Guid FromWarehouseId { get; set; }
+    public long FromWarehouseId { get; set; }
     public Warehouse FromWarehouse { get; set; } = null!;
 
-    public Guid ToWarehouseId { get; set; }
+    public long ToWarehouseId { get; set; }
     public Warehouse ToWarehouse { get; set; } = null!;
 }

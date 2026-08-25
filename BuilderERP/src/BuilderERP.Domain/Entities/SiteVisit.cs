@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -9,10 +9,10 @@ public class SiteVisit : BaseEntity
     public string? Feedback { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid LeadId { get; set; }
+    public long LeadId { get; set; }
     public Lead Lead { get; set; } = null!;
 
-    public Guid? PropertyUnitId { get; set; }
+    public long? PropertyUnitId { get; set; }
     public PropertyUnit? PropertyUnit { get; set; }
 
     public Guid? AssignedToUserId { get; set; }

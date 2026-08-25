@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Stocks;
 
-public record SetStockActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetStockActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetStockActiveCommandHandler : IRequestHandler<SetStockActiveCommand, bool>
 {

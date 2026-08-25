@@ -13,7 +13,7 @@ public class CreateIncidentReportDtoValidatorTests
     [Fact]
     public void Should_have_error_when_project_id_is_empty()
     {
-        var model = new CreateIncidentReportDto { ProjectId = Guid.Empty, ReportedBy = "John Doe", Description = "Slip and fall" };
+        var model = new CreateIncidentReportDto { ProjectId = 0L, ReportedBy = "John Doe", Description = "Slip and fall" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
@@ -21,7 +21,7 @@ public class CreateIncidentReportDtoValidatorTests
     [Fact]
     public void Should_have_error_when_reported_by_is_empty()
     {
-        var model = new CreateIncidentReportDto { ProjectId = Guid.NewGuid(), ReportedBy = "", Description = "Slip and fall" };
+        var model = new CreateIncidentReportDto { ProjectId = 1L, ReportedBy = "", Description = "Slip and fall" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ReportedBy);
     }
@@ -29,7 +29,7 @@ public class CreateIncidentReportDtoValidatorTests
     [Fact]
     public void Should_have_error_when_description_is_empty()
     {
-        var model = new CreateIncidentReportDto { ProjectId = Guid.NewGuid(), ReportedBy = "John Doe", Description = "" };
+        var model = new CreateIncidentReportDto { ProjectId = 1L, ReportedBy = "John Doe", Description = "" };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
     }
@@ -39,7 +39,7 @@ public class CreateIncidentReportDtoValidatorTests
     {
         var model = new CreateIncidentReportDto
         {
-            ProjectId = Guid.NewGuid(),
+            ProjectId = 1L,
             ReportedBy = "John Doe",
             Description = "Slip and fall near the scaffolding",
             Severity = IncidentSeverity.Major,

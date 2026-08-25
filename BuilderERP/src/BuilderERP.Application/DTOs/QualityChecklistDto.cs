@@ -4,8 +4,8 @@ namespace BuilderERP.Application.DTOs;
 
 public class QualityChecklistDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public string ChecklistName { get; set; } = string.Empty;
     public string? Category { get; set; }
@@ -18,7 +18,7 @@ public class QualityChecklistDto
 
 public class CreateQualityChecklistDto
 {
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public string ChecklistName { get; set; } = string.Empty;
     public string? Category { get; set; }
     public DateTime ChecklistDate { get; set; } = DateTime.UtcNow;
@@ -29,8 +29,8 @@ public class CreateQualityChecklistDto
 
 public class UpdateQualityChecklistDto
 {
-    public Guid Id { get; set; }
-    public Guid ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
     public string ChecklistName { get; set; } = string.Empty;
     public string? Category { get; set; }
     public DateTime ChecklistDate { get; set; }

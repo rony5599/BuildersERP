@@ -24,7 +24,7 @@ public class ContractorLedgersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? contractorId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? contractorId, int page = 1, int pageSize = 25)
     {
         var ledgers = await _mediator.Send(new GetAllContractorLedgersQuery(contractorId, page, pageSize));
         ViewBag.SelectedContractorId = contractorId;
@@ -62,7 +62,7 @@ public class ContractorLedgersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.ContractorLedgerManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var ledger = await _mediator.Send(new GetContractorLedgerByIdQuery(id));
         if (ledger is null)
@@ -109,7 +109,7 @@ public class ContractorLedgersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.ContractorLedgerManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetContractorLedgerActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

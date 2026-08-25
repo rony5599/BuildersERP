@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -15,12 +15,12 @@ public class GoodsReceiveDetail : BaseEntity
     public decimal TaxAmount { get; set; }
     public decimal LineTotal { get; set; }
 
-    public Guid GoodsReceiveId { get; set; }
+    public long GoodsReceiveId { get; set; }
     public GoodsReceive GoodsReceive { get; set; } = null!;
 
-    public Guid PurchaseOrderDetailId { get; set; }
+    public long PurchaseOrderDetailId { get; set; }
     public PurchaseOrderDetail PurchaseOrderDetail { get; set; } = null!;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 }

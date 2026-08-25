@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.DailyProgresses;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -25,7 +25,7 @@ public class DailyProgressesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var items = await _mediator.Send(new GetAllDailyProgressesQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -63,7 +63,7 @@ public class DailyProgressesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.DailyProgressManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetDailyProgressByIdQuery(id));
         if (item is null)
@@ -111,7 +111,7 @@ public class DailyProgressesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.DailyProgressManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetDailyProgressActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

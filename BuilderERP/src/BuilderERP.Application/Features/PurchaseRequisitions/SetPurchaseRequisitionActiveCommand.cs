@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.PurchaseRequisitions;
 
-public record SetPurchaseRequisitionActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetPurchaseRequisitionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetPurchaseRequisitionActiveCommandHandler : IRequestHandler<SetPurchaseRequisitionActiveCommand, bool>
 {

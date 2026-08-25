@@ -2,7 +2,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class StockIssueDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string IssueNumber { get; set; } = string.Empty;
     public DateTime IssueDate { get; set; }
     public decimal Quantity { get; set; }
@@ -12,11 +12,11 @@ public class StockIssueDto
     public string? WastageReason { get; set; }
     public string? Remarks { get; set; }
     public bool IsActive { get; set; }
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public string MaterialName { get; set; } = string.Empty;
-    public Guid WarehouseId { get; set; }
+    public long WarehouseId { get; set; }
     public string WarehouseName { get; set; } = string.Empty;
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
 }
 
@@ -30,13 +30,13 @@ public class CreateStockIssueDto
     public decimal WastageQuantity { get; set; }
     public string? WastageReason { get; set; }
     public string? Remarks { get; set; }
-    public Guid MaterialId { get; set; }
-    public Guid WarehouseId { get; set; }
+    public long MaterialId { get; set; }
+    public long WarehouseId { get; set; }
 }
 
 public class UpdateStockIssueDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string IssueNumber { get; set; } = string.Empty;
     public DateTime IssueDate { get; set; }
     public decimal Quantity { get; set; }
@@ -45,6 +45,6 @@ public class UpdateStockIssueDto
     public decimal WastageQuantity { get; set; }
     public string? WastageReason { get; set; }
     public string? Remarks { get; set; }
-    public Guid MaterialId { get; set; }
-    public Guid WarehouseId { get; set; }
+    public long MaterialId { get; set; }
+    public long WarehouseId { get; set; }
 }

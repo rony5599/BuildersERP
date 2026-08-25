@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ParkingSlots;
 
-public record GetParkingSlotByIdQuery(Guid Id) : IRequest<ParkingSlotDto?>;
+public record GetParkingSlotByIdQuery(long Id) : IRequest<ParkingSlotDto?>;
 
 public class GetParkingSlotByIdQueryHandler : IRequestHandler<GetParkingSlotByIdQuery, ParkingSlotDto?>
 {

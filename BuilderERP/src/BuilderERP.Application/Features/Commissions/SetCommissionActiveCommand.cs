@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Commissions;
 
-public record SetCommissionActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetCommissionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetCommissionActiveCommandHandler : IRequestHandler<SetCommissionActiveCommand, bool>
 {

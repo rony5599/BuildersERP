@@ -12,13 +12,13 @@ public class CreatePurchaseOrderDtoValidatorTests
 
     private static List<CreatePurchaseOrderDetailDto> ValidDetails() => new()
     {
-        new CreatePurchaseOrderDetailDto { MaterialId = Guid.NewGuid(), OrderedQuantity = 10, UnitPrice = 100 }
+        new CreatePurchaseOrderDetailDto { MaterialId = 1L, OrderedQuantity = 10, UnitPrice = 100 }
     };
 
     [Fact]
     public void Should_have_error_when_details_is_empty()
     {
-        var model = new CreatePurchaseOrderDto { DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.NewGuid(), Details = new() };
+        var model = new CreatePurchaseOrderDto { DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = 1L, Details = new() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Details);
     }
@@ -26,7 +26,7 @@ public class CreatePurchaseOrderDtoValidatorTests
     [Fact]
     public void Should_have_error_when_vendor_quotation_id_is_empty()
     {
-        var model = new CreatePurchaseOrderDto { DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = Guid.Empty, Details = ValidDetails() };
+        var model = new CreatePurchaseOrderDto { DeliveryDate = DateTime.UtcNow.AddDays(10), VendorQuotationId = 0L, Details = ValidDetails() };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.VendorQuotationId);
     }
@@ -37,7 +37,7 @@ public class CreatePurchaseOrderDtoValidatorTests
         var model = new CreatePurchaseOrderDto
         {
             DeliveryDate = DateTime.UtcNow.AddDays(10),
-            VendorQuotationId = Guid.NewGuid(),
+            VendorQuotationId = 1L,
             Status = PurchaseOrderStatus.Draft,
             Details = ValidDetails()
         };

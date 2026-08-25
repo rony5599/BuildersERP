@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Milestones;
 
-public record GetAllMilestonesQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MilestoneDto>>;
+public record GetAllMilestonesQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MilestoneDto>>;
 
 public class GetAllMilestonesQueryHandler : IRequestHandler<GetAllMilestonesQuery, PagedResult<MilestoneDto>>
 {

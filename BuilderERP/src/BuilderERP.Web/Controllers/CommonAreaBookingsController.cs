@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CommonAreaBookings;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class CommonAreaBookingsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CommonAreaBookingManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetCommonAreaBookingByIdQuery(id));
         if (item is null)
@@ -113,7 +113,7 @@ public class CommonAreaBookingsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CommonAreaBookingManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCommonAreaBookingActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.TestReports;
 
-public record GetAllTestReportsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<TestReportDto>>;
+public record GetAllTestReportsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<TestReportDto>>;
 
 public class GetAllTestReportsQueryHandler : IRequestHandler<GetAllTestReportsQuery, PagedResult<TestReportDto>>
 {

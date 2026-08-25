@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.VisitorLogs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class VisitorLogsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.VisitorLogManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetVisitorLogByIdQuery(id));
         if (item is null)
@@ -114,7 +114,7 @@ public class VisitorLogsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.VisitorLogManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetVisitorLogActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

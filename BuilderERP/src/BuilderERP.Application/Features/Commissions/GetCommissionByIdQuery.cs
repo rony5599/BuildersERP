@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Commissions;
 
-public record GetCommissionByIdQuery(Guid Id) : IRequest<CommissionDto?>;
+public record GetCommissionByIdQuery(long Id) : IRequest<CommissionDto?>;
 
 public class GetCommissionByIdQueryHandler : IRequestHandler<GetCommissionByIdQuery, CommissionDto?>
 {

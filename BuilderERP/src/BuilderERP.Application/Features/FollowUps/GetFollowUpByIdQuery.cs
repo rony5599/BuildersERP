@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.FollowUps;
 
-public record GetFollowUpByIdQuery(Guid Id) : IRequest<FollowUpDto?>;
+public record GetFollowUpByIdQuery(long Id) : IRequest<FollowUpDto?>;
 
 public class GetFollowUpByIdQueryHandler : IRequestHandler<GetFollowUpByIdQuery, FollowUpDto?>
 {

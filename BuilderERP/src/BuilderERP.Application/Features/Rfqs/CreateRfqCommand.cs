@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Rfqs;
 
-public record CreateRfqCommand(CreateRfqDto Dto) : IRequest<Guid>;
+public record CreateRfqCommand(CreateRfqDto Dto) : IRequest<long>;
 
-public class CreateRfqCommandHandler : IRequestHandler<CreateRfqCommand, Guid>
+public class CreateRfqCommandHandler : IRequestHandler<CreateRfqCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ public class CreateRfqCommandHandler : IRequestHandler<CreateRfqCommand, Guid>
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreateRfqCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateRfqCommand request, CancellationToken cancellationToken)
     {
         var projectId = await _unitOfWork.Repository<PurchaseRequisition>().Query()
             .Where(r => r.Id == request.Dto.PurchaseRequisitionId)

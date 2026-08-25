@@ -2,14 +2,14 @@ namespace BuilderERP.Application.DTOs;
 
 public class WarehouseDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string WarehouseCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Location { get; set; }
     public bool IsActive { get; set; }
-    public Guid BranchId { get; set; }
+    public long BranchId { get; set; }
     public string BranchName { get; set; } = string.Empty;
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
 }
 
@@ -18,16 +18,16 @@ public class CreateWarehouseDto
     public string WarehouseCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Location { get; set; }
-    public Guid BranchId { get; set; }
-    public Guid ProjectId { get; set; }
+    public long BranchId { get; set; }
+    public long ProjectId { get; set; }
 }
 
 public class UpdateWarehouseDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string WarehouseCode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Location { get; set; }
-    public Guid BranchId { get; set; }
-    public Guid ProjectId { get; set; }
+    public long BranchId { get; set; }
+    public long ProjectId { get; set; }
 }

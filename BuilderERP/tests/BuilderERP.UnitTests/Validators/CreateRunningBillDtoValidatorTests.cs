@@ -13,7 +13,7 @@ public class CreateRunningBillDtoValidatorTests
     [Fact]
     public void Should_have_error_when_bill_number_is_empty()
     {
-        var model = new CreateRunningBillDto { BillNumber = "", WorkOrderId = Guid.NewGuid(), WorkDoneAmount = 1000 };
+        var model = new CreateRunningBillDto { BillNumber = "", WorkOrderId = 1L, WorkDoneAmount = 1000 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.BillNumber);
     }
@@ -21,7 +21,7 @@ public class CreateRunningBillDtoValidatorTests
     [Fact]
     public void Should_have_error_when_work_order_id_is_empty()
     {
-        var model = new CreateRunningBillDto { BillNumber = "RB-001", WorkOrderId = Guid.Empty, WorkDoneAmount = 1000 };
+        var model = new CreateRunningBillDto { BillNumber = "RB-001", WorkOrderId = 0L, WorkDoneAmount = 1000 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkOrderId);
     }
@@ -29,7 +29,7 @@ public class CreateRunningBillDtoValidatorTests
     [Fact]
     public void Should_have_error_when_work_done_amount_is_negative()
     {
-        var model = new CreateRunningBillDto { BillNumber = "RB-001", WorkOrderId = Guid.NewGuid(), WorkDoneAmount = -1 };
+        var model = new CreateRunningBillDto { BillNumber = "RB-001", WorkOrderId = 1L, WorkDoneAmount = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.WorkDoneAmount);
     }
@@ -37,7 +37,7 @@ public class CreateRunningBillDtoValidatorTests
     [Fact]
     public void Should_have_error_when_deduction_amount_is_negative()
     {
-        var model = new CreateRunningBillDto { BillNumber = "RB-001", WorkOrderId = Guid.NewGuid(), WorkDoneAmount = 1000, DeductionAmount = -1 };
+        var model = new CreateRunningBillDto { BillNumber = "RB-001", WorkOrderId = 1L, WorkDoneAmount = 1000, DeductionAmount = -1 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DeductionAmount);
     }
@@ -48,7 +48,7 @@ public class CreateRunningBillDtoValidatorTests
         var model = new CreateRunningBillDto
         {
             BillNumber = "RB-001",
-            WorkOrderId = Guid.NewGuid(),
+            WorkOrderId = 1L,
             WorkDoneAmount = 1000,
             PreviousBillAmount = 200,
             DeductionAmount = 50,

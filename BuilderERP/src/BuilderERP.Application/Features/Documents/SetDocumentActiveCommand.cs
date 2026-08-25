@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Documents;
 
-public record SetDocumentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetDocumentActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetDocumentActiveCommandHandler : IRequestHandler<SetDocumentActiveCommand, bool>
 {

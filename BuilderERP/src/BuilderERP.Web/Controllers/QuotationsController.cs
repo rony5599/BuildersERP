@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Application.Features.Quotations;
@@ -63,7 +63,7 @@ public class QuotationsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.QuotationManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var quotation = await _mediator.Send(new GetQuotationByIdQuery(id));
         if (quotation is null)
@@ -110,7 +110,7 @@ public class QuotationsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.QuotationManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetQuotationActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

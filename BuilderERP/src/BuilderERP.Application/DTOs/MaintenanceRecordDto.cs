@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class MaintenanceRecordDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public MaintenanceType MaintenanceType { get; set; }
     public DateTime MaintenanceDate { get; set; }
     public string Description { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ public class MaintenanceRecordDto
     public MaintenanceStatus Status { get; set; }
     public DateTime? NextServiceDate { get; set; }
     public bool IsActive { get; set; }
-    public Guid EquipmentId { get; set; }
+    public long EquipmentId { get; set; }
     public string EquipmentName { get; set; } = string.Empty;
 }
 
@@ -24,17 +24,17 @@ public class CreateMaintenanceRecordDto
     public decimal Cost { get; set; }
     public MaintenanceStatus Status { get; set; } = MaintenanceStatus.Scheduled;
     public DateTime? NextServiceDate { get; set; }
-    public Guid EquipmentId { get; set; }
+    public long EquipmentId { get; set; }
 }
 
 public class UpdateMaintenanceRecordDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public MaintenanceType MaintenanceType { get; set; }
     public DateTime MaintenanceDate { get; set; }
     public string Description { get; set; } = string.Empty;
     public decimal Cost { get; set; }
     public MaintenanceStatus Status { get; set; }
     public DateTime? NextServiceDate { get; set; }
-    public Guid EquipmentId { get; set; }
+    public long EquipmentId { get; set; }
 }

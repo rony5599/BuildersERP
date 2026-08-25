@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.SafetyInspections;
 using BuilderERP.Shared.Authorization;
@@ -62,7 +62,7 @@ public class SafetyInspectionsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SafetyInspectionManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var item = await _mediator.Send(new GetSafetyInspectionByIdQuery(id));
         if (item is null)
@@ -110,7 +110,7 @@ public class SafetyInspectionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SafetyInspectionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSafetyInspectionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

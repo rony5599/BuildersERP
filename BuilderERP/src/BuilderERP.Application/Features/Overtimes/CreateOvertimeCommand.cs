@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Overtimes;
 
-public record CreateOvertimeCommand(CreateOvertimeDto Dto) : IRequest<Guid>;
+public record CreateOvertimeCommand(CreateOvertimeDto Dto) : IRequest<long>;
 
-public class CreateOvertimeCommandHandler : IRequestHandler<CreateOvertimeCommand, Guid>
+public class CreateOvertimeCommandHandler : IRequestHandler<CreateOvertimeCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateOvertimeCommandHandler : IRequestHandler<CreateOvertimeComman
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateOvertimeCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateOvertimeCommand request, CancellationToken cancellationToken)
     {
         var overtime = _mapper.Map<Overtime>(request.Dto);
         overtime.Amount = overtime.Hours * overtime.RatePerHour;

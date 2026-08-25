@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -16,6 +16,6 @@ public class RunningBill : BaseEntity
     public DateTime? CertificationDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid WorkOrderId { get; set; }
+    public long WorkOrderId { get; set; }
     public WorkOrder WorkOrder { get; set; } = null!;
 }

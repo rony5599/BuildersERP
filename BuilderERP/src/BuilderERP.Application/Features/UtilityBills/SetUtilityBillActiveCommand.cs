@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.UtilityBills;
 
-public record SetUtilityBillActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetUtilityBillActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetUtilityBillActiveCommandHandler : IRequestHandler<SetUtilityBillActiveCommand, bool>
 {

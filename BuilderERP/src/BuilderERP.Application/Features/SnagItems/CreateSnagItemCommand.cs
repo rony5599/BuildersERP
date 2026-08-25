@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SnagItems;
 
-public record CreateSnagItemCommand(CreateSnagItemDto Dto) : IRequest<Guid>;
+public record CreateSnagItemCommand(CreateSnagItemDto Dto) : IRequest<long>;
 
-public class CreateSnagItemCommandHandler : IRequestHandler<CreateSnagItemCommand, Guid>
+public class CreateSnagItemCommandHandler : IRequestHandler<CreateSnagItemCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateSnagItemCommandHandler : IRequestHandler<CreateSnagItemComman
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateSnagItemCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateSnagItemCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<SnagItem>(request.Dto);
         var repository = _unitOfWork.Repository<SnagItem>();

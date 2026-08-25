@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.BoqItems;
 
-public record SetBoqItemActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetBoqItemActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetBoqItemActiveCommandHandler : IRequestHandler<SetBoqItemActiveCommand, bool>
 {

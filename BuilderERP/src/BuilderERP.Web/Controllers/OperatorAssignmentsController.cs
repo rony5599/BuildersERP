@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.OperatorAssignments;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Workers;
@@ -63,7 +63,7 @@ public class OperatorAssignmentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.OperatorAssignmentManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var assignment = await _mediator.Send(new GetOperatorAssignmentByIdQuery(id));
         if (assignment is null)
@@ -110,7 +110,7 @@ public class OperatorAssignmentsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.OperatorAssignmentManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetOperatorAssignmentActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

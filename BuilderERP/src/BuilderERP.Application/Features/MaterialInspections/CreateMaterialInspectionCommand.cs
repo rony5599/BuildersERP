@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.MaterialInspections;
 
-public record CreateMaterialInspectionCommand(CreateMaterialInspectionDto Dto) : IRequest<Guid>;
+public record CreateMaterialInspectionCommand(CreateMaterialInspectionDto Dto) : IRequest<long>;
 
-public class CreateMaterialInspectionCommandHandler : IRequestHandler<CreateMaterialInspectionCommand, Guid>
+public class CreateMaterialInspectionCommandHandler : IRequestHandler<CreateMaterialInspectionCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateMaterialInspectionCommandHandler : IRequestHandler<CreateMate
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateMaterialInspectionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateMaterialInspectionCommand request, CancellationToken cancellationToken)
     {
         var inspection = _mapper.Map<MaterialInspection>(request.Dto);
         await _unitOfWork.Repository<MaterialInspection>().AddAsync(inspection);

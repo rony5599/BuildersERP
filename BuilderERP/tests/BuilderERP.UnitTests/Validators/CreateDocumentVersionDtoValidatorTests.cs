@@ -12,7 +12,7 @@ public class CreateDocumentVersionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_version_number_is_empty()
     {
-        var model = new CreateDocumentVersionDto { VersionNumber = "", FilePath = "/uploads/document-versions/abc.pdf", DocumentId = Guid.NewGuid() };
+        var model = new CreateDocumentVersionDto { VersionNumber = "", FilePath = "/uploads/document-versions/abc.pdf", DocumentId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.VersionNumber);
     }
@@ -20,7 +20,7 @@ public class CreateDocumentVersionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_file_path_is_empty()
     {
-        var model = new CreateDocumentVersionDto { VersionNumber = "V1", FilePath = "", DocumentId = Guid.NewGuid() };
+        var model = new CreateDocumentVersionDto { VersionNumber = "V1", FilePath = "", DocumentId = 1L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FilePath);
     }
@@ -28,7 +28,7 @@ public class CreateDocumentVersionDtoValidatorTests
     [Fact]
     public void Should_have_error_when_document_id_is_empty()
     {
-        var model = new CreateDocumentVersionDto { VersionNumber = "V1", FilePath = "/uploads/document-versions/abc.pdf", DocumentId = Guid.Empty };
+        var model = new CreateDocumentVersionDto { VersionNumber = "V1", FilePath = "/uploads/document-versions/abc.pdf", DocumentId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DocumentId);
     }
@@ -40,7 +40,7 @@ public class CreateDocumentVersionDtoValidatorTests
         {
             VersionNumber = "V1",
             FilePath = "/uploads/document-versions/abc.pdf",
-            DocumentId = Guid.NewGuid()
+            DocumentId = 1L
         };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

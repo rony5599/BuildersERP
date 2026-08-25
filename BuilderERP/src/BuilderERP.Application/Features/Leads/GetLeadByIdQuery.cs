@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Leads;
 
-public record GetLeadByIdQuery(Guid Id) : IRequest<LeadDto?>;
+public record GetLeadByIdQuery(long Id) : IRequest<LeadDto?>;
 
 public class GetLeadByIdQueryHandler : IRequestHandler<GetLeadByIdQuery, LeadDto?>
 {

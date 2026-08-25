@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Equipments;
 
-public record SetEquipmentActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetEquipmentActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetEquipmentActiveCommandHandler : IRequestHandler<SetEquipmentActiveCommand, bool>
 {

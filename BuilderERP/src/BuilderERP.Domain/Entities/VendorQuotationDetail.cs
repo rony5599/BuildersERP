@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -16,9 +16,9 @@ public class VendorQuotationDetail : BaseEntity
     public decimal NetAmount { get; set; }
     public int? DeliveryDays { get; set; }
 
-    public Guid VendorQuotationId { get; set; }
+    public long VendorQuotationId { get; set; }
     public VendorQuotation VendorQuotation { get; set; } = null!;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 }

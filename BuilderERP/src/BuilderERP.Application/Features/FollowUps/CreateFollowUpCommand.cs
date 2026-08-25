@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.FollowUps;
 
-public record CreateFollowUpCommand(CreateFollowUpDto Dto) : IRequest<Guid>;
+public record CreateFollowUpCommand(CreateFollowUpDto Dto) : IRequest<long>;
 
-public class CreateFollowUpCommandHandler : IRequestHandler<CreateFollowUpCommand, Guid>
+public class CreateFollowUpCommandHandler : IRequestHandler<CreateFollowUpCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateFollowUpCommandHandler : IRequestHandler<CreateFollowUpComman
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateFollowUpCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateFollowUpCommand request, CancellationToken cancellationToken)
     {
         var followUp = _mapper.Map<FollowUp>(request.Dto);
         await _unitOfWork.Repository<FollowUp>().AddAsync(followUp);

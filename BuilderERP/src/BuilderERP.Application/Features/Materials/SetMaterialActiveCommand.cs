@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record SetMaterialActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetMaterialActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetMaterialActiveCommandHandler : IRequestHandler<SetMaterialActiveCommand, bool>
 {

@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.BoqItems;
 
-public record CreateBoqItemCommand(CreateBoqItemDto Dto) : IRequest<Guid>;
+public record CreateBoqItemCommand(CreateBoqItemDto Dto) : IRequest<long>;
 
-public class CreateBoqItemCommandHandler : IRequestHandler<CreateBoqItemCommand, Guid>
+public class CreateBoqItemCommandHandler : IRequestHandler<CreateBoqItemCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateBoqItemCommandHandler : IRequestHandler<CreateBoqItemCommand,
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateBoqItemCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateBoqItemCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<BoqItem>(request.Dto);
         item.Amount = item.Quantity * item.Rate;

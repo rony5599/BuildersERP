@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SafetyInspections;
 
-public record GetAllSafetyInspectionsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyInspectionDto>>;
+public record GetAllSafetyInspectionsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyInspectionDto>>;
 
 public class GetAllSafetyInspectionsQueryHandler : IRequestHandler<GetAllSafetyInspectionsQuery, PagedResult<SafetyInspectionDto>>
 {

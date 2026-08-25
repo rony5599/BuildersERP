@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Towers;
 
-public record GetAllTowersQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<TowerDto>>;
+public record GetAllTowersQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<TowerDto>>;
 
 public class GetAllTowersQueryHandler : IRequestHandler<GetAllTowersQuery, PagedResult<TowerDto>>
 {

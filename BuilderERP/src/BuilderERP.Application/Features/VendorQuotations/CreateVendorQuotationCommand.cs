@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
-public record CreateVendorQuotationCommand(CreateVendorQuotationDto Dto) : IRequest<Guid>;
+public record CreateVendorQuotationCommand(CreateVendorQuotationDto Dto) : IRequest<long>;
 
-public class CreateVendorQuotationCommandHandler : IRequestHandler<CreateVendorQuotationCommand, Guid>
+public class CreateVendorQuotationCommandHandler : IRequestHandler<CreateVendorQuotationCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ public class CreateVendorQuotationCommandHandler : IRequestHandler<CreateVendorQ
         _numberGenerator = numberGenerator;
     }
 
-    public async Task<Guid> Handle(CreateVendorQuotationCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateVendorQuotationCommand request, CancellationToken cancellationToken)
     {
         var projectId = await _unitOfWork.Repository<Rfq>().Query()
             .Where(r => r.Id == request.Dto.RfqId)

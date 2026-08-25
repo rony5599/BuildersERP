@@ -159,7 +159,7 @@ public class RolesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.RoleManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Permissions(Guid id, List<Guid> selectedPermissionIds)
+    public async Task<IActionResult> Permissions(Guid id, List<long> selectedPermissionIds)
     {
         var role = await _roleManager.FindByIdAsync(id.ToString());
         if (role is null)

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.Companies;
 
-public record GetCompanyByIdQuery(Guid Id) : IRequest<CompanyDto?>;
+public record GetCompanyByIdQuery(long Id) : IRequest<CompanyDto?>;
 
 public class GetCompanyByIdQueryHandler : IRequestHandler<GetCompanyByIdQuery, CompanyDto?>
 {

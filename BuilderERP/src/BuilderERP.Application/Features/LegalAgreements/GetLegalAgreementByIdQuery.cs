@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.LegalAgreements;
 
-public record GetLegalAgreementByIdQuery(Guid Id) : IRequest<LegalAgreementDto?>;
+public record GetLegalAgreementByIdQuery(long Id) : IRequest<LegalAgreementDto?>;
 
 public class GetLegalAgreementByIdQueryHandler : IRequestHandler<GetLegalAgreementByIdQuery, LegalAgreementDto?>
 {

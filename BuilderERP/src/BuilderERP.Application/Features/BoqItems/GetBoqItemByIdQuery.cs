@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BoqItems;
 
-public record GetBoqItemByIdQuery(Guid Id) : IRequest<BoqItemDto?>;
+public record GetBoqItemByIdQuery(long Id) : IRequest<BoqItemDto?>;
 
 public class GetBoqItemByIdQueryHandler : IRequestHandler<GetBoqItemByIdQuery, BoqItemDto?>
 {

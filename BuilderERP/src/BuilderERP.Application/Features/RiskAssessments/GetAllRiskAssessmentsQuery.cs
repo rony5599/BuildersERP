@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.RiskAssessments;
 
-public record GetAllRiskAssessmentsQuery(Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RiskAssessmentDto>>;
+public record GetAllRiskAssessmentsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<RiskAssessmentDto>>;
 
 public class GetAllRiskAssessmentsQueryHandler : IRequestHandler<GetAllRiskAssessmentsQuery, PagedResult<RiskAssessmentDto>>
 {

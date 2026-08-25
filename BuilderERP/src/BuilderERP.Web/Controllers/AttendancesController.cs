@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Attendances;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Workers;
@@ -63,7 +63,7 @@ public class AttendancesController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.AttendanceManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var attendance = await _mediator.Send(new GetAttendanceByIdQuery(id));
         if (attendance is null)
@@ -110,7 +110,7 @@ public class AttendancesController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.AttendanceManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetAttendanceActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

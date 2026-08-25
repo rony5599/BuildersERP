@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SafetyTrainings;
 
-public record GetAllSafetyTrainingsQuery(Guid? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyTrainingDto>>;
+public record GetAllSafetyTrainingsQuery(long? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SafetyTrainingDto>>;
 
 public class GetAllSafetyTrainingsQueryHandler : IRequestHandler<GetAllSafetyTrainingsQuery, PagedResult<SafetyTrainingDto>>
 {

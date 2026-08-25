@@ -13,7 +13,7 @@ public class CreateBookingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_booking_amount_is_zero_or_negative()
     {
-        var model = new CreateBookingDto { BookingAmount = -1, CustomerId = Guid.NewGuid(), PropertyUnitId = Guid.NewGuid() };
+        var model = new CreateBookingDto { BookingAmount = -1, CustomerId = 1L, PropertyUnitId = 2L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.BookingAmount);
     }
@@ -21,7 +21,7 @@ public class CreateBookingDtoValidatorTests
     [Fact]
     public void Should_have_error_when_property_unit_is_not_selected()
     {
-        var model = new CreateBookingDto { BookingAmount = 5000, CustomerId = Guid.NewGuid(), PropertyUnitId = Guid.Empty };
+        var model = new CreateBookingDto { BookingAmount = 5000, CustomerId = 1L, PropertyUnitId = 0L };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PropertyUnitId);
     }
@@ -32,8 +32,8 @@ public class CreateBookingDtoValidatorTests
         var model = new CreateBookingDto
         {
             BookingAmount = 5000,
-            CustomerId = Guid.NewGuid(),
-            PropertyUnitId = Guid.NewGuid(),
+            CustomerId = 1L,
+            PropertyUnitId = 2L,
             Status = BookingRequestStatus.Confirmed
         };
         var result = _validator.TestValidate(model);

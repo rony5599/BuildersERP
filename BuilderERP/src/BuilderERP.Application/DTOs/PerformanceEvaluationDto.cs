@@ -2,10 +2,10 @@ namespace BuilderERP.Application.DTOs;
 
 public class PerformanceEvaluationDto
 {
-    public Guid Id { get; set; }
-    public Guid ContractorId { get; set; }
+    public long Id { get; set; }
+    public long ContractorId { get; set; }
     public string ContractorName { get; set; } = string.Empty;
-    public Guid? ProjectId { get; set; }
+    public long? ProjectId { get; set; }
     public string? ProjectName { get; set; }
     public DateTime EvaluationDate { get; set; }
     public int QualityScore { get; set; }
@@ -18,8 +18,8 @@ public class PerformanceEvaluationDto
 
 public class CreatePerformanceEvaluationDto
 {
-    public Guid ContractorId { get; set; }
-    public Guid? ProjectId { get; set; }
+    public long ContractorId { get; set; }
+    public long? ProjectId { get; set; }
     public DateTime EvaluationDate { get; set; } = DateTime.UtcNow;
     public int QualityScore { get; set; }
     public int TimelinessScore { get; set; }
@@ -29,9 +29,9 @@ public class CreatePerformanceEvaluationDto
 
 public class UpdatePerformanceEvaluationDto
 {
-    public Guid Id { get; set; }
-    public Guid ContractorId { get; set; }
-    public Guid? ProjectId { get; set; }
+    public long Id { get; set; }
+    public long ContractorId { get; set; }
+    public long? ProjectId { get; set; }
     public DateTime EvaluationDate { get; set; }
     public int QualityScore { get; set; }
     public int TimelinessScore { get; set; }

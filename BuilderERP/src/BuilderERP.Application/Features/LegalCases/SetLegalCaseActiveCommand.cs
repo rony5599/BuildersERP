@@ -1,10 +1,10 @@
-﻿using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.LegalCases;
 
-public record SetLegalCaseActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetLegalCaseActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetLegalCaseActiveCommandHandler : IRequestHandler<SetLegalCaseActiveCommand, bool>
 {

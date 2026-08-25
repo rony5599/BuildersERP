@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Application.Features.InstallmentPlans;
 using BuilderERP.Application.Features.Projects;
@@ -28,7 +28,7 @@ public class InstallmentPlansController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, Guid? propertyUnitId, Guid? customerId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, long? propertyUnitId, long? customerId, int page = 1, int pageSize = 25)
     {
         var plans = await _mediator.Send(new GetAllInstallmentPlansQuery(projectId, propertyUnitId, customerId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -69,7 +69,7 @@ public class InstallmentPlansController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var plan = await _mediator.Send(new GetInstallmentPlanByIdQuery(id));
         if (plan is null)
@@ -117,7 +117,7 @@ public class InstallmentPlansController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.InstallmentPlanManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetInstallmentPlanActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
@@ -129,7 +129,7 @@ public class InstallmentPlansController : Controller
         ViewBag.SaleAgreements = agreements.Items;
     }
 
-    private async Task PopulateFiltersAsync(Guid? projectId, Guid? propertyUnitId, Guid? customerId)
+    private async Task PopulateFiltersAsync(long? projectId, long? propertyUnitId, long? customerId)
     {
         var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);

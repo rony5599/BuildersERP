@@ -1,4 +1,4 @@
-namespace BuilderERP.Domain.Entities;
+﻿namespace BuilderERP.Domain.Entities;
 
 public class ItemPriceHistory : BaseEntity
 {
@@ -16,9 +16,9 @@ public class ItemPriceHistory : BaseEntity
     public string SourceDocumentType { get; set; } = string.Empty;
     public string SourceDocumentNumber { get; set; } = string.Empty;
 
-    public Guid MaterialId { get; set; }
+    public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;
 
-    public Guid SupplierId { get; set; }
+    public long SupplierId { get; set; }
     public Supplier Supplier { get; set; } = null!;
 }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Salaries;
 
-public record GetAllSalariesQuery(Guid? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SalaryDto>>;
+public record GetAllSalariesQuery(long? WorkerId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<SalaryDto>>;
 
 public class GetAllSalariesQueryHandler : IRequestHandler<GetAllSalariesQuery, PagedResult<SalaryDto>>
 {

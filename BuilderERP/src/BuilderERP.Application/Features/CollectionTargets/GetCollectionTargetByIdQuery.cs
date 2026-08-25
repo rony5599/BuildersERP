@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CollectionTargets;
 
-public record GetCollectionTargetByIdQuery(Guid Id) : IRequest<CollectionTargetDto?>;
+public record GetCollectionTargetByIdQuery(long Id) : IRequest<CollectionTargetDto?>;
 
 public class GetCollectionTargetByIdQueryHandler : IRequestHandler<GetCollectionTargetByIdQuery, CollectionTargetDto?>
 {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Documents;
 
-public record GetAllDocumentsQuery(Guid? CustomerId = null, Guid? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DocumentDto>>;
+public record GetAllDocumentsQuery(long? CustomerId = null, long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<DocumentDto>>;
 
 public class GetAllDocumentsQueryHandler : IRequestHandler<GetAllDocumentsQuery, PagedResult<DocumentDto>>
 {

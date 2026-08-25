@@ -1,4 +1,4 @@
-using BuilderERP.Domain.Enums;
+﻿using BuilderERP.Domain.Enums;
 
 namespace BuilderERP.Domain.Entities;
 
@@ -15,6 +15,6 @@ public class Salary : BaseEntity
     public DateTime? PaymentDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid WorkerId { get; set; }
+    public long WorkerId { get; set; }
     public Worker Worker { get; set; } = null!;
 }

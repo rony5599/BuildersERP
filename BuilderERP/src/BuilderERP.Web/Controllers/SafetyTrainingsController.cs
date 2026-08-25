@@ -62,7 +62,7 @@ public class SafetyTrainingsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SafetyTrainingManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var training = await _mediator.Send(new GetSafetyTrainingByIdQuery(id));
         if (training is null)
@@ -111,7 +111,7 @@ public class SafetyTrainingsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SafetyTrainingManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSafetyTrainingActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

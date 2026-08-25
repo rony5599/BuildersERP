@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Leads;
 using BuilderERP.Application.Features.PropertyUnits;
 using BuilderERP.Application.Features.SiteVisits;
@@ -72,7 +72,7 @@ public class SiteVisitsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SiteVisitManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var visit = await _mediator.Send(new GetSiteVisitByIdQuery(id));
         if (visit is null)
@@ -120,7 +120,7 @@ public class SiteVisitsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.SiteVisitManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetSiteVisitActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

@@ -17,8 +17,8 @@ public class CreateWorkOrderDtoValidatorTests
         {
             WorkOrderNumber = "",
             Description = "Foundation work",
-            ContractorId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid(),
+            ContractorId = 1L,
+            ProjectId = 2L,
             Amount = 1000
         };
         var result = _validator.TestValidate(model);
@@ -32,8 +32,8 @@ public class CreateWorkOrderDtoValidatorTests
         {
             WorkOrderNumber = "WO-001",
             Description = "",
-            ContractorId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid(),
+            ContractorId = 1L,
+            ProjectId = 2L,
             Amount = 1000
         };
         var result = _validator.TestValidate(model);
@@ -47,8 +47,8 @@ public class CreateWorkOrderDtoValidatorTests
         {
             WorkOrderNumber = "WO-001",
             Description = "Foundation work",
-            ContractorId = Guid.Empty,
-            ProjectId = Guid.NewGuid(),
+            ContractorId = 0L,
+            ProjectId = 1L,
             Amount = 1000
         };
         var result = _validator.TestValidate(model);
@@ -62,8 +62,8 @@ public class CreateWorkOrderDtoValidatorTests
         {
             WorkOrderNumber = "WO-001",
             Description = "Foundation work",
-            ContractorId = Guid.NewGuid(),
-            ProjectId = Guid.Empty,
+            ContractorId = 1L,
+            ProjectId = 0L,
             Amount = 1000
         };
         var result = _validator.TestValidate(model);
@@ -77,8 +77,8 @@ public class CreateWorkOrderDtoValidatorTests
         {
             WorkOrderNumber = "WO-001",
             Description = "Foundation work",
-            ContractorId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid(),
+            ContractorId = 1L,
+            ProjectId = 2L,
             Amount = -1
         };
         var result = _validator.TestValidate(model);
@@ -92,8 +92,8 @@ public class CreateWorkOrderDtoValidatorTests
         {
             WorkOrderNumber = "WO-001",
             Description = "Foundation work",
-            ContractorId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid(),
+            ContractorId = 1L,
+            ProjectId = 2L,
             Amount = 1000,
             Status = WorkOrderStatus.Draft
         };

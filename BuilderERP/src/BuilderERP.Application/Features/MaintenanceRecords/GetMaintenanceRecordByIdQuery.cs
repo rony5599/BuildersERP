@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.MaintenanceRecords;
 
-public record GetMaintenanceRecordByIdQuery(Guid Id) : IRequest<MaintenanceRecordDto?>;
+public record GetMaintenanceRecordByIdQuery(long Id) : IRequest<MaintenanceRecordDto?>;
 
 public class GetMaintenanceRecordByIdQueryHandler : IRequestHandler<GetMaintenanceRecordByIdQuery, MaintenanceRecordDto?>
 {

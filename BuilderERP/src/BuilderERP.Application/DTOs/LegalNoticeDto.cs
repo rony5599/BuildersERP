@@ -4,7 +4,7 @@ namespace BuilderERP.Application.DTOs;
 
 public class LegalNoticeDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string NoticeNumber { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public LegalNoticeType NoticeType { get; set; }
@@ -13,7 +13,7 @@ public class LegalNoticeDto
     public DateTime? ResponseDeadline { get; set; }
     public LegalNoticeStatus Status { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
     public bool IsActive { get; set; }
     public string ProjectName { get; set; } = string.Empty;
 }
@@ -28,12 +28,12 @@ public class CreateLegalNoticeDto
     public DateTime? ResponseDeadline { get; set; }
     public LegalNoticeStatus Status { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
 }
 
 public class UpdateLegalNoticeDto
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public string NoticeNumber { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public LegalNoticeType NoticeType { get; set; }
@@ -42,5 +42,5 @@ public class UpdateLegalNoticeDto
     public DateTime? ResponseDeadline { get; set; }
     public LegalNoticeStatus Status { get; set; }
     public string? Remarks { get; set; }
-    public Guid ProjectId { get; set; }
+    public long ProjectId { get; set; }
 }

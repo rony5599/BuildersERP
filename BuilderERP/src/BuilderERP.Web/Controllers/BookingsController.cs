@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Bookings;
 using BuilderERP.Application.Features.Brokers;
 using BuilderERP.Application.Features.Customers;
@@ -70,7 +70,7 @@ public class BookingsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.BookingManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var booking = await _mediator.Send(new GetBookingByIdQuery(id));
         if (booking is null)
@@ -120,7 +120,7 @@ public class BookingsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.BookingManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetBookingActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

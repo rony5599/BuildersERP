@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SitePhotos;
 
-public record SetSitePhotoActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetSitePhotoActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetSitePhotoActiveCommandHandler : IRequestHandler<SetSitePhotoActiveCommand, bool>
 {

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.SiteInspections;
 
-public record GetSiteInspectionByIdQuery(Guid Id) : IRequest<SiteInspectionDto?>;
+public record GetSiteInspectionByIdQuery(long Id) : IRequest<SiteInspectionDto?>;
 
 public class GetSiteInspectionByIdQueryHandler : IRequestHandler<GetSiteInspectionByIdQuery, SiteInspectionDto?>
 {

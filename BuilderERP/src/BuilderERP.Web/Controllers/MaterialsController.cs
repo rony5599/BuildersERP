@@ -26,7 +26,7 @@ public class MaterialsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(Guid? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
     {
         var materials = await _mediator.Send(new GetAllMaterialsQuery(projectId, page, pageSize));
         ViewBag.SelectedProjectId = projectId;
@@ -66,7 +66,7 @@ public class MaterialsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.MaterialManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var material = await _mediator.Send(new GetMaterialByIdQuery(id));
         if (material is null)
@@ -126,7 +126,7 @@ public class MaterialsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.MaterialManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetMaterialActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

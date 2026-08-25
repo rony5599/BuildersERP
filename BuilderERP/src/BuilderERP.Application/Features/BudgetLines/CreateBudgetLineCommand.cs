@@ -6,9 +6,9 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.BudgetLines;
 
-public record CreateBudgetLineCommand(CreateBudgetLineDto Dto) : IRequest<Guid>;
+public record CreateBudgetLineCommand(CreateBudgetLineDto Dto) : IRequest<long>;
 
-public class CreateBudgetLineCommandHandler : IRequestHandler<CreateBudgetLineCommand, Guid>
+public class CreateBudgetLineCommandHandler : IRequestHandler<CreateBudgetLineCommand, long>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ public class CreateBudgetLineCommandHandler : IRequestHandler<CreateBudgetLineCo
         _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateBudgetLineCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateBudgetLineCommand request, CancellationToken cancellationToken)
     {
         var budgetLine = _mapper.Map<BudgetLine>(request.Dto);
         await _unitOfWork.Repository<BudgetLine>().AddAsync(budgetLine);

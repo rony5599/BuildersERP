@@ -1,4 +1,4 @@
-﻿using BuilderERP.Application.DTOs;
+using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Customers;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -61,7 +61,7 @@ public class CustomersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.CustomerManage)]
-    public async Task<IActionResult> Edit(Guid id)
+    public async Task<IActionResult> Edit(long id)
     {
         var customer = await _mediator.Send(new GetCustomerByIdQuery(id));
         if (customer is null)
@@ -111,7 +111,7 @@ public class CustomersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CustomerManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(Guid id, bool isActive)
+    public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCustomerActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));

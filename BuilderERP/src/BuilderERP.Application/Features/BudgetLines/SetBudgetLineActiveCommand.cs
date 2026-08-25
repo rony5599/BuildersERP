@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.BudgetLines;
 
-public record SetBudgetLineActiveCommand(Guid Id, bool IsActive) : IRequest<bool>;
+public record SetBudgetLineActiveCommand(long Id, bool IsActive) : IRequest<bool>;
 
 public class SetBudgetLineActiveCommandHandler : IRequestHandler<SetBudgetLineActiveCommand, bool>
 {

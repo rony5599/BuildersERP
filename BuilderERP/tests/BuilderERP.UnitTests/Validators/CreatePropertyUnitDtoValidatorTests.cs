@@ -13,7 +13,7 @@ public class CreatePropertyUnitDtoValidatorTests
     [Fact]
     public void Should_have_error_when_unit_number_is_empty()
     {
-        var model = new CreatePropertyUnitDto { UnitNumber = "", FloorId = Guid.NewGuid(), UnitType = UnitType.Flat };
+        var model = new CreatePropertyUnitDto { UnitNumber = "", FloorId = 1L, UnitType = UnitType.Flat };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.UnitNumber);
     }
@@ -21,7 +21,7 @@ public class CreatePropertyUnitDtoValidatorTests
     [Fact]
     public void Should_have_error_when_price_is_negative()
     {
-        var model = new CreatePropertyUnitDto { UnitNumber = "A-101", FloorId = Guid.NewGuid(), UnitType = UnitType.Flat, Price = -100 };
+        var model = new CreatePropertyUnitDto { UnitNumber = "A-101", FloorId = 1L, UnitType = UnitType.Flat, Price = -100 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Price);
     }
@@ -29,7 +29,7 @@ public class CreatePropertyUnitDtoValidatorTests
     [Fact]
     public void Should_have_error_when_area_is_negative()
     {
-        var model = new CreatePropertyUnitDto { UnitNumber = "A-101", FloorId = Guid.NewGuid(), UnitType = UnitType.Flat, Area = -50 };
+        var model = new CreatePropertyUnitDto { UnitNumber = "A-101", FloorId = 1L, UnitType = UnitType.Flat, Area = -50 };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Area);
     }
@@ -40,7 +40,7 @@ public class CreatePropertyUnitDtoValidatorTests
         var model = new CreatePropertyUnitDto
         {
             UnitNumber = "A-101",
-            FloorId = Guid.NewGuid(),
+            FloorId = 1L,
             UnitType = UnitType.Flat,
             Area = 1200,
             Price = 250000,
