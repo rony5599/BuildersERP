@@ -65,7 +65,7 @@
                     <td>@log.ChangedAt.ToLocalTime().ToString("g")</td>
                     <td>@log.EntityName</td>
                     <td>
-                        <span title="@log.EntityId">@log.EntityId.ToString()[..8]</span>
+                        <span title="@log.EntityId">@log.EntityId</span>
                         @if (!isHistoryView)
                         {
                             <a asp-action="History" asp-route-entityName="@log.EntityName" asp-route-entityId="@log.EntityId" class="ms-1" title="View full history for this record">history</a>
