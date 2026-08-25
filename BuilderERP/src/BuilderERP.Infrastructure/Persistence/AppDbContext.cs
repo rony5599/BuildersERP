@@ -75,6 +75,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<DrawingApproval> DrawingApprovals => Set<DrawingApproval>();
     public DbSet<Contractor> Contractors => Set<Contractor>();
     public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
+    public DbSet<EngineerWorkOrderRequisition> EngineerWorkOrderRequisitions => Set<EngineerWorkOrderRequisition>();
+    public DbSet<EngineerWorkOrderRequisitionDetail> EngineerWorkOrderRequisitionDetails => Set<EngineerWorkOrderRequisitionDetail>();
+    public DbSet<EngineerWorkOrder> EngineerWorkOrders => Set<EngineerWorkOrder>();
+    public DbSet<EngineerWorkOrderDetail> EngineerWorkOrderDetails => Set<EngineerWorkOrderDetail>();
     public DbSet<RateContract> RateContracts => Set<RateContract>();
     public DbSet<RunningBill> RunningBills => Set<RunningBill>();
     public DbSet<SecurityDeposit> SecurityDeposits => Set<SecurityDeposit>();
@@ -869,6 +873,72 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(w => w.ProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<EngineerWorkOrderRequisition>()
+            .HasOne(r => r.Project)
+            .WithMany()
+            .HasForeignKey(r => r.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrderRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
+
+        builder.Entity<EngineerWorkOrderRequisitionDetail>()
+            .HasOne(d => d.EngineerWorkOrderRequisition)
+            .WithMany(r => r.Details)
+            .HasForeignKey(d => d.EngineerWorkOrderRequisitionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EngineerWorkOrderRequisitionDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrderRequisitionDetail>().Property(d => d.Quantity).HasPrecision(18, 3);
+        builder.Entity<EngineerWorkOrderRequisitionDetail>().Property(d => d.EstimatedUnitPrice).HasPrecision(18, 2);
+        builder.Entity<EngineerWorkOrderRequisitionDetail>().Property(d => d.EstimatedAmount).HasPrecision(18, 2);
+
+        builder.Entity<EngineerWorkOrder>()
+            .HasOne(w => w.EngineerWorkOrderRequisition)
+            .WithMany()
+            .HasForeignKey(w => w.EngineerWorkOrderRequisitionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrder>()
+            .HasOne(w => w.Supplier)
+            .WithMany()
+            .HasForeignKey(w => w.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrder>()
+            .HasOne(w => w.MotherWorkOrder)
+            .WithMany(w => w.Revisions)
+            .HasForeignKey(w => w.MotherWorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrder>()
+            .HasOne(w => w.PreviousWorkOrder)
+            .WithMany()
+            .HasForeignKey(w => w.PreviousWorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrder>().Property(w => w.TotalAmount).HasPrecision(18, 2);
+
+        builder.Entity<EngineerWorkOrderDetail>()
+            .HasOne(d => d.EngineerWorkOrder)
+            .WithMany(w => w.Details)
+            .HasForeignKey(d => d.EngineerWorkOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EngineerWorkOrderDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EngineerWorkOrderDetail>().Property(d => d.Qty).HasPrecision(18, 3);
+        builder.Entity<EngineerWorkOrderDetail>().Property(d => d.Rate).HasPrecision(18, 2);
+        builder.Entity<EngineerWorkOrderDetail>().Property(d => d.Amount).HasPrecision(18, 2);
+
         builder.Entity<RateContract>().Property(r => r.Rate).HasPrecision(18, 2);
 
         builder.Entity<RateContract>()
@@ -1300,6 +1370,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),
             typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),
             typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),
+            typeof(EngineerWorkOrderRequisition), typeof(EngineerWorkOrderRequisitionDetail),
+            typeof(EngineerWorkOrder), typeof(EngineerWorkOrderDetail),
             typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger),
             typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary),
             typeof(Equipment), typeof(EquipmentRental), typeof(FuelLog), typeof(MaintenanceRecord), typeof(OperatorAssignment),
