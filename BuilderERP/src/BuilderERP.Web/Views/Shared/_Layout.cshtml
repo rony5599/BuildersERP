@@ -350,6 +350,23 @@
                     </ul>
                     </div>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView))
+                {
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Engineering Work Orders<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView))
+                        {
+                            <li class="nav-item"><a asp-controller="EngineerWorkOrderRequisitions" asp-action="Index" class="@NavClass("EngineerWorkOrderRequisitions")"><i class="bi bi-file-earmark-text"></i> Engineer Work Order Requisitions</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView))
+                        {
+                            <li class="nav-item"><a asp-controller="EngineerWorkOrders" asp-action="Index" class="@NavClass("EngineerWorkOrders")"><i class="bi bi-file-earmark-ruled"></i> Engineer Work Orders</a></li>
+                        }
+                    </ul>
+                    </div>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ContractorView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WorkOrderView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RateContractView)

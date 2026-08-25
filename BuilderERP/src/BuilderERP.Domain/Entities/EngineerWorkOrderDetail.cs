@@ -1,8 +1,10 @@
+using BuilderERP.Domain.Enums;
+
 namespace BuilderERP.Domain.Entities;
 
 public class EngineerWorkOrderDetail : BaseEntity
 {
-    public string? Description { get; set; }
+    public UnitOfMeasure UnitOfMeasure { get; set; } = UnitOfMeasure.Piece;
     public decimal Qty { get; set; }
     public decimal Rate { get; set; }
     public decimal Amount { get; set; }

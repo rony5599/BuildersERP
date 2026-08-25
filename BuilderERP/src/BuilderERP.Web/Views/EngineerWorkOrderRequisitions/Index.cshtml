@@ -1,0 +1,19 @@
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.EngineerWorkOrderRequisitionDto>
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@{
+    ViewData["Title"] = "Engineer Work Order Requisitions";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Engineer Work Order Requisitions</h1>
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionManage))
+    {
+        <a asp-action="Create" class="btn btn-primary">New Requisition</a>
+    }
+</div>
+
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

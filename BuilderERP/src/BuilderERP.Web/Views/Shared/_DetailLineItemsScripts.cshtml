@@ -54,6 +54,39 @@
             renumberRows(tbody, prefix);
         }
 
+        function addDetailRow(tableId, prefix, values) {
+            var table = document.getElementById(tableId);
+            if (!table) return null;
+            var tbody = table.querySelector('tbody');
+            var template = tbody.querySelector('tr.detail-row-template');
+            if (!template) return null;
+
+            var clone = template.cloneNode(true);
+            clone.classList.remove('d-none');
+            clone.classList.add('detail-row');
+            if (values) {
+                clone.querySelectorAll('[name]').forEach(function (el) {
+                    var fieldName = el.name.replace(/^.*\]\./, '');
+                    if (Object.prototype.hasOwnProperty.call(values, fieldName) && values[fieldName] != null) {
+                        el.value = values[fieldName];
+                    }
+                });
+            }
+            tbody.appendChild(clone);
+            renumberRows(tbody, prefix);
+            return clone;
+        }
+
+        function clearDetailRows(tableId, prefix) {
+            var table = document.getElementById(tableId);
+            if (!table) return;
+            var tbody = table.querySelector('tbody');
+            tbody.querySelectorAll('tr.detail-row').forEach(function (row) { row.remove(); });
+            renumberRows(tbody, prefix);
+        }
+
         window.initDetailTable = initDetailTable;
+        window.addDetailRow = addDetailRow;
+        window.clearDetailRows = clearDetailRows;
     })();
 </script>

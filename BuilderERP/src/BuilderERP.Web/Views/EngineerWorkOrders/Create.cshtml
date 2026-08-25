@@ -1,0 +1,139 @@
+@model BuilderERP.Application.DTOs.CreateEngineerWorkOrderDto
+@using BuilderERP.Domain.Enums
+@{
+    var isRevision = ViewBag.IsRevision is true;
+    ViewData["Title"] = isRevision ? "Revise Engineer Work Order" : "New Engineer Work Order";
+}
+
+<h1 class="h3 mb-4">@ViewData["Title"]</h1>
+
+<form asp-action="@(isRevision ? "Revise" : "Create")" method="post">
+    @if (isRevision)
+    {
+        <input type="hidden" name="previousWorkOrderId" value="@ViewBag.PreviousWorkOrderId" />
+    }
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row col-md-8">
+        <div class="mb-3 col-md-4">
+            <label asp-for="EngineerWorkOrderRequisitionId" class="form-label"></label>
+            <div class="input-group">
+                <select asp-for="EngineerWorkOrderRequisitionId" asp-items="ViewBag.EngineerWorkOrderRequisitions" class="form-select">
+                    <option value="">-- Select Requisition --</option>
+                </select>
+                <button type="button" id="load-requisition-items" class="btn btn-outline-secondary">Load Items</button>
+            </div>
+            <span asp-validation-for="EngineerWorkOrderRequisitionId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="SupplierId" class="form-label"></label>
+            <select asp-for="SupplierId" asp-items="ViewBag.Suppliers" class="form-select">
+                <option value="">-- Select Supplier --</option>
+            </select>
+            <span asp-validation-for="SupplierId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<EngineerWorkOrderStatus>()" class="form-select"></select>
+        </div>
+        <div class="mb-3 col-md-8">
+            <label asp-for="TermsAndCondition" class="form-label"></label>
+            <textarea asp-for="TermsAndCondition" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <h5 class="mt-4">Line Items</h5>
+    <table class="table table-sm" id="ewo-details-table">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Unit</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Remarks</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Details.Count > 0)
+            {
+                for (var i = 0; i < Model.Details.Count; i++)
+                {
+                    <tr class="detail-row">
+                        <td>
+                            <select asp-for="Details[i].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
+                                <option value="">-- Material --</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select asp-for="Details[i].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
+                        </td>
+                        <td><input name="Details[@i].Qty" type="number" step="0.001" value="@Model.Details[i].Qty" class="form-control form-control-sm" /></td>
+                        <td><input name="Details[@i].Rate" type="number" step="0.01" value="@Model.Details[i].Rate" class="form-control form-control-sm" /></td>
+                        <td><input name="Details[@i].Remarks" value="@Model.Details[i].Remarks" class="form-control form-control-sm" /></td>
+                        <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-row>Remove</button></td>
+                    </tr>
+                }
+            }
+            <tr class="detail-row-template">
+                <td>
+                    <select name="Details[__index__].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
+                        <option value="">-- Material --</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="Details[__index__].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
+                </td>
+                <td><input name="Details[__index__].Qty" type="number" step="0.001" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].Rate" type="number" step="0.01" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].Remarks" class="form-control form-control-sm" /></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-row>Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-sm btn-outline-primary mb-3" data-add-row-for="ewo-details-table">Add Row</button>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<partial name="_DetailLineItemsScripts" />
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        initDetailTable('ewo-details-table', 'Details');
+
+        var loadBtn = document.getElementById('load-requisition-items');
+        var requisitionSelect = document.querySelector('[name="EngineerWorkOrderRequisitionId"]');
+        if (loadBtn && requisitionSelect) {
+            loadBtn.addEventListener('click', function () {
+                var requisitionId = requisitionSelect.value;
+                if (!requisitionId) {
+                    alert('Select a requisition first.');
+                    return;
+                }
+
+                fetch('@Url.Action("RequisitionItems", "EngineerWorkOrders")?requisitionId=' + requisitionId)
+                    .then(function (response) {
+                        if (!response.ok) throw new Error('Failed to load requisition items.');
+                        return response.json();
+                    })
+                    .then(function (items) {
+                        clearDetailRows('ewo-details-table', 'Details');
+                        items.forEach(function (item) {
+                            addDetailRow('ewo-details-table', 'Details', {
+                                MaterialId: item.materialId,
+                                UnitOfMeasure: item.unitOfMeasure,
+                                Qty: item.qty,
+                                Rate: item.rate,
+                                Remarks: item.remarks
+                            });
+                        });
+                    })
+                    .catch(function (err) {
+                        alert(err.message);
+                    });
+            });
+        }
+    });
+</script>
