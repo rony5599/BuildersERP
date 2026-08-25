@@ -157,7 +157,7 @@ public class EngineerWorkOrdersController : Controller
         await PopulateDropdownsAsync();
         ViewBag.PreviousWorkOrderId = id;
         ViewBag.IsRevision = true;
-        return View(dto);
+        return View("Create", dto);
     }
 
     [HttpPost]
@@ -172,7 +172,7 @@ public class EngineerWorkOrdersController : Controller
             await PopulateDropdownsAsync();
             ViewBag.PreviousWorkOrderId = previousWorkOrderId;
             ViewBag.IsRevision = true;
-            return View(dto);
+            return View("Create", dto);
         }
 
         var result = await _mediator.Send(new CreateEngineerWorkOrderRevisionCommand(previousWorkOrderId, dto));
@@ -188,7 +188,7 @@ public class EngineerWorkOrdersController : Controller
             await PopulateDropdownsAsync();
             ViewBag.PreviousWorkOrderId = previousWorkOrderId;
             ViewBag.IsRevision = true;
-            return View(dto);
+            return View("Create", dto);
         }
 
         return RedirectToAction(nameof(Index));
