@@ -89,6 +89,11 @@ jobs:
             /XF "appsettings.Production.json" `
             /NFL /NDL /NJH /NJS
           if ($LASTEXITCODE -ge 8) { throw "robocopy failed with exit code $LASTEXITCODE" }
+          # Robocopy's own exit codes (0-7) are informational, not failure — but GitHub
+          # Actions appends "exit $LASTEXITCODE" after every powershell step, so a
+          # nonzero-but-successful robocopy code (e.g. 1 = files copied) would otherwise
+          # be reported as a failed step. Reset it now that we've confirmed success above.
+          $LASTEXITCODE = 0
 
       - name: Start app pool and IIS site
         shell: powershell
