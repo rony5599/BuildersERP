@@ -53,7 +53,7 @@ jobs:
 
   deploy:
     needs: build-and-test
-    runs-on: [self-hosted, Windows]
+    runs-on: [self-hosted, windows]
     steps:
       - name: Download publish artifact
         uses: actions/download-artifact@v4
@@ -65,10 +65,12 @@ jobs:
         shell: powershell
         run: |
           Import-Module WebAdministration
-          if (Get-Website -Name "${{ env.IIS_SITE_NAME }}" -ErrorAction SilentlyContinue) {
+          $site = Get-Website -Name "${{ env.IIS_SITE_NAME }}" -ErrorAction SilentlyContinue
+          if ($site -and $site.State -ne 'Stopped') {
             Stop-Website -Name "${{ env.IIS_SITE_NAME }}"
           }
-          if (Get-WebAppPoolState -Name "${{ env.IIS_APP_POOL_NAME }}" -ErrorAction SilentlyContinue) {
+          $poolState = Get-WebAppPoolState -Name "${{ env.IIS_APP_POOL_NAME }}" -ErrorAction SilentlyContinue
+          if ($poolState -and $poolState.Value -ne 'Stopped') {
             Stop-WebAppPool -Name "${{ env.IIS_APP_POOL_NAME }}"
           }
 
@@ -92,5 +94,11 @@ jobs:
         shell: powershell
         run: |
           Import-Module WebAdministration
-          Start-WebAppPool -Name "${{ env.IIS_APP_POOL_NAME }}"
-          Start-Website -Name "${{ env.IIS_SITE_NAME }}"
+          $poolState = Get-WebAppPoolState -Name "${{ env.IIS_APP_POOL_NAME }}" -ErrorAction SilentlyContinue
+          if ($poolState -and $poolState.Value -ne 'Started') {
+            Start-WebAppPool -Name "${{ env.IIS_APP_POOL_NAME }}"
+          }
+          $site = Get-Website -Name "${{ env.IIS_SITE_NAME }}" -ErrorAction SilentlyContinue
+          if ($site -and $site.State -ne 'Started') {
+            Start-Website -Name "${{ env.IIS_SITE_NAME }}"
+          }
