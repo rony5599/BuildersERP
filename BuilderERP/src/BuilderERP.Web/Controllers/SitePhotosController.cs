@@ -5,9 +5,9 @@ using BuilderERP.Application.Features.SitePhotos;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
+using BuilderERP.Web.Storage;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -19,18 +19,18 @@ public class SitePhotosController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateSitePhotoDto> _createValidator;
     private readonly IValidator<UpdateSitePhotoDto> _updateValidator;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IUploadsPathProvider _uploadsPathProvider;
 
     public SitePhotosController(
         IMediator mediator,
         IValidator<CreateSitePhotoDto> createValidator,
         IValidator<UpdateSitePhotoDto> updateValidator,
-        IWebHostEnvironment environment)
+        IUploadsPathProvider uploadsPathProvider)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
-        _environment = environment;
+        _uploadsPathProvider = uploadsPathProvider;
     }
 
     public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
@@ -150,7 +150,7 @@ public class SitePhotosController : Controller
 
     private async Task<string> SavePhotoAsync(IFormFile photo)
     {
-        var uploadsRoot = Path.Combine(_environment.WebRootPath, "uploads", "site-photos");
+        var uploadsRoot = _uploadsPathProvider.GetPath("site-photos");
         Directory.CreateDirectory(uploadsRoot);
         var safeFileName = $"{Guid.NewGuid()}_{Path.GetFileName(photo.FileName)}";
         var fullPath = Path.Combine(uploadsRoot, safeFileName);

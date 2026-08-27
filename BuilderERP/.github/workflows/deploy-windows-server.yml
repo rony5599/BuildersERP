@@ -74,8 +74,11 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "${{ env.DEPLOY_PATH }}" | Out-Null
           # /MIR deletes anything in the destination not present in the source.
-          # wwwroot/uploads (and App_Data) are runtime data that only ever exist on the
-          # server, never in the build output, so they are excluded to avoid data loss.
+          # Uploaded files (documents, drawings, photos, test reports) are stored at
+          # C:/BuilderERP-Data/uploads by default (see Storage:UploadsRoot in
+          # appsettings.json / UploadsPathProvider) — outside DEPLOY_PATH entirely, so
+          # /MIR can never touch them. App_Data and wwwroot/uploads are excluded here
+          # too as defense-in-depth in case that default is ever overridden.
           robocopy "publish_output" "${{ env.DEPLOY_PATH }}" /MIR `
             /XD "App_Data" "wwwroot\uploads" `
             /XF "appsettings.Production.json" `

@@ -5,9 +5,9 @@ using BuilderERP.Application.Features.Projects;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
+using BuilderERP.Web.Storage;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -19,18 +19,18 @@ public class DocumentsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateDocumentDto> _createValidator;
     private readonly IValidator<UpdateDocumentDto> _updateValidator;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IUploadsPathProvider _uploadsPathProvider;
 
     public DocumentsController(
         IMediator mediator,
         IValidator<CreateDocumentDto> createValidator,
         IValidator<UpdateDocumentDto> updateValidator,
-        IWebHostEnvironment environment)
+        IUploadsPathProvider uploadsPathProvider)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
-        _environment = environment;
+        _uploadsPathProvider = uploadsPathProvider;
     }
 
     public async Task<IActionResult> Index(long? customerId, long? projectId, int page = 1, int pageSize = 25)
@@ -65,7 +65,7 @@ public class DocumentsController : Controller
         }
         else
         {
-            var uploadsRoot = Path.Combine(_environment.WebRootPath, "uploads", "documents");
+            var uploadsRoot = _uploadsPathProvider.GetPath("documents");
             Directory.CreateDirectory(uploadsRoot);
             var safeFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
             var fullPath = Path.Combine(uploadsRoot, safeFileName);
@@ -122,7 +122,7 @@ public class DocumentsController : Controller
     {
         if (file is not null && file.Length > 0)
         {
-            var uploadsRoot = Path.Combine(_environment.WebRootPath, "uploads", "documents");
+            var uploadsRoot = _uploadsPathProvider.GetPath("documents");
             Directory.CreateDirectory(uploadsRoot);
             var safeFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
             var fullPath = Path.Combine(uploadsRoot, safeFileName);

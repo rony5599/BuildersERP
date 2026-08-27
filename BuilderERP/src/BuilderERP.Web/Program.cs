@@ -5,7 +5,9 @@ using BuilderERP.Infrastructure;
 using BuilderERP.Infrastructure.Identity;
 using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Middleware;
+using BuilderERP.Web.Storage;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,7 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.Configure<ProcurementSettings>(builder.Configuration.GetSection("ProcurementSettings"));
+    builder.Services.AddSingleton<IUploadsPathProvider, UploadsPathProvider>();
 
     builder.Services.ConfigureApplicationCookie(options =>
     {
@@ -72,6 +75,14 @@ try
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+
+    var uploadsPathProvider = app.Services.GetRequiredService<IUploadsPathProvider>();
+    Directory.CreateDirectory(uploadsPathProvider.PhysicalRoot);
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(uploadsPathProvider.PhysicalRoot),
+        RequestPath = "/uploads"
+    });
 
     app.UseRouting();
 
