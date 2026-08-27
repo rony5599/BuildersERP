@@ -2,7 +2,16 @@ namespace BuilderERP.Web.Storage;
 
 public interface IUploadsPathProvider
 {
-    string PhysicalRoot { get; }
+    //string PhysicalRoot { get; }
+    public string PhysicalRoot
+    {
+        get
+        {
+            var relativePath = "uploads"; // or your relative path
+            var absolutePath = Path.Combine(AppContext.BaseDirectory, relativePath);
+            return Path.GetFullPath(absolutePath);
+        }
+    }
 
     string GetPath(string subfolder);
 }
