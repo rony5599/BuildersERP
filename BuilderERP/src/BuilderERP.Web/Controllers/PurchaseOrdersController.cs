@@ -1,6 +1,7 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.PurchaseOrders;
+using BuilderERP.Application.Features.PurchaseOrders.Export;
 using BuilderERP.Application.Features.VendorQuotations;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -18,12 +19,18 @@ public class PurchaseOrdersController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreatePurchaseOrderDto> _createValidator;
     private readonly IValidator<UpdatePurchaseOrderDto> _updateValidator;
+    private readonly PurchaseOrderPdfExporter _pdfExporter;
 
-    public PurchaseOrdersController(IMediator mediator, IValidator<CreatePurchaseOrderDto> createValidator, IValidator<UpdatePurchaseOrderDto> updateValidator)
+    public PurchaseOrdersController(
+        IMediator mediator,
+        IValidator<CreatePurchaseOrderDto> createValidator,
+        IValidator<UpdatePurchaseOrderDto> updateValidator,
+        PurchaseOrderPdfExporter pdfExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _pdfExporter = pdfExporter;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
@@ -131,6 +138,29 @@ public class PurchaseOrdersController : Controller
     {
         await _mediator.Send(new SetPurchaseOrderActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Print(long id)
+    {
+        var data = await _mediator.Send(new GetPurchaseOrderPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        return View(data);
+    }
+
+    public async Task<IActionResult> PrintPdf(long id)
+    {
+        var data = await _mediator.Send(new GetPurchaseOrderPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        var pdfBytes = _pdfExporter.Export(data);
+        return File(pdfBytes, "application/pdf", $"{data.PONumber}.pdf");
     }
 
     private async Task PopulateDropdownsAsync()

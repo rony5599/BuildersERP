@@ -67,3 +67,32 @@ public class UpdatePurchaseOrderDto
     public long VendorQuotationId { get; set; }
     public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }
+
+public class PurchaseOrderPrintDto
+{
+    public string PONumber { get; set; } = string.Empty;
+    public DateTime OrderDate { get; set; }
+
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyAddress { get; set; }
+    public string? CompanyPhone { get; set; }
+    public string? CompanyEmail { get; set; }
+
+    public string SupplierName { get; set; } = string.Empty;
+    public string? SupplierAddress { get; set; }
+    public string? SupplierPhone { get; set; }
+    public string? SupplierEmail { get; set; }
+
+    public List<PurchaseOrderPrintLineDto> Lines { get; set; } = new();
+
+    public decimal Subtotal => Lines.Sum(l => l.Amount);
+    public decimal Total => Subtotal;
+}
+
+public class PurchaseOrderPrintLineDto
+{
+    public string Description { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+    public decimal Rate { get; set; }
+    public decimal Amount { get; set; }
+}

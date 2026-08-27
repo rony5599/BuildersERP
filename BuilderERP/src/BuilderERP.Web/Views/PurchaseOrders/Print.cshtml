@@ -1,0 +1,266 @@
+@model BuilderERP.Application.DTOs.PurchaseOrderPrintDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Purchase Order @Model.PONumber</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #222;
+            margin: 0;
+            background: #e9ecef;
+        }
+        .toolbar {
+            padding: 12px 24px;
+            background: #fff;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            gap: 8px;
+        }
+        .toolbar a, .toolbar button {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid #0d6efd;
+            background: #0d6efd;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .toolbar a.secondary, .toolbar button.secondary {
+            background: #fff;
+            color: #0d6efd;
+        }
+        .sheet {
+            max-width: 800px;
+            margin: 24px auto;
+            background: #fff;
+            padding: 48px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        .title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0 0 24px;
+        }
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+        .company-details, .party-details {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #333;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #dee2e6;
+            margin: 24px 0;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .meta-row .party {
+            flex: 1;
+        }
+        .meta-row .po-info {
+            text-align: right;
+        }
+        .section-label {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .po-info table {
+            margin-left: auto;
+        }
+        .po-info td {
+            padding: 2px 0 2px 12px;
+            font-size: 14px;
+        }
+        .po-info td.label {
+            font-weight: 700;
+        }
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 32px;
+        }
+        table.items th {
+            background: #0d6efd;
+            color: #fff;
+            text-align: left;
+            padding: 10px 8px;
+            font-size: 13px;
+        }
+        table.items th.num, table.items td.num {
+            text-align: right;
+        }
+        table.items td {
+            padding: 10px 8px;
+            font-size: 13px;
+            border-bottom: 1px solid #eceff1;
+        }
+        .totals {
+            width: 100%;
+            margin-top: 16px;
+        }
+        .totals table {
+            margin-left: auto;
+            width: 260px;
+            border-collapse: collapse;
+        }
+        .totals td {
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .totals td.label {
+            font-weight: 700;
+        }
+        .totals td.value {
+            text-align: right;
+        }
+        .totals tr.grand td {
+            border-top: 1px solid #333;
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .signature {
+            margin-top: 80px;
+            text-align: right;
+        }
+        .signature .line {
+            display: inline-block;
+            width: 220px;
+            border-bottom: 1px solid #333;
+            height: 40px;
+        }
+        .signature .caption {
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        @@media print {
+            body { background: #fff; }
+            .toolbar { display: none; }
+            .sheet { box-shadow: none; margin: 0; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="window.print()">Print</button>
+        <a class="secondary" asp-action="PrintPdf" asp-route-id="@ViewContext.RouteData.Values["id"]">Download PDF</a>
+    </div>
+
+    <div class="sheet">
+        <div class="title">PURCHASE ORDER</div>
+
+        <div class="company-name">@Model.CompanyName</div>
+        <div class="company-details">
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyAddress))
+            {
+                <div>@Model.CompanyAddress</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyPhone))
+            {
+                <div>Mobile: @Model.CompanyPhone</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyEmail))
+            {
+                <div>Email: @Model.CompanyEmail</div>
+            }
+        </div>
+
+        <hr />
+
+        <div class="meta-row">
+            <div class="party">
+                <div class="section-label">Supplier</div>
+                <div class="party-details">
+                    <div>@Model.SupplierName</div>
+                    @if (!string.IsNullOrWhiteSpace(Model.SupplierAddress))
+                    {
+                        <div>@Model.SupplierAddress</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.SupplierPhone))
+                    {
+                        <div>Phone: @Model.SupplierPhone</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.SupplierEmail))
+                    {
+                        <div>Email: @Model.SupplierEmail</div>
+                    }
+                </div>
+            </div>
+            <div class="po-info">
+                <table>
+                    <tr>
+                        <td class="label">PO No :</td>
+                        <td>@Model.PONumber</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Order Date :</td>
+                        <td>@Model.OrderDate.ToString("MMM dd, yyyy")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <table class="items">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">Sl.</th>
+                    <th>Description</th>
+                    <th class="num" style="width: 60px;">Qty</th>
+                    <th class="num" style="width: 100px;">Rate</th>
+                    <th class="num" style="width: 110px;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ var sl = 1; }
+                @foreach (var line in Model.Lines)
+                {
+                    <tr>
+                        <td>@sl</td>
+                        <td>@line.Description</td>
+                        <td class="num">@line.Quantity.ToString("0.##")</td>
+                        <td class="num">$ @line.Rate.ToString("N2")</td>
+                        <td class="num">$ @line.Amount.ToString("N2")</td>
+                    </tr>
+                    sl++;
+                }
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <table>
+                <tr>
+                    <td class="label">Subtotal</td>
+                    <td class="value">$ @Model.Subtotal.ToString("N2")</td>
+                </tr>
+                <tr class="grand">
+                    <td class="label">Total</td>
+                    <td class="value">$ @Model.Total.ToString("N2")</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="signature">
+            <div class="line"></div>
+            <div class="caption">Authorized Signatory</div>
+        </div>
+    </div>
+</body>
+</html>
