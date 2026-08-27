@@ -8,7 +8,9 @@
      style="min-height: 100vh; background-image: url('@Url.Content("~/images/ogiBuilderErpBackgroud.png")'); background-size: cover; background-position: center;">
     <div class="card shadow-sm" style="width: 24rem;">
         <div class="card-body p-4">
-            <h1 class="h4 mb-4 text-center">Techven ERP</h1>
+            <div class="text-center mb-4">
+                <img src="@Url.Content("~/images/TechVen-Logo.png")" alt="Techven ERP" style="max-width: 180px; height: auto;" />
+            </div>
             <form asp-controller="Account" asp-action="Login" method="post">
                 <input type="hidden" asp-for="ReturnUrl" />
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
