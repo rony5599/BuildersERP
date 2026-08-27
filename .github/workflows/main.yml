@@ -1,0 +1,93 @@
+name: Build and Deploy to Windows Server
+
+# Deploys BuilderERP.Web to C:/BuildersERP on an IIS-hosted Windows server.
+# Requires a self-hosted GitHub Actions runner installed ON that server
+# (Settings > Actions > Runners > New self-hosted runner, label it "windows-server"),
+# and the WebAdministration PowerShell module (bundled with IIS Management Tools).
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  BUILD_CONFIGURATION: Release
+  WEB_PROJECT: src/BuilderERP.Web/BuilderERP.Web.csproj
+  DEPLOY_PATH: C:/BuildersERP
+  IIS_SITE_NAME: BuilderERP
+  IIS_APP_POOL_NAME: BuilderERP
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore BuilderERP.sln
+
+      - name: Build
+        run: dotnet build BuilderERP.sln -c ${{ env.BUILD_CONFIGURATION }} --no-restore
+
+      - name: Test
+        run: dotnet test BuilderERP.sln -c ${{ env.BUILD_CONFIGURATION }} --no-build --verbosity normal
+
+      - name: Publish
+        run: dotnet publish ${{ env.WEB_PROJECT }} -c ${{ env.BUILD_CONFIGURATION }} -o publish_output --no-build
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: builderserp-publish
+          path: publish_output
+
+  deploy:
+    needs: build-and-test
+    runs-on: [self-hosted, windows-server]
+    steps:
+      - name: Download publish artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: builderserp-publish
+          path: publish_output
+
+      - name: Stop IIS site and app pool
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          if (Get-Website -Name "${{ env.IIS_SITE_NAME }}" -ErrorAction SilentlyContinue) {
+            Stop-Website -Name "${{ env.IIS_SITE_NAME }}"
+          }
+          if (Get-WebAppPoolState -Name "${{ env.IIS_APP_POOL_NAME }}" -ErrorAction SilentlyContinue) {
+            Stop-WebAppPool -Name "${{ env.IIS_APP_POOL_NAME }}"
+          }
+
+      - name: Deploy files to C:/BuildersERP
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path "${{ env.DEPLOY_PATH }}" | Out-Null
+          # /MIR deletes anything in the destination not present in the source.
+          # Uploaded files (documents, drawings, photos, test reports) are stored at
+          # C:/BuilderERP-Data/uploads by default (see Storage:UploadsRoot in
+          # appsettings.json / UploadsPathProvider) — outside DEPLOY_PATH entirely, so
+          # /MIR can never touch them. App_Data and wwwroot/uploads are excluded here
+          # too as defense-in-depth in case that default is ever overridden.
+          robocopy "publish_output" "${{ env.DEPLOY_PATH }}" /MIR `
+            /XD "App_Data" "wwwroot\uploads" `
+            /XF "appsettings.Production.json" `
+            /NFL /NDL /NJH /NJS
+          if ($LASTEXITCODE -ge 8) { throw "robocopy failed with exit code $LASTEXITCODE" }
+
+      - name: Start app pool and IIS site
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          Start-WebAppPool -Name "${{ env.IIS_APP_POOL_NAME }}"
+          Start-Website -Name "${{ env.IIS_SITE_NAME }}"
