@@ -125,7 +125,11 @@ public class StockTransfersController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
-        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
+        ViewBag.Materials = materials.Items.Select(m => new SelectListItem
+        {
+            Value = m.Id.ToString(),
+            Text = $"{m.MaterialCode} | {m.Name} | {m.CategoryName}"
+        }).ToList();
 
         var warehouses = await _mediator.Send(new GetAllWarehousesQuery(PageSize: int.MaxValue));
         ViewBag.Warehouses = new SelectList(warehouses.Items, "Id", "Name");
