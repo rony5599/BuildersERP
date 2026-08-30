@@ -1,0 +1,79 @@
+@model BuilderERP.Application.DTOs.EngineerWorkOrderDto
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="text-muted small">WO #</div>
+        <div class="fw-semibold">@Model.WorkOrderNo</div>
+    </div>
+    <div class="col-md-4">
+        <div class="text-muted small">Requisition</div>
+        <div class="fw-semibold">@Model.RequisitionNumber</div>
+    </div>
+    <div class="col-md-4">
+        <div class="text-muted small">Supplier</div>
+        <div class="fw-semibold">@Model.SupplierName</div>
+    </div>
+    <div class="col-md-4 mt-2">
+        <div class="text-muted small">Rev #</div>
+        <div class="fw-semibold">@Model.RevisionNo</div>
+    </div>
+    <div class="col-md-4 mt-2">
+        <div class="text-muted small">Revision Date</div>
+        <div class="fw-semibold">@(Model.RevisionDate?.ToString("dd-MMM-yyyy") ?? "-")</div>
+    </div>
+    <div class="col-md-4 mt-2">
+        <div class="text-muted small">Status</div>
+        <div class="fw-semibold">@Model.Status</div>
+    </div>
+    <div class="col-md-4 mt-2">
+        <div class="text-muted small">Total Amount</div>
+        <div class="fw-semibold">@Model.TotalAmount</div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.TermsAndCondition))
+    {
+        <div class="col-md-12 mt-2">
+            <div class="text-muted small">Terms &amp; Condition</div>
+            <div>@Model.TermsAndCondition</div>
+        </div>
+    }
+</div>
+
+<h6>Line Items</h6>
+<table class="table table-sm table-bordered">
+    <thead>
+        <tr>
+            <th>Material</th>
+            <th>Unit</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detail in Model.Details)
+        {
+            <tr>
+                <td>@detail.MaterialName</td>
+                <td>@detail.UnitOfMeasure</td>
+                <td>@detail.Qty</td>
+                <td>@detail.Rate</td>
+                <td>@detail.Amount</td>
+                <td>@detail.Remarks</td>
+            </tr>
+        }
+        @if (Model.Details.Count == 0)
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted">No line items.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.PreviousWorkOrderId.HasValue)
+{
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-load-wo-details="@Model.PreviousWorkOrderId">
+        View Previous Revision
+    </button>
+}

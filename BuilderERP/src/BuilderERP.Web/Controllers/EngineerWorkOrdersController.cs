@@ -195,6 +195,18 @@ public class EngineerWorkOrdersController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Details(long id)
+    {
+        var workOrder = await _mediator.Send(new GetEngineerWorkOrderByIdQuery(id));
+        if (workOrder is null)
+        {
+            return NotFound();
+        }
+
+        return PartialView("_DetailsModal", workOrder);
+    }
+
+    [HttpGet]
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
     public async Task<IActionResult> RequisitionItems(long requisitionId)
     {

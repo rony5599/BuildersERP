@@ -23,7 +23,16 @@
                 <td>@order.WorkOrderNo</td>
                 <td>@order.RequisitionNumber</td>
                 <td>@order.SupplierName</td>
-                <td>@order.RevisionNo</td>
+                <td>
+                    @if (order.PreviousWorkOrderId.HasValue)
+                    {
+                        <a href="#" class="link-primary" data-load-wo-details="@order.PreviousWorkOrderId" title="View previous revision">@order.RevisionNo</a>
+                    }
+                    else
+                    {
+                        @order.RevisionNo
+                    }
+                </td>
                 <td>@order.TotalAmount</td>
                 <td>@order.Status</td>
                 <td class="text-end">

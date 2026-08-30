@@ -17,3 +17,75 @@
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>
+
+<div class="modal fade" id="wo-details-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="wo-details-back-btn" hidden>
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <h5 class="modal-title">Work Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="wo-details-modal-body">
+                <div class="text-center text-muted py-4">Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var modalEl = document.getElementById('wo-details-modal');
+            var bodyEl = document.getElementById('wo-details-modal-body');
+            var backBtn = document.getElementById('wo-details-back-btn');
+            if (!modalEl || !bodyEl || typeof bootstrap === 'undefined') return;
+            var modal = new bootstrap.Modal(modalEl);
+            var history = [];
+
+            function loadDetails(id) {
+                bodyEl.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
+                modal.show();
+                fetch('@Url.Action("Details", "EngineerWorkOrders")?id=' + encodeURIComponent(id))
+                    .then(function (response) {
+                        if (!response.ok) throw new Error('Failed to load work order details.');
+                        return response.text();
+                    })
+                    .then(function (html) {
+                        bodyEl.innerHTML = html;
+                        bodyEl.setAttribute('data-current-wo-id', id);
+                        backBtn.hidden = history.length === 0;
+                    })
+                    .catch(function (err) {
+                        bodyEl.innerHTML = '<div class="text-danger">' + err.message + '</div>';
+                    });
+            }
+
+            document.addEventListener('click', function (e) {
+                var trigger = e.target.closest('[data-load-wo-details]');
+                if (trigger) {
+                    e.preventDefault();
+                    var currentId = bodyEl.getAttribute('data-current-wo-id');
+                    if (currentId) {
+                        history.push(currentId);
+                    }
+                    loadDetails(trigger.getAttribute('data-load-wo-details'));
+                    return;
+                }
+
+                if (e.target.closest('#wo-details-back-btn')) {
+                    if (history.length === 0) return;
+                    loadDetails(history.pop());
+                }
+            });
+
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                history = [];
+                backBtn.hidden = true;
+                bodyEl.removeAttribute('data-current-wo-id');
+            });
+        })();
+    </script>
+}
