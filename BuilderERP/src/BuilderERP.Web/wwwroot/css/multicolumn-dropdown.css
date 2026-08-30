@@ -55,8 +55,7 @@
 }
 
 .multicolumn-dropdown-header {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 8px;
     padding: 8px;
     background-color: #f8f9fa;
@@ -74,8 +73,7 @@
 }
 
 .multicolumn-dropdown-item {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 8px;
     padding: 8px;
     cursor: pointer;
@@ -98,26 +96,13 @@
 }
 
 .multicolumn-dropdown-column {
+    flex: 1;
+    min-width: 0;
     padding: 4px 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 0.875rem;
-}
-
-.multicolumn-dropdown-column:nth-child(1) {
-    /* Material Code - slightly narrower */
-    flex: 0.8;
-}
-
-.multicolumn-dropdown-column:nth-child(2) {
-    /* Name - wider */
-    flex: 1.2;
-}
-
-.multicolumn-dropdown-column:nth-child(3) {
-    /* Category - regular */
-    flex: 1;
 }
 
 /* Scrollbar styling */
