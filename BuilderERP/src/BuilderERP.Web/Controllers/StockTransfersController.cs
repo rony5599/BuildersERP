@@ -132,6 +132,10 @@ public class StockTransfersController : Controller
         }).ToList();
 
         var warehouses = await _mediator.Send(new GetAllWarehousesQuery(PageSize: int.MaxValue));
-        ViewBag.Warehouses = new SelectList(warehouses.Items, "Id", "Name");
+        ViewBag.Warehouses = warehouses.Items.Select(w => new SelectListItem
+        {
+            Value = w.Id.ToString(),
+            Text = $"{w.Name} | {w.ProjectName}"
+        }).ToList();
     }
 }
