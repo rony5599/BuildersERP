@@ -23,9 +23,37 @@
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="PurchaseRequisitionId" class="form-label"></label>
-            <select asp-for="PurchaseRequisitionId" asp-items="ViewBag.PurchaseRequisitions" class="form-select">
-                <option value="">-- Select Purchase Requisition --</option>
-            </select>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="purchaseRequisition-container">
+                    <input type="hidden" asp-for="PurchaseRequisitionId" id="purchaseRequisition" value="@Model.PurchaseRequisitionId" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="Search Purchase Requisition..."
+                               autocomplete="off"
+                               id="purchaseRequisition-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="purchaseRequisition-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Purchase Requisition</div>
+                            <div class="multicolumn-dropdown-column">Project</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var requisition in (IEnumerable<dynamic>)ViewBag.PurchaseRequisitions ?? new List<dynamic>())
+                            {
+                                var parts = requisition.Text?.Split(" | ") ?? new[] { "", "" };
+                                <div class="multicolumn-dropdown-item" data-value="@requisition.Value">
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
             <span asp-validation-for="PurchaseRequisitionId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
@@ -181,6 +209,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('purchaseRequisition-container');
+
         // Initialize detail table first
         initDetailTable('rfq-details-table', 'Details');
 
