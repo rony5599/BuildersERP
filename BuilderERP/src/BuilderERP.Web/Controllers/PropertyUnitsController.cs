@@ -122,6 +122,10 @@ public class PropertyUnitsController : Controller
     private async Task PopulateFloorsAsync(long? projectId)
     {
         var floors = await _mediator.Send(new BuilderERP.Application.Features.Floors.GetAllFloorsQuery(projectId, PageSize: int.MaxValue));
-        ViewBag.Floors = new SelectList(floors.Items, "Id", "Name");
+        ViewBag.Floors = floors.Items.Select(f => new SelectListItem
+        {
+            Value = f.Id.ToString(),
+            Text = $"{f.Name} | {f.TowerName} | {f.BuildingName} | {f.ProjectName}"
+        }).ToList();
     }
 }

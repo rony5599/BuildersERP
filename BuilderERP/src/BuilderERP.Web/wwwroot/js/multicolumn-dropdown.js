@@ -50,11 +50,8 @@ class MultiColumnDropdown {
         let visibleCount = 0;
 
         this.items.forEach(item => {
-            const code = item.querySelector('.multicolumn-dropdown-column:nth-child(1)')?.textContent?.toLowerCase() || '';
-            const name = item.querySelector('.multicolumn-dropdown-column:nth-child(2)')?.textContent?.toLowerCase() || '';
-            const category = item.querySelector('.multicolumn-dropdown-column:nth-child(3)')?.textContent?.toLowerCase() || '';
-
-            const matches = code.includes(query) || name.includes(query) || category.includes(query);
+            const columns = Array.from(item.querySelectorAll('.multicolumn-dropdown-column'));
+            const matches = columns.some(col => (col.textContent || '').toLowerCase().includes(query));
 
             if (matches && query.length >= 0) {
                 item.classList.remove('hidden');

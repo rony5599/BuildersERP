@@ -4,15 +4,51 @@
     ViewData["Title"] = "New Property Unit";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
 <h1 class="h3 mb-4">New Property Unit</h1>
 
 <form asp-action="Create" method="post" class="col-md-6">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="mb-3">
         <label asp-for="FloorId" class="form-label"></label>
-        <select asp-for="FloorId" asp-items="ViewBag.Floors" class="form-select">
-            <option value="">-- Select Floor --</option>
-        </select>
+        <div class="multicolumn-dropdown-wrapper">
+            <div class="multicolumn-dropdown-container" id="floor-container">
+                <input type="hidden" asp-for="FloorId" id="floor" value="" />
+                <div class="multicolumn-dropdown-trigger">
+                    <input type="text"
+                           class="multicolumn-dropdown-filter form-control"
+                           placeholder="Search Floor..."
+                           autocomplete="off"
+                           id="floor-filter" />
+                    <span class="multicolumn-dropdown-icon">
+                        <i class="bi bi-chevron-down"></i>
+                    </span>
+                </div>
+                <div class="multicolumn-dropdown-menu" id="floor-menu" style="display: none;">
+                    <div class="multicolumn-dropdown-header">
+                        <div class="multicolumn-dropdown-column">Floor</div>
+                        <div class="multicolumn-dropdown-column">Tower</div>
+                        <div class="multicolumn-dropdown-column">Building</div>
+                        <div class="multicolumn-dropdown-column">Project</div>
+                    </div>
+                    <div class="multicolumn-dropdown-items">
+                        @foreach (var floor in (IEnumerable<dynamic>)ViewBag.Floors ?? new List<dynamic>())
+                        {
+                            var parts = floor.Text?.Split(" | ") ?? new[] { "", "", "", "" };
+                            <div class="multicolumn-dropdown-item" data-value="@floor.Value">
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2]?.Trim() ?? "" : "")</div>
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 3 ? parts[3]?.Trim() ?? "" : "")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
         <span asp-validation-for="FloorId" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -43,3 +79,10 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('floor-container');
+    });
+</script>

@@ -3,15 +3,49 @@
     ViewData["Title"] = "New Floor";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
 <h1 class="h3 mb-4">New Floor</h1>
 
 <form asp-action="Create" method="post" class="col-md-6">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="mb-3">
         <label asp-for="TowerId" class="form-label"></label>
-        <select asp-for="TowerId" asp-items="ViewBag.Towers" class="form-select">
-            <option value="">-- Select Tower --</option>
-        </select>
+        <div class="multicolumn-dropdown-wrapper">
+            <div class="multicolumn-dropdown-container" id="tower-container">
+                <input type="hidden" asp-for="TowerId" id="tower" value="" />
+                <div class="multicolumn-dropdown-trigger">
+                    <input type="text"
+                           class="multicolumn-dropdown-filter form-control"
+                           placeholder="Search Tower..."
+                           autocomplete="off"
+                           id="tower-filter" />
+                    <span class="multicolumn-dropdown-icon">
+                        <i class="bi bi-chevron-down"></i>
+                    </span>
+                </div>
+                <div class="multicolumn-dropdown-menu" id="tower-menu" style="display: none;">
+                    <div class="multicolumn-dropdown-header">
+                        <div class="multicolumn-dropdown-column">Tower</div>
+                        <div class="multicolumn-dropdown-column">Building</div>
+                        <div class="multicolumn-dropdown-column">Project</div>
+                    </div>
+                    <div class="multicolumn-dropdown-items">
+                        @foreach (var tower in (IEnumerable<dynamic>)ViewBag.Towers ?? new List<dynamic>())
+                        {
+                            var parts = tower.Text?.Split(" | ") ?? new[] { "", "", "" };
+                            <div class="multicolumn-dropdown-item" data-value="@tower.Value">
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2]?.Trim() ?? "" : "")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
         <span asp-validation-for="TowerId" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -27,3 +61,10 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('tower-container');
+    });
+</script>

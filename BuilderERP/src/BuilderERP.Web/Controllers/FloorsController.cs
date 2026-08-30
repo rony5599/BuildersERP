@@ -120,6 +120,10 @@ public class FloorsController : Controller
     private async Task PopulateTowersAsync(long? projectId)
     {
         var towers = await _mediator.Send(new GetAllTowersQuery(projectId, PageSize: int.MaxValue));
-        ViewBag.Towers = new SelectList(towers.Items, "Id", "Name");
+        ViewBag.Towers = towers.Items.Select(t => new SelectListItem
+        {
+            Value = t.Id.ToString(),
+            Text = $"{t.Name} | {t.BuildingName} | {t.ProjectName}"
+        }).ToList();
     }
 }
