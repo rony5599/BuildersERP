@@ -4,6 +4,10 @@
     ViewData["Title"] = "New Purchase Order";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
 <h1 class="h3 mb-4">New Purchase Order</h1>
 
 <form asp-action="Create" method="post">
@@ -35,22 +39,52 @@
     <table class="table table-sm" id="po-details-table">
         <thead>
             <tr>
-                <th>Material</th>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Unit Price</th>
-                <th>Disc %</th>
-                <th>VAT %</th>
-                <th>Tax %</th>
-                <th></th>
+                <th style="width: 25%;">Material</th>
+                <th style="width: 10%;">Qty</th>
+                <th style="width: 10%;">Unit</th>
+                <th style="width: 12%;">Unit Price</th>
+                <th style="width: 8%;">Disc %</th>
+                <th style="width: 8%;">VAT %</th>
+                <th style="width: 8%;">Tax %</th>
+                <th style="width: 9%;"></th>
             </tr>
         </thead>
         <tbody>
             <tr class="detail-row-template">
                 <td>
-                    <select name="Details[__index__].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
-                        <option value="">-- Material --</option>
-                    </select>
+                    <div class="multicolumn-dropdown-wrapper material-dropdown-template">
+                        <div class="multicolumn-dropdown-container" id="material-__index__-container">
+                            <input type="hidden" name="Details[__index__].MaterialId" id="material-__index__" value="" />
+                            <div class="multicolumn-dropdown-trigger">
+                                <input type="text" 
+                                       class="multicolumn-dropdown-filter form-control form-control-sm" 
+                                       placeholder="Search Material..."
+                                       autocomplete="off"
+                                       id="material-__index__-filter" />
+                                <span class="multicolumn-dropdown-icon">
+                                    <i class="bi bi-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div class="multicolumn-dropdown-menu" id="material-__index__-menu" style="display: none;">
+                                <div class="multicolumn-dropdown-header">
+                                    <div class="multicolumn-dropdown-column">Code</div>
+                                    <div class="multicolumn-dropdown-column">Name</div>
+                                    <div class="multicolumn-dropdown-column">Category</div>
+                                </div>
+                                <div class="multicolumn-dropdown-items">
+                                    @foreach(var material in (IEnumerable<dynamic>)ViewBag.Materials ?? new List<dynamic>())
+                                    {
+                                        var parts = material.Text?.Split(" | ") ?? new[] { "", "", "" };
+                                        <div class="multicolumn-dropdown-item" data-value="@material.Value">
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2]?.Trim() ?? "" : "")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td><input name="Details[__index__].OrderedQuantity" type="number" step="0.001" class="form-control form-control-sm" /></td>
                 <td>
@@ -73,8 +107,42 @@
 </form>
 
 <partial name="_DetailLineItemsScripts" />
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         initDetailTable('po-details-table', 'Details');
+    });
+
+    // Initialize material dropdowns in a specific row
+    function initializeDropdownsInRow(row) {
+        const containers = row.querySelectorAll('[id$="-container"]');
+        containers.forEach(container => {
+            if (container.id.includes('material-')) {
+                new MultiColumnDropdown(container.id);
+            }
+        });
+    }
+
+    // Hook into the row addition process
+    const addBtn = document.querySelector('[data-add-row-for="po-details-table"]');
+    if (addBtn) {
+        const originalClickHandler = addBtn.onclick;
+        addBtn.addEventListener('click', function () {
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#po-details-table tbody tr.detail-row');
+                const lastRow = rows[rows.length - 1];
+                if (lastRow) {
+                    initializeDropdownsInRow(lastRow);
+                }
+            }, 10);
+        });
+    }
+
+    // Initialize dropdowns on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#po-details-table tbody tr.detail-row');
+        rows.forEach(row => {
+            initializeDropdownsInRow(row);
+        });
     });
 </script>

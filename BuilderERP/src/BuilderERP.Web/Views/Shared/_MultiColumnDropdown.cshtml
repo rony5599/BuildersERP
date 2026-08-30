@@ -1,0 +1,48 @@
+@model IEnumerable<dynamic>
+
+@{
+    var dropdownId = ViewData["DropdownId"] ?? "multicolumn-dropdown";
+    var fieldName = ViewData["FieldName"] ?? "SelectedId";
+    var placeholder = ViewData["Placeholder"] ?? "Select an option...";
+    var selectedValue = ViewData["SelectedValue"];
+    var columns = ViewData["Columns"] as List<string> ?? new List<string> { "Code", "Name", "Category" };
+}
+
+<div class="multicolumn-dropdown-wrapper">
+    <div class="multicolumn-dropdown-container" id="@dropdownId-container">
+        <!-- Hidden input for form submission -->
+        <input type="hidden" name="@fieldName" id="@dropdownId" value="@(selectedValue ?? "")" />
+        
+        <!-- Dropdown trigger button -->
+        <div class="multicolumn-dropdown-trigger">
+            <input type="text" 
+                   class="multicolumn-dropdown-filter form-control form-control-sm" 
+                   placeholder="@placeholder"
+                   autocomplete="off"
+                   id="@dropdownId-filter" />
+            <span class="multicolumn-dropdown-icon">
+                <i class="bi bi-chevron-down"></i>
+            </span>
+        </div>
+        
+        <!-- Dropdown options grid -->
+        <div class="multicolumn-dropdown-menu" id="@dropdownId-menu" style="display: none;">
+            <div class="multicolumn-dropdown-header">
+                @foreach(var column in columns)
+                {
+                    <div class="multicolumn-dropdown-column">@column</div>
+                }
+            </div>
+            <div class="multicolumn-dropdown-items">
+                @foreach(var item in Model ?? new List<dynamic>())
+                {
+                    <div class="multicolumn-dropdown-item" data-value="@item.Id">
+                        <div class="multicolumn-dropdown-column">@(item.MaterialCode ?? item.Code ?? "")</div>
+                        <div class="multicolumn-dropdown-column">@(item.Name ?? "")</div>
+                        <div class="multicolumn-dropdown-column">@(item.CategoryName ?? item.Category ?? "")</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
