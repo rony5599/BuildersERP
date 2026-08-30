@@ -167,6 +167,10 @@ public class PurchaseReturnsController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var receives = await _mediator.Send(new GetAllGoodsReceivesQuery(PageSize: int.MaxValue));
-        ViewBag.GoodsReceives = new SelectList(receives.Items, "Id", "GrnNumber");
+        ViewBag.GoodsReceives = receives.Items.Select(r => new SelectListItem
+        {
+            Value = r.Id.ToString(),
+            Text = $"{r.GrnNumber} | {r.ProjectName}"
+        }).ToList();
     }
 }

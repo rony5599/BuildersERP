@@ -26,6 +26,10 @@ public class GetAllPurchaseOrdersQueryHandler : IRequestHandler<GetAllPurchaseOr
         var query = _unitOfWork.Repository<PurchaseOrder>().Query()
             .Include(o => o.VendorQuotation)
             .ThenInclude(v => v.Supplier)
+            .Include(o => o.VendorQuotation)
+            .ThenInclude(v => v.Rfq)
+            .ThenInclude(r => r.PurchaseRequisition)
+            .ThenInclude(p => p.Project)
             .Include(o => o.Details)
             .AsQueryable();
 

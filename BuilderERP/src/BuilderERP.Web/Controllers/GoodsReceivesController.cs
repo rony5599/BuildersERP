@@ -171,7 +171,11 @@ public class GoodsReceivesController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var orders = await _mediator.Send(new GetAllPurchaseOrdersQuery(PageSize: int.MaxValue));
-        ViewBag.PurchaseOrders = new SelectList(orders.Items, "Id", "PONumber");
+        ViewBag.PurchaseOrders = orders.Items.Select(o => new SelectListItem
+        {
+            Value = o.Id.ToString(),
+            Text = $"{o.PONumber} | {o.ProjectName}"
+        }).ToList();
 
         var warehouses = await _mediator.Send(new GetAllWarehousesQuery(PageSize: int.MaxValue));
         ViewBag.Warehouses = warehouses.Items.Select(w => new SelectListItem

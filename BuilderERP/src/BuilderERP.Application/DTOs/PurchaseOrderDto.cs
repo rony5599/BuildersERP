@@ -15,6 +15,8 @@ public class PurchaseOrderDto
     public long VendorQuotationId { get; set; }
     public string QuotationNumber { get; set; } = string.Empty;
     public string SupplierName { get; set; } = string.Empty;
+    public long ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public List<PurchaseOrderDetailDto> Details { get; set; } = new();
 }
 

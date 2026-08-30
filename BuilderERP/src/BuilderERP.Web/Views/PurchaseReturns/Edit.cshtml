@@ -4,6 +4,10 @@
     ViewData["Title"] = "Edit Purchase Return";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
 <h1 class="h3 mb-4">Edit Purchase Return</h1>
 
 <form asp-action="Edit" method="post">
@@ -17,9 +21,37 @@
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="GoodsReceiveId" class="form-label"></label>
-            <select asp-for="GoodsReceiveId" asp-items="ViewBag.GoodsReceives" class="form-select" id="goodsReceiveSelect">
-                <option value="">-- Select Goods Receive --</option>
-            </select>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="goodsReceive-container">
+                    <input type="hidden" asp-for="GoodsReceiveId" id="goodsReceive" value="@Model.GoodsReceiveId" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="Search Goods Receive..."
+                               autocomplete="off"
+                               id="goodsReceive-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="goodsReceive-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Goods Receive</div>
+                            <div class="multicolumn-dropdown-column">Project</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var receive in (IEnumerable<dynamic>)ViewBag.GoodsReceives ?? new List<dynamic>())
+                            {
+                                var parts = receive.Text?.Split(" | ") ?? new[] { "", "" };
+                                <div class="multicolumn-dropdown-item" data-value="@receive.Value">
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
             <span asp-validation-for="GoodsReceiveId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
@@ -101,12 +133,14 @@
 </form>
 
 <partial name="_DetailLineItemsScripts" />
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('goodsReceive-container');
         initDetailTable('ret-details-table', 'Details');
 
         document.getElementById('loadGrnLinesBtn').addEventListener('click', function () {
-            var grnId = document.getElementById('goodsReceiveSelect').value;
+            var grnId = document.getElementById('goodsReceive').value;
             if (!grnId) {
                 alert('Select a goods receive first.');
                 return;

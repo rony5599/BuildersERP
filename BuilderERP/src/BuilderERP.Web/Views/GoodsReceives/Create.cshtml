@@ -14,9 +14,37 @@
     <div class="row col-md-8">
         <div class="mb-3 col-md-4">
             <label asp-for="PurchaseOrderId" class="form-label"></label>
-            <select asp-for="PurchaseOrderId" asp-items="ViewBag.PurchaseOrders" class="form-select" id="purchaseOrderSelect">
-                <option value="">-- Select Purchase Order --</option>
-            </select>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="purchaseOrder-container">
+                    <input type="hidden" asp-for="PurchaseOrderId" id="purchaseOrder" value="" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="Search Purchase Order..."
+                               autocomplete="off"
+                               id="purchaseOrder-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="purchaseOrder-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Purchase Order</div>
+                            <div class="multicolumn-dropdown-column">Project Name</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var order in (IEnumerable<dynamic>)ViewBag.PurchaseOrders ?? new List<dynamic>())
+                            {
+                                var parts = order.Text?.Split(" | ") ?? new[] { "", "" };
+                                <div class="multicolumn-dropdown-item" data-value="@order.Value">
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
             <span asp-validation-for="PurchaseOrderId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
@@ -119,10 +147,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         new MultiColumnDropdown('warehouse-container');
+        new MultiColumnDropdown('purchaseOrder-container');
         initDetailTable('grn-details-table', 'Details');
 
         document.getElementById('loadPoLinesBtn').addEventListener('click', function () {
-            var poId = document.getElementById('purchaseOrderSelect').value;
+            var poId = document.getElementById('purchaseOrder').value;
             if (!poId) {
                 alert('Select a purchase order first.');
                 return;

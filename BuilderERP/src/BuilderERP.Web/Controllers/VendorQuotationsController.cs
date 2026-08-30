@@ -155,7 +155,11 @@ public class VendorQuotationsController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var rfqs = await _mediator.Send(new GetAllRfqsQuery(PageSize: int.MaxValue));
-        ViewBag.Rfqs = new SelectList(rfqs.Items, "Id", "RfqNumber");
+        ViewBag.Rfqs = rfqs.Items.Select(r => new SelectListItem
+        {
+            Value = r.Id.ToString(),
+            Text = $"{r.RfqNumber} | {r.RequisitionNumber} | {r.ProjectName}"
+        }).ToList();
 
         var suppliers = await _mediator.Send(new GetAllSuppliersQuery(PageSize: int.MaxValue));
         ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name");

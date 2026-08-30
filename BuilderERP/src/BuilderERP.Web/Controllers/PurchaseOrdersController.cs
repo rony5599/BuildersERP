@@ -166,7 +166,11 @@ public class PurchaseOrdersController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery(PageSize: int.MaxValue));
-        ViewBag.VendorQuotations = new SelectList(quotations.Items, "Id", "QuotationNumber");
+        ViewBag.VendorQuotations = quotations.Items.Select(q => new SelectListItem
+        {
+            Value = q.Id.ToString(),
+            Text = $"{q.QuotationNumber} | {q.ProjectName}"
+        }).ToList();
 
         var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
         // Format materials with Code - Name | Category for multicolumn dropdown
