@@ -11,6 +11,7 @@
     {
         pages.Add(new List<BuilderERP.Application.DTOs.PurchaseOrderPrintLineDto>());
     }
+    var copyLabels = new[] { "Office Copy", "Customer Copy", "Bill Copy" };
 }
 <!DOCTYPE html>
 <html>
@@ -48,11 +49,25 @@
             color: #0d6efd;
         }
         .sheet {
+            position: relative;
             max-width: 800px;
             margin: 24px auto;
             background: #fff;
             padding: 48px;
             box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        .copy-label {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #333;
         }
         .sheet + .sheet {
             margin-top: 40px;
@@ -189,6 +204,7 @@
             .toolbar { display: none; }
             .sheet { box-shadow: none; margin: 0; max-width: none; padding: 12px; page-break-after: always; }
             .sheet:last-of-type { page-break-after: auto; }
+            .copy-label { top: 4px; right: 4px; }
             .title { font-size: 24px; margin-bottom: 12px; }
             table.items { margin-top: 16px; }
             table.items tr { page-break-inside: avoid; }
@@ -202,14 +218,17 @@
         <a class="secondary" asp-action="PrintPdf" asp-route-id="@ViewContext.RouteData.Values["id"]">Download PDF</a>
     </div>
 
-    @for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
+    @foreach (var copyLabel in copyLabels)
     {
-        var pageLines = pages[pageIndex];
-        var startSl = pageIndex * itemsPerPage + 1;
-        var isLastPage = pageIndex == pages.Count - 1;
+        for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
+        {
+            var pageLines = pages[pageIndex];
+            var startSl = pageIndex * itemsPerPage + 1;
+            var isLastPage = pageIndex == pages.Count - 1;
 
-        <div class="sheet">
-            <div class="title">PURCHASE ORDER</div>
+            <div class="sheet">
+                <div class="copy-label">@copyLabel</div>
+                <div class="title">PURCHASE ORDER</div>
 
             <div class="company-name">@Model.CompanyName</div>
             <div class="company-details">
@@ -374,7 +393,8 @@
                     <div class="page-footer">Page @(pageIndex + 1) of @pages.Count</div>
                 }
             }
-        </div>
+            </div>
+        }
     }
 </body>
 </html>

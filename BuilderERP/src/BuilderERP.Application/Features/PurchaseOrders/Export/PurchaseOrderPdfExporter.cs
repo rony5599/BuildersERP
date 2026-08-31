@@ -8,6 +8,7 @@ namespace BuilderERP.Application.Features.PurchaseOrders.Export;
 public class PurchaseOrderPdfExporter
 {
     private const int ItemsPerPage = 10;
+    private static readonly string[] CopyLabels = { "Office Copy", "Customer Copy", "Bill Copy" };
 
     public byte[] Export(PurchaseOrderPrintDto data)
     {
@@ -24,21 +25,24 @@ public class PurchaseOrderPdfExporter
 
         var document = Document.Create(container =>
         {
-            for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
+            foreach (var copyLabel in CopyLabels)
             {
-                var pageLines = pages[pageIndex];
-                var startSl = pageIndex * ItemsPerPage + 1;
-                var isLastPage = pageIndex == pages.Count - 1;
-
-                container.Page(page =>
+                for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
                 {
-                    page.Size(PageSizes.A4);
-                    page.Margin(36);
-                    page.DefaultTextStyle(x => x.FontSize(10));
+                    var pageLines = pages[pageIndex];
+                    var startSl = pageIndex * ItemsPerPage + 1;
+                    var isLastPage = pageIndex == pages.Count - 1;
 
-                    page.Header().Column(column =>
+                    container.Page(page =>
                     {
-                        column.Item().AlignCenter().Text("PURCHASE ORDER").FontSize(22).Bold();
+                        page.Size(PageSizes.A4);
+                        page.Margin(36);
+                        page.DefaultTextStyle(x => x.FontSize(10));
+
+                        page.Header().Column(column =>
+                        {
+                            column.Item().AlignRight().Border(1).BorderColor(Colors.Grey.Darken2).Padding(4).Text(copyLabel).Bold().FontSize(9);
+                            column.Item().AlignCenter().Text("PURCHASE ORDER").FontSize(22).Bold();
                         column.Item().PaddingTop(12).Row(row =>
                         {
                             row.RelativeItem().Column(c =>
@@ -229,13 +233,14 @@ public class PurchaseOrderPdfExporter
                         });
                     });
 
-                    page.Footer().AlignCenter().Text(x =>
-                    {
-                        x.CurrentPageNumber();
-                        x.Span(" / ");
-                        x.TotalPages();
+                        page.Footer().AlignCenter().Text(x =>
+                        {
+                            x.CurrentPageNumber();
+                            x.Span(" / ");
+                            x.TotalPages();
+                        });
                     });
-                });
+                }
             }
         });
 
