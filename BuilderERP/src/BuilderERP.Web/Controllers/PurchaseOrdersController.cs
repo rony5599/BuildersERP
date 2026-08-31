@@ -85,6 +85,10 @@ public class PurchaseOrdersController : Controller
             OrderDate = order.OrderDate,
             DeliveryDate = order.DeliveryDate,
             Status = order.Status,
+            TermsOfPayment = order.TermsOfPayment,
+            DispatchedThrough = order.DispatchedThrough,
+            Destination = order.Destination,
+            Remarks = order.Remarks,
             VendorQuotationId = order.VendorQuotationId,
             Details = order.Details.Select(d => new CreatePurchaseOrderDetailDto
             {

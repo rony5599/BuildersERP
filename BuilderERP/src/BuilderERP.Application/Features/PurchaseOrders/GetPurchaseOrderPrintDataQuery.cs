@@ -47,6 +47,10 @@ public class GetPurchaseOrderPrintDataQueryHandler : IRequestHandler<GetPurchase
             SupplierAddress = supplier?.Address,
             SupplierPhone = supplier?.Phone,
             SupplierEmail = supplier?.Email,
+            TermsOfPayment = order.TermsOfPayment,
+            DispatchedThrough = order.DispatchedThrough,
+            Destination = order.Destination,
+            Remarks = order.Remarks,
             Lines = order.Details.Select(d => new PurchaseOrderPrintLineDto
             {
                 Description = d.Material?.Name ?? string.Empty,

@@ -61,6 +61,22 @@
             <input asp-for="DeliveryDate" type="date" class="form-control" />
             <span asp-validation-for="DeliveryDate" class="text-danger"></span>
         </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="TermsOfPayment" class="form-label">Terms of Payment / Delivery</label>
+            <input asp-for="TermsOfPayment" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="DispatchedThrough" class="form-label">Dispatched Through</label>
+            <input asp-for="DispatchedThrough" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Destination" class="form-label">Destination</label>
+            <input asp-for="Destination" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-8">
+            <label asp-for="Remarks" class="form-label">Remarks</label>
+            <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
+        </div>
     </div>
 
     <h5 class="mt-4">Line Items</h5>

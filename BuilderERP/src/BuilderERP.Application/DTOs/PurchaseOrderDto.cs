@@ -12,6 +12,10 @@ public class PurchaseOrderDto
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? TermsOfPayment { get; set; }
+    public string? DispatchedThrough { get; set; }
+    public string? Destination { get; set; }
+    public string? Remarks { get; set; }
     public long VendorQuotationId { get; set; }
     public string QuotationNumber { get; set; } = string.Empty;
     public string SupplierName { get; set; } = string.Empty;
@@ -55,6 +59,10 @@ public class CreatePurchaseOrderDto
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;
+    public string? TermsOfPayment { get; set; }
+    public string? DispatchedThrough { get; set; }
+    public string? Destination { get; set; }
+    public string? Remarks { get; set; }
     public long VendorQuotationId { get; set; }
     public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }
@@ -66,6 +74,10 @@ public class UpdatePurchaseOrderDto
     public DateTime OrderDate { get; set; }
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
+    public string? TermsOfPayment { get; set; }
+    public string? DispatchedThrough { get; set; }
+    public string? Destination { get; set; }
+    public string? Remarks { get; set; }
     public long VendorQuotationId { get; set; }
     public List<CreatePurchaseOrderDetailDto> Details { get; set; } = new();
 }
@@ -84,6 +96,11 @@ public class PurchaseOrderPrintDto
     public string? SupplierAddress { get; set; }
     public string? SupplierPhone { get; set; }
     public string? SupplierEmail { get; set; }
+
+    public string? TermsOfPayment { get; set; }
+    public string? DispatchedThrough { get; set; }
+    public string? Destination { get; set; }
+    public string? Remarks { get; set; }
 
     public List<PurchaseOrderPrintLineDto> Lines { get; set; } = new();
 

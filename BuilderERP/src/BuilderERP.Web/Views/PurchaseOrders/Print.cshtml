@@ -1,6 +1,16 @@
 @model BuilderERP.Application.DTOs.PurchaseOrderPrintDto
 @{
     Layout = null;
+    const int itemsPerPage = 10;
+    var pages = Model.Lines
+        .Select((line, index) => (line, index))
+        .GroupBy(x => x.index / itemsPerPage)
+        .Select(g => g.Select(x => x.line).ToList())
+        .ToList();
+    if (pages.Count == 0)
+    {
+        pages.Add(new List<BuilderERP.Application.DTOs.PurchaseOrderPrintLineDto>());
+    }
 }
 <!DOCTYPE html>
 <html>
@@ -43,6 +53,16 @@
             background: #fff;
             padding: 48px;
             box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        .sheet + .sheet {
+            margin-top: 40px;
+        }
+        .page-footer {
+            margin-top: 12px;
+            text-align: right;
+            font-size: 11px;
+            color: #888;
+            font-style: italic;
         }
         .title {
             text-align: center;
@@ -136,25 +156,43 @@
             font-size: 16px;
             font-weight: 800;
         }
-        .signature {
+        .signature-row {
             margin-top: 80px;
-            text-align: right;
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
         }
-        .signature .line {
-            display: inline-block;
-            width: 220px;
+        .signature-row .signature {
+            flex: 1;
+            text-align: center;
+        }
+        .signature-row .signature .line {
+            display: block;
             border-bottom: 1px solid #333;
             height: 40px;
         }
-        .signature .caption {
+        .signature-row .signature .caption {
             font-weight: 700;
             margin-top: 4px;
+        }
+        .signature-row .signature .subcaption {
+            font-size: 12px;
+            color: #555;
+        }
+
+        @@page {
+            margin: 10mm;
         }
 
         @@media print {
             body { background: #fff; }
             .toolbar { display: none; }
-            .sheet { box-shadow: none; margin: 0; max-width: none; }
+            .sheet { box-shadow: none; margin: 0; max-width: none; padding: 12px; page-break-after: always; }
+            .sheet:last-of-type { page-break-after: auto; }
+            .title { font-size: 24px; margin-bottom: 12px; }
+            table.items { margin-top: 16px; }
+            table.items tr { page-break-inside: avoid; }
+            .signature-row { margin-top: 40px; }
         }
     </style>
 </head>
@@ -164,103 +202,179 @@
         <a class="secondary" asp-action="PrintPdf" asp-route-id="@ViewContext.RouteData.Values["id"]">Download PDF</a>
     </div>
 
-    <div class="sheet">
-        <div class="title">PURCHASE ORDER</div>
+    @for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
+    {
+        var pageLines = pages[pageIndex];
+        var startSl = pageIndex * itemsPerPage + 1;
+        var isLastPage = pageIndex == pages.Count - 1;
 
-        <div class="company-name">@Model.CompanyName</div>
-        <div class="company-details">
-            @if (!string.IsNullOrWhiteSpace(Model.CompanyAddress))
-            {
-                <div>@Model.CompanyAddress</div>
-            }
-            @if (!string.IsNullOrWhiteSpace(Model.CompanyPhone))
-            {
-                <div>Mobile: @Model.CompanyPhone</div>
-            }
-            @if (!string.IsNullOrWhiteSpace(Model.CompanyEmail))
-            {
-                <div>Email: @Model.CompanyEmail</div>
-            }
-        </div>
+        <div class="sheet">
+            <div class="title">PURCHASE ORDER</div>
 
-        <hr />
+            <div class="company-name">@Model.CompanyName</div>
+            <div class="company-details">
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyAddress))
+                {
+                    <div>@Model.CompanyAddress</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyPhone))
+                {
+                    <div>Mobile: @Model.CompanyPhone</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyEmail))
+                {
+                    <div>Email: @Model.CompanyEmail</div>
+                }
+            </div>
 
-        <div class="meta-row">
-            <div class="party">
-                <div class="section-label">Supplier</div>
-                <div class="party-details">
-                    <div>@Model.SupplierName</div>
-                    @if (!string.IsNullOrWhiteSpace(Model.SupplierAddress))
+            <hr />
+
+            @if (!string.IsNullOrWhiteSpace(Model.TermsOfPayment) || !string.IsNullOrWhiteSpace(Model.DispatchedThrough) || !string.IsNullOrWhiteSpace(Model.Destination))
+            {
+                <div class="meta-row">
+                    @if (!string.IsNullOrWhiteSpace(Model.TermsOfPayment))
                     {
-                        <div>@Model.SupplierAddress</div>
+                        <div class="party">
+                            <div class="section-label">Terms of Payment / Delivery</div>
+                            <div class="party-details">@Model.TermsOfPayment</div>
+                        </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.SupplierPhone))
+                    @if (!string.IsNullOrWhiteSpace(Model.DispatchedThrough))
                     {
-                        <div>Phone: @Model.SupplierPhone</div>
+                        <div class="party">
+                            <div class="section-label">Dispatched Through</div>
+                            <div class="party-details">@Model.DispatchedThrough</div>
+                        </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.SupplierEmail))
+                    @if (!string.IsNullOrWhiteSpace(Model.Destination))
                     {
-                        <div>Email: @Model.SupplierEmail</div>
+                        <div class="party">
+                            <div class="section-label">Destination</div>
+                            <div class="party-details">@Model.Destination</div>
+                        </div>
                     }
                 </div>
-            </div>
-            <div class="po-info">
-                <table>
-                    <tr>
-                        <td class="label">PO No :</td>
-                        <td>@Model.PONumber</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Order Date :</td>
-                        <td>@Model.OrderDate.ToString("MMM dd, yyyy")</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+                <hr />
+            }
 
-        <table class="items">
-            <thead>
-                <tr>
-                    <th style="width: 40px;">Sl.</th>
-                    <th>Description</th>
-                    <th class="num" style="width: 60px;">Qty</th>
-                    <th class="num" style="width: 100px;">Rate</th>
-                    <th class="num" style="width: 110px;">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{ var sl = 1; }
-                @foreach (var line in Model.Lines)
-                {
-                    <tr>
-                        <td>@sl</td>
-                        <td>@line.Description</td>
-                        <td class="num">@line.Quantity.ToString("0.##")</td>
-                        <td class="num">$ @line.Rate.ToString("N2")</td>
-                        <td class="num">$ @line.Amount.ToString("N2")</td>
-                    </tr>
-                    sl++;
-                }
-            </tbody>
-        </table>
+            <div class="meta-row">
+                <div class="party">
+                    <div class="section-label">Consignee &mdash; Ship To</div>
+                    <div class="party-details">
+                        <div>@Model.CompanyName</div>
+                        @if (!string.IsNullOrWhiteSpace(Model.CompanyAddress))
+                        {
+                            <div>@Model.CompanyAddress</div>
+                        }
+                    </div>
+                </div>
+                <div class="party">
+                    <div class="section-label">Supplier &mdash; Bill From</div>
+                    <div class="party-details">
+                        <div>@Model.SupplierName</div>
+                        @if (!string.IsNullOrWhiteSpace(Model.SupplierAddress))
+                        {
+                            <div>@Model.SupplierAddress</div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.SupplierPhone))
+                        {
+                            <div>Phone: @Model.SupplierPhone</div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.SupplierEmail))
+                        {
+                            <div>Email: @Model.SupplierEmail</div>
+                        }
+                    </div>
+                </div>
+                <div class="po-info">
+                    <table>
+                        <tr>
+                            <td class="label">PO No :</td>
+                            <td>@Model.PONumber</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Order Date :</td>
+                            <td>@Model.OrderDate.ToString("MMM dd, yyyy")</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
-        <div class="totals">
-            <table>
-                <tr>
-                    <td class="label">Subtotal</td>
-                    <td class="value">$ @Model.Subtotal.ToString("N2")</td>
-                </tr>
-                <tr class="grand">
-                    <td class="label">Total</td>
-                    <td class="value">$ @Model.Total.ToString("N2")</td>
-                </tr>
+            <table class="items">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">Sl.</th>
+                        <th>Description</th>
+                        <th class="num" style="width: 60px;">Qty</th>
+                        <th class="num" style="width: 100px;">Rate</th>
+                        <th class="num" style="width: 110px;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var sl = startSl; }
+                    @foreach (var line in pageLines)
+                    {
+                        <tr>
+                            <td>@sl</td>
+                            <td>@line.Description</td>
+                            <td class="num">@line.Quantity.ToString("0.##")</td>
+                            <td class="num">@line.Rate.ToString("N2")</td>
+                            <td class="num">@line.Amount.ToString("N2")</td>
+                        </tr>
+                        sl++;
+                    }
+                </tbody>
             </table>
-        </div>
 
-        <div class="signature">
-            <div class="line"></div>
-            <div class="caption">Authorized Signatory</div>
+            @if (!isLastPage)
+            {
+                <div class="page-footer">Continued on next page&hellip; (Page @(pageIndex + 1) of @pages.Count)</div>
+            }
+            else
+            {
+                <div class="totals">
+                    <table>
+                        <tr>
+                            <td class="label">Subtotal</td>
+                            <td class="value">@Model.Subtotal.ToString("N2")</td>
+                        </tr>
+                        <tr class="grand">
+                            <td class="label">Total</td>
+                            <td class="value">@Model.Total.ToString("N2")</td>
+                        </tr>
+                    </table>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+                {
+                    <div class="section-label" style="margin-top: 24px;">Remarks</div>
+                    <div class="party-details">@Model.Remarks</div>
+                }
+
+                <div class="signature-row">
+                    <div class="signature">
+                        <div class="line"></div>
+                        <div class="caption">Sr. Executive</div>
+                        <div class="subcaption">Procurement Dept.</div>
+                    </div>
+                    <div class="signature">
+                        <div class="line"></div>
+                        <div class="caption">Sr. Manager</div>
+                        <div class="subcaption">Procurement Dept.</div>
+                    </div>
+                    <div class="signature">
+                        <div class="line"></div>
+                        <div class="caption">Authorized Signatory</div>
+                        <div class="subcaption">@Model.CompanyName</div>
+                    </div>
+                </div>
+
+                @if (pages.Count > 1)
+                {
+                    <div class="page-footer">Page @(pageIndex + 1) of @pages.Count</div>
+                }
+            }
         </div>
-    </div>
+    }
 </body>
 </html>

@@ -12,6 +12,11 @@ public class PurchaseOrder : BaseEntity
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;
     public bool IsActive { get; set; } = true;
 
+    public string? TermsOfPayment { get; set; }
+    public string? DispatchedThrough { get; set; }
+    public string? Destination { get; set; }
+    public string? Remarks { get; set; }
+
     public long VendorQuotationId { get; set; }
     public VendorQuotation VendorQuotation { get; set; } = null!;
 

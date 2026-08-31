@@ -47,6 +47,10 @@ public class UpdatePurchaseOrderCommandHandler : IRequestHandler<UpdatePurchaseO
         order.OrderDate = request.Dto.OrderDate;
         order.DeliveryDate = request.Dto.DeliveryDate;
         order.Status = request.Dto.Status;
+        order.TermsOfPayment = request.Dto.TermsOfPayment;
+        order.DispatchedThrough = request.Dto.DispatchedThrough;
+        order.Destination = request.Dto.Destination;
+        order.Remarks = request.Dto.Remarks;
         order.VendorQuotationId = request.Dto.VendorQuotationId;
 
         var detailRepository = _unitOfWork.Repository<PurchaseOrderDetail>();
