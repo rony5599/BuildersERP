@@ -102,6 +102,9 @@ public class PurchaseOrderPrintDto
     public string? Destination { get; set; }
     public string? Remarks { get; set; }
 
+    public string? PrintedBy { get; set; }
+    public DateTime PrintedAt { get; set; }
+
     public List<PurchaseOrderPrintLineDto> Lines { get; set; } = new();
 
     public decimal Subtotal => Lines.Sum(l => l.Amount);

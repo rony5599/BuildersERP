@@ -79,6 +79,13 @@
             color: #888;
             font-style: italic;
         }
+        .audit-stamp {
+            position: absolute;
+            bottom: 12px;
+            left: 48px;
+            font-size: 9px;
+            color: #aaa;
+        }
         .title {
             text-align: center;
             font-size: 32px;
@@ -205,6 +212,7 @@
             .sheet { box-shadow: none; margin: 0; max-width: none; padding: 12px; page-break-after: always; }
             .sheet:last-of-type { page-break-after: auto; }
             .copy-label { top: 4px; right: 4px; }
+            .audit-stamp { bottom: 2px; left: 12px; }
             .title { font-size: 24px; margin-bottom: 12px; }
             table.items { margin-top: 16px; }
             table.items tr { page-break-inside: avoid; }
@@ -393,6 +401,8 @@
                     <div class="page-footer">Page @(pageIndex + 1) of @pages.Count</div>
                 }
             }
+
+            <div class="audit-stamp">Printed by @(Model.PrintedBy ?? "Unknown") on @Model.PrintedAt.ToString("dd MMM yyyy, hh:mm tt")</div>
             </div>
         }
     }

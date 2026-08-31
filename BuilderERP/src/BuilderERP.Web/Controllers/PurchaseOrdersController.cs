@@ -152,6 +152,9 @@ public class PurchaseOrdersController : Controller
             return NotFound();
         }
 
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
         return View(data);
     }
 
@@ -162,6 +165,9 @@ public class PurchaseOrdersController : Controller
         {
             return NotFound();
         }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
 
         var pdfBytes = _pdfExporter.Export(data);
         return File(pdfBytes, "application/pdf", $"{data.PONumber}.pdf");
