@@ -1,0 +1,23 @@
+@model BuilderERP.Web.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Approval Required";
+    Layout = "_Layout";
+}
+
+<div class="d-flex justify-content-center align-items-center"
+     style="min-height: 100vh; background-image: url('@Url.Content("~/images/ogiBuilderErpBackgroud.png")'); background-size: cover; background-position: center;">
+    <div class="card shadow-sm" style="width: 26rem;">
+        <div class="card-body p-4 text-center">
+            <div class="mb-3">
+                <img src="@Url.Content("~/images/TechVen-Logo.png")" alt="Techven ERP" style="max-width: 180px; height: auto;" />
+            </div>
+            <h1 class="h4">Device Approval Required</h1>
+            <p class="text-muted">
+                This device is not yet recognized for your account. A request has been sent to an
+                administrator for approval. You will be able to log in from this device once it has
+                been approved.
+            </p>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary w-100">Back to Login</a>
+        </div>
+    </div>
+</div>

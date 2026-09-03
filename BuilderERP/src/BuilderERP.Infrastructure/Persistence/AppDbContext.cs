@@ -125,6 +125,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<SecurityIncident> SecurityIncidents => Set<SecurityIncident>();
     public DbSet<ParkingSlot> ParkingSlots => Set<ParkingSlot>();
     public DbSet<CommonAreaBooking> CommonAreaBookings => Set<CommonAreaBooking>();
+    public DbSet<UserDevice> UserDevices => Set<UserDevice>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -161,6 +162,26 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.Property(a => a.PropertyName).HasMaxLength(200);
             entity.HasIndex(a => new { a.EntityName, a.EntityId });
             entity.HasIndex(a => a.ChangedAt);
+        });
+
+        builder.Entity<UserDevice>(entity =>
+        {
+            entity.Property(d => d.DeviceId).HasMaxLength(100).IsRequired();
+            entity.Property(d => d.DeviceName).HasMaxLength(200);
+            entity.Property(d => d.DeviceType).HasMaxLength(50);
+            entity.Property(d => d.Browser).HasMaxLength(100);
+            entity.Property(d => d.OperatingSystem).HasMaxLength(100);
+            entity.Property(d => d.IPAddress).HasMaxLength(45);
+            entity.Property(d => d.LastIPAddress).HasMaxLength(45);
+            entity.Property(d => d.UserAgent).HasMaxLength(512);
+
+            entity.HasIndex(d => new { d.UserId, d.DeviceId }).IsUnique();
+            entity.HasIndex(d => d.Status);
+
+            entity.HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Company>().HasIndex(c => c.Code).IsUnique();

@@ -1,4 +1,5 @@
 using BuilderERP.Domain.Entities;
+using BuilderERP.Infrastructure.Identity;
 using BuilderERP.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,12 +12,18 @@ public class AccountController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IDeviceRecognitionService _deviceRecognition;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<AccountController> logger)
+    public AccountController(
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        IDeviceRecognitionService deviceRecognition,
+        ILogger<AccountController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _deviceRecognition = deviceRecognition;
         _logger = logger;
     }
 
@@ -42,11 +49,28 @@ public class AccountController : Controller
             return View(model);
         }
 
+        var deviceId = _deviceRecognition.GetOrCreateDeviceId(HttpContext);
+        var deviceStatus = await _deviceRecognition.CheckDeviceAsync(user.Id, deviceId, HttpContext);
+
+        if (deviceStatus == DeviceStatus.Pending)
+        {
+            _logger.LogInformation("Login blocked for {Email}: device {DeviceId} is pending approval", model.Email, deviceId);
+            return View("DeviceApprovalRequired", model);
+        }
+
+        if (deviceStatus != DeviceStatus.Approved)
+        {
+            _logger.LogInformation("Login blocked for {Email}: device {DeviceId} status is {Status}", model.Email, deviceId, deviceStatus);
+            return AddDeviceError(model, deviceStatus);
+        }
+
         var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
 
         if (result.Succeeded)
         {
             _logger.LogInformation("User {Email} logged in", model.Email);
+            await _deviceRecognition.RecordSuccessfulLoginAsync(user.Id, deviceId, HttpContext);
+
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);
@@ -65,6 +89,20 @@ public class AccountController : Controller
         }
 
         return View(model);
+    }
+
+    private IActionResult AddDeviceError(LoginViewModel model, DeviceStatus deviceStatus)
+    {
+        var message = deviceStatus switch
+        {
+            DeviceStatus.Rejected => "This device was rejected by an administrator.",
+            DeviceStatus.Revoked => "Access from this device has been revoked.",
+            DeviceStatus.Blocked => "This device has been blocked.",
+            _ => "This device is not approved for login."
+        };
+
+        ModelState.AddModelError(string.Empty, message);
+        return View("Login", model);
     }
 
     [HttpPost]

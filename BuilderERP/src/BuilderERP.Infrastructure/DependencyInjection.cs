@@ -1,6 +1,7 @@
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using BuilderERP.Infrastructure.Authorization;
+using BuilderERP.Infrastructure.Identity;
 using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
@@ -45,6 +46,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IDocumentNumberGenerator, DocumentNumberGenerator>();
+        services.AddScoped<IDeviceRecognitionService, DeviceRecognitionService>();
 
         var redisConnectionString = configuration.GetConnectionString("Redis");
         if (!string.IsNullOrWhiteSpace(redisConnectionString))

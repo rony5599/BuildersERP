@@ -67,7 +67,8 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ProjectView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CostCenterView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DeviceApprovalView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">Administration<i class="bi bi-chevron-down nav-section-caret"></i></button>
@@ -99,6 +100,10 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))
                         {
                             <li class="nav-item"><a asp-controller="Roles" asp-action="Index" class="@NavClass("Roles")"><i class="bi bi-shield-check"></i> Roles</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DeviceApprovalView))
+                        {
+                            <li class="nav-item"><a asp-controller="DeviceApprovals" asp-action="Index" class="@NavClass("DeviceApprovals")"><i class="bi bi-laptop"></i> Device Approvals</a></li>
                         }
                     </ul>
                     </div>

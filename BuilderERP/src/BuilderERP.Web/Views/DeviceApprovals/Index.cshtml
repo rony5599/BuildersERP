@@ -1,0 +1,30 @@
+@using BuilderERP.Application.Common
+@using BuilderERP.Domain.Entities
+@model PagedResult<BuilderERP.Application.DTOs.DeviceApprovalDto>
+@{
+    ViewData["Title"] = "Device Approvals";
+    var currentStatus = ViewBag.StatusFilter as DeviceStatus?;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Device Approvals</h1>
+</div>
+
+<form method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-auto">
+        <label class="col-form-label">Status</label>
+    </div>
+    <div class="col-auto">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="" selected="@(currentStatus is null)">All</option>
+            @foreach (var value in Enum.GetValues<DeviceStatus>())
+            {
+                <option value="@((int)value)" selected="@(currentStatus == value)">@value</option>
+            }
+        </select>
+    </div>
+</form>
+
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>
