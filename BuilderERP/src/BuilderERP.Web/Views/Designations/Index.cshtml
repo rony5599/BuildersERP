@@ -1,0 +1,19 @@
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.DesignationDto>
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@{
+    ViewData["Title"] = "Designations";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Designations</h1>
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DesignationManage))
+    {
+        <a asp-action="Create" class="btn btn-primary">New Designation</a>
+    }
+</div>
+
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

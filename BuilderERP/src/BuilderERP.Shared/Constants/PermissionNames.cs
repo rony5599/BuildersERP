@@ -303,6 +303,12 @@ public static class PermissionNames
     public const string DeviceApprovalView = "DeviceApproval.View";
     public const string DeviceApprovalManage = "DeviceApproval.Manage";
 
+    public const string EmployeeView = "Employee.View";
+    public const string EmployeeManage = "Employee.Manage";
+
+    public const string DesignationView = "Designation.View";
+    public const string DesignationManage = "Designation.Manage";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -414,6 +420,8 @@ public static class PermissionNames
         (ReportView, "Report"),
         (AuditTrailView, "AuditTrail"),
         (DeviceApprovalView, "DeviceApproval"), (DeviceApprovalManage, "DeviceApproval"),
+        (EmployeeView, "Employee"), (EmployeeManage, "Employee"),
+        (DesignationView, "Designation"), (DesignationManage, "Designation"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -527,5 +535,7 @@ public static class PermissionNames
         ReportView,
         AuditTrailView,
         DeviceApprovalView, DeviceApprovalManage,
+        EmployeeView, EmployeeManage,
+        DesignationView, DesignationManage,
     };
 }

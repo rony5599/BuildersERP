@@ -15,6 +15,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Designation> Designations => Set<Designation>();
+    public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<CostCenter> CostCenters => Set<CostCenter>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
@@ -201,6 +203,36 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .WithMany(b => b.Departments)
             .HasForeignKey(d => d.BranchId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Employee>()
+            .HasOne(e => e.Department)
+            .WithMany()
+            .HasForeignKey(e => e.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Employee>()
+            .HasOne(e => e.Designation)
+            .WithMany()
+            .HasForeignKey(e => e.DesignationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Employee>()
+            .HasOne(e => e.Branch)
+            .WithMany()
+            .HasForeignKey(e => e.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Employee>()
+            .HasOne(e => e.ReportingTo)
+            .WithMany()
+            .HasForeignKey(e => e.ReportingToId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Employee>()
+            .HasOne(e => e.User)
+            .WithMany()
+            .HasForeignKey(e => e.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Entity<Project>()
             .HasOne(p => p.Branch)

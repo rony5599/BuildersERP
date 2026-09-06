@@ -64,6 +64,8 @@
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CompanyView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BranchView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DepartmentView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DesignationView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EmployeeView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ProjectView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CostCenterView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserView)
@@ -84,6 +86,14 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DepartmentView))
                         {
                             <li class="nav-item"><a asp-controller="Departments" asp-action="Index" class="@NavClass("Departments")"><i class="bi bi-diagram-2"></i> Departments</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DesignationView))
+                        {
+                            <li class="nav-item"><a asp-controller="Designations" asp-action="Index" class="@NavClass("Designations")"><i class="bi bi-award"></i> Designations</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EmployeeView))
+                        {
+                            <li class="nav-item"><a asp-controller="Employees" asp-action="Index" class="@NavClass("Employees")"><i class="bi bi-person-badge"></i> Employees</a></li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ProjectView))
                         {
