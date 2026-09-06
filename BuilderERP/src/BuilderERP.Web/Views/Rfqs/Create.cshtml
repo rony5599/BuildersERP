@@ -49,6 +49,7 @@
                 </div>
             </div>
             <span asp-validation-for="PurchaseRequisitionId" class="text-danger"></span>
+            <button type="button" id="load-requisition-btn" class="btn btn-sm btn-outline-secondary mt-2">Load Items</button>
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="Status" class="form-label"></label>
@@ -181,6 +182,42 @@
                         initializeDropdownsInRow(lastRow);
                     }
                 }, 10);
+            });
+        }
+
+        // Load line items from the selected Purchase Requisition
+        const loadBtn = document.getElementById('load-requisition-btn');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', function () {
+                const purchaseRequisitionId = document.getElementById('purchaseRequisition').value;
+                if (!purchaseRequisitionId) {
+                    alert('Please select a Purchase Requisition first.');
+                    return;
+                }
+
+                fetch(`@Url.Action("GetPurchaseRequisitionDetails")?id=${purchaseRequisitionId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to load requisition items.');
+                        return response.json();
+                    })
+                    .then(items => {
+                        clearDetailRows('rfq-details-table', 'Details');
+                        items.forEach(item => {
+                            const row = addDetailRow('rfq-details-table', 'Details', {
+                                MaterialId: item.materialId,
+                                Quantity: item.quantity,
+                                UnitOfMeasure: item.unitOfMeasure,
+                                Specification: item.specification
+                            });
+                            if (row) {
+                                initializeDropdownsInRow(row);
+                            }
+                        });
+                        if (items.length === 0) {
+                            initDetailTable('rfq-details-table', 'Details');
+                        }
+                    })
+                    .catch(() => alert('Failed to load Purchase Requisition items.'));
             });
         }
     });

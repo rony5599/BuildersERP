@@ -135,6 +135,30 @@ public class PurchaseOrdersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
+    public async Task<IActionResult> GetVendorQuotationDetails(long id)
+    {
+        var quotation = await _mediator.Send(new GetVendorQuotationByIdQuery(id));
+        if (quotation is null)
+        {
+            return NotFound();
+        }
+
+        var details = quotation.Details.Select(d => new
+        {
+            materialId = d.MaterialId,
+            orderedQuantity = d.Quantity,
+            unitOfMeasure = (int)d.UnitOfMeasure,
+            unitPrice = d.UnitPrice,
+            discountPercent = d.DiscountPercent,
+            vatPercent = d.VatPercent,
+            taxPercent = d.TaxPercent
+        });
+
+        return Json(details);
+    }
+
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
     [ValidateAntiForgeryToken]

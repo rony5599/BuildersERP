@@ -53,6 +53,7 @@
                 </div>
             </div>
             <span asp-validation-for="VendorQuotationId" class="text-danger"></span>
+            <button type="button" id="load-quotation-btn" class="btn btn-sm btn-outline-secondary mt-2">Load Items</button>
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="Status" class="form-label"></label>
@@ -245,4 +246,45 @@
             }, 10);
         });
     }
+
+    // Load line items from the selected Vendor Quotation
+    document.addEventListener('DOMContentLoaded', function () {
+        const loadBtn = document.getElementById('load-quotation-btn');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', function () {
+                const vendorQuotationId = document.getElementById('vendorQuotation').value;
+                if (!vendorQuotationId) {
+                    alert('Please select a Vendor Quotation first.');
+                    return;
+                }
+
+                fetch(`@Url.Action("GetVendorQuotationDetails")?id=${vendorQuotationId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to load vendor quotation items.');
+                        return response.json();
+                    })
+                    .then(items => {
+                        clearDetailRows('po-details-table', 'Details');
+                        items.forEach(item => {
+                            const row = addDetailRow('po-details-table', 'Details', {
+                                MaterialId: item.materialId,
+                                OrderedQuantity: item.orderedQuantity,
+                                UnitOfMeasure: item.unitOfMeasure,
+                                UnitPrice: item.unitPrice,
+                                DiscountPercent: item.discountPercent,
+                                VatPercent: item.vatPercent,
+                                TaxPercent: item.taxPercent
+                            });
+                            if (row) {
+                                initializeDropdownsInRow(row);
+                            }
+                        });
+                        if (items.length === 0) {
+                            initDetailTable('po-details-table', 'Details');
+                        }
+                    })
+                    .catch(() => alert('Failed to load Vendor Quotation items.'));
+            });
+        }
+    });
 </script>

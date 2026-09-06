@@ -55,6 +55,7 @@
                 </div>
             </div>
             <span asp-validation-for="RfqId" class="text-danger"></span>
+            <button type="button" id="load-rfq-btn" class="btn btn-sm btn-outline-secondary mt-2">Load Items</button>
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="SupplierId" class="form-label"></label>
@@ -236,6 +237,41 @@
                         initializeDropdownsInRow(lastRow);
                     }
                 }, 10);
+            });
+        }
+
+        // Load line items from the selected RFQ
+        const loadBtn = document.getElementById('load-rfq-btn');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', function () {
+                const rfqId = document.getElementById('rfq').value;
+                if (!rfqId) {
+                    alert('Please select an RFQ first.');
+                    return;
+                }
+
+                fetch(`@Url.Action("GetRfqDetails")?id=${rfqId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to load RFQ items.');
+                        return response.json();
+                    })
+                    .then(items => {
+                        clearDetailRows('vq-details-table', 'Details');
+                        items.forEach(item => {
+                            const row = addDetailRow('vq-details-table', 'Details', {
+                                MaterialId: item.materialId,
+                                Quantity: item.quantity,
+                                UnitOfMeasure: item.unitOfMeasure
+                            });
+                            if (row) {
+                                initializeDropdownsInRow(row);
+                            }
+                        });
+                        if (items.length === 0) {
+                            initDetailTable('vq-details-table', 'Details');
+                        }
+                    })
+                    .catch(() => alert('Failed to load RFQ items.'));
             });
         }
     });

@@ -127,6 +127,27 @@ public class VendorQuotationsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    [PermissionAuthorize(PermissionNames.VendorQuotationManage)]
+    public async Task<IActionResult> GetRfqDetails(long id)
+    {
+        var rfq = await _mediator.Send(new GetRfqByIdQuery(id));
+        if (rfq is null)
+        {
+            return NotFound();
+        }
+
+        var details = rfq.Details.Select(d => new
+        {
+            materialId = d.MaterialId,
+            quantity = d.Quantity,
+            unitOfMeasure = (int)d.UnitOfMeasure,
+            specification = d.Specification
+        });
+
+        return Json(details);
+    }
+
     [HttpPost]
     [PermissionAuthorize(PermissionNames.VendorQuotationManage)]
     [ValidateAntiForgeryToken]

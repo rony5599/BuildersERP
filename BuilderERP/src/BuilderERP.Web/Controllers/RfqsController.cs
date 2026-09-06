@@ -123,6 +123,27 @@ public class RfqsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    [PermissionAuthorize(PermissionNames.RfqManage)]
+    public async Task<IActionResult> GetPurchaseRequisitionDetails(long id)
+    {
+        var requisition = await _mediator.Send(new GetPurchaseRequisitionByIdQuery(id));
+        if (requisition is null)
+        {
+            return NotFound();
+        }
+
+        var details = requisition.Details.Select(d => new
+        {
+            materialId = d.MaterialId,
+            quantity = d.Quantity,
+            unitOfMeasure = (int)d.UnitOfMeasure,
+            specification = d.Remarks
+        });
+
+        return Json(details);
+    }
+
     [HttpPost]
     [PermissionAuthorize(PermissionNames.RfqManage)]
     [ValidateAntiForgeryToken]
