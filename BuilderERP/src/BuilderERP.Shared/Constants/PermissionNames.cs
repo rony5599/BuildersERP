@@ -93,6 +93,9 @@ public static class PermissionNames
     public const string PurchaseRequisitionView = "PurchaseRequisition.View";
     public const string PurchaseRequisitionManage = "PurchaseRequisition.Manage";
 
+    public const string CashRequisitionView = "CashRequisition.View";
+    public const string CashRequisitionManage = "CashRequisition.Manage";
+
     public const string RfqView = "Rfq.View";
     public const string RfqManage = "Rfq.Manage";
 
@@ -342,6 +345,7 @@ public static class PermissionNames
         (PaymentReminderView, "PaymentReminder"), (PaymentReminderManage, "PaymentReminder"),
         (SupplierView, "Supplier"), (SupplierManage, "Supplier"),
         (PurchaseRequisitionView, "PurchaseRequisition"), (PurchaseRequisitionManage, "PurchaseRequisition"),
+        (CashRequisitionView, "CashRequisition"), (CashRequisitionManage, "CashRequisition"),
         (RfqView, "Rfq"), (RfqManage, "Rfq"),
         (VendorQuotationView, "VendorQuotation"), (VendorQuotationManage, "VendorQuotation"),
         (PurchaseOrderView, "PurchaseOrder"), (PurchaseOrderManage, "PurchaseOrder"),
@@ -457,6 +461,7 @@ public static class PermissionNames
         PaymentReminderView, PaymentReminderManage,
         SupplierView, SupplierManage,
         PurchaseRequisitionView, PurchaseRequisitionManage,
+        CashRequisitionView, CashRequisitionManage,
         RfqView, RfqManage,
         VendorQuotationView, VendorQuotationManage,
         PurchaseOrderView, PurchaseOrderManage,

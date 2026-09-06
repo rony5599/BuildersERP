@@ -42,6 +42,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PaymentReminder> PaymentReminders => Set<PaymentReminder>();
     public DbSet<Supplier> Suppliers => Set<Supplier>();
     public DbSet<PurchaseRequisition> PurchaseRequisitions => Set<PurchaseRequisition>();
+    public DbSet<CashRequisition> CashRequisitions => Set<CashRequisition>();
+    public DbSet<CashRequisitionDetail> CashRequisitionDetails => Set<CashRequisitionDetail>();
     public DbSet<Rfq> Rfqs => Set<Rfq>();
     public DbSet<VendorQuotation> VendorQuotations => Set<VendorQuotation>();
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
@@ -511,6 +513,42 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<PurchaseRequisitionDetail>().Property(d => d.Quantity).HasPrecision(18, 3);
         builder.Entity<PurchaseRequisitionDetail>().Property(d => d.EstimatedUnitPrice).HasPrecision(18, 2);
         builder.Entity<PurchaseRequisitionDetail>().Property(d => d.EstimatedAmount).HasPrecision(18, 2);
+
+        builder.Entity<CashRequisition>()
+            .HasOne(r => r.RequesterEmployee)
+            .WithMany()
+            .HasForeignKey(r => r.RequesterEmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashRequisition>()
+            .HasOne(r => r.Department)
+            .WithMany()
+            .HasForeignKey(r => r.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashRequisition>()
+            .HasOne(r => r.Project)
+            .WithMany()
+            .HasForeignKey(r => r.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
+
+        builder.Entity<CashRequisitionDetail>()
+            .HasOne(d => d.CashRequisition)
+            .WithMany(r => r.Details)
+            .HasForeignKey(d => d.CashRequisitionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CashRequisitionDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashRequisitionDetail>().Property(d => d.Quantity).HasPrecision(18, 3);
+        builder.Entity<CashRequisitionDetail>().Property(d => d.EstimatedUnitPrice).HasPrecision(18, 2);
+        builder.Entity<CashRequisitionDetail>().Property(d => d.EstimatedAmount).HasPrecision(18, 2);
 
         builder.Entity<VendorQuotation>()
             .HasOne(v => v.Rfq)
@@ -1419,7 +1457,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Quotation), typeof(Booking), typeof(SaleAgreement), typeof(Broker), typeof(Commission),
             typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
             typeof(CollectionTarget), typeof(PaymentReminder),
-            typeof(Supplier), typeof(PurchaseRequisition), typeof(Rfq), typeof(VendorQuotation),
+            typeof(Supplier), typeof(PurchaseRequisition), typeof(CashRequisition), typeof(CashRequisitionDetail), typeof(Rfq), typeof(VendorQuotation),
             typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
             typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
