@@ -47,6 +47,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Rfq> Rfqs => Set<Rfq>();
     public DbSet<VendorQuotation> VendorQuotations => Set<VendorQuotation>();
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
+    public DbSet<CashPurchaseOrder> CashPurchaseOrders => Set<CashPurchaseOrder>();
+    public DbSet<CashPurchaseOrderDetail> CashPurchaseOrderDetails => Set<CashPurchaseOrderDetail>();
     public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
     public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
@@ -617,6 +619,44 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<PurchaseOrderDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
         builder.Entity<PurchaseOrderDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
         builder.Entity<PurchaseOrderDetail>().Property(d => d.LineTotal).HasPrecision(18, 2);
+
+        builder.Entity<CashPurchaseOrder>()
+            .HasOne(o => o.Supplier)
+            .WithMany()
+            .HasForeignKey(o => o.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPurchaseOrder>()
+            .HasOne(o => o.CashRequisition)
+            .WithMany()
+            .HasForeignKey(o => o.CashRequisitionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPurchaseOrder>().Property(o => o.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<CashPurchaseOrder>().Property(o => o.ReceivedAmount).HasPrecision(18, 2);
+
+        builder.Entity<CashPurchaseOrderDetail>()
+            .HasOne(d => d.CashPurchaseOrder)
+            .WithMany(o => o.Details)
+            .HasForeignKey(d => d.CashPurchaseOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CashPurchaseOrderDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.OrderedQuantity).HasPrecision(18, 3);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.ReceivedQuantity).HasPrecision(18, 3);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.DiscountPercent).HasPrecision(5, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.DiscountAmount).HasPrecision(18, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.VatPercent).HasPrecision(5, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.VatAmount).HasPrecision(18, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
+        builder.Entity<CashPurchaseOrderDetail>().Property(d => d.LineTotal).HasPrecision(18, 2);
 
         builder.Entity<GoodsReceive>()
             .HasOne(g => g.PurchaseOrder)
@@ -1458,7 +1498,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
             typeof(CollectionTarget), typeof(PaymentReminder),
             typeof(Supplier), typeof(PurchaseRequisition), typeof(CashRequisition), typeof(CashRequisitionDetail), typeof(Rfq), typeof(VendorQuotation),
-            typeof(PurchaseOrder), typeof(GoodsReceive), typeof(PurchaseReturn),
+            typeof(PurchaseOrder), typeof(CashPurchaseOrder), typeof(CashPurchaseOrderDetail), typeof(GoodsReceive), typeof(PurchaseReturn),
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
             typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
             typeof(ItemCategory), typeof(ItemPriceHistory), typeof(PurchaseRequisitionDetail),

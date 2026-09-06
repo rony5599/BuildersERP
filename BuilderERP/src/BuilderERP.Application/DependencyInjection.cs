@@ -1,5 +1,6 @@
 using System.Reflection;
 using BuilderERP.Application.Common.Caching;
+using BuilderERP.Application.Features.CashPurchaseOrders.Export;
 using BuilderERP.Application.Features.PurchaseOrders.Export;
 using BuilderERP.Application.Features.Reports;
 using BuilderERP.Application.Features.Reports.Export;
@@ -32,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<ExcelReportExporter>();
         services.AddScoped<PdfReportExporter>();
         services.AddScoped<PurchaseOrderPdfExporter>();
+        services.AddScoped<CashPurchaseOrderPdfExporter>();
 
         return services;
     }

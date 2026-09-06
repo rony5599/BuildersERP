@@ -105,6 +105,9 @@ public static class PermissionNames
     public const string PurchaseOrderView = "PurchaseOrder.View";
     public const string PurchaseOrderManage = "PurchaseOrder.Manage";
 
+    public const string CashPurchaseOrderView = "CashPurchaseOrder.View";
+    public const string CashPurchaseOrderManage = "CashPurchaseOrder.Manage";
+
     public const string EngineerWorkOrderRequisitionView = "EngineerWorkOrderRequisition.View";
     public const string EngineerWorkOrderRequisitionManage = "EngineerWorkOrderRequisition.Manage";
 
@@ -349,6 +352,7 @@ public static class PermissionNames
         (RfqView, "Rfq"), (RfqManage, "Rfq"),
         (VendorQuotationView, "VendorQuotation"), (VendorQuotationManage, "VendorQuotation"),
         (PurchaseOrderView, "PurchaseOrder"), (PurchaseOrderManage, "PurchaseOrder"),
+        (CashPurchaseOrderView, "CashPurchaseOrder"), (CashPurchaseOrderManage, "CashPurchaseOrder"),
         (EngineerWorkOrderRequisitionView, "EngineerWorkOrderRequisition"), (EngineerWorkOrderRequisitionManage, "EngineerWorkOrderRequisition"),
         (EngineerWorkOrderView, "EngineerWorkOrder"), (EngineerWorkOrderManage, "EngineerWorkOrder"),
         (GoodsReceiveView, "GoodsReceive"), (GoodsReceiveManage, "GoodsReceive"),
@@ -465,6 +469,7 @@ public static class PermissionNames
         RfqView, RfqManage,
         VendorQuotationView, VendorQuotationManage,
         PurchaseOrderView, PurchaseOrderManage,
+        CashPurchaseOrderView, CashPurchaseOrderManage,
         EngineerWorkOrderRequisitionView, EngineerWorkOrderRequisitionManage,
         EngineerWorkOrderView, EngineerWorkOrderManage,
         GoodsReceiveView, GoodsReceiveManage,

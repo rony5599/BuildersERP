@@ -262,6 +262,7 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPurchaseOrderView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
                 {
@@ -291,6 +292,10 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView))
                         {
                             <li class="nav-item"><a asp-controller="PurchaseOrders" asp-action="Index" class="@NavClass("PurchaseOrders")"><i class="bi bi-cart-check"></i> Purchase Orders</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPurchaseOrderView))
+                        {
+                            <li class="nav-item"><a asp-controller="CashPurchaseOrders" asp-action="Index" class="@NavClass("CashPurchaseOrders")"><i class="bi bi-cash-stack"></i> Cash Purchase Orders</a></li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveView))
                         {

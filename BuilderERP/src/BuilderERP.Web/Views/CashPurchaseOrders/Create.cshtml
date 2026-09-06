@@ -1,0 +1,239 @@
+@model BuilderERP.Application.DTOs.CreateCashPurchaseOrderDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Cash Purchase Order";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
+<h1 class="h3 mb-4">New Cash Purchase Order</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row col-md-8">
+        <div class="mb-3 col-md-4">
+            <label asp-for="CashRequisitionId" class="form-label"></label>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="cashRequisition-container">
+                    <input type="hidden" asp-for="CashRequisitionId" id="cashRequisition" value="" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="Search Cash Requisition..."
+                               autocomplete="off"
+                               id="cashRequisition-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="cashRequisition-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Cash Requisition</div>
+                            <div class="multicolumn-dropdown-column">Project Name</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var requisition in (IEnumerable<dynamic>)ViewBag.CashRequisitions ?? new List<dynamic>())
+                            {
+                                var parts = requisition.Text?.Split(" | ") ?? new[] { "", "" };
+                                <div class="multicolumn-dropdown-item" data-value="@requisition.Value">
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="CashRequisitionId" class="text-danger"></span>
+            <button type="button" id="load-requisition-btn" class="btn btn-sm btn-outline-secondary mt-2">Load Items</button>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="SupplierId" class="form-label"></label>
+            <select asp-for="SupplierId" asp-items="ViewBag.Suppliers" class="form-select">
+                <option value="">-- Select Supplier --</option>
+            </select>
+            <span asp-validation-for="SupplierId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<PurchaseOrderStatus>()" class="form-select"></select>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="OrderDate" class="form-label"></label>
+            <input asp-for="OrderDate" type="date" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="DeliveryDate" class="form-label"></label>
+            <input asp-for="DeliveryDate" type="date" class="form-control" />
+            <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="TermsOfPayment" class="form-label">Terms of Payment / Delivery</label>
+            <input asp-for="TermsOfPayment" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="DispatchedThrough" class="form-label">Dispatched Through</label>
+            <input asp-for="DispatchedThrough" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-4">
+            <label asp-for="Destination" class="form-label">Destination</label>
+            <input asp-for="Destination" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-8">
+            <label asp-for="Remarks" class="form-label">Remarks</label>
+            <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
+        </div>
+    </div>
+
+    <h5 class="mt-4">Line Items</h5>
+    <table class="table table-sm" id="cpo-details-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">Material</th>
+                <th style="width: 10%;">Qty</th>
+                <th style="width: 10%;">Unit</th>
+                <th style="width: 12%;">Unit Price</th>
+                <th style="width: 8%;">Disc %</th>
+                <th style="width: 8%;">VAT %</th>
+                <th style="width: 8%;">Tax %</th>
+                <th style="width: 9%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="detail-row-template">
+                <td>
+                    <div class="multicolumn-dropdown-wrapper material-dropdown-template">
+                        <div class="multicolumn-dropdown-container" id="material-__index__-container">
+                            <input type="hidden" name="Details[__index__].MaterialId" id="material-__index__" value="" />
+                            <div class="multicolumn-dropdown-trigger">
+                                <input type="text"
+                                       class="multicolumn-dropdown-filter form-control form-control-sm"
+                                       placeholder="Search Material..."
+                                       autocomplete="off"
+                                       id="material-__index__-filter" />
+                                <span class="multicolumn-dropdown-icon">
+                                    <i class="bi bi-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div class="multicolumn-dropdown-menu" id="material-__index__-menu" style="display: none;">
+                                <div class="multicolumn-dropdown-header">
+                                    <div class="multicolumn-dropdown-column">Code</div>
+                                    <div class="multicolumn-dropdown-column">Name</div>
+                                    <div class="multicolumn-dropdown-column">Category</div>
+                                </div>
+                                <div class="multicolumn-dropdown-items">
+                                    @foreach(var material in (IEnumerable<dynamic>)ViewBag.Materials ?? new List<dynamic>())
+                                    {
+                                        var parts = material.Text?.Split(" | ") ?? new[] { "", "", "" };
+                                        <div class="multicolumn-dropdown-item" data-value="@material.Value">
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2]?.Trim() ?? "" : "")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td><input name="Details[__index__].OrderedQuantity" type="number" step="0.001" class="form-control form-control-sm" /></td>
+                <td>
+                    <select name="Details[__index__].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
+                </td>
+                <td><input name="Details[__index__].UnitPrice" type="number" step="0.01" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].DiscountPercent" type="number" step="0.01" value="0" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].VatPercent" type="number" step="0.01" value="0" class="form-control form-control-sm" /></td>
+                <td><input name="Details[__index__].TaxPercent" type="number" step="0.01" value="0" class="form-control form-control-sm" /></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-row>Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-sm btn-outline-primary mb-3" data-add-row-for="cpo-details-table">Add Row</button>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<partial name="_DetailLineItemsScripts" />
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('cashRequisition-container');
+        initDetailTable('cpo-details-table', 'Details');
+    });
+
+    // Initialize material dropdowns in a specific row
+    function initializeDropdownsInRow(row) {
+        const containers = row.querySelectorAll('[id$="-container"]');
+        containers.forEach(container => {
+            if (container.id.includes('material-')) {
+                new MultiColumnDropdown(container.id);
+            }
+        });
+    }
+
+    // Hook into the row addition process
+    const addBtn = document.querySelector('[data-add-row-for="cpo-details-table"]');
+    if (addBtn) {
+        addBtn.addEventListener('click', function () {
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#cpo-details-table tbody tr.detail-row');
+                const lastRow = rows[rows.length - 1];
+                if (lastRow) {
+                    initializeDropdownsInRow(lastRow);
+                }
+            }, 10);
+        });
+    }
+
+    // Initialize dropdowns on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#cpo-details-table tbody tr.detail-row');
+        rows.forEach(row => {
+            initializeDropdownsInRow(row);
+        });
+
+        // Load line items from the selected Cash Requisition
+        const loadBtn = document.getElementById('load-requisition-btn');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', function () {
+                const cashRequisitionId = document.getElementById('cashRequisition').value;
+                if (!cashRequisitionId) {
+                    alert('Please select a Cash Requisition first.');
+                    return;
+                }
+
+                fetch(`@Url.Action("GetCashRequisitionDetails")?id=${cashRequisitionId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to load cash requisition items.');
+                        return response.json();
+                    })
+                    .then(items => {
+                        clearDetailRows('cpo-details-table', 'Details');
+                        items.forEach(item => {
+                            const row = addDetailRow('cpo-details-table', 'Details', {
+                                MaterialId: item.materialId,
+                                OrderedQuantity: item.orderedQuantity,
+                                UnitOfMeasure: item.unitOfMeasure,
+                                UnitPrice: item.unitPrice,
+                                DiscountPercent: item.discountPercent,
+                                VatPercent: item.vatPercent,
+                                TaxPercent: item.taxPercent
+                            });
+                            if (row) {
+                                initializeDropdownsInRow(row);
+                            }
+                        });
+                        if (items.length === 0) {
+                            initDetailTable('cpo-details-table', 'Details');
+                        }
+                    })
+                    .catch(() => alert('Failed to load Cash Requisition items.'));
+            });
+        }
+    });
+</script>
