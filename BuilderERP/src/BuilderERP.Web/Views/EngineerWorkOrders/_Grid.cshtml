@@ -36,6 +36,7 @@
                 <td>@order.TotalAmount</td>
                 <td>@order.Status</td>
                 <td class="text-end">
+                    <a asp-action="Print" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary" target="_blank">Print</a>
                     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderManage))
                     {
                         <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary">Edit</a>

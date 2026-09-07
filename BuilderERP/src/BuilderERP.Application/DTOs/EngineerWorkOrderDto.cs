@@ -63,3 +63,42 @@ public class UpdateEngineerWorkOrderDto
     public EngineerWorkOrderStatus Status { get; set; }
     public List<CreateEngineerWorkOrderDetailDto> Details { get; set; } = new();
 }
+
+public class EngineerWorkOrderPrintDto
+{
+    public string WorkOrderNo { get; set; } = string.Empty;
+    public string RequisitionNumber { get; set; } = string.Empty;
+    public int RevisionNo { get; set; }
+    public DateTime OrderDate { get; set; }
+    public EngineerWorkOrderStatus Status { get; set; }
+
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyAddress { get; set; }
+    public string? CompanyPhone { get; set; }
+    public string? CompanyEmail { get; set; }
+
+    public string SupplierName { get; set; } = string.Empty;
+    public string? SupplierAddress { get; set; }
+    public string? SupplierPhone { get; set; }
+    public string? SupplierEmail { get; set; }
+
+    public string? TermsAndCondition { get; set; }
+
+    public string? PrintedBy { get; set; }
+    public DateTime PrintedAt { get; set; }
+
+    public List<EngineerWorkOrderPrintLineDto> Lines { get; set; } = new();
+
+    public decimal Subtotal => Lines.Sum(l => l.Amount);
+    public decimal Total => Subtotal;
+}
+
+public class EngineerWorkOrderPrintLineDto
+{
+    public string Description { get; set; } = string.Empty;
+    public string UnitOfMeasure { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+    public decimal Rate { get; set; }
+    public decimal Amount { get; set; }
+    public string? Remarks { get; set; }
+}
