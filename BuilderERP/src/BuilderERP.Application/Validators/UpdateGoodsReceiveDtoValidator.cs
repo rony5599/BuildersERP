@@ -15,13 +15,13 @@ public class UpdateGoodsReceiveDtoValidator : AbstractValidator<UpdateGoodsRecei
         RuleFor(x => x.Remarks).MaximumLength(500);
         RuleFor(x => x.Status).IsInEnum();
 
-        RuleFor(x => x.PurchaseOrderId).NotEmpty()
+        RuleFor(x => x.PurchaseOrderId).Must(id => id.HasValue && id.Value > 0)
             .When(x => x.SourceType == GrnSourceType.PurchaseOrder)
             .WithMessage("Purchase order is required.");
-        RuleFor(x => x.EngineerWorkOrderId).NotEmpty()
+        RuleFor(x => x.EngineerWorkOrderId).Must(id => id.HasValue && id.Value > 0)
             .When(x => x.SourceType == GrnSourceType.EngineerWorkOrder)
             .WithMessage("Engineer work order is required.");
-        RuleFor(x => x.CashPurchaseOrderId).NotEmpty()
+        RuleFor(x => x.CashPurchaseOrderId).Must(id => id.HasValue && id.Value > 0)
             .When(x => x.SourceType == GrnSourceType.CashPurchaseOrder)
             .WithMessage("Cash purchase order is required.");
 
