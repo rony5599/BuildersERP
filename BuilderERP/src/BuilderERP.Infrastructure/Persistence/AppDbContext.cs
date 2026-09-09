@@ -665,6 +665,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<GoodsReceive>()
+            .HasOne(g => g.EngineerWorkOrder)
+            .WithMany()
+            .HasForeignKey(g => g.EngineerWorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceive>()
+            .HasOne(g => g.CashPurchaseOrder)
+            .WithMany()
+            .HasForeignKey(g => g.CashPurchaseOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceive>()
             .HasOne(g => g.Warehouse)
             .WithMany()
             .HasForeignKey(g => g.WarehouseId)
@@ -682,6 +694,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasOne(d => d.PurchaseOrderDetail)
             .WithMany()
             .HasForeignKey(d => d.PurchaseOrderDetailId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceiveDetail>()
+            .HasOne(d => d.EngineerWorkOrderDetail)
+            .WithMany()
+            .HasForeignKey(d => d.EngineerWorkOrderDetailId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<GoodsReceiveDetail>()
+            .HasOne(d => d.CashPurchaseOrderDetail)
+            .WithMany()
+            .HasForeignKey(d => d.CashPurchaseOrderDetailId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<GoodsReceiveDetail>()
@@ -1077,6 +1101,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<EngineerWorkOrderDetail>().Property(d => d.Qty).HasPrecision(18, 3);
         builder.Entity<EngineerWorkOrderDetail>().Property(d => d.Rate).HasPrecision(18, 2);
         builder.Entity<EngineerWorkOrderDetail>().Property(d => d.Amount).HasPrecision(18, 2);
+        builder.Entity<EngineerWorkOrderDetail>().Property(d => d.ReceivedQuantity).HasPrecision(18, 3);
+
+        builder.Entity<EngineerWorkOrder>().Property(w => w.ReceivedAmount).HasPrecision(18, 2);
 
         builder.Entity<RateContract>().Property(r => r.Rate).HasPrecision(18, 2);
 

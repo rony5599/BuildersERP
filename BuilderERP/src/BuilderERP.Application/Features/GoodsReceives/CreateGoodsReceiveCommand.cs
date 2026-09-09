@@ -2,6 +2,7 @@ using AutoMapper;
 using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +26,7 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
 
     public async Task<long> Handle(CreateGoodsReceiveCommand request, CancellationToken cancellationToken)
     {
-        var projectId = await _unitOfWork.Repository<PurchaseOrder>().Query()
-            .Where(o => o.Id == request.Dto.PurchaseOrderId)
-            .Select(o => o.VendorQuotation.Rfq.PurchaseRequisition.ProjectId)
-            .SingleAsync(cancellationToken);
+        var projectId = await ResolveProjectIdAsync(request.Dto, cancellationToken);
 
         var receive = _mapper.Map<GoodsReceive>(request.Dto);
         receive.GrnNumber = await _numberGenerator.GenerateAsync(projectId, "GRN", cancellationToken);
@@ -41,6 +39,8 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
             {
                 GoodsReceiveId = receive.Id,
                 PurchaseOrderDetailId = detail.PurchaseOrderDetailId,
+                EngineerWorkOrderDetailId = detail.EngineerWorkOrderDetailId,
+                CashPurchaseOrderDetailId = detail.CashPurchaseOrderDetailId,
                 MaterialId = detail.MaterialId,
                 ReceivedQuantity = detail.ReceivedQuantity,
                 UnitOfMeasure = detail.UnitOfMeasure,
@@ -62,5 +62,25 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
         await _unitOfWork.SaveChangesAsync();
 
         return receive.Id;
+    }
+
+    private async Task<long> ResolveProjectIdAsync(CreateGoodsReceiveDto dto, CancellationToken cancellationToken)
+    {
+        return dto.SourceType switch
+        {
+            GrnSourceType.PurchaseOrder => await _unitOfWork.Repository<PurchaseOrder>().Query()
+                .Where(o => o.Id == dto.PurchaseOrderId)
+                .Select(o => o.VendorQuotation.Rfq.PurchaseRequisition.ProjectId)
+                .SingleAsync(cancellationToken),
+            GrnSourceType.EngineerWorkOrder => await _unitOfWork.Repository<EngineerWorkOrder>().Query()
+                .Where(o => o.Id == dto.EngineerWorkOrderId)
+                .Select(o => o.EngineerWorkOrderRequisition.ProjectId)
+                .SingleAsync(cancellationToken),
+            GrnSourceType.CashPurchaseOrder => await _unitOfWork.Repository<CashPurchaseOrder>().Query()
+                .Where(o => o.Id == dto.CashPurchaseOrderId)
+                .Select(o => o.CashRequisition.ProjectId)
+                .SingleAsync(cancellationToken),
+            _ => throw new ArgumentOutOfRangeException(nameof(dto.SourceType))
+        };
     }
 }

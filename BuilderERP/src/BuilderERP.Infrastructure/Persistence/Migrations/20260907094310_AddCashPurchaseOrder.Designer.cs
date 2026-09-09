@@ -4,6 +4,7 @@ using BuilderERP.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuilderERP.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260907094310_AddCashPurchaseOrder")]
+    partial class AddCashPurchaseOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2273,10 +2276,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<long?>("PreviousWorkOrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("ReceivedAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime?>("RevisionDate")
                         .HasColumnType("datetime2");
 
@@ -2359,10 +2358,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("Rate")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ReceivedQuantity")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2869,17 +2864,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("CashPurchaseOrderId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("EngineerWorkOrderId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("GrnNumber")
                         .IsRequired()
@@ -2900,7 +2889,7 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("PurchaseOrderId")
+                    b.Property<long>("PurchaseOrderId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("ReceivedAmount")
@@ -2913,9 +2902,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SourceType")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -2923,10 +2909,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CashPurchaseOrderId");
-
-                    b.HasIndex("EngineerWorkOrderId");
 
                     b.HasIndex("Guid")
                         .IsUnique();
@@ -2949,17 +2931,11 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("BatchNo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CashPurchaseOrderDetailId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("EngineerWorkOrderDetailId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("GoodsReceiveId")
                         .HasColumnType("bigint");
@@ -2983,7 +2959,7 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("PurchaseOrderDetailId")
+                    b.Property<long>("PurchaseOrderDetailId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("ReceivedQuantity")
@@ -3017,10 +2993,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CashPurchaseOrderDetailId");
-
-                    b.HasIndex("EngineerWorkOrderDetailId");
 
                     b.HasIndex("GoodsReceiveId");
 
@@ -8745,30 +8717,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.GoodsReceive", b =>
                 {
-                    b.HasOne("BuilderERP.Domain.Entities.CashPurchaseOrder", "CashPurchaseOrder")
-                        .WithMany()
-                        .HasForeignKey("CashPurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "EngineerWorkOrder")
-                        .WithMany()
-                        .HasForeignKey("EngineerWorkOrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BuilderERP.Domain.Entities.PurchaseOrder", "PurchaseOrder")
                         .WithMany("GoodsReceives")
                         .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("BuilderERP.Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CashPurchaseOrder");
-
-                    b.Navigation("EngineerWorkOrder");
 
                     b.Navigation("PurchaseOrder");
 
@@ -8777,16 +8736,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.GoodsReceiveDetail", b =>
                 {
-                    b.HasOne("BuilderERP.Domain.Entities.CashPurchaseOrderDetail", "CashPurchaseOrderDetail")
-                        .WithMany()
-                        .HasForeignKey("CashPurchaseOrderDetailId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrderDetail", "EngineerWorkOrderDetail")
-                        .WithMany()
-                        .HasForeignKey("EngineerWorkOrderDetailId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BuilderERP.Domain.Entities.GoodsReceive", "GoodsReceive")
                         .WithMany("Details")
                         .HasForeignKey("GoodsReceiveId")
@@ -8802,11 +8751,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasOne("BuilderERP.Domain.Entities.PurchaseOrderDetail", "PurchaseOrderDetail")
                         .WithMany()
                         .HasForeignKey("PurchaseOrderDetailId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CashPurchaseOrderDetail");
-
-                    b.Navigation("EngineerWorkOrderDetail");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("GoodsReceive");
 

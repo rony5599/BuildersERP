@@ -18,8 +18,14 @@ public class GoodsReceiveDetail : BaseEntity
     public long GoodsReceiveId { get; set; }
     public GoodsReceive GoodsReceive { get; set; } = null!;
 
-    public long PurchaseOrderDetailId { get; set; }
-    public PurchaseOrderDetail PurchaseOrderDetail { get; set; } = null!;
+    public long? PurchaseOrderDetailId { get; set; }
+    public PurchaseOrderDetail? PurchaseOrderDetail { get; set; }
+
+    public long? EngineerWorkOrderDetailId { get; set; }
+    public EngineerWorkOrderDetail? EngineerWorkOrderDetail { get; set; }
+
+    public long? CashPurchaseOrderDetailId { get; set; }
+    public CashPurchaseOrderDetail? CashPurchaseOrderDetail { get; set; }
 
     public long MaterialId { get; set; }
     public Material Material { get; set; } = null!;

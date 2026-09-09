@@ -23,6 +23,7 @@ public class EngineerWorkOrder : BaseEntity
 
     public EngineerWorkOrderStatus Status { get; set; } = EngineerWorkOrderStatus.Draft;
     public decimal TotalAmount { get; set; }
+    public decimal ReceivedAmount { get; set; }
 
     public long? PreviousWorkOrderId { get; set; }
     public EngineerWorkOrder? PreviousWorkOrder { get; set; }

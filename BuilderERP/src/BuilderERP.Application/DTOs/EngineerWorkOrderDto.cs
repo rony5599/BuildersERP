@@ -17,6 +17,7 @@ public class EngineerWorkOrderDto
     public string SupplierName { get; set; } = string.Empty;
     public EngineerWorkOrderStatus Status { get; set; }
     public decimal TotalAmount { get; set; }
+    public decimal ReceivedAmount { get; set; }
     public long? PreviousWorkOrderId { get; set; }
     public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -32,6 +33,8 @@ public class EngineerWorkOrderDetailDto
     public decimal Qty { get; set; }
     public decimal Rate { get; set; }
     public decimal Amount { get; set; }
+    public decimal ReceivedQuantity { get; set; }
+    public decimal RemainingQuantity => Qty - ReceivedQuantity;
     public string? Remarks { get; set; }
 }
 

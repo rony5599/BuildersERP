@@ -20,6 +20,10 @@
             <span asp-validation-for="GrnNumber" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
+            <label asp-for="SourceType" class="form-label"></label>
+            <select asp-for="SourceType" id="sourceType" asp-items="Html.GetEnumSelectList<GrnSourceType>()" class="form-select"></select>
+        </div>
+        <div class="mb-3 col-md-4 source-picker" data-source-type="@((int)GrnSourceType.PurchaseOrder)" id="purchaseOrder-wrapper">
             <label asp-for="PurchaseOrderId" class="form-label"></label>
             <div class="multicolumn-dropdown-wrapper">
                 <div class="multicolumn-dropdown-container" id="purchaseOrder-container">
@@ -53,6 +57,76 @@
                 </div>
             </div>
             <span asp-validation-for="PurchaseOrderId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4 source-picker" data-source-type="@((int)GrnSourceType.EngineerWorkOrder)" id="engineerWorkOrder-wrapper" style="display:none;">
+            <label asp-for="EngineerWorkOrderId" class="form-label"></label>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="engineerWorkOrder-container">
+                    <input type="hidden" asp-for="EngineerWorkOrderId" id="engineerWorkOrder" value="@Model.EngineerWorkOrderId" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="Search Engineer Work Order..."
+                               autocomplete="off"
+                               id="engineerWorkOrder-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="engineerWorkOrder-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Work Order</div>
+                            <div class="multicolumn-dropdown-column">Supplier</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var order in (IEnumerable<dynamic>)ViewBag.EngineerWorkOrders ?? new List<dynamic>())
+                            {
+                                var parts = order.Text?.Split(" | ") ?? new[] { "", "" };
+                                <div class="multicolumn-dropdown-item" data-value="@order.Value">
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="EngineerWorkOrderId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-4 source-picker" data-source-type="@((int)GrnSourceType.CashPurchaseOrder)" id="cashPurchaseOrder-wrapper" style="display:none;">
+            <label asp-for="CashPurchaseOrderId" class="form-label"></label>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="cashPurchaseOrder-container">
+                    <input type="hidden" asp-for="CashPurchaseOrderId" id="cashPurchaseOrder" value="@Model.CashPurchaseOrderId" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="Search Cash Purchase Order..."
+                               autocomplete="off"
+                               id="cashPurchaseOrder-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="cashPurchaseOrder-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Cash Purchase Order</div>
+                            <div class="multicolumn-dropdown-column">Project Name</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var order in (IEnumerable<dynamic>)ViewBag.CashPurchaseOrders ?? new List<dynamic>())
+                            {
+                                var parts = order.Text?.Split(" | ") ?? new[] { "", "" };
+                                <div class="multicolumn-dropdown-item" data-value="@order.Value">
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="CashPurchaseOrderId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="WarehouseId" class="form-label"></label>
@@ -105,14 +179,14 @@
     </div>
 
     <div class="mb-2">
-        <button type="button" class="btn btn-sm btn-outline-secondary" id="loadPoLinesBtn">Reload Open Lines from Purchase Order</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="loadLinesBtn">Reload Open Lines from Source Document</button>
     </div>
 
     <h5 class="mt-3">Line Items</h5>
     <table class="table table-sm" id="grn-details-table">
         <thead>
             <tr>
-                <th>PO Line</th>
+                <th>Source Line</th>
                 <th>Material</th>
                 <th>Qty</th>
                 <th>Unit</th>
@@ -130,6 +204,8 @@
                 <tr class="detail-row">
                     <td>
                         <input type="hidden" name="Details[@i].PurchaseOrderDetailId" class="po-detail-id" value="@Model.Details[i].PurchaseOrderDetailId" />
+                        <input type="hidden" name="Details[@i].EngineerWorkOrderDetailId" class="ewo-detail-id" value="@Model.Details[i].EngineerWorkOrderDetailId" />
+                        <input type="hidden" name="Details[@i].CashPurchaseOrderDetailId" class="cpo-detail-id" value="@Model.Details[i].CashPurchaseOrderDetailId" />
                         <input type="hidden" name="Details[@i].MaterialId" class="material-id" value="@Model.Details[i].MaterialId" />
                         <span class="po-line-label text-muted small">@ViewBag.DetailMaterialNames[i]</span>
                     </td>
@@ -149,6 +225,8 @@
             <tr class="detail-row-template">
                 <td>
                     <input type="hidden" name="Details[__index__].PurchaseOrderDetailId" class="po-detail-id" />
+                    <input type="hidden" name="Details[__index__].EngineerWorkOrderDetailId" class="ewo-detail-id" />
+                    <input type="hidden" name="Details[__index__].CashPurchaseOrderDetailId" class="cpo-detail-id" />
                     <input type="hidden" name="Details[__index__].MaterialId" class="material-id" />
                     <span class="po-line-label text-muted small">-- pick from list --</span>
                 </td>
@@ -179,29 +257,59 @@
     document.addEventListener('DOMContentLoaded', function () {
         new MultiColumnDropdown('warehouse-container');
         new MultiColumnDropdown('purchaseOrder-container');
+        new MultiColumnDropdown('engineerWorkOrder-container');
+        new MultiColumnDropdown('cashPurchaseOrder-container');
         initDetailTable('grn-details-table', 'Details');
 
-        document.getElementById('loadPoLinesBtn').addEventListener('click', function () {
-            var poId = document.getElementById('purchaseOrder').value;
-            if (!poId) {
-                alert('Select a purchase order first.');
+        var sourceConfig = {
+            '@((int)GrnSourceType.PurchaseOrder)': { wrapper: 'purchaseOrder-wrapper', idField: 'purchaseOrder', action: '@Url.Action("GetOpenPurchaseOrderLines")', param: 'purchaseOrderId' },
+            '@((int)GrnSourceType.EngineerWorkOrder)': { wrapper: 'engineerWorkOrder-wrapper', idField: 'engineerWorkOrder', action: '@Url.Action("GetOpenEngineerWorkOrderLines")', param: 'engineerWorkOrderId' },
+            '@((int)GrnSourceType.CashPurchaseOrder)': { wrapper: 'cashPurchaseOrder-wrapper', idField: 'cashPurchaseOrder', action: '@Url.Action("GetOpenCashPurchaseOrderLines")', param: 'cashPurchaseOrderId' }
+        };
+
+        function currentConfig() {
+            return sourceConfig[document.getElementById('sourceType').value];
+        }
+
+        function updateSourceVisibility() {
+            var selected = document.getElementById('sourceType').value;
+            document.querySelectorAll('.source-picker').forEach(function (el) {
+                el.style.display = (el.dataset.sourceType === selected) ? '' : 'none';
+            });
+        }
+
+        document.getElementById('sourceType').addEventListener('change', function () {
+            updateSourceVisibility();
+            var table = document.getElementById('grn-details-table');
+            table.querySelector('tbody').querySelectorAll('tr.detail-row').forEach(function (row) { row.remove(); });
+        });
+        updateSourceVisibility();
+
+        document.getElementById('loadLinesBtn').addEventListener('click', function () {
+            var config = currentConfig();
+            var sourceId = document.getElementById(config.idField).value;
+            if (!sourceId) {
+                alert('Select a source document first.');
                 return;
             }
 
-            fetch('@Url.Action("GetOpenPurchaseOrderLines")?purchaseOrderId=' + poId)
+            fetch(config.action + '?' + config.param + '=' + sourceId)
                 .then(function (r) { return r.json(); })
                 .then(function (lines) {
                     var table = document.getElementById('grn-details-table');
                     var tbody = table.querySelector('tbody');
                     tbody.querySelectorAll('tr.detail-row').forEach(function (row) { row.remove(); });
                     var template = tbody.querySelector('tr.detail-row-template');
+                    var sourceType = document.getElementById('sourceType').value;
 
                     lines.forEach(function (line) {
                         if (line.remainingQuantity <= 0) return;
                         var clone = template.cloneNode(true);
                         clone.classList.remove('d-none');
                         clone.classList.add('detail-row');
-                        clone.querySelector('.po-detail-id').value = line.purchaseOrderDetailId;
+                        clone.querySelector('.po-detail-id').value = sourceType === '@((int)GrnSourceType.PurchaseOrder)' ? line.detailId : '';
+                        clone.querySelector('.ewo-detail-id').value = sourceType === '@((int)GrnSourceType.EngineerWorkOrder)' ? line.detailId : '';
+                        clone.querySelector('.cpo-detail-id').value = sourceType === '@((int)GrnSourceType.CashPurchaseOrder)' ? line.detailId : '';
                         clone.querySelector('.material-id').value = line.materialId;
                         clone.querySelector('.po-line-label').textContent = line.materialName + ' (remaining ' + line.remainingQuantity + ')';
                         clone.querySelector('.material-name').textContent = line.materialName;

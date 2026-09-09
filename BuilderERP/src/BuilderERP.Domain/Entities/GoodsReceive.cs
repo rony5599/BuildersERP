@@ -11,8 +11,16 @@ public class GoodsReceive : BaseEntity
     public GrnStatus Status { get; set; } = GrnStatus.Draft;
     public bool IsActive { get; set; } = true;
 
-    public long PurchaseOrderId { get; set; }
-    public PurchaseOrder PurchaseOrder { get; set; } = null!;
+    public GrnSourceType SourceType { get; set; } = GrnSourceType.PurchaseOrder;
+
+    public long? PurchaseOrderId { get; set; }
+    public PurchaseOrder? PurchaseOrder { get; set; }
+
+    public long? EngineerWorkOrderId { get; set; }
+    public EngineerWorkOrder? EngineerWorkOrder { get; set; }
+
+    public long? CashPurchaseOrderId { get; set; }
+    public CashPurchaseOrder? CashPurchaseOrder { get; set; }
 
     public long WarehouseId { get; set; }
     public Warehouse Warehouse { get; set; } = null!;

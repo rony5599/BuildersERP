@@ -8,6 +8,7 @@ public class EngineerWorkOrderDetail : BaseEntity
     public decimal Qty { get; set; }
     public decimal Rate { get; set; }
     public decimal Amount { get; set; }
+    public decimal ReceivedQuantity { get; set; }
     public string? Remarks { get; set; }
 
     public long EngineerWorkOrderId { get; set; }
