@@ -5,8 +5,10 @@ using BuilderERP.Domain.Entities;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
+using BuilderERP.Web.Models;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -181,6 +183,58 @@ public class UsersController : Controller
             await _userManager.AddToRoleAsync(user, dto.Role);
         }
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Roles = RoleNames.SuperAdmin)]
+    public async Task<IActionResult> ResetPassword(Guid id)
+    {
+        var user = await _userManager.FindByIdAsync(id.ToString());
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        var model = new ResetPasswordViewModel
+        {
+            UserId = user.Id,
+            Email = user.Email ?? string.Empty
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = RoleNames.SuperAdmin)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    {
+        var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        model.Email = user.Email ?? string.Empty;
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
+        }
+
+        TempData["StatusMessage"] = $"Password for {user.Email} has been reset.";
         return RedirectToAction(nameof(Index));
     }
 

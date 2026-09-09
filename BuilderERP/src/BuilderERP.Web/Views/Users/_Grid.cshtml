@@ -34,6 +34,10 @@
                     {
                         <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
                     }
+                    @if (User.IsInRole(RoleNames.SuperAdmin))
+                    {
+                        <a asp-action="ResetPassword" asp-route-id="@user.Id" class="btn btn-sm btn-outline-warning">Reset Password</a>
+                    }
                 </td>
             </tr>
         }
