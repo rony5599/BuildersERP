@@ -5,6 +5,10 @@
     ViewData["Title"] = isRevision ? "Revise Engineer Work Order" : "New Engineer Work Order";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
 <h1 class="h3 mb-4">@ViewData["Title"]</h1>
 
 <form asp-action="@(isRevision ? "Revise" : "Create")" method="post">
@@ -60,9 +64,39 @@
                 {
                     <tr class="detail-row">
                         <td>
-                            <select asp-for="Details[i].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
-                                <option value="">-- Material --</option>
-                            </select>
+                            <div class="multicolumn-dropdown-wrapper">
+                                <div class="multicolumn-dropdown-container" id="material-@(i)-container">
+                                    <input type="hidden" asp-for="Details[i].MaterialId" id="material-@(i)" value="@Model.Details[i].MaterialId" />
+                                    <div class="multicolumn-dropdown-trigger">
+                                        <input type="text"
+                                               class="multicolumn-dropdown-filter form-control form-control-sm"
+                                               placeholder="Search Material..."
+                                               autocomplete="off"
+                                               id="material-@(i)-filter" />
+                                        <span class="multicolumn-dropdown-icon">
+                                            <i class="bi bi-chevron-down"></i>
+                                        </span>
+                                    </div>
+                                    <div class="multicolumn-dropdown-menu" id="material-@(i)-menu" style="display: none;">
+                                        <div class="multicolumn-dropdown-header">
+                                            <div class="multicolumn-dropdown-column">Code</div>
+                                            <div class="multicolumn-dropdown-column">Name</div>
+                                            <div class="multicolumn-dropdown-column">Category</div>
+                                        </div>
+                                        <div class="multicolumn-dropdown-items">
+                                            @foreach (var material in (IEnumerable<dynamic>)ViewBag.Materials ?? new List<dynamic>())
+                                            {
+                                                var parts = material.Text?.Split(" | ") ?? new[] { "", "", "" };
+                                                <div class="multicolumn-dropdown-item" data-value="@material.Value">
+                                                    <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                                    <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                                    <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2]?.Trim() ?? "" : "")</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                         <td>
                             <select asp-for="Details[i].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
@@ -76,9 +110,39 @@
             }
             <tr class="detail-row-template">
                 <td>
-                    <select name="Details[__index__].MaterialId" asp-items="ViewBag.Materials" class="form-select form-select-sm">
-                        <option value="">-- Material --</option>
-                    </select>
+                    <div class="multicolumn-dropdown-wrapper material-dropdown-template">
+                        <div class="multicolumn-dropdown-container" id="material-__index__-container">
+                            <input type="hidden" name="Details[__index__].MaterialId" id="material-__index__" value="" />
+                            <div class="multicolumn-dropdown-trigger">
+                                <input type="text"
+                                       class="multicolumn-dropdown-filter form-control form-control-sm"
+                                       placeholder="Search Material..."
+                                       autocomplete="off"
+                                       id="material-__index__-filter" />
+                                <span class="multicolumn-dropdown-icon">
+                                    <i class="bi bi-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div class="multicolumn-dropdown-menu" id="material-__index__-menu" style="display: none;">
+                                <div class="multicolumn-dropdown-header">
+                                    <div class="multicolumn-dropdown-column">Code</div>
+                                    <div class="multicolumn-dropdown-column">Name</div>
+                                    <div class="multicolumn-dropdown-column">Category</div>
+                                </div>
+                                <div class="multicolumn-dropdown-items">
+                                    @foreach (var material in (IEnumerable<dynamic>)ViewBag.Materials ?? new List<dynamic>())
+                                    {
+                                        var parts = material.Text?.Split(" | ") ?? new[] { "", "", "" };
+                                        <div class="multicolumn-dropdown-item" data-value="@material.Value">
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0]?.Trim() ?? "" : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1]?.Trim() ?? "" : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2]?.Trim() ?? "" : "")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <select name="Details[__index__].UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select form-select-sm"></select>
@@ -99,9 +163,39 @@
 </form>
 
 <partial name="_DetailLineItemsScripts" />
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         initDetailTable('ewo-details-table', 'Details');
+
+        // Initialize material dropdowns in a specific row
+        function initializeDropdownsInRow(row) {
+            const containers = row.querySelectorAll('[id$="-container"]');
+            containers.forEach(container => {
+                if (container.id.includes('material-')) {
+                    new MultiColumnDropdown(container.id);
+                }
+            });
+        }
+
+        // Initialize dropdowns for rows already present on page load
+        document.querySelectorAll('#ewo-details-table tbody tr.detail-row').forEach(function (row) {
+            initializeDropdownsInRow(row);
+        });
+
+        // Hook into the row addition process
+        var addBtn = document.querySelector('[data-add-row-for="ewo-details-table"]');
+        if (addBtn) {
+            addBtn.addEventListener('click', function () {
+                setTimeout(function () {
+                    var rows = document.querySelectorAll('#ewo-details-table tbody tr.detail-row');
+                    var lastRow = rows[rows.length - 1];
+                    if (lastRow) {
+                        initializeDropdownsInRow(lastRow);
+                    }
+                }, 10);
+            });
+        }
 
         var loadBtn = document.getElementById('load-requisition-items');
         var requisitionSelect = document.querySelector('[name="EngineerWorkOrderRequisitionId"]');
@@ -121,13 +215,16 @@
                     .then(function (items) {
                         clearDetailRows('ewo-details-table', 'Details');
                         items.forEach(function (item) {
-                            addDetailRow('ewo-details-table', 'Details', {
+                            var row = addDetailRow('ewo-details-table', 'Details', {
                                 MaterialId: item.materialId,
                                 UnitOfMeasure: item.unitOfMeasure,
                                 Qty: item.qty,
                                 Rate: item.rate,
                                 Remarks: item.remarks
                             });
+                            if (row) {
+                                initializeDropdownsInRow(row);
+                            }
                         });
                     })
                     .catch(function (err) {

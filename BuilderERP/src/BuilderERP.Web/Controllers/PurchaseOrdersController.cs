@@ -33,9 +33,31 @@ public class PurchaseOrdersController : Controller
         _pdfExporter = pdfExporter;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(
+        int page = 1,
+        int pageSize = 25,
+        string? poNumber = null,
+        DateTime? orderDateFrom = null,
+        DateTime? orderDateTo = null,
+        DateTime? deliveryDateFrom = null,
+        DateTime? deliveryDateTo = null)
     {
-        var orders = await _mediator.Send(new GetAllPurchaseOrdersQuery(page, pageSize));
+        var orders = await _mediator.Send(new GetAllPurchaseOrdersQuery(
+            page, pageSize, poNumber, orderDateFrom, orderDateTo, deliveryDateFrom, deliveryDateTo));
+
+        ViewBag.PONumber = poNumber;
+        ViewBag.OrderDateFrom = orderDateFrom;
+        ViewBag.OrderDateTo = orderDateTo;
+        ViewBag.DeliveryDateFrom = deliveryDateFrom;
+        ViewBag.DeliveryDateTo = deliveryDateTo;
+
+        var routeValues = new Dictionary<string, string?>();
+        if (!string.IsNullOrWhiteSpace(poNumber)) routeValues["poNumber"] = poNumber;
+        if (orderDateFrom.HasValue) routeValues["orderDateFrom"] = orderDateFrom.Value.ToString("yyyy-MM-dd");
+        if (orderDateTo.HasValue) routeValues["orderDateTo"] = orderDateTo.Value.ToString("yyyy-MM-dd");
+        if (deliveryDateFrom.HasValue) routeValues["deliveryDateFrom"] = deliveryDateFrom.Value.ToString("yyyy-MM-dd");
+        if (deliveryDateTo.HasValue) routeValues["deliveryDateTo"] = deliveryDateTo.Value.ToString("yyyy-MM-dd");
+        ViewBag.FilterRouteValues = routeValues;
 
         if (this.IsAjaxRequest())
         {

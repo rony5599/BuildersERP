@@ -7,8 +7,14 @@ public enum UnitOfMeasure
     Bag,
     Ton,
     Meter,
-    Liter,
+    Ltr,
     Box,
     CubicFeet,
-    SquareFeet
+    SquareFeet,
+    Nos,
+    Cft,
+    Truck,
+    Container,
+    Roll,
+    Pound
 }

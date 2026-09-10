@@ -63,5 +63,5 @@
     TotalPages = Model.TotalPages,
     TotalCount = Model.TotalCount,
     Action = "Index",
-    RouteValues = new()
+    RouteValues = (Dictionary<string, string?>)(ViewBag.FilterRouteValues ?? new Dictionary<string, string?>())
 })" />

@@ -14,6 +14,33 @@
     }
 </div>
 
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-2">
+        <label class="form-label small mb-1">PO No</label>
+        <input type="text" name="poNumber" value="@ViewBag.PONumber" class="form-control" placeholder="PO No" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label small mb-1">PO Date From</label>
+        <input type="date" name="orderDateFrom" value="@(((DateTime?)ViewBag.OrderDateFrom)?.ToString("yyyy-MM-dd"))" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label small mb-1">PO Date To</label>
+        <input type="date" name="orderDateTo" value="@(((DateTime?)ViewBag.OrderDateTo)?.ToString("yyyy-MM-dd"))" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label small mb-1">Delivery Date From</label>
+        <input type="date" name="deliveryDateFrom" value="@(((DateTime?)ViewBag.DeliveryDateFrom)?.ToString("yyyy-MM-dd"))" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label small mb-1">Delivery Date To</label>
+        <input type="date" name="deliveryDateTo" value="@(((DateTime?)ViewBag.DeliveryDateTo)?.ToString("yyyy-MM-dd"))" class="form-control" />
+    </div>
+    <div class="col-md-2 d-flex gap-2 align-items-end">
+        <button type="submit" class="btn btn-primary flex-fill">Filter</button>
+        <a asp-action="Index" class="btn btn-outline-secondary flex-fill">Clear</a>
+    </div>
+</form>
+
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>

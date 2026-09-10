@@ -18,7 +18,19 @@ class MultiColumnDropdown {
         this.selectedItem = null;
         this.allItems = Array.from(this.items);
 
+        this.applyColumnTooltips();
         this.init();
+    }
+
+    applyColumnTooltips() {
+        this.items.forEach(item => {
+            item.querySelectorAll('.multicolumn-dropdown-column').forEach(col => {
+                const text = (col.textContent || '').trim();
+                if (text) {
+                    col.title = text;
+                }
+            });
+        });
     }
 
     init() {
@@ -117,6 +129,7 @@ class MultiColumnDropdown {
 
         // Update filter display - show Code - Name
         this.filter.value = `${code} - ${name}`.trim();
+        this.filter.title = this.filter.value;
 
         // Update selected state
         this.items.forEach(i => i.classList.remove('selected'));
@@ -138,6 +151,7 @@ class MultiColumnDropdown {
                 const code = selected.querySelector('.multicolumn-dropdown-column:nth-child(1)')?.textContent?.trim() || '';
                 const name = selected.querySelector('.multicolumn-dropdown-column:nth-child(2)')?.textContent?.trim() || '';
                 this.filter.value = `${code} - ${name}`.trim();
+                this.filter.title = this.filter.value;
                 this.selectedItem = selected;
             }
         }
@@ -158,6 +172,7 @@ class MultiColumnDropdown {
                 const code = this.selectedItem.querySelector('.multicolumn-dropdown-column:nth-child(1)')?.textContent?.trim() || '';
                 const name = this.selectedItem.querySelector('.multicolumn-dropdown-column:nth-child(2)')?.textContent?.trim() || '';
                 this.filter.value = `${code} - ${name}`.trim();
+                this.filter.title = this.filter.value;
             }
         }
     }

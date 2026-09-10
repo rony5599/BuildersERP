@@ -273,6 +273,11 @@ public class EngineerWorkOrdersController : Controller
         ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name");
 
         var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
-        ViewBag.Materials = new SelectList(materials.Items, "Id", "Name");
+        // Format materials with Code | Name | Category for multicolumn dropdown
+        ViewBag.Materials = materials.Items.Select(m => new SelectListItem
+        {
+            Value = m.Id.ToString(),
+            Text = $"{m.MaterialCode} | {m.Name} | {m.CategoryName}"
+        }).ToList();
     }
 }
