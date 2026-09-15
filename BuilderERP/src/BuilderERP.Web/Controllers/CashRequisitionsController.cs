@@ -4,6 +4,7 @@ using BuilderERP.Application.Features.Departments;
 using BuilderERP.Application.Features.Employees;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -28,9 +29,19 @@ public class CashRequisitionsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? requisitionNumber = null, long? projectId = null, RequisitionStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        var requisitions = await _mediator.Send(new GetAllCashRequisitionsQuery(page, pageSize));
+        var requisitions = await _mediator.Send(new GetAllCashRequisitionsQuery(page, pageSize, requisitionNumber, projectId, status, dateFrom, dateTo));
+
+        ViewBag.RequisitionNumber = requisitionNumber;
+        ViewBag.ProjectId = projectId;
+        ViewBag.Status = status;
+        ViewBag.DateFrom = dateFrom;
+        ViewBag.DateTo = dateTo;
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
+        ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(RequisitionStatus)).Cast<RequisitionStatus>().Select(s => new { Id = s, Name = s.ToString() }), "Id", "Name", status);
 
         if (this.IsAjaxRequest())
         {
