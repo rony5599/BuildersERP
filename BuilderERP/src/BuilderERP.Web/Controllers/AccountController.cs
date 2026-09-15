@@ -52,16 +52,20 @@ public class AccountController : Controller
         var deviceId = _deviceRecognition.GetOrCreateDeviceId(HttpContext);
         var deviceStatus = await _deviceRecognition.CheckDeviceAsync(user.Id, deviceId, HttpContext);
 
-        if (deviceStatus == DeviceStatus.Pending)
+        bool deviceapprovalEnabled = false; // This should be fetched from configuration or database
+        if (deviceapprovalEnabled)
         {
-            _logger.LogInformation("Login blocked for {Email}: device {DeviceId} is pending approval", model.Email, deviceId);
-            return View("DeviceApprovalRequired", model);
-        }
+            if (deviceStatus == DeviceStatus.Pending)
+            {
+                _logger.LogInformation("Login blocked for {Email}: device {DeviceId} is pending approval", model.Email, deviceId);
+                return View("DeviceApprovalRequired", model);
+            }
 
-        if (deviceStatus != DeviceStatus.Approved)
-        {
-            _logger.LogInformation("Login blocked for {Email}: device {DeviceId} status is {Status}", model.Email, deviceId, deviceStatus);
-            return AddDeviceError(model, deviceStatus);
+            if (deviceStatus != DeviceStatus.Approved)
+            {
+                _logger.LogInformation("Login blocked for {Email}: device {DeviceId} status is {Status}", model.Email, deviceId, deviceStatus);
+                return AddDeviceError(model, deviceStatus);
+            }
         }
 
         var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
