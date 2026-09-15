@@ -8,7 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockTransfers;
 
-public record GetAllStockTransfersQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockTransferDto>>;
+public record GetAllStockTransfersQuery(
+    long? ProjectId = null,
+    int Page = 1,
+    int PageSize = 25,
+    string? TransferNumber = null,
+    long? MaterialId = null,
+    DateTime? DateFrom = null,
+    DateTime? DateTo = null) : IRequest<PagedResult<StockTransferDto>>;
 
 public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTransfersQuery, PagedResult<StockTransferDto>>
 {
@@ -32,6 +39,27 @@ public class GetAllStockTransfersQueryHandler : IRequestHandler<GetAllStockTrans
         if (request.ProjectId.HasValue)
         {
             query = query.Where(t => t.FromWarehouse.ProjectId == request.ProjectId.Value || t.ToWarehouse.ProjectId == request.ProjectId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.TransferNumber))
+        {
+            var term = request.TransferNumber.Trim();
+            query = query.Where(t => t.TransferNumber.Contains(term));
+        }
+
+        if (request.MaterialId.HasValue)
+        {
+            query = query.Where(t => t.MaterialId == request.MaterialId.Value);
+        }
+
+        if (request.DateFrom.HasValue)
+        {
+            query = query.Where(t => t.TransferDate >= request.DateFrom.Value.Date);
+        }
+
+        if (request.DateTo.HasValue)
+        {
+            query = query.Where(t => t.TransferDate < request.DateTo.Value.Date.AddDays(1));
         }
 
         var page = request.Page < 1 ? 1 : request.Page;

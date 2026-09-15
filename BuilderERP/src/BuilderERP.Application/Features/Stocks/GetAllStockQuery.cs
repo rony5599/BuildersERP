@@ -8,7 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Stocks;
 
-public record GetAllStockQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockDto>>;
+public record GetAllStockQuery(
+    long? ProjectId = null,
+    int Page = 1,
+    int PageSize = 25,
+    long? MaterialId = null,
+    long? WarehouseId = null,
+    bool? IsActive = null) : IRequest<PagedResult<StockDto>>;
 
 public class GetAllStockQueryHandler : IRequestHandler<GetAllStockQuery, PagedResult<StockDto>>
 {
@@ -31,6 +37,21 @@ public class GetAllStockQueryHandler : IRequestHandler<GetAllStockQuery, PagedRe
         if (request.ProjectId.HasValue)
         {
             query = query.Where(s => s.Warehouse.ProjectId == request.ProjectId.Value);
+        }
+
+        if (request.MaterialId.HasValue)
+        {
+            query = query.Where(s => s.MaterialId == request.MaterialId.Value);
+        }
+
+        if (request.WarehouseId.HasValue)
+        {
+            query = query.Where(s => s.WarehouseId == request.WarehouseId.Value);
+        }
+
+        if (request.IsActive.HasValue)
+        {
+            query = query.Where(s => s.IsActive == request.IsActive.Value);
         }
 
         var page = request.Page < 1 ? 1 : request.Page;

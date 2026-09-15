@@ -8,6 +8,8 @@ public class EngineerWorkOrderDto
     public string WorkOrderNo { get; set; } = string.Empty;
     public long EngineerWorkOrderRequisitionId { get; set; }
     public string RequisitionNumber { get; set; } = string.Empty;
+    public long ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
     public long? MotherWorkOrderId { get; set; }
     public int RevisionNo { get; set; }
     public bool IsLatestRevision { get; set; }

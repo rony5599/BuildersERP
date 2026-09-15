@@ -26,10 +26,16 @@ public class MaterialsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25, string? search = null, long? categoryId = null, bool? isActive = null)
     {
-        var materials = await _mediator.Send(new GetAllMaterialsQuery(projectId, page, pageSize));
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(projectId, page, pageSize, search, categoryId, isActive));
         ViewBag.SelectedProjectId = projectId;
+        ViewBag.Search = search;
+        ViewBag.CategoryId = categoryId;
+        ViewBag.IsActive = isActive;
+
+        var categories = await _mediator.Send(new GetAllItemCategoriesQuery(PageSize: int.MaxValue));
+        ViewBag.Categories = new SelectList(categories.Items, "Id", "Name", categoryId);
 
         if (this.IsAjaxRequest())
         {

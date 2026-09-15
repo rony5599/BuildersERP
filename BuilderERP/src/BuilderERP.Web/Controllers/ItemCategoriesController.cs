@@ -24,9 +24,16 @@ public class ItemCategoriesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? search = null, long? parentCategoryId = null, bool? isActive = null)
     {
-        var categories = await _mediator.Send(new GetAllItemCategoriesQuery(page, pageSize));
+        var categories = await _mediator.Send(new GetAllItemCategoriesQuery(page, pageSize, search, parentCategoryId, isActive));
+
+        ViewBag.Search = search;
+        ViewBag.ParentCategoryId = parentCategoryId;
+        ViewBag.IsActive = isActive;
+
+        var allCategories = await _mediator.Send(new GetAllItemCategoriesQuery(PageSize: int.MaxValue));
+        ViewBag.ParentCategories = new SelectList(allCategories.Items, "Id", "Name", parentCategoryId);
 
         if (this.IsAjaxRequest())
         {

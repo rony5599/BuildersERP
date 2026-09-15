@@ -3,6 +3,7 @@ using BuilderERP.Application.Features.CashPurchaseOrders;
 using BuilderERP.Application.Features.EngineerWorkOrders;
 using BuilderERP.Application.Features.GoodsReceives;
 using BuilderERP.Application.Features.Materials;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PurchaseOrders;
 using BuilderERP.Application.Features.Warehouses;
 using BuilderERP.Domain.Enums;
@@ -30,9 +31,19 @@ public class GoodsReceivesController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? grnNumber = null, long? projectId = null, GrnStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        var receives = await _mediator.Send(new GetAllGoodsReceivesQuery(page, pageSize));
+        var receives = await _mediator.Send(new GetAllGoodsReceivesQuery(page, pageSize, grnNumber, projectId, status, dateFrom, dateTo));
+
+        ViewBag.GrnNumber = grnNumber;
+        ViewBag.ProjectId = projectId;
+        ViewBag.Status = status;
+        ViewBag.DateFrom = dateFrom;
+        ViewBag.DateTo = dateTo;
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
+        ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(GrnStatus)).Cast<GrnStatus>().Select(s => new { Id = s, Name = s.ToString() }), "Id", "Name", status);
 
         if (this.IsAjaxRequest())
         {

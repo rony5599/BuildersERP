@@ -2,13 +2,21 @@ using AutoMapper;
 using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.VendorQuotations;
 
-public record GetAllVendorQuotationsQuery(int Page = 1, int PageSize = 25) : IRequest<PagedResult<VendorQuotationDto>>;
+public record GetAllVendorQuotationsQuery(
+    int Page = 1,
+    int PageSize = 25,
+    string? QuotationNumber = null,
+    long? ProjectId = null,
+    VendorQuotationStatus? Status = null,
+    DateTime? DateFrom = null,
+    DateTime? DateTo = null) : IRequest<PagedResult<VendorQuotationDto>>;
 
 public class GetAllVendorQuotationsQueryHandler : IRequestHandler<GetAllVendorQuotationsQuery, PagedResult<VendorQuotationDto>>
 {
@@ -30,6 +38,32 @@ public class GetAllVendorQuotationsQueryHandler : IRequestHandler<GetAllVendorQu
             .ThenInclude(pr => pr.Project)
             .Include(v => v.Details)
             .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(request.QuotationNumber))
+        {
+            var term = request.QuotationNumber.Trim();
+            query = query.Where(v => v.QuotationNumber.Contains(term));
+        }
+
+        if (request.ProjectId.HasValue)
+        {
+            query = query.Where(v => v.Rfq.PurchaseRequisition.ProjectId == request.ProjectId.Value);
+        }
+
+        if (request.Status.HasValue)
+        {
+            query = query.Where(v => v.Status == request.Status.Value);
+        }
+
+        if (request.DateFrom.HasValue)
+        {
+            query = query.Where(v => v.QuotationDate >= request.DateFrom.Value.Date);
+        }
+
+        if (request.DateTo.HasValue)
+        {
+            query = query.Where(v => v.QuotationDate < request.DateTo.Value.Date.AddDays(1));
+        }
 
         var page = request.Page < 1 ? 1 : request.Page;
         var pageSize = request.PageSize < 1 ? 25 : request.PageSize;

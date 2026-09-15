@@ -27,18 +27,26 @@ public class StockAdjustmentsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25, string? adjustmentNumber = null, long? materialId = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        var adjustments = await _mediator.Send(new GetAllStockAdjustmentsQuery(projectId, page, pageSize));
+        var adjustments = await _mediator.Send(new GetAllStockAdjustmentsQuery(projectId, page, pageSize, adjustmentNumber, materialId, dateFrom, dateTo));
         ViewBag.SelectedProjectId = projectId;
+        ViewBag.AdjustmentNumber = adjustmentNumber;
+        ViewBag.SelectedMaterialId = materialId;
+        ViewBag.DateFrom = dateFrom;
+        ViewBag.DateTo = dateTo;
+
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.MaterialFilterOptions = new SelectList(materials.Items, "Id", "Name", materialId);
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
 
         if (this.IsAjaxRequest())
         {
             return PartialView("_Grid", adjustments);
         }
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
-        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(adjustments);
     }
 

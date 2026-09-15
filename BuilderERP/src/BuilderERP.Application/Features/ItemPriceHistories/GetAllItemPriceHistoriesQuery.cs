@@ -8,7 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.ItemPriceHistories;
 
-public record GetAllItemPriceHistoriesQuery(long? MaterialId = null, long? SupplierId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<ItemPriceHistoryDto>>;
+public record GetAllItemPriceHistoriesQuery(
+    long? MaterialId = null,
+    long? SupplierId = null,
+    int Page = 1,
+    int PageSize = 25,
+    DateTime? DateFrom = null,
+    DateTime? DateTo = null) : IRequest<PagedResult<ItemPriceHistoryDto>>;
 
 public class GetAllItemPriceHistoriesQueryHandler : IRequestHandler<GetAllItemPriceHistoriesQuery, PagedResult<ItemPriceHistoryDto>>
 {
@@ -36,6 +42,16 @@ public class GetAllItemPriceHistoriesQueryHandler : IRequestHandler<GetAllItemPr
         if (request.SupplierId.HasValue)
         {
             query = query.Where(h => h.SupplierId == request.SupplierId.Value);
+        }
+
+        if (request.DateFrom.HasValue)
+        {
+            query = query.Where(h => h.EffectiveDate >= request.DateFrom.Value.Date);
+        }
+
+        if (request.DateTo.HasValue)
+        {
+            query = query.Where(h => h.EffectiveDate < request.DateTo.Value.Date.AddDays(1));
         }
 
         var page = request.Page < 1 ? 1 : request.Page;

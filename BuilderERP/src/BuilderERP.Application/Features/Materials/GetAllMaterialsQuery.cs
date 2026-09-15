@@ -8,7 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.Materials;
 
-public record GetAllMaterialsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<MaterialDto>>;
+public record GetAllMaterialsQuery(
+    long? ProjectId = null,
+    int Page = 1,
+    int PageSize = 25,
+    string? SearchTerm = null,
+    long? CategoryId = null,
+    bool? IsActive = null) : IRequest<PagedResult<MaterialDto>>;
 
 public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery, PagedResult<MaterialDto>>
 {
@@ -33,6 +39,25 @@ public class GetAllMaterialsQueryHandler : IRequestHandler<GetAllMaterialsQuery,
                 .Distinct();
 
             query = query.Where(m => materialIdsInProject.Contains(m.Id));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            var term = request.SearchTerm.Trim();
+            query = query.Where(m =>
+                m.MaterialCode.Contains(term) ||
+                m.Name.Contains(term) ||
+                (m.Barcode != null && m.Barcode.Contains(term)));
+        }
+
+        if (request.CategoryId.HasValue)
+        {
+            query = query.Where(m => m.CategoryId == request.CategoryId.Value);
+        }
+
+        if (request.IsActive.HasValue)
+        {
+            query = query.Where(m => m.IsActive == request.IsActive.Value);
         }
 
         var page = request.Page < 1 ? 1 : request.Page;

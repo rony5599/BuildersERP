@@ -1,8 +1,10 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.Materials;
+using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Rfqs;
 using BuilderERP.Application.Features.Suppliers;
 using BuilderERP.Application.Features.VendorQuotations;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -27,9 +29,19 @@ public class VendorQuotationsController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? quotationNumber = null, long? projectId = null, VendorQuotationStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery(page, pageSize));
+        var quotations = await _mediator.Send(new GetAllVendorQuotationsQuery(page, pageSize, quotationNumber, projectId, status, dateFrom, dateTo));
+
+        ViewBag.QuotationNumber = quotationNumber;
+        ViewBag.ProjectId = projectId;
+        ViewBag.Status = status;
+        ViewBag.DateFrom = dateFrom;
+        ViewBag.DateTo = dateTo;
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
+        ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(VendorQuotationStatus)).Cast<VendorQuotationStatus>().Select(s => new { Id = s, Name = s.ToString() }), "Id", "Name", status);
 
         if (this.IsAjaxRequest())
         {

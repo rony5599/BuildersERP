@@ -8,7 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockAdjustments;
 
-public record GetAllStockAdjustmentsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockAdjustmentDto>>;
+public record GetAllStockAdjustmentsQuery(
+    long? ProjectId = null,
+    int Page = 1,
+    int PageSize = 25,
+    string? AdjustmentNumber = null,
+    long? MaterialId = null,
+    DateTime? DateFrom = null,
+    DateTime? DateTo = null) : IRequest<PagedResult<StockAdjustmentDto>>;
 
 public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdjustmentsQuery, PagedResult<StockAdjustmentDto>>
 {
@@ -31,6 +38,27 @@ public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdj
         if (request.ProjectId.HasValue)
         {
             query = query.Where(a => a.Warehouse.ProjectId == request.ProjectId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.AdjustmentNumber))
+        {
+            var term = request.AdjustmentNumber.Trim();
+            query = query.Where(a => a.AdjustmentNumber.Contains(term));
+        }
+
+        if (request.MaterialId.HasValue)
+        {
+            query = query.Where(a => a.MaterialId == request.MaterialId.Value);
+        }
+
+        if (request.DateFrom.HasValue)
+        {
+            query = query.Where(a => a.AdjustmentDate >= request.DateFrom.Value.Date);
+        }
+
+        if (request.DateTo.HasValue)
+        {
+            query = query.Where(a => a.AdjustmentDate < request.DateTo.Value.Date.AddDays(1));
         }
 
         var page = request.Page < 1 ? 1 : request.Page;

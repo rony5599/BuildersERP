@@ -8,7 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.StockReturns;
 
-public record GetAllStockReturnsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<StockReturnDto>>;
+public record GetAllStockReturnsQuery(
+    long? ProjectId = null,
+    int Page = 1,
+    int PageSize = 25,
+    string? ReturnNumber = null,
+    long? MaterialId = null,
+    DateTime? DateFrom = null,
+    DateTime? DateTo = null) : IRequest<PagedResult<StockReturnDto>>;
 
 public class GetAllStockReturnsQueryHandler : IRequestHandler<GetAllStockReturnsQuery, PagedResult<StockReturnDto>>
 {
@@ -31,6 +38,27 @@ public class GetAllStockReturnsQueryHandler : IRequestHandler<GetAllStockReturns
         if (request.ProjectId.HasValue)
         {
             query = query.Where(r => r.Warehouse.ProjectId == request.ProjectId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ReturnNumber))
+        {
+            var term = request.ReturnNumber.Trim();
+            query = query.Where(r => r.ReturnNumber.Contains(term));
+        }
+
+        if (request.MaterialId.HasValue)
+        {
+            query = query.Where(r => r.MaterialId == request.MaterialId.Value);
+        }
+
+        if (request.DateFrom.HasValue)
+        {
+            query = query.Where(r => r.ReturnDate >= request.DateFrom.Value.Date);
+        }
+
+        if (request.DateTo.HasValue)
+        {
+            query = query.Where(r => r.ReturnDate < request.DateTo.Value.Date.AddDays(1));
         }
 
         var page = request.Page < 1 ? 1 : request.Page;

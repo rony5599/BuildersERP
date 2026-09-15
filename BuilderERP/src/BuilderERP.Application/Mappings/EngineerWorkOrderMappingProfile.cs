@@ -10,6 +10,8 @@ public class EngineerWorkOrderMappingProfile : Profile
     {
         CreateMap<EngineerWorkOrder, EngineerWorkOrderDto>()
             .ForMember(dest => dest.RequisitionNumber, opt => opt.MapFrom(src => src.EngineerWorkOrderRequisition != null ? src.EngineerWorkOrderRequisition.RequisitionNumber : string.Empty))
+            .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.EngineerWorkOrderRequisition != null ? src.EngineerWorkOrderRequisition.ProjectId : 0L))
+            .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.EngineerWorkOrderRequisition != null && src.EngineerWorkOrderRequisition.Project != null ? src.EngineerWorkOrderRequisition.Project.Name : string.Empty))
             .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Supplier != null ? src.Supplier.Name : string.Empty))
             .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details));
         CreateMap<EngineerWorkOrderDetail, EngineerWorkOrderDetailDto>()

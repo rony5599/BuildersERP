@@ -10,13 +10,6 @@
     <h1 class="h3 mb-0">Stock</h1>
 </div>
 
-<form method="get" class="mb-3 col-md-4">
-    <label class="form-label">Project</label>
-    <select name="projectId" asp-items="ViewBag.Projects" class="form-select" onchange="this.form.submit()">
-        <option value="">-- All Projects --</option>
-    </select>
-</form>
-
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>

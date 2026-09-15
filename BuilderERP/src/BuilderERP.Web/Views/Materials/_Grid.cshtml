@@ -1,62 +1,133 @@
 @using BuilderERP.Application.Common
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model PagedResult<BuilderERP.Application.DTOs.MaterialDto>
+@{
+    var search = ViewBag.Search as string;
+    var categoryId = ViewBag.CategoryId as long?;
+    var isActive = ViewBag.IsActive as bool?;
+    var hasFilters = !string.IsNullOrWhiteSpace(search) || categoryId.HasValue || isActive.HasValue;
+}
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>UOM</th>
-            <th>Reorder Level</th>
-            <th>Barcode</th>
-            <th>Active</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var material in Model.Items)
-        {
-            <tr>
-                <td>@material.MaterialCode</td>
-                <td>@material.Name</td>
-                <td>@material.UnitOfMeasure</td>
-                <td>@material.ReorderLevel</td>
-                <td>@material.Barcode</td>
-                <td>
-                    <span class="badge @(material.IsActive ? "bg-success" : "bg-secondary")">
-                        @(material.IsActive ? "Active" : "Inactive")
-                    </span>
-                </td>
-                <td class="text-end">
-                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialManage))
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row gy-3 gx-4 align-items-end grid-search-form">
+            <input type="hidden" name="projectId" value="@ViewBag.SelectedProjectId" />
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label small mb-1">Search</label>
+                <input type="search" name="search" value="@search" class="form-control" placeholder="Code, name or barcode" />
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label small mb-1">Category</label>
+                <select name="categoryId" asp-items="@(ViewBag.Categories as SelectList)" class="form-select">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label small mb-1">Status</label>
+                <select name="isActive" class="form-select">
+                    <option value="">All Statuses</option>
+                    @if (isActive == true)
                     {
-                        <a asp-action="Edit" asp-route-id="@material.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <form asp-action="ToggleActive" asp-route-id="@material.Id" asp-route-isActive="@material.IsActive" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                @(material.IsActive ? "Deactivate" : "Activate")
-                            </button>
-                        </form>
+                        <option value="true" selected>Active</option>
                     }
-                </td>
-            </tr>
-        }
-        @if (Model.Items.Count == 0)
-        {
-            <tr>
-                <td colspan="7" class="text-center text-muted">No materials found.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    else
+                    {
+                        <option value="true">Active</option>
+                    }
+                    @if (isActive == false)
+                    {
+                        <option value="false" selected>Inactive</option>
+                    }
+                    else
+                    {
+                        <option value="false">Inactive</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                @if (hasFilters)
+                {
+                    <a asp-action="Index" asp-route-projectId="@ViewBag.SelectedProjectId" class="btn btn-outline-secondary flex-grow-1">Clear</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
 
-<partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
-{
-    Page = Model.Page,
-    PageSize = Model.PageSize,
-    TotalPages = Model.TotalPages,
-    TotalCount = Model.TotalCount,
-    Action = "Index",
-    RouteValues = new Dictionary<string, string?> { ["projectId"] = ViewBag.SelectedProjectId?.ToString() }
-})" />
+<div class="card">
+    <table class="table table-striped table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>UOM</th>
+                <th>Reorder Level</th>
+                <th>Barcode</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var material in Model.Items)
+            {
+                <tr>
+                    <td>@material.MaterialCode</td>
+                    <td>@material.Name</td>
+                    <td>@material.CategoryName</td>
+                    <td>@material.UnitOfMeasure</td>
+                    <td>@material.ReorderLevel</td>
+                    <td>@material.Barcode</td>
+                    <td>
+                        <span class="badge @(material.IsActive ? "bg-success" : "bg-secondary")">
+                            <span class="badge-dot"></span>@(material.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MaterialManage))
+                        {
+                            <a asp-action="Edit" asp-route-id="@material.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form asp-action="ToggleActive" asp-route-id="@material.Id" asp-route-isActive="@material.IsActive" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    @(material.IsActive ? "Deactivate" : "Activate")
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (Model.Items.Count == 0)
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted">No materials found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="card-body pt-2">
+        <partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+        {
+            Page = Model.Page,
+            PageSize = Model.PageSize,
+            TotalPages = Model.TotalPages,
+            TotalCount = Model.TotalCount,
+            Action = "Index",
+            RouteValues = BuildFilterRouteValues(ViewBag.SelectedProjectId as long?, search, categoryId, isActive)
+        })" />
+    </div>
+</div>
+
+@functions {
+    private static Dictionary<string, string?> BuildFilterRouteValues(long? projectId, string? search, long? categoryId, bool? isActive)
+    {
+        var values = new Dictionary<string, string?>();
+        if (projectId.HasValue) values["projectId"] = projectId.Value.ToString();
+        if (!string.IsNullOrWhiteSpace(search)) values["search"] = search;
+        if (categoryId.HasValue) values["categoryId"] = categoryId.Value.ToString();
+        if (isActive.HasValue) values["isActive"] = isActive.Value.ToString();
+        return values;
+    }
+}

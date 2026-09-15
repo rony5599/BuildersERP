@@ -27,18 +27,26 @@ public class StockTransfersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25, string? transferNumber = null, long? materialId = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        var transfers = await _mediator.Send(new GetAllStockTransfersQuery(projectId, page, pageSize));
+        var transfers = await _mediator.Send(new GetAllStockTransfersQuery(projectId, page, pageSize, transferNumber, materialId, dateFrom, dateTo));
         ViewBag.SelectedProjectId = projectId;
+        ViewBag.TransferNumber = transferNumber;
+        ViewBag.SelectedMaterialId = materialId;
+        ViewBag.DateFrom = dateFrom;
+        ViewBag.DateTo = dateTo;
+
+        var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
+        ViewBag.MaterialFilterOptions = new SelectList(materials.Items, "Id", "Name", materialId);
+
+        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
+        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
 
         if (this.IsAjaxRequest())
         {
             return PartialView("_Grid", transfers);
         }
 
-        var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
-        ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(transfers);
     }
 

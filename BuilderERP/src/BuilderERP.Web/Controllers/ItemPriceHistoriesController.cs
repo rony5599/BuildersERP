@@ -20,22 +20,24 @@ public class ItemPriceHistoriesController : Controller
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> Index(long? materialId, long? supplierId, int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(long? materialId, long? supplierId, int page = 1, int pageSize = 25, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        var history = await _mediator.Send(new GetAllItemPriceHistoriesQuery(materialId, supplierId, page, pageSize));
+        var history = await _mediator.Send(new GetAllItemPriceHistoriesQuery(materialId, supplierId, page, pageSize, dateFrom, dateTo));
         ViewBag.SelectedMaterialId = materialId;
         ViewBag.SelectedSupplierId = supplierId;
-
-        if (this.IsAjaxRequest())
-        {
-            return PartialView("_Grid", history);
-        }
+        ViewBag.DateFrom = dateFrom;
+        ViewBag.DateTo = dateTo;
 
         var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
         ViewBag.Materials = new SelectList(materials.Items, "Id", "Name", materialId);
 
         var suppliers = await _mediator.Send(new GetAllSuppliersQuery(PageSize: int.MaxValue));
         ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name", supplierId);
+
+        if (this.IsAjaxRequest())
+        {
+            return PartialView("_Grid", history);
+        }
 
         return View(history);
     }

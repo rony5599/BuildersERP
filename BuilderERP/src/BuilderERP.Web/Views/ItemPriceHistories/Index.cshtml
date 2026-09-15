@@ -8,21 +8,6 @@
     <h1 class="h3 mb-0">Item Price History</h1>
 </div>
 
-<form method="get" class="row mb-3">
-    <div class="col-md-4">
-        <label class="form-label">Material</label>
-        <select name="materialId" asp-items="ViewBag.Materials" class="form-select" onchange="this.form.submit()">
-            <option value="">-- All Materials --</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Supplier</label>
-        <select name="supplierId" asp-items="ViewBag.Suppliers" class="form-select" onchange="this.form.submit()">
-            <option value="">-- All Suppliers --</option>
-        </select>
-    </div>
-</form>
-
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>
