@@ -52,6 +52,8 @@ try
 
     var app = builder.Build();
 
+    var enableHttps = builder.Configuration.GetValue("EnableHttps", false);
+
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
@@ -66,14 +68,21 @@ try
     else
     {
         app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();
+        if (enableHttps)
+        {
+            app.UseHsts();
+        }
     }
 
     app.UseMiddleware<ExceptionHandlingMiddleware>();
 
     app.UseSerilogRequestLogging();
 
-    app.UseHttpsRedirection();
+    if (enableHttps)
+    {
+        app.UseHttpsRedirection();
+    }
+
     app.UseStaticFiles();
 
     var uploadsPathProvider = app.Services.GetRequiredService<IUploadsPathProvider>();
