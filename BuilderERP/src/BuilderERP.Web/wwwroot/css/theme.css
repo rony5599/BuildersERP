@@ -588,6 +588,16 @@ a:hover {
 .badge.bg-primary { background-color: var(--brand-50) !important; color: var(--brand-600) !important; }
 .badge.bg-info { background-color: var(--info-50) !important; color: var(--brand-600) !important; }
 
+.badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
 /* ---------------- Alerts ---------------- */
 .alert {
   border-radius: var(--radius-lg);
