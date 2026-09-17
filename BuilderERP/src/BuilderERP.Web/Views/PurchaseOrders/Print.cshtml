@@ -12,8 +12,6 @@
         pages.Add(new List<BuilderERP.Application.DTOs.PurchaseOrderPrintLineDto>());
     }
     var copyLabels = new[] { "Office Copy", "Customer Copy", "Bill Copy" };
-    // Office Copy and Customer Copy are disabled for now — only Bill Copy prints. Kept above, not deleted.
-    var activeCopyLabels = copyLabels.Where(l => l == "Bill Copy").ToArray();
 }
 <!DOCTYPE html>
 <html>
@@ -245,7 +243,7 @@
         <a class="secondary" asp-action="PrintPdf" asp-route-id="@ViewContext.RouteData.Values["id"]">Download PDF</a>
     </div>
 
-    @foreach (var copyLabel in activeCopyLabels)
+    @foreach (var copyLabel in copyLabels)
     {
         for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
         {

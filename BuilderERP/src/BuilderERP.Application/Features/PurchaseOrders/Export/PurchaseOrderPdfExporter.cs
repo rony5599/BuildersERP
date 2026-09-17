@@ -9,8 +9,6 @@ public class PurchaseOrderPdfExporter
 {
     private const int ItemsPerPage = 10;
     private static readonly string[] CopyLabels = { "Office Copy", "Customer Copy", "Bill Copy" };
-    // Office Copy and Customer Copy are disabled for now — only Bill Copy prints. Kept above, not deleted.
-    private static readonly string[] ActiveCopyLabels = CopyLabels.Where(l => l == "Bill Copy").ToArray();
 
     public byte[] Export(PurchaseOrderPrintDto data)
     {
@@ -27,7 +25,7 @@ public class PurchaseOrderPdfExporter
 
         var document = Document.Create(container =>
         {
-            foreach (var copyLabel in ActiveCopyLabels)
+            foreach (var copyLabel in CopyLabels)
             {
                 for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
                 {
