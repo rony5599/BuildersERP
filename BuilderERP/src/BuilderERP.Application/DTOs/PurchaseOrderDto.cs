@@ -85,6 +85,7 @@ public class UpdatePurchaseOrderDto
 public class PurchaseOrderPrintDto
 {
     public string PONumber { get; set; } = string.Empty;
+    public string RequisitionNumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; }
 
     public string CompanyName { get; set; } = string.Empty;

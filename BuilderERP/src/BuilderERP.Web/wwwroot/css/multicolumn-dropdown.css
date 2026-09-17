@@ -105,6 +105,14 @@
     font-size: 0.875rem;
 }
 
+.multicolumn-dropdown-column:nth-child(1) {
+    flex: 0 0 80px;
+}
+
+.multicolumn-dropdown-column:nth-child(2) {
+    flex: 2;
+}
+
 /* Scrollbar styling */
 .multicolumn-dropdown-menu::-webkit-scrollbar {
     width: 6px;

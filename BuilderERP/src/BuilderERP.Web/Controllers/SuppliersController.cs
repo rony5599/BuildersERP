@@ -23,9 +23,13 @@ public class SuppliersController : Controller
         _updateValidator = updateValidator;
     }
 
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? search = null, string? vendorCategory = null, bool? isActive = null)
     {
-        var suppliers = await _mediator.Send(new GetAllSuppliersQuery(page, pageSize));
+        var suppliers = await _mediator.Send(new GetAllSuppliersQuery(page, pageSize, search, vendorCategory, isActive));
+
+        ViewBag.Search = search;
+        ViewBag.VendorCategory = vendorCategory;
+        ViewBag.IsActive = isActive;
 
         if (this.IsAjaxRequest())
         {

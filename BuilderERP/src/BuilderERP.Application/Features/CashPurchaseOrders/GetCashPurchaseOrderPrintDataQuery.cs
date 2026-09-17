@@ -21,6 +21,7 @@ public class GetCashPurchaseOrderPrintDataQueryHandler : IRequestHandler<GetCash
     {
         var order = await _unitOfWork.Repository<CashPurchaseOrder>().Query()
             .Include(o => o.Supplier)
+            .Include(o => o.CashRequisition)
             .Include(o => o.Details).ThenInclude(d => d.Material)
             .FirstOrDefaultAsync(o => o.Id == request.Id, cancellationToken);
 
@@ -38,6 +39,7 @@ public class GetCashPurchaseOrderPrintDataQueryHandler : IRequestHandler<GetCash
         return new CashPurchaseOrderPrintDto
         {
             CPONumber = order.CPONumber,
+            RequisitionNumber = order.CashRequisition?.RequisitionNumber ?? string.Empty,
             OrderDate = order.OrderDate,
             CompanyName = company?.Name ?? string.Empty,
             CompanyAddress = company?.Address,

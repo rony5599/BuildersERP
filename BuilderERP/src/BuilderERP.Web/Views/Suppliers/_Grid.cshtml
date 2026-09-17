@@ -2,61 +2,127 @@
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @model PagedResult<BuilderERP.Application.DTOs.SupplierDto>
+@{
+    var search = ViewBag.Search as string;
+    var vendorCategory = ViewBag.VendorCategory as string;
+    var isActive = ViewBag.IsActive as bool?;
+    var hasFilters = !string.IsNullOrWhiteSpace(search) || !string.IsNullOrWhiteSpace(vendorCategory) || isActive.HasValue;
+}
 
-<table class="table table-striped table-hover bg-white">
-    <thead>
-        <tr>
-            <th>Supplier Code</th>
-            <th>Name</th>
-            <th>Contact Person</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Active</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var supplier in Model.Items)
-        {
-            <tr>
-                <td>@supplier.SupplierCode</td>
-                <td>@supplier.Name</td>
-                <td>@supplier.ContactPerson</td>
-                <td>@supplier.Phone</td>
-                <td>@supplier.Email</td>
-                <td>
-                    <span class="badge @(supplier.IsActive ? "bg-success" : "bg-secondary")">
-                        @(supplier.IsActive ? "Active" : "Inactive")
-                    </span>
-                </td>
-                <td class="text-end">
-                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierManage))
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row gy-3 gx-4 align-items-end grid-search-form">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label small mb-1">Search</label>
+                <input type="search" name="search" value="@search" class="form-control" placeholder="Code, name, phone, email, contact" />
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label small mb-1">Vendor Category</label>
+                <input type="search" name="vendorCategory" value="@vendorCategory" class="form-control" placeholder="Vendor category" />
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label small mb-1">Status</label>
+                <select name="isActive" class="form-select">
+                    <option value="">All Statuses</option>
+                    @if (isActive == true)
                     {
-                        <a asp-action="Edit" asp-route-id="@supplier.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <form asp-action="ToggleActive" asp-route-id="@supplier.Id" asp-route-isActive="@supplier.IsActive" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                @(supplier.IsActive ? "Deactivate" : "Activate")
-                            </button>
-                        </form>
+                        <option value="true" selected>Active</option>
                     }
-                </td>
-            </tr>
-        }
-        @if (Model.Items.Count == 0)
-        {
-            <tr>
-                <td colspan="7" class="text-center text-muted">No suppliers found.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    else
+                    {
+                        <option value="true">Active</option>
+                    }
+                    @if (isActive == false)
+                    {
+                        <option value="false" selected>Inactive</option>
+                    }
+                    else
+                    {
+                        <option value="false">Inactive</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                @if (hasFilters)
+                {
+                    <a asp-action="Index" class="btn btn-outline-secondary flex-grow-1">Clear</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
 
-<partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
-{
-    Page = Model.Page,
-    PageSize = Model.PageSize,
-    TotalPages = Model.TotalPages,
-    TotalCount = Model.TotalCount,
-    Action = "Index",
-    RouteValues = new()
-})" />
+<div class="card">
+    <table class="table table-striped table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Supplier Code</th>
+                <th>Name</th>
+                <th>Vendor Category</th>
+                <th>Contact Person</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var supplier in Model.Items)
+            {
+                <tr>
+                    <td>@supplier.SupplierCode</td>
+                    <td>@supplier.Name</td>
+                    <td>@supplier.VendorCategory</td>
+                    <td>@supplier.ContactPerson</td>
+                    <td>@supplier.Phone</td>
+                    <td>@supplier.Email</td>
+                    <td>
+                        <span class="badge @(supplier.IsActive ? "bg-success" : "bg-secondary")">
+                            <span class="badge-dot"></span>@(supplier.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierManage))
+                        {
+                            <a asp-action="Edit" asp-route-id="@supplier.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form asp-action="ToggleActive" asp-route-id="@supplier.Id" asp-route-isActive="@supplier.IsActive" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    @(supplier.IsActive ? "Deactivate" : "Activate")
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (Model.Items.Count == 0)
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted">No suppliers found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="card-body pt-2">
+        <partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+        {
+            Page = Model.Page,
+            PageSize = Model.PageSize,
+            TotalPages = Model.TotalPages,
+            TotalCount = Model.TotalCount,
+            Action = "Index",
+            RouteValues = BuildFilterRouteValues(search, vendorCategory, isActive)
+        })" />
+    </div>
+</div>
+
+@functions {
+    private static Dictionary<string, string?> BuildFilterRouteValues(string? search, string? vendorCategory, bool? isActive)
+    {
+        var values = new Dictionary<string, string?>();
+        if (!string.IsNullOrWhiteSpace(search)) values["search"] = search;
+        if (!string.IsNullOrWhiteSpace(vendorCategory)) values["vendorCategory"] = vendorCategory;
+        if (isActive.HasValue) values["isActive"] = isActive.Value.ToString();
+        return values;
+    }
+}

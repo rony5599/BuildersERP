@@ -79,12 +79,6 @@ public class EngineerWorkOrderPdfExporter
                             {
                                 row.RelativeItem().Column(c =>
                                 {
-                                    c.Item().Text("Requisition").Bold();
-                                    c.Item().Text(data.RequisitionNumber);
-                                });
-
-                                row.RelativeItem().Column(c =>
-                                {
                                     c.Item().Text("Supplier").Bold();
                                     c.Item().Text(data.SupplierName);
                                     if (!string.IsNullOrWhiteSpace(data.SupplierAddress))
@@ -108,6 +102,14 @@ public class EngineerWorkOrderPdfExporter
                                         t.Span("WO No: ").Bold();
                                         t.Span(data.WorkOrderNo);
                                     });
+                                    if (!string.IsNullOrWhiteSpace(data.RequisitionNumber))
+                                    {
+                                        c.Item().AlignRight().Text(t =>
+                                        {
+                                            t.Span("Req No: ").Bold();
+                                            t.Span(data.RequisitionNumber);
+                                        });
+                                    }
                                     c.Item().AlignRight().Text(t =>
                                     {
                                         t.Span("Rev No: ").Bold();

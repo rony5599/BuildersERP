@@ -21,6 +21,7 @@ public class GetPurchaseOrderPrintDataQueryHandler : IRequestHandler<GetPurchase
     {
         var order = await _unitOfWork.Repository<PurchaseOrder>().Query()
             .Include(o => o.VendorQuotation).ThenInclude(v => v.Supplier)
+            .Include(o => o.VendorQuotation).ThenInclude(v => v.Rfq).ThenInclude(r => r.PurchaseRequisition)
             .Include(o => o.Details).ThenInclude(d => d.Material)
             .FirstOrDefaultAsync(o => o.Id == request.Id, cancellationToken);
 
@@ -38,6 +39,7 @@ public class GetPurchaseOrderPrintDataQueryHandler : IRequestHandler<GetPurchase
         return new PurchaseOrderPrintDto
         {
             PONumber = order.PONumber,
+            RequisitionNumber = order.VendorQuotation?.Rfq?.PurchaseRequisition?.RequisitionNumber ?? string.Empty,
             OrderDate = order.OrderDate,
             CompanyName = company?.Name ?? string.Empty,
             CompanyAddress = company?.Address,

@@ -1,7 +1,7 @@
 @model BuilderERP.Application.DTOs.CashPurchaseOrderPrintDto
 @{
     Layout = null;
-    const int itemsPerPage = 10;
+    const int itemsPerPage = 16;
     var pages = Model.Lines
         .Select((line, index) => (line, index))
         .GroupBy(x => x.index / itemsPerPage)
@@ -12,6 +12,8 @@
         pages.Add(new List<BuilderERP.Application.DTOs.CashPurchaseOrderPrintLineDto>());
     }
     var copyLabels = new[] { "Office Copy", "Customer Copy", "Bill Copy" };
+    // Office Copy and Customer Copy are disabled for now — only Bill Copy prints. Kept above, not deleted.
+    var activeCopyLabels = copyLabels.Where(l => l == "Bill Copy").ToArray();
 }
 <!DOCTYPE html>
 <html>
@@ -86,12 +88,24 @@
             font-size: 7px;
             color: #aaa;
         }
+        .letterhead {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .company-logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            max-height: 64px;
+            max-width: 140px;
+            object-fit: contain;
+        }
         .title {
             text-align: center;
             font-size: 28px;
             font-weight: 800;
             letter-spacing: 1px;
-            margin: 0 0 24px;
+            margin: 0;
         }
         .company-name {
             font-size: 16px;
@@ -143,16 +157,19 @@
             background: #0d6efd;
             color: #fff;
             text-align: left;
-            padding: 10px 8px;
+            padding: 6px 8px;
             font-size: 11px;
         }
         table.items th.num, table.items td.num {
             text-align: right;
         }
         table.items td {
-            padding: 10px 8px;
+            padding: 5px 8px;
             font-size: 11px;
-            border-bottom: 1px solid #eceff1;
+            border-bottom: 1px solid #adb5bd;
+        }
+        table.items tbody tr:nth-child(even) td {
+            background: #eef1f3;
         }
         .totals {
             width: 100%;
@@ -213,7 +230,9 @@
             .sheet:last-of-type { page-break-after: auto; }
             .copy-label { top: 4px; right: 4px; }
             .audit-stamp { bottom: 2px; left: 12px; }
-            .title { font-size: 20px; margin-bottom: 12px; }
+            .letterhead { margin-bottom: 12px; }
+            .company-logo { max-height: 48px; }
+            .title { font-size: 20px; }
             table.items { margin-top: 16px; }
             table.items tr { page-break-inside: avoid; }
             .signature-row { margin-top: 40px; }
@@ -226,7 +245,7 @@
         <a class="secondary" asp-action="PrintPdf" asp-route-id="@ViewContext.RouteData.Values["id"]">Download PDF</a>
     </div>
 
-    @foreach (var copyLabel in copyLabels)
+    @foreach (var copyLabel in activeCopyLabels)
     {
         for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
         {
@@ -236,7 +255,10 @@
 
             <div class="sheet">
                 <div class="copy-label">@copyLabel</div>
-                <div class="title">CASH PURCHASE ORDER</div>
+                <div class="letterhead">
+                    <img src="~/uploads/padlogo/padlogo.png" class="company-logo" alt="@Model.CompanyName logo" />
+                    <div class="title">CASH PURCHASE ORDER</div>
+                </div>
 
             <div class="company-name">@Model.CompanyName</div>
             <div class="company-details">
@@ -319,6 +341,13 @@
                             <td class="label">CPO No :</td>
                             <td>@Model.CPONumber</td>
                         </tr>
+                        @if (!string.IsNullOrWhiteSpace(Model.RequisitionNumber))
+                        {
+                            <tr>
+                                <td class="label">Req No :</td>
+                                <td>@Model.RequisitionNumber</td>
+                            </tr>
+                        }
                         <tr>
                             <td class="label">Order Date :</td>
                             <td>@Model.OrderDate.ToString("MMM dd, yyyy")</td>
