@@ -1,0 +1,19 @@
+@using BuilderERP.Application.Common
+@model PagedResult<BuilderERP.Application.DTOs.PoBillDto>
+@using BuilderERP.Shared.Constants
+@using BuilderERP.Shared.Authorization
+@{
+    ViewData["Title"] = "PO Bills";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">PO Bills</h1>
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PoBillManage))
+    {
+        <a asp-action="Create" class="btn btn-primary">New PO Bill</a>
+    }
+</div>
+
+<div data-grid-container>
+    <partial name="_Grid" model="Model" />
+</div>

@@ -1,0 +1,200 @@
+@model BuilderERP.Application.DTOs.SavePoBillDto
+@using BuilderERP.Domain.Enums
+@{
+    var isEdit = Model.Id > 0;
+    var isLocked = ViewBag.IsLocked as bool? ?? false;
+    var initialQty = (Dictionary<long, decimal>)ViewBag.InitialQuantities;
+    var initialJson = System.Text.Json.JsonSerializer.Serialize(initialQty.ToDictionary(k => k.Key.ToString(), v => v.Value));
+    var excludeBillId = isEdit ? Model.Id.ToString() : "";
+}
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="poBillForm">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    @if (isLocked)
+    {
+        <div class="alert alert-info">This bill is @Model.Status and can no longer be edited.</div>
+    }
+    <fieldset @(isLocked ? "disabled" : null)>
+        <div class="row col-lg-10">
+            @if (isEdit)
+            {
+                <div class="mb-3 col-md-3">
+                    <label class="form-label">Bill #</label>
+                    <input class="form-control" value="@Model.BillNumber" disabled />
+                </div>
+            }
+            <div class="mb-3 @(isEdit ? "col-md-9" : "col-md-12")">
+                <label asp-for="PurchaseOrderId" class="form-label">Approved Purchase Order</label>
+                @if (isEdit)
+                {
+                    <input type="hidden" asp-for="PurchaseOrderId" />
+                    <select id="purchaseOrderId" asp-items="@((List<SelectListItem>)ViewBag.PurchaseOrders)" class="form-select" disabled></select>
+                }
+                else
+                {
+                    <select asp-for="PurchaseOrderId" id="purchaseOrderId" asp-items="@((List<SelectListItem>)ViewBag.PurchaseOrders)" class="form-select">
+                        <option value="">-- Select PO (PO # | Supplier | Project) --</option>
+                    </select>
+                }
+                <span asp-validation-for="PurchaseOrderId" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="BillDate" class="form-label"></label>
+                <input asp-for="BillDate" type="date" class="form-control" />
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="DueDate" class="form-label"></label>
+                <input asp-for="DueDate" type="date" class="form-control" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="SupplierInvoiceNumber" class="form-label">Supplier Invoice #</label>
+                <input asp-for="SupplierInvoiceNumber" class="form-control" />
+                <span asp-validation-for="SupplierInvoiceNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" asp-items="Html.GetEnumSelectList<PoBillStatus>()" class="form-select"></select>
+            </div>
+            <div class="mb-3 col-md-12">
+                <label asp-for="Remarks" class="form-label"></label>
+                <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Remarks" class="text-danger"></span>
+            </div>
+        </div>
+
+        <h5 class="mt-2">Bill Lines</h5>
+        <p class="text-muted small mb-2">Prices, discount, VAT and tax come from the PO. Enter the quantity to bill on this bill; leave 0 to skip a line.</p>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" id="billLinesTable">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th class="text-end">Ordered</th>
+                        <th class="text-end">Already Billed</th>
+                        <th class="text-end">Remaining</th>
+                        <th style="width:130px">Bill Qty</th>
+                        <th class="text-end">Unit Price</th>
+                        <th class="text-end">Disc %</th>
+                        <th class="text-end">VAT %</th>
+                        <th class="text-end">Tax %</th>
+                        <th class="text-end">Line Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="billLinesEmpty"><td colspan="10" class="text-center text-muted">Select a purchase order to load its lines.</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9" class="text-end">Bill Total</th>
+                        <th class="text-end" id="billTotal">0.00</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </fieldset>
+
+    <div>
+        @if (!isLocked)
+        {
+            <button type="submit" class="btn btn-primary">Save</button>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('poBillForm');
+        var select = document.getElementById('purchaseOrderId');
+        var tbody = document.querySelector('#billLinesTable tbody');
+        var totalEl = document.getElementById('billTotal');
+        var initial = @Html.Raw(initialJson);
+        var excludeBillId = '@excludeBillId';
+        var linesUrl = '@Url.Action("GetLines")';
+        var fmt = function (n) { return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+
+        function lineTotal(qty, l) {
+            var gross = qty * l.unitPrice;
+            var disc = Math.round(gross * l.discountPercent) / 100;
+            var baseAmt = gross - disc;
+            return baseAmt + Math.round(baseAmt * l.vatPercent) / 100 + Math.round(baseAmt * l.taxPercent) / 100;
+        }
+
+        function recalc() {
+            var total = 0;
+            tbody.querySelectorAll('tr.bill-line').forEach(function (row) {
+                var l = row._line;
+                var qty = parseFloat(row.querySelector('.bill-qty').value) || 0;
+                var t = lineTotal(qty, l);
+                row.querySelector('.line-total').textContent = fmt(t);
+                total += t;
+            });
+            totalEl.textContent = fmt(total);
+        }
+
+        function render(lines) {
+            tbody.innerHTML = '';
+            if (!lines.length) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">This purchase order has no lines.</td></tr>';
+                recalc();
+                return;
+            }
+            lines.forEach(function (l) {
+                var tr = document.createElement('tr');
+                tr.className = 'bill-line';
+                tr._line = l;
+                var preset = initial[l.purchaseOrderDetailId];
+                var qty = preset !== undefined ? preset : (excludeBillId ? 0 : l.remainingQuantity);
+                tr.innerHTML =
+                    '<td><input type="hidden" class="po-detail-id" value="' + l.purchaseOrderDetailId + '" />' + l.materialName + ' <span class="text-muted small">(' + l.unitOfMeasure + ')</span></td>' +
+                    '<td class="text-end">' + l.orderedQuantity + '</td>' +
+                    '<td class="text-end">' + l.alreadyBilledQuantity + '</td>' +
+                    '<td class="text-end">' + l.remainingQuantity + '</td>' +
+                    '<td><input type="number" step="0.001" min="0" max="' + l.remainingQuantity + '" class="form-control form-control-sm bill-qty" value="' + qty + '" /></td>' +
+                    '<td class="text-end">' + fmt(l.unitPrice) + '</td>' +
+                    '<td class="text-end">' + l.discountPercent + '</td>' +
+                    '<td class="text-end">' + l.vatPercent + '</td>' +
+                    '<td class="text-end">' + l.taxPercent + '</td>' +
+                    '<td class="text-end line-total">0.00</td>';
+                tbody.appendChild(tr);
+            });
+            recalc();
+        }
+
+        function load() {
+            var poId = select.value;
+            if (!poId) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">Select a purchase order to load its lines.</td></tr>';
+                recalc();
+                return;
+            }
+            var url = linesUrl + '?purchaseOrderId=' + encodeURIComponent(poId) + (excludeBillId ? '&excludeBillId=' + excludeBillId : '');
+            fetch(url).then(function (r) { return r.json(); }).then(render);
+        }
+
+        select.addEventListener('change', function () { initial = {}; load(); });
+        tbody.addEventListener('input', function (e) { if (e.target.classList.contains('bill-qty')) recalc(); });
+
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('.generated-detail').forEach(function (el) { el.remove(); });
+            var i = 0;
+            tbody.querySelectorAll('tr.bill-line').forEach(function (row) {
+                var qty = parseFloat(row.querySelector('.bill-qty').value) || 0;
+                if (qty <= 0) return;
+                [['PurchaseOrderDetailId', row.querySelector('.po-detail-id').value], ['BilledQuantity', qty]].forEach(function (p) {
+                    var h = document.createElement('input');
+                    h.type = 'hidden';
+                    h.className = 'generated-detail';
+                    h.name = 'Details[' + i + '].' + p[0];
+                    h.value = p[1];
+                    form.appendChild(h);
+                });
+                i++;
+            });
+        });
+
+        load();
+    });
+</script>

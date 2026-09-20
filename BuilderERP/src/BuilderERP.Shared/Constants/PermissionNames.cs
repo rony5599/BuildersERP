@@ -120,6 +120,14 @@ public static class PermissionNames
     public const string PurchaseReturnView = "PurchaseReturn.View";
     public const string PurchaseReturnManage = "PurchaseReturn.Manage";
 
+    public const string PoBillView = "PoBill.View";
+    public const string PoBillManage = "PoBill.Manage";
+
+    public const string SupplierPaymentView = "SupplierPayment.View";
+    public const string SupplierPaymentManage = "SupplierPayment.Manage";
+
+    public const string SupplierLedgerView = "SupplierLedger.View";
+
     public const string WarehouseView = "Warehouse.View";
     public const string WarehouseManage = "Warehouse.Manage";
 
@@ -357,6 +365,9 @@ public static class PermissionNames
         (EngineerWorkOrderView, "EngineerWorkOrder"), (EngineerWorkOrderManage, "EngineerWorkOrder"),
         (GoodsReceiveView, "GoodsReceive"), (GoodsReceiveManage, "GoodsReceive"),
         (PurchaseReturnView, "PurchaseReturn"), (PurchaseReturnManage, "PurchaseReturn"),
+        (PoBillView, "PoBill"), (PoBillManage, "PoBill"),
+        (SupplierPaymentView, "SupplierPayment"), (SupplierPaymentManage, "SupplierPayment"),
+        (SupplierLedgerView, "SupplierLedger"),
         (WarehouseView, "Warehouse"), (WarehouseManage, "Warehouse"),
         (MaterialView, "Material"), (MaterialManage, "Material"),
         (ItemCategoryView, "ItemCategory"), (ItemCategoryManage, "ItemCategory"),
@@ -474,6 +485,9 @@ public static class PermissionNames
         EngineerWorkOrderView, EngineerWorkOrderManage,
         GoodsReceiveView, GoodsReceiveManage,
         PurchaseReturnView, PurchaseReturnManage,
+        PoBillView, PoBillManage,
+        SupplierPaymentView, SupplierPaymentManage,
+        SupplierLedgerView,
         WarehouseView, WarehouseManage,
         MaterialView, MaterialManage,
         ItemCategoryView, ItemCategoryManage,

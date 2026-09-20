@@ -1,0 +1,61 @@
+@model BuilderERP.Application.DTOs.CreateSupplierPaymentDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Supplier Payment";
+    var bills = (IReadOnlyList<BuilderERP.Application.DTOs.PayableBillDto>)ViewBag.PayableBills;
+}
+
+<h1 class="h3 mb-4">New Supplier Payment</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row col-lg-10">
+        <div class="mb-3 col-md-12">
+            <label asp-for="PoBillId" class="form-label">Approved Bill (with outstanding balance)</label>
+            <select asp-for="PoBillId" id="poBillId" class="form-select">
+                <option value="">-- Select bill (Bill # | Supplier | PO # | Outstanding) --</option>
+                @foreach (var b in bills)
+                {
+                    <option value="@b.Id" data-outstanding="@b.Outstanding.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@(b.Id == Model.PoBillId)">@b.BillNumber | @b.SupplierName | @b.PONumber | Outstanding @b.Outstanding.ToString("N2")</option>
+                }
+            </select>
+            <span asp-validation-for="PoBillId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="PaymentDate" class="form-label"></label>
+            <input asp-for="PaymentDate" type="date" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="Amount" class="form-label"></label>
+            <input asp-for="Amount" type="number" step="0.01" class="form-control" id="amount" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="Method" class="form-label"></label>
+            <select asp-for="Method" asp-items="Html.GetEnumSelectList<PaymentMethod>()" class="form-select"></select>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="ReferenceNumber" class="form-label">Cheque / Ref #</label>
+            <input asp-for="ReferenceNumber" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-12">
+            <label asp-for="Remarks" class="form-label"></label>
+            <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
+        </div>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var select = document.getElementById('poBillId');
+        var amount = document.getElementById('amount');
+        select.addEventListener('change', function () {
+            var opt = select.options[select.selectedIndex];
+            if (opt && opt.dataset.outstanding) amount.value = opt.dataset.outstanding;
+        });
+    });
+</script>
