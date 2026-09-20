@@ -86,6 +86,7 @@
                         </span>
                     </td>
                     <td class="text-end">
+                        <a asp-action="Print" asp-route-id="@receive.Id" class="btn btn-sm btn-outline-primary" target="_blank">Print</a>
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveManage))
                         {
                             <a asp-action="Edit" asp-route-id="@receive.Id" class="btn btn-sm btn-outline-secondary">Edit</a>

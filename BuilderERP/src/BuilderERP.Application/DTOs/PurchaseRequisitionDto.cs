@@ -63,3 +63,37 @@ public class UpdatePurchaseRequisitionDto
     public long ProjectId { get; set; }
     public List<CreatePurchaseRequisitionDetailDto> Details { get; set; } = new();
 }
+
+public class PurchaseRequisitionPrintDto
+{
+    public string RequisitionNumber { get; set; } = string.Empty;
+    public DateTime RequestDate { get; set; }
+    public DateTime RequiredByDate { get; set; }
+    public RequisitionStatus Status { get; set; }
+    public string? Description { get; set; }
+
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyAddress { get; set; }
+    public string? CompanyPhone { get; set; }
+    public string? CompanyEmail { get; set; }
+
+    public string DepartmentName { get; set; } = string.Empty;
+    public string ProjectName { get; set; } = string.Empty;
+
+    public string? PrintedBy { get; set; }
+    public DateTime PrintedAt { get; set; }
+
+    public List<PurchaseRequisitionPrintLineDto> Lines { get; set; } = new();
+
+    public decimal Total => Lines.Sum(l => l.Amount);
+}
+
+public class PurchaseRequisitionPrintLineDto
+{
+    public string Description { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+    public string UnitOfMeasure { get; set; } = string.Empty;
+    public decimal Rate { get; set; }
+    public decimal Amount { get; set; }
+    public string? Remarks { get; set; }
+}

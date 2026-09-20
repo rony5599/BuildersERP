@@ -2,6 +2,7 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CashPurchaseOrders;
 using BuilderERP.Application.Features.EngineerWorkOrders;
 using BuilderERP.Application.Features.GoodsReceives;
+using BuilderERP.Application.Features.GoodsReceives.Export;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PurchaseOrders;
@@ -23,12 +24,18 @@ public class GoodsReceivesController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateGoodsReceiveDto> _createValidator;
     private readonly IValidator<UpdateGoodsReceiveDto> _updateValidator;
+    private readonly GoodsReceivePdfExporter _pdfExporter;
 
-    public GoodsReceivesController(IMediator mediator, IValidator<CreateGoodsReceiveDto> createValidator, IValidator<UpdateGoodsReceiveDto> updateValidator)
+    public GoodsReceivesController(
+        IMediator mediator,
+        IValidator<CreateGoodsReceiveDto> createValidator,
+        IValidator<UpdateGoodsReceiveDto> updateValidator,
+        GoodsReceivePdfExporter pdfExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _pdfExporter = pdfExporter;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? grnNumber = null, long? projectId = null, GrnStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
@@ -166,6 +173,35 @@ public class GoodsReceivesController : Controller
     {
         await _mediator.Send(new SetGoodsReceiveActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Print(long id)
+    {
+        var data = await _mediator.Send(new GetGoodsReceivePrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        return View(data);
+    }
+
+    public async Task<IActionResult> PrintPdf(long id)
+    {
+        var data = await _mediator.Send(new GetGoodsReceivePrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        var pdfBytes = _pdfExporter.Export(data);
+        return File(pdfBytes, "application/pdf", $"{data.GrnNumber}.pdf");
     }
 
     [HttpGet]

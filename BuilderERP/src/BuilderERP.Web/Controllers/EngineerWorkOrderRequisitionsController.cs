@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.EngineerWorkOrderRequisitions;
+using BuilderERP.Application.Features.EngineerWorkOrderRequisitions.Export;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Domain.Enums;
@@ -19,12 +20,18 @@ public class EngineerWorkOrderRequisitionsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateEngineerWorkOrderRequisitionDto> _createValidator;
     private readonly IValidator<UpdateEngineerWorkOrderRequisitionDto> _updateValidator;
+    private readonly EngineerWorkOrderRequisitionPdfExporter _pdfExporter;
 
-    public EngineerWorkOrderRequisitionsController(IMediator mediator, IValidator<CreateEngineerWorkOrderRequisitionDto> createValidator, IValidator<UpdateEngineerWorkOrderRequisitionDto> updateValidator)
+    public EngineerWorkOrderRequisitionsController(
+        IMediator mediator,
+        IValidator<CreateEngineerWorkOrderRequisitionDto> createValidator,
+        IValidator<UpdateEngineerWorkOrderRequisitionDto> updateValidator,
+        EngineerWorkOrderRequisitionPdfExporter pdfExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _pdfExporter = pdfExporter;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? requisitionNumber = null, long? projectId = null, RequisitionStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
@@ -141,6 +148,35 @@ public class EngineerWorkOrderRequisitionsController : Controller
     {
         await _mediator.Send(new SetEngineerWorkOrderRequisitionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Print(long id)
+    {
+        var data = await _mediator.Send(new GetEngineerWorkOrderRequisitionPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        return View(data);
+    }
+
+    public async Task<IActionResult> PrintPdf(long id)
+    {
+        var data = await _mediator.Send(new GetEngineerWorkOrderRequisitionPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        var pdfBytes = _pdfExporter.Export(data);
+        return File(pdfBytes, "application/pdf", $"{data.RequisitionNumber}.pdf");
     }
 
     private async Task PopulateDropdownsAsync()

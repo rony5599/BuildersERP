@@ -1,0 +1,372 @@
+@model BuilderERP.Application.DTOs.GoodsReceivePrintDto
+@{
+    Layout = null;
+    const int itemsPerPage = 16;
+    var pages = Model.Lines
+        .Select((line, index) => (line, index))
+        .GroupBy(x => x.index / itemsPerPage)
+        .Select(g => g.Select(x => x.line).ToList())
+        .ToList();
+    if (pages.Count == 0)
+    {
+        pages.Add(new List<BuilderERP.Application.DTOs.GoodsReceivePrintLineDto>());
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>GRN @Model.GrnNumber</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #222;
+            margin: 0;
+            background: #e9ecef;
+        }
+        .toolbar {
+            padding: 12px 24px;
+            background: #fff;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            gap: 8px;
+        }
+        .toolbar a, .toolbar button {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid #0d6efd;
+            background: #0d6efd;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .toolbar a.secondary, .toolbar button.secondary {
+            background: #fff;
+            color: #0d6efd;
+        }
+        .sheet {
+            position: relative;
+            max-width: 800px;
+            margin: 24px auto;
+            background: #fff;
+            padding: 48px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        .sheet + .sheet {
+            margin-top: 40px;
+        }
+        .page-footer {
+            margin-top: 12px;
+            text-align: right;
+            font-size: 9px;
+            color: #888;
+            font-style: italic;
+        }
+        .audit-stamp {
+            position: absolute;
+            bottom: 12px;
+            left: 48px;
+            font-size: 7px;
+            color: #aaa;
+        }
+        .letterhead {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .company-logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            max-height: 64px;
+            max-width: 140px;
+            object-fit: contain;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .company-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+        .company-details, .party-details {
+            font-size: 11px;
+            line-height: 1.5;
+            color: #333;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #dee2e6;
+            margin: 24px 0;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .meta-row .party {
+            flex: 1;
+        }
+        .meta-row .req-info {
+            text-align: right;
+        }
+        .section-label {
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        .req-info table {
+            margin-left: auto;
+        }
+        .req-info td {
+            padding: 2px 0 2px 12px;
+            font-size: 12px;
+        }
+        .req-info td.label {
+            font-weight: 700;
+        }
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 32px;
+        }
+        table.items th {
+            background: #0d6efd;
+            color: #fff;
+            text-align: left;
+            padding: 6px 8px;
+            font-size: 11px;
+        }
+        table.items th.num, table.items td.num {
+            text-align: right;
+        }
+        table.items td {
+            padding: 5px 8px;
+            font-size: 11px;
+            border-bottom: 1px solid #adb5bd;
+        }
+        table.items tbody tr:nth-child(even) td {
+            background: #eef1f3;
+        }
+        .totals {
+            width: 100%;
+            margin-top: 16px;
+        }
+        .totals table {
+            margin-left: auto;
+            width: 260px;
+            border-collapse: collapse;
+        }
+        .totals td {
+            padding: 8px 0;
+            font-size: 12px;
+        }
+        .totals td.label {
+            font-weight: 700;
+        }
+        .totals td.value {
+            text-align: right;
+        }
+        .totals tr.grand td {
+            border-top: 1px solid #333;
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .signature-row {
+            margin-top: 80px;
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .signature-row .signature {
+            flex: 1;
+            text-align: center;
+        }
+        .signature-row .signature .line {
+            display: block;
+            border-bottom: 1px solid #333;
+            height: 40px;
+        }
+        .signature-row .signature .caption {
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .signature-row .signature .subcaption {
+            font-size: 10px;
+            color: #555;
+        }
+
+        @@page {
+            margin: 10mm;
+        }
+
+        @@media print {
+            body { background: #fff; }
+            .toolbar { display: none; }
+            .sheet { box-shadow: none; margin: 0; max-width: none; padding: 12px; page-break-after: always; }
+            .sheet:last-of-type { page-break-after: auto; }
+            .audit-stamp { bottom: 2px; left: 12px; }
+            .letterhead { margin-bottom: 12px; }
+            .company-logo { max-height: 48px; }
+            .title { font-size: 18px; }
+            table.items { margin-top: 16px; }
+            table.items tr { page-break-inside: avoid; }
+            .signature-row { margin-top: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="window.print()">Print</button>
+        <a class="secondary" asp-action="PrintPdf" asp-route-id="@ViewContext.RouteData.Values["id"]">Download PDF</a>
+    </div>
+
+    @for (var pageIndex = 0; pageIndex < pages.Count; pageIndex++)
+    {
+        var pageLines = pages[pageIndex];
+        var startSl = pageIndex * itemsPerPage + 1;
+        var isLastPage = pageIndex == pages.Count - 1;
+
+        <div class="sheet">
+            <div class="letterhead">
+                <img src="~/uploads/padlogo/padlogo.png" class="company-logo" alt="@Model.CompanyName logo" />
+                <div class="title">GOODS RECEIVED NOTE</div>
+            </div>
+
+            <div class="company-name">@Model.CompanyName</div>
+            <div class="company-details">
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyAddress))
+                {
+                    <div>@Model.CompanyAddress</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyPhone))
+                {
+                    <div>Mobile: @Model.CompanyPhone</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyEmail))
+                {
+                    <div>Email: @Model.CompanyEmail</div>
+                }
+            </div>
+
+            <hr />
+
+            <div class="meta-row">
+                <div class="party">
+                    <div class="section-label">Supplier</div>
+                    <div class="party-details">@Model.SupplierName</div>
+                </div>
+                <div class="party">
+                    <div class="section-label">Warehouse</div>
+                    <div class="party-details">
+                        <div>@Model.WarehouseName</div>
+                        <div>Project: @Model.ProjectName</div>
+                    </div>
+                </div>
+                <div class="req-info">
+                    <table>
+                        <tr>
+                            <td class="label">GRN No :</td>
+                            <td>@Model.GrnNumber</td>
+                        </tr>
+                        <tr>
+                            <td class="label">@Model.SourceType No :</td>
+                            <td>@Model.SourceDocumentNumber</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Received Date :</td>
+                            <td>@Model.ReceivedDate.ToString("MMM dd, yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Status :</td>
+                            <td>@Model.Status</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <table class="items">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;">Sl.</th>
+                        <th>Description</th>
+                        <th class="num" style="width: 50px;">Qty</th>
+                        <th style="width: 50px;">UOM</th>
+                        <th class="num" style="width: 80px;">Rate</th>
+                        <th class="num" style="width: 90px;">Amount</th>
+                        <th style="width: 100px;">Batch/Serial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var sl = startSl; }
+                    @foreach (var line in pageLines)
+                    {
+                        <tr>
+                            <td>@sl</td>
+                            <td>@line.Description</td>
+                            <td class="num">@line.Quantity.ToString("0.##")</td>
+                            <td>@line.UnitOfMeasure</td>
+                            <td class="num">@line.Rate.ToString("N2")</td>
+                            <td class="num">@line.Amount.ToString("N2")</td>
+                            <td>@(string.Join(" / ", new[] { line.BatchNo, line.SerialNo }.Where(v => !string.IsNullOrWhiteSpace(v))))</td>
+                        </tr>
+                        sl++;
+                    }
+                </tbody>
+            </table>
+
+            @if (!isLastPage)
+            {
+                <div class="page-footer">Continued on next page&hellip; (Page @(pageIndex + 1) of @pages.Count)</div>
+            }
+            else
+            {
+                <div class="totals">
+                    <table>
+                        <tr class="grand">
+                            <td class="label">Total</td>
+                            <td class="value">@Model.Total.ToString("N2")</td>
+                        </tr>
+                    </table>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+                {
+                    <div class="section-label" style="margin-top: 24px;">Remarks</div>
+                    <div class="party-details">@Model.Remarks</div>
+                }
+
+                <div class="signature-row">
+                    <div class="signature">
+                        <div class="line"></div>
+                        <div class="caption">Received By</div>
+                    </div>
+                    <div class="signature">
+                        <div class="line"></div>
+                        <div class="caption">Checked By</div>
+                    </div>
+                    <div class="signature">
+                        <div class="line"></div>
+                        <div class="caption">Authorized Signatory</div>
+                        <div class="subcaption">@Model.CompanyName</div>
+                    </div>
+                </div>
+
+                @if (pages.Count > 1)
+                {
+                    <div class="page-footer">Page @(pageIndex + 1) of @pages.Count</div>
+                }
+            }
+
+            <div class="audit-stamp">Printed by @(Model.PrintedBy ?? "Unknown") on @Model.PrintedAt.ToString("dd MMM yyyy, hh:mm tt")</div>
+        </div>
+    }
+</body>
+</html>

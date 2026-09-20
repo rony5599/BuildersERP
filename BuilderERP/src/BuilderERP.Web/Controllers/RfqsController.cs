@@ -3,6 +3,7 @@ using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.PurchaseRequisitions;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Rfqs;
+using BuilderERP.Application.Features.Rfqs.Export;
 using BuilderERP.Application.Features.Suppliers;
 using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
@@ -21,12 +22,18 @@ public class RfqsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateRfqDto> _createValidator;
     private readonly IValidator<UpdateRfqDto> _updateValidator;
+    private readonly RfqPdfExporter _pdfExporter;
 
-    public RfqsController(IMediator mediator, IValidator<CreateRfqDto> createValidator, IValidator<UpdateRfqDto> updateValidator)
+    public RfqsController(
+        IMediator mediator,
+        IValidator<CreateRfqDto> createValidator,
+        IValidator<UpdateRfqDto> updateValidator,
+        RfqPdfExporter pdfExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _pdfExporter = pdfExporter;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? rfqNumber = null, long? projectId = null, RfqStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
@@ -163,6 +170,35 @@ public class RfqsController : Controller
     {
         await _mediator.Send(new SetRfqActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Print(long id)
+    {
+        var data = await _mediator.Send(new GetRfqPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        return View(data);
+    }
+
+    public async Task<IActionResult> PrintPdf(long id)
+    {
+        var data = await _mediator.Send(new GetRfqPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        var pdfBytes = _pdfExporter.Export(data);
+        return File(pdfBytes, "application/pdf", $"{data.RfqNumber}.pdf");
     }
 
     private async Task PopulateDropdownsAsync()

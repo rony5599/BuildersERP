@@ -4,6 +4,7 @@ using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Rfqs;
 using BuilderERP.Application.Features.Suppliers;
 using BuilderERP.Application.Features.VendorQuotations;
+using BuilderERP.Application.Features.VendorQuotations.Export;
 using BuilderERP.Domain.Enums;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
@@ -21,12 +22,18 @@ public class VendorQuotationsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateVendorQuotationDto> _createValidator;
     private readonly IValidator<UpdateVendorQuotationDto> _updateValidator;
+    private readonly VendorQuotationPdfExporter _pdfExporter;
 
-    public VendorQuotationsController(IMediator mediator, IValidator<CreateVendorQuotationDto> createValidator, IValidator<UpdateVendorQuotationDto> updateValidator)
+    public VendorQuotationsController(
+        IMediator mediator,
+        IValidator<CreateVendorQuotationDto> createValidator,
+        IValidator<UpdateVendorQuotationDto> updateValidator,
+        VendorQuotationPdfExporter pdfExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _pdfExporter = pdfExporter;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? quotationNumber = null, long? projectId = null, VendorQuotationStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
@@ -167,6 +174,35 @@ public class VendorQuotationsController : Controller
     {
         await _mediator.Send(new SetVendorQuotationActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Print(long id)
+    {
+        var data = await _mediator.Send(new GetVendorQuotationPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        return View(data);
+    }
+
+    public async Task<IActionResult> PrintPdf(long id)
+    {
+        var data = await _mediator.Send(new GetVendorQuotationPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        var pdfBytes = _pdfExporter.Export(data);
+        return File(pdfBytes, "application/pdf", $"{data.QuotationNumber}.pdf");
     }
 
     public async Task<IActionResult> Compare(long requisitionId)

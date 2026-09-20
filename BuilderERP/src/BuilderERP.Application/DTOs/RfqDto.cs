@@ -66,3 +66,33 @@ public class UpdateRfqDto
     public List<long> SupplierIds { get; set; } = new();
     public List<CreateRfqDetailDto> Details { get; set; } = new();
 }
+
+public class RfqPrintDto
+{
+    public string RfqNumber { get; set; } = string.Empty;
+    public DateTime IssueDate { get; set; }
+    public DateTime ClosingDate { get; set; }
+    public RfqStatus Status { get; set; }
+
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyAddress { get; set; }
+    public string? CompanyPhone { get; set; }
+    public string? CompanyEmail { get; set; }
+
+    public string RequisitionNumber { get; set; } = string.Empty;
+    public string ProjectName { get; set; } = string.Empty;
+
+    public string? PrintedBy { get; set; }
+    public DateTime PrintedAt { get; set; }
+
+    public List<string> VendorNames { get; set; } = new();
+    public List<RfqPrintLineDto> Lines { get; set; } = new();
+}
+
+public class RfqPrintLineDto
+{
+    public string Description { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+    public string UnitOfMeasure { get; set; } = string.Empty;
+    public string? Specification { get; set; }
+}

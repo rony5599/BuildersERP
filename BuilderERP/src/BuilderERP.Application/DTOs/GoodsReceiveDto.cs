@@ -85,3 +85,41 @@ public class UpdateGoodsReceiveDto
     public long WarehouseId { get; set; }
     public List<CreateGoodsReceiveDetailDto> Details { get; set; } = new();
 }
+
+public class GoodsReceivePrintDto
+{
+    public string GrnNumber { get; set; } = string.Empty;
+    public DateTime ReceivedDate { get; set; }
+    public GrnStatus Status { get; set; }
+    public string? Remarks { get; set; }
+
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyAddress { get; set; }
+    public string? CompanyPhone { get; set; }
+    public string? CompanyEmail { get; set; }
+
+    public string WarehouseName { get; set; } = string.Empty;
+    public string ProjectName { get; set; } = string.Empty;
+
+    public GrnSourceType SourceType { get; set; }
+    public string SourceDocumentNumber { get; set; } = string.Empty;
+    public string SupplierName { get; set; } = string.Empty;
+
+    public string? PrintedBy { get; set; }
+    public DateTime PrintedAt { get; set; }
+
+    public List<GoodsReceivePrintLineDto> Lines { get; set; } = new();
+
+    public decimal Total => Lines.Sum(l => l.Amount);
+}
+
+public class GoodsReceivePrintLineDto
+{
+    public string Description { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+    public string UnitOfMeasure { get; set; } = string.Empty;
+    public decimal Rate { get; set; }
+    public decimal Amount { get; set; }
+    public string? BatchNo { get; set; }
+    public string? SerialNo { get; set; }
+}

@@ -1,5 +1,6 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CashRequisitions;
+using BuilderERP.Application.Features.CashRequisitions.Export;
 using BuilderERP.Application.Features.Departments;
 using BuilderERP.Application.Features.Employees;
 using BuilderERP.Application.Features.Materials;
@@ -21,12 +22,18 @@ public class CashRequisitionsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<CreateCashRequisitionDto> _createValidator;
     private readonly IValidator<UpdateCashRequisitionDto> _updateValidator;
+    private readonly CashRequisitionPdfExporter _pdfExporter;
 
-    public CashRequisitionsController(IMediator mediator, IValidator<CreateCashRequisitionDto> createValidator, IValidator<UpdateCashRequisitionDto> updateValidator)
+    public CashRequisitionsController(
+        IMediator mediator,
+        IValidator<CreateCashRequisitionDto> createValidator,
+        IValidator<UpdateCashRequisitionDto> updateValidator,
+        CashRequisitionPdfExporter pdfExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _pdfExporter = pdfExporter;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? requisitionNumber = null, long? projectId = null, RequisitionStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
@@ -146,6 +153,35 @@ public class CashRequisitionsController : Controller
     {
         await _mediator.Send(new SetCashRequisitionActiveCommand(id, !isActive));
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Print(long id)
+    {
+        var data = await _mediator.Send(new GetCashRequisitionPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        return View(data);
+    }
+
+    public async Task<IActionResult> PrintPdf(long id)
+    {
+        var data = await _mediator.Send(new GetCashRequisitionPrintDataQuery(id));
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        data.PrintedBy = User.Identity?.Name;
+        data.PrintedAt = DateTime.Now;
+
+        var pdfBytes = _pdfExporter.Export(data);
+        return File(pdfBytes, "application/pdf", $"{data.RequisitionNumber}.pdf");
     }
 
     private async Task PopulateDropdownsAsync()
