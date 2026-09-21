@@ -225,7 +225,7 @@ public class PurchaseOrdersController : Controller
         ViewBag.VendorQuotations = quotations.Items.Select(q => new SelectListItem
         {
             Value = q.Id.ToString(),
-            Text = $"{q.QuotationNumber} | {q.ProjectName}"
+            Text = $"{q.RequisitionNumber} | {q.QuotationNumber} | {q.ProjectName}"
         }).ToList();
 
         var materials = await _mediator.Send(new GetAllMaterialsQuery(PageSize: int.MaxValue));
