@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -156,6 +157,8 @@ public class PurchaseRequisitionPdfExporter
                                 });
                             });
                         });
+
+                        column.Item().PaddingTop(6).Text($"In Words: {AmountInWords.ToBdtWords(data.Total)}").Bold().FontSize(10);
 
                         if (!string.IsNullOrWhiteSpace(data.Description))
                         {
