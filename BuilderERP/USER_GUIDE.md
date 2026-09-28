@@ -58,7 +58,19 @@ Company, Branch, Department, Project, Cost Center setup, plus **Users** and **Ro
 **Installment Plans → Installments → Receipts.** Define a payment schedule for a sale, track individual installment due/paid status, and record receipts against payments received.
 
 ### Procurement
-**Suppliers → Purchase Requisitions → RFQs → Vendor Quotations → Purchase Orders → Goods Receives → Purchase Returns.** The standard procure-to-pay flow: a requisition triggers RFQs sent to suppliers, vendor quotations are compared, a Purchase Order is issued, goods are received against it, and returns are recorded if needed.
+**Suppliers → Purchase Requisitions → RFQs → Vendor Quotations → Purchase Orders → Goods Receives → Purchase Returns → PO Bills → Supplier Payments → Supplier Ledger.** The standard procure-to-pay flow: a requisition triggers RFQs sent to suppliers, vendor quotations are compared, a Purchase Order is issued, goods are received against it, and returns are recorded if needed. Once a Purchase Order is **Approved** it can be billed (**PO Bills**) and paid (**Supplier Payments**); the **Supplier Ledger** shows each supplier's running balance, computed live from their approved bills (credit) minus payments and approved/completed returns (debit).
+
+#### Cash Purchase Workflow (petty cash / on-the-spot buying)
+
+A separate, lighter flow covers purchases paid for with cash handed to an employee, instead of going through the full RFQ/Vendor-Quotation cycle. It is anchored on an **approved Cash Requisition** and produces its own running account per employee, the **Requester Ledger**:
+
+1. **Cash Requisition** (Procurement → Cash Requisitions) — the employee's request for cash to make a purchase. It must be **Approved** before any of the steps below can happen against it.
+2. **Cash Disbursement** (Procurement → Cash Disbursements) — the cash actually handed to the requester against that requisition. Recording one only requires an approved requisition; it does **not** require a Cash PO or bill to exist yet. This is a **debit** in the Requester Ledger.
+3. **Cash Purchase Order (CPO)** (Procurement → Cash Purchase Orders) — an order placed with a supplier, funded by the requisition.
+4. **Cash PO Bill** (Procurement → Cash PO Bills) — how the requester accounts for what was actually bought against a CPO. Only an approved/received CPO can be billed, and a bill can't exceed a CPO line's ordered quantity minus what's already been billed on it. Once the bill's status is set to **Approved**, it becomes a **credit** in the Requester Ledger.
+5. **Requester Ledger** (Procurement → Requester Ledger) — nets the two sides per employee: *opening balance + debits (cash issued) − credits (bills approved) = closing balance*. A positive balance means the requester is still holding cash that hasn't been accounted for yet; a negative balance means they've spent more than was issued and the company owes them the difference. Both the on-screen ledger and its **Print** view state this plainly (e.g. "held by requester" / "owed to requester").
+
+Steps 2–4 don't have to happen in a fixed order relative to each other — cash can be disbursed before or after the CPO is placed — but each one individually depends on the requisition being Approved, and a bill depends on its own CPO being Approved. Cash PO Bills have their own **Print** view (Accounts copy + Requester copy), separate from the ledger print-out.
 
 ### Construction Project Management
 **Work Breakdown (WBS) / Gantt Chart → Milestones → BOQ → Daily Progress → Site Photos → Delay Analysis → Budget Lines / Budget vs Actual.** Plan and track construction execution: break the project into WBS tasks (viewable as a Gantt chart), track milestones, manage the Bill of Quantities, log daily site progress with photos, analyze delays, and monitor budget vs. actual spend.

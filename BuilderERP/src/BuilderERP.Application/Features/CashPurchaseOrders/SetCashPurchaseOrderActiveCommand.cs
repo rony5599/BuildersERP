@@ -1,10 +1,15 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.CashPurchaseOrders;
 
-public record SetCashPurchaseOrderActiveCommand(long Id, bool IsActive) : IRequest<bool>;
+public record SetCashPurchaseOrderActiveCommand(long Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
+{
+    // Also read by other features' cached queries: the billable-CPO dropdown and billed quantities are cached under CashPoBills; the requester ledger is cached under RequesterLedger.
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CashPoBills", "RequesterLedger"];
+}
 
 public class SetCashPurchaseOrderActiveCommandHandler : IRequestHandler<SetCashPurchaseOrderActiveCommand, bool>
 {

@@ -267,7 +267,10 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PoBillView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierPaymentView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RequesterLedgerView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">Procurement<i class="bi bi-chevron-down nav-section-caret"></i></button>
@@ -319,6 +322,18 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView))
                         {
                             <li class="nav-item"><a asp-controller="SupplierLedger" asp-action="Index" class="@NavClass("SupplierLedger")"><i class="bi bi-journal-text"></i> Supplier Ledger</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillView))
+                        {
+                            <li class="nav-item"><a asp-controller="CashPoBills" asp-action="Index" class="@NavClass("CashPoBills")"><i class="bi bi-receipt-cutoff"></i> Cash PO Bills</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView))
+                        {
+                            <li class="nav-item"><a asp-controller="CashDisbursements" asp-action="Index" class="@NavClass("CashDisbursements")"><i class="bi bi-cash-coin"></i> Cash Disbursements</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RequesterLedgerView))
+                        {
+                            <li class="nav-item"><a asp-controller="RequesterLedger" asp-action="Index" class="@NavClass("RequesterLedger")"><i class="bi bi-person-lines-fill"></i> Requester Ledger</a></li>
                         }
                     </ul>
                     </div>

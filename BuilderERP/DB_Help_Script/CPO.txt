@@ -1,0 +1,7 @@
+delete from [dbo].[CashPoBillDetails]
+delete from [dbo].[CashPoBills]
+delete from [dbo].[CashPurchaseOrderDetails]
+delete from [dbo].[CashPurchaseOrders]
+delete from [dbo].[CashRequisitionDetails]
+delete from  [dbo].[CashRequisitions]
+delete from [dbo].[CashDisbursements]

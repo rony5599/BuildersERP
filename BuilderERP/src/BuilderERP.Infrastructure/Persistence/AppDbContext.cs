@@ -53,6 +53,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
     public DbSet<PoBill> PoBills => Set<PoBill>();
     public DbSet<SupplierPayment> SupplierPayments => Set<SupplierPayment>();
+    public DbSet<CashPoBill> CashPoBills => Set<CashPoBill>();
+    public DbSet<CashDisbursement> CashDisbursements => Set<CashDisbursement>();
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();
     public DbSet<Material> Materials => Set<Material>();
@@ -71,6 +73,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<GoodsReceiveDetail> GoodsReceiveDetails => Set<GoodsReceiveDetail>();
     public DbSet<PurchaseReturnDetail> PurchaseReturnDetails => Set<PurchaseReturnDetail>();
     public DbSet<PoBillDetail> PoBillDetails => Set<PoBillDetail>();
+    public DbSet<CashPoBillDetail> CashPoBillDetails => Set<CashPoBillDetail>();
     public DbSet<InventoryTransaction> InventoryTransactions => Set<InventoryTransaction>();
     public DbSet<WbsTask> WbsTasks => Set<WbsTask>();
     public DbSet<Milestone> Milestones => Set<Milestone>();
@@ -813,6 +816,66 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<SupplierPayment>().Property(p => p.Amount).HasPrecision(18, 2);
         builder.Entity<SupplierPayment>().HasIndex(p => p.PaymentNumber);
         builder.Entity<SupplierPayment>().HasIndex(p => p.SupplierId);
+
+        builder.Entity<CashPoBill>()
+            .HasOne(b => b.CashPurchaseOrder)
+            .WithMany()
+            .HasForeignKey(b => b.CashPurchaseOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPoBill>()
+            .HasOne(b => b.RequesterEmployee)
+            .WithMany()
+            .HasForeignKey(b => b.RequesterEmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPoBill>().Property(b => b.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<CashPoBill>().HasIndex(b => b.BillNumber);
+        builder.Entity<CashPoBill>().HasIndex(b => b.RequesterEmployeeId);
+
+        builder.Entity<CashPoBillDetail>()
+            .HasOne(d => d.CashPoBill)
+            .WithMany(b => b.Details)
+            .HasForeignKey(d => d.CashPoBillId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CashPoBillDetail>()
+            .HasOne(d => d.CashPurchaseOrderDetail)
+            .WithMany()
+            .HasForeignKey(d => d.CashPurchaseOrderDetailId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPoBillDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashPoBillDetail>().Property(d => d.BilledQuantity).HasPrecision(18, 3);
+        builder.Entity<CashPoBillDetail>().Property(d => d.UnitPrice).HasPrecision(18, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.DiscountPercent).HasPrecision(5, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.DiscountAmount).HasPrecision(18, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.VatPercent).HasPrecision(5, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.VatAmount).HasPrecision(18, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.TaxPercent).HasPrecision(5, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.TaxAmount).HasPrecision(18, 2);
+        builder.Entity<CashPoBillDetail>().Property(d => d.LineTotal).HasPrecision(18, 2);
+
+        builder.Entity<CashDisbursement>()
+            .HasOne(d => d.CashRequisition)
+            .WithMany()
+            .HasForeignKey(d => d.CashRequisitionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashDisbursement>()
+            .HasOne(d => d.RequesterEmployee)
+            .WithMany()
+            .HasForeignKey(d => d.RequesterEmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<CashDisbursement>().Property(d => d.Amount).HasPrecision(18, 2);
+        builder.Entity<CashDisbursement>().HasIndex(d => d.DisbursementNumber);
+        builder.Entity<CashDisbursement>().HasIndex(d => d.RequesterEmployeeId);
 
         builder.Entity<ItemCategory>().HasIndex(c => c.Code).IsUnique();
 
@@ -1581,12 +1644,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(InstallmentPlan), typeof(Installment), typeof(Receipt),
             typeof(CollectionTarget), typeof(PaymentReminder),
             typeof(Supplier), typeof(PurchaseRequisition), typeof(CashRequisition), typeof(CashRequisitionDetail), typeof(Rfq), typeof(VendorQuotation),
-            typeof(PurchaseOrder), typeof(CashPurchaseOrder), typeof(CashPurchaseOrderDetail), typeof(GoodsReceive), typeof(PurchaseReturn), typeof(PoBill), typeof(SupplierPayment),
+            typeof(PurchaseOrder), typeof(CashPurchaseOrder), typeof(CashPurchaseOrderDetail), typeof(GoodsReceive), typeof(PurchaseReturn), typeof(PoBill), typeof(SupplierPayment), typeof(CashPoBill), typeof(CashDisbursement),
             typeof(Warehouse), typeof(Material), typeof(Stock), typeof(StockTransfer),
             typeof(StockIssue), typeof(StockReturn), typeof(StockAdjustment),
             typeof(ItemCategory), typeof(ItemPriceHistory), typeof(PurchaseRequisitionDetail),
             typeof(RfqVendor), typeof(RfqDetail), typeof(VendorQuotationDetail),
-            typeof(PurchaseOrderDetail), typeof(GoodsReceiveDetail), typeof(PurchaseReturnDetail), typeof(PoBillDetail),
+            typeof(PurchaseOrderDetail), typeof(GoodsReceiveDetail), typeof(PurchaseReturnDetail), typeof(PoBillDetail), typeof(CashPoBillDetail),
             typeof(InventoryTransaction),
             typeof(WbsTask), typeof(Milestone), typeof(BoqItem), typeof(DailyProgress),
             typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),

@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
@@ -7,7 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.CashRequisitions;
 
-public record UpdateCashRequisitionCommand(UpdateCashRequisitionDto Dto) : IRequest<UpdateCashRequisitionResult>;
+public record UpdateCashRequisitionCommand(UpdateCashRequisitionDto Dto) : IRequest<UpdateCashRequisitionResult>, IInvalidatesFeatures
+{
+    // Also read by other features' cached queries: the requester ledger and the disbursable-requisition dropdown are cached under RequesterLedger and CashDisbursements.
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["RequesterLedger", "CashDisbursements"];
+}
 
 public enum UpdateCashRequisitionResult
 {

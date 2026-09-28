@@ -1,0 +1,103 @@
+@model BuilderERP.Application.DTOs.CreateCashDisbursementDto
+@using BuilderERP.Domain.Enums
+@{
+    ViewData["Title"] = "New Cash Disbursement";
+    var bills = (IReadOnlyList<BuilderERP.Application.DTOs.DisbursableRequisitionDto>)ViewBag.Requisitions;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+    <style>
+        /* Requisition numbers (e.g. ML-CR-0002) are wider than the default first-column width. */
+        #requisitionId-menu .multicolumn-dropdown-column:nth-child(1) {
+            flex: 0 0 130px;
+        }
+    </style>
+}
+
+<h1 class="h3 mb-4">New Cash Disbursement</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row col-lg-10">
+        <div class="mb-3 col-md-12">
+            <label asp-for="CashRequisitionId" class="form-label">Approved Cash Requisition</label>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="requisitionId-container">
+                    <input type="hidden" asp-for="CashRequisitionId" id="requisitionId" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="-- Select requisition (Req # | Requester | Not yet issued) --"
+                               autocomplete="off"
+                               id="requisitionId-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="requisitionId-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Req #</div>
+                            <div class="multicolumn-dropdown-column">Requester</div>
+                            <div class="multicolumn-dropdown-column">Estimated</div>
+                            <div class="multicolumn-dropdown-column">Not Yet Issued</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var b in bills)
+                            {
+                                var remaining = b.Remaining > 0 ? b.Remaining : 0;
+                                <div class="multicolumn-dropdown-item" data-value="@b.Id" data-outstanding="@remaining.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                                    <div class="multicolumn-dropdown-column">@b.RequisitionNumber</div>
+                                    <div class="multicolumn-dropdown-column">@b.RequesterName</div>
+                                    <div class="multicolumn-dropdown-column">@b.EstimatedAmount.ToString("N2")</div>
+                                    <div class="multicolumn-dropdown-column">@remaining.ToString("N2")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="CashRequisitionId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="DisbursementDate" class="form-label"></label>
+            <input asp-for="DisbursementDate" type="date" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="Amount" class="form-label"></label>
+            <input asp-for="Amount" type="number" step="0.01" class="form-control" id="amount" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="Method" class="form-label"></label>
+            <select asp-for="Method" asp-items="Html.GetEnumSelectList<PaymentMethod>()" class="form-select"></select>
+        </div>
+        <div class="mb-3 col-md-3">
+            <label asp-for="ReferenceNumber" class="form-label">Cheque / Ref #</label>
+            <input asp-for="ReferenceNumber" class="form-control" />
+        </div>
+        <div class="mb-3 col-md-12">
+            <label asp-for="Remarks" class="form-label"></label>
+            <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
+        </div>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('requisitionId-container');
+
+        var select = document.getElementById('requisitionId');
+        var amount = document.getElementById('amount');
+        var menu = document.getElementById('requisitionId-menu');
+        select.addEventListener('change', function () {
+            var item = menu.querySelector('.multicolumn-dropdown-item[data-value="' + CSS.escape(select.value) + '"]');
+            if (item && item.dataset.outstanding) amount.value = item.dataset.outstanding;
+        });
+    });
+</script>

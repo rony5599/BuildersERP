@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
@@ -8,7 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.CashPurchaseOrders;
 
-public record UpdateCashPurchaseOrderCommand(UpdateCashPurchaseOrderDto Dto) : IRequest<UpdateCashPurchaseOrderResult>;
+public record UpdateCashPurchaseOrderCommand(UpdateCashPurchaseOrderDto Dto) : IRequest<UpdateCashPurchaseOrderResult>, IInvalidatesFeatures
+{
+    // Also read by other features' cached queries: the billable-CPO dropdown and billed quantities are cached under CashPoBills; the requester ledger is cached under RequesterLedger.
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["CashPoBills", "RequesterLedger"];
+}
 
 public enum UpdateCashPurchaseOrderResult
 {

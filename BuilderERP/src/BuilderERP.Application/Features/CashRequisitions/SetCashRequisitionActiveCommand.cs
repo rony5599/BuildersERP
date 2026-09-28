@@ -1,10 +1,15 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
 namespace BuilderERP.Application.Features.CashRequisitions;
 
-public record SetCashRequisitionActiveCommand(long Id, bool IsActive) : IRequest<bool>;
+public record SetCashRequisitionActiveCommand(long Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
+{
+    // Also read by other features' cached queries: the requester ledger and the disbursable-requisition dropdown are cached under RequesterLedger and CashDisbursements.
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["RequesterLedger", "CashDisbursements"];
+}
 
 public class SetCashRequisitionActiveCommandHandler : IRequestHandler<SetCashRequisitionActiveCommand, bool>
 {

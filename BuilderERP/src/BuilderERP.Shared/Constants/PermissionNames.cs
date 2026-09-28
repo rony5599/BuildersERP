@@ -128,6 +128,14 @@ public static class PermissionNames
 
     public const string SupplierLedgerView = "SupplierLedger.View";
 
+    public const string CashPoBillView = "CashPoBill.View";
+    public const string CashPoBillManage = "CashPoBill.Manage";
+
+    public const string RequesterLedgerView = "RequesterLedger.View";
+
+    public const string CashDisbursementView = "CashDisbursement.View";
+    public const string CashDisbursementManage = "CashDisbursement.Manage";
+
     public const string WarehouseView = "Warehouse.View";
     public const string WarehouseManage = "Warehouse.Manage";
 
@@ -368,6 +376,9 @@ public static class PermissionNames
         (PoBillView, "PoBill"), (PoBillManage, "PoBill"),
         (SupplierPaymentView, "SupplierPayment"), (SupplierPaymentManage, "SupplierPayment"),
         (SupplierLedgerView, "SupplierLedger"),
+        (CashPoBillView, "CashPoBill"), (CashPoBillManage, "CashPoBill"),
+        (RequesterLedgerView, "RequesterLedger"),
+        (CashDisbursementView, "CashDisbursement"), (CashDisbursementManage, "CashDisbursement"),
         (WarehouseView, "Warehouse"), (WarehouseManage, "Warehouse"),
         (MaterialView, "Material"), (MaterialManage, "Material"),
         (ItemCategoryView, "ItemCategory"), (ItemCategoryManage, "ItemCategory"),
@@ -488,6 +499,9 @@ public static class PermissionNames
         PoBillView, PoBillManage,
         SupplierPaymentView, SupplierPaymentManage,
         SupplierLedgerView,
+        CashPoBillView, CashPoBillManage,
+        RequesterLedgerView,
+        CashDisbursementView, CashDisbursementManage,
         WarehouseView, WarehouseManage,
         MaterialView, MaterialManage,
         ItemCategoryView, ItemCategoryManage,
