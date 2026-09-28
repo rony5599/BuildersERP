@@ -1,0 +1,18 @@
+<a href="#" class="small text-decoration-none" data-bs-toggle="modal" data-bs-target="#cashWorkflowHelpModal">
+    <i class="bi bi-question-circle"></i> How it works
+</a>
+
+<div class="modal fade" id="cashWorkflowHelpModal" tabindex="-1" aria-labelledby="cashWorkflowHelpTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cashWorkflowHelpTitle">Cash purchase workflow</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="~/images/cash_purchase_workflow.png" asp-append-version="true" class="img-fluid"
+                     alt="Cash purchase workflow: a cash requisition, once approved, leads to a cash disbursement (debit) and a cash purchase order then cash PO bill (credit). The requester ledger nets debits minus credits: positive means cash held by the requester, negative means owed to the requester." />
+            </div>
+        </div>
+    </div>
+</div>
