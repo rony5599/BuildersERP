@@ -1,0 +1,18 @@
+<a href="#" class="small text-decoration-none" data-bs-toggle="modal" data-bs-target="#procureToPayHelpModal">
+    <i class="bi bi-question-circle"></i> How it works
+</a>
+
+<div class="modal fade" id="procureToPayHelpModal" tabindex="-1" aria-labelledby="procureToPayHelpTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="procureToPayHelpTitle">Procure-to-pay workflow</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="~/images/procure_to_pay_workflow.png" asp-append-version="true" class="img-fluid"
+                     alt="Procure-to-pay workflow: a requisition leads to an RFQ, a vendor quote and a purchase order. Once approved, the purchase order can be billed (PO bill, a credit) and paid (supplier payment, a debit). Goods receives can lead to purchase returns (a debit). The supplier ledger shows credits from approved bills and debits from payments and returns." />
+            </div>
+        </div>
+    </div>
+</div>

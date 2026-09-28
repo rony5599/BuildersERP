@@ -60,9 +60,17 @@ Company, Branch, Department, Project, Cost Center setup, plus **Users** and **Ro
 ### Procurement
 **Suppliers → Purchase Requisitions → RFQs → Vendor Quotations → Purchase Orders → Goods Receives → Purchase Returns → PO Bills → Supplier Payments → Supplier Ledger.** The standard procure-to-pay flow: a requisition triggers RFQs sent to suppliers, vendor quotations are compared, a Purchase Order is issued, goods are received against it, and returns are recorded if needed. Once a Purchase Order is **Approved** it can be billed (**PO Bills**) and paid (**Supplier Payments**); the **Supplier Ledger** shows each supplier's running balance, computed live from their approved bills (credit) minus payments and approved/completed returns (debit).
 
+![Procure-to-pay workflow](src/BuilderERP.Web/wwwroot/images/procure_to_pay_workflow.png)
+
+On the **Purchase Orders** page, click **How it works** next to the page title to see this diagram in a popup.
+
 #### Cash Purchase Workflow (petty cash / on-the-spot buying)
 
 A separate, lighter flow covers purchases paid for with cash handed to an employee, instead of going through the full RFQ/Vendor-Quotation cycle. It is anchored on an **approved Cash Requisition** and produces its own running account per employee, the **Requester Ledger**:
+
+![Cash purchase workflow](src/BuilderERP.Web/wwwroot/images/cash_purchase_workflow.png)
+
+Each of the cash pages (Cash Requisitions, Cash Purchase Orders, Cash Disbursements, Cash PO Bills, Requester Ledger) has a **How it works** link next to its title that opens this diagram in a popup.
 
 1. **Cash Requisition** (Procurement → Cash Requisitions) — the employee's request for cash to make a purchase. It must be **Approved** before any of the steps below can happen against it.
 2. **Cash Disbursement** (Procurement → Cash Disbursements) — the cash actually handed to the requester against that requisition. Recording one only requires an approved requisition; it does **not** require a Cash PO or bill to exist yet. This is a **debit** in the Requester Ledger.
