@@ -16,5 +16,6 @@ public enum UnitOfMeasure
     Truck,
     Container,
     Roll,
-    Pound
+    Pound,
+    Rft
 }
