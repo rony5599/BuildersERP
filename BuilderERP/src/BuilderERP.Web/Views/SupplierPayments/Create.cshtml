@@ -3,7 +3,20 @@
 @{
     ViewData["Title"] = "New Supplier Payment";
     var bills = (IReadOnlyList<BuilderERP.Application.DTOs.PayableBillDto>)ViewBag.PayableBills;
+    var selectedBill = bills.FirstOrDefault(b => b.IsEwoBill ? b.Id == Model.EwoBillId : b.Id == Model.PoBillId);
+    var selectedBillKey = selectedBill == null ? "" : $"{(selectedBill.IsEwoBill ? "EWO" : "PO")}:{selectedBill.Id}";
 }
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
+<style>
+    #billKey-menu .multicolumn-dropdown-column:nth-child(1) { flex: 0 0 150px; }
+    #billKey-menu .multicolumn-dropdown-column:nth-child(2) { flex: 2; }
+    #billKey-menu .multicolumn-dropdown-column:nth-child(3) { flex: 1.25; }
+    #billKey-menu .multicolumn-dropdown-column:nth-child(4) { flex: 0 0 120px; text-align: right; }
+</style>
 
 <h1 class="h3 mb-4">New Supplier Payment</h1>
 
@@ -14,19 +27,42 @@
             <label for="billKey" class="form-label">Approved Bill (with outstanding balance)</label>
             <input type="hidden" asp-for="PoBillId" id="poBillId" />
             <input type="hidden" asp-for="EwoBillId" id="ewoBillId" />
-            <select id="billKey" class="form-select">
-                <option value="">-- Select bill (Bill # | Supplier | PO / EWO # | Outstanding) --</option>
-                @foreach (var group in bills.GroupBy(b => b.IsEwoBill).OrderBy(g => g.Key))
-                {
-                    <optgroup label="@(group.Key ? "EWO Bills" : "PO Bills")">
-                        @foreach (var b in group)
-                        {
-                            var selected = b.IsEwoBill ? b.Id == Model.EwoBillId : b.Id == Model.PoBillId;
-                            <option value="@(b.IsEwoBill ? "EWO" : "PO"):@b.Id" data-outstanding="@b.Outstanding.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@selected">@b.BillNumber | @b.SupplierName | @b.PONumber | Outstanding @b.Outstanding.ToString("N2")</option>
-                        }
-                    </optgroup>
-                }
-            </select>
+            <div class="multicolumn-dropdown-wrapper">
+                <div class="multicolumn-dropdown-container" id="billKey-container">
+                    <input type="hidden" id="billKey" value="@selectedBillKey" />
+                    <div class="multicolumn-dropdown-trigger">
+                        <input type="text"
+                               class="multicolumn-dropdown-filter form-control"
+                               placeholder="-- Select bill (Bill # | Supplier | PO / EWO # | Outstanding) --"
+                               autocomplete="off"
+                               id="billKey-filter" />
+                        <span class="multicolumn-dropdown-icon">
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="multicolumn-dropdown-menu" id="billKey-menu" style="display: none;">
+                        <div class="multicolumn-dropdown-header">
+                            <div class="multicolumn-dropdown-column">Bill #</div>
+                            <div class="multicolumn-dropdown-column">Supplier</div>
+                            <div class="multicolumn-dropdown-column">PO / EWO #</div>
+                            <div class="multicolumn-dropdown-column">Outstanding</div>
+                        </div>
+                        <div class="multicolumn-dropdown-items">
+                            @foreach (var b in bills.OrderBy(b => b.IsEwoBill).ThenBy(b => b.BillNumber))
+                            {
+                                <div class="multicolumn-dropdown-item"
+                                     data-value="@(b.IsEwoBill ? "EWO" : "PO"):@b.Id"
+                                     data-outstanding="@b.Outstanding.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                                    <div class="multicolumn-dropdown-column">@b.BillNumber</div>
+                                    <div class="multicolumn-dropdown-column">@b.SupplierName</div>
+                                    <div class="multicolumn-dropdown-column">@b.PONumber</div>
+                                    <div class="multicolumn-dropdown-column">@b.Outstanding.ToString("N2")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="mb-3 col-md-3">
             <label asp-for="PaymentDate" class="form-label"></label>
@@ -56,8 +92,11 @@
     </div>
 </form>
 
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('billKey-container');
+
         var select = document.getElementById('billKey');
         var poBillId = document.getElementById('poBillId');
         var ewoBillId = document.getElementById('ewoBillId');
@@ -67,14 +106,18 @@
             poBillId.value = parts[0] === 'PO' ? parts[1] : '';
             ewoBillId.value = parts[0] === 'EWO' ? parts[1] : '';
         }
+        function selectedItem() {
+            return Array.from(document.querySelectorAll('#billKey-menu .multicolumn-dropdown-item'))
+                .find(function (item) { return item.dataset.value === select.value; });
+        }
         select.addEventListener('change', function () {
             sync();
-            var opt = select.options[select.selectedIndex];
-            if (opt && opt.dataset.outstanding) amount.value = opt.dataset.outstanding;
+            var item = selectedItem();
+            if (item && item.dataset.outstanding) amount.value = item.dataset.outstanding;
         });
         sync();
         // Opened from a bill's "Pay" link: suggest the outstanding amount.
-        var initial = select.options[select.selectedIndex];
+        var initial = selectedItem();
         if (initial && initial.dataset.outstanding && !(parseFloat(amount.value) > 0)) amount.value = initial.dataset.outstanding;
     });
 </script>
