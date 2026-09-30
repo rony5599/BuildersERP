@@ -333,7 +333,11 @@ public class EngineerWorkOrdersController : Controller
     private async Task PopulateDropdownsAsync()
     {
         var requisitions = await _mediator.Send(new GetAllEngineerWorkOrderRequisitionsQuery(PageSize: int.MaxValue));
-        ViewBag.EngineerWorkOrderRequisitions = new SelectList(requisitions.Items, "Id", "RequisitionNumber");
+        ViewBag.EngineerWorkOrderRequisitions = requisitions.Items.Select(r => new SelectListItem
+        {
+            Value = r.Id.ToString(),
+            Text = $"{r.RequisitionNumber} | {r.ProjectName}"
+        }).ToList();
 
         var suppliers = await _mediator.Send(new GetAllSuppliersQuery(PageSize: int.MaxValue));
         ViewBag.Suppliers = new SelectList(suppliers.Items, "Id", "Name");

@@ -1,10 +1,16 @@
 @model List<BuilderERP.Application.DTOs.EngineerWorkOrderPaymentHeadDto>
 @* Requires the _DetailLineItemsScripts partial on the page. Posts as PaymentHeads[i].HeadName / .Percent. *@
 
-<h5 class="mt-4">Payment Heads</h5>
-<p class="text-muted small mb-2">Stages the contractor is paid by as work progresses (e.g. Vertical 18%, Internal 22%, Security 10%). They must total 100%. Needed before the work order can be billed.</p>
+<div class="ewo-payment-heading">
+    <span class="ewo-section-icon"><i class="bi bi-percent"></i></span>
+    <div>
+        <h5>Payment Heads</h5>
+        <p>Set the progress-payment stages. The allocation must total 100% before the work order can be billed.</p>
+    </div>
+</div>
 <div class="mb-2">@Html.ValidationMessage("PaymentHeads", null, new { @class = "text-danger small" })</div>
-<table class="table table-sm" id="ewo-heads-table" style="max-width: 640px;">
+<div class="table-responsive ewo-heads-table-wrap">
+<table class="table table-sm align-middle" id="ewo-heads-table">
     <thead>
         <tr>
             <th>Head</th>
@@ -35,9 +41,10 @@
         </tr>
     </tfoot>
 </table>
-<div class="mb-3 d-flex gap-2">
-    <button type="button" class="btn btn-sm btn-outline-primary" data-add-row-for="ewo-heads-table">Add Head</button>
-    <button type="button" class="btn btn-sm btn-outline-secondary" id="ewo-heads-standard">Use standard split (Vertical 18 / Internal 22 / RCC 15 / Roof 15 / Finishing 20 / Security 10)</button>
+</div>
+<div class="ewo-heads-actions">
+    <button type="button" class="btn btn-sm btn-outline-primary" data-add-row-for="ewo-heads-table"><i class="bi bi-plus-lg"></i> Add Payment Head</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary" id="ewo-heads-standard"><i class="bi bi-magic"></i> Use Standard Split</button>
 </div>
 
 <script>

@@ -160,3 +160,57 @@
 .po-bill-form-actions { display:flex; justify-content:flex-end; gap:.65rem; padding:.25rem 0 2rem; }
 .po-bill-form-actions .btn { min-width:130px; padding:.65rem 1rem; }
 @media (max-width:767.98px) { .po-bill-details-card { padding:1.1rem .9rem .2rem; } .po-bill-lines-card .po-bill-section-title { padding:1rem; } .po-bill-form-actions { position:sticky; bottom:0; z-index:20; margin:0 -.5rem; padding:.75rem; background:rgba(249,250,251,.96); border-top:1px solid var(--gray-200); } .po-bill-form-actions .btn { flex:1; min-width:0; } }
+
+/* Engineer work order create/edit */
+.ewo-form-header { margin-bottom:1.5rem; }
+.ewo-form { display:grid; gap:1.25rem; max-width:1280px; }
+.ewo-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.ewo-info-card { padding:1.35rem 1.25rem .35rem; }
+.ewo-section-title,.ewo-payment-heading { display:flex; align-items:flex-start; gap:.75rem; }
+.ewo-section-title { margin-bottom:1.25rem; }
+.ewo-section-title h5,.ewo-payment-heading h5 { margin:0 0 .18rem; color:var(--gray-900); font-size:1rem; }
+.ewo-section-title p,.ewo-payment-heading p { margin:0; color:var(--gray-500); font-size:.84rem; }
+.ewo-section-icon { display:inline-flex; flex:0 0 36px; align-items:center; justify-content:center; width:36px; height:36px; color:var(--brand-600); background:var(--brand-50); border-radius:.6rem; }
+.ewo-info-card .form-label { margin-bottom:.4rem; color:var(--gray-700); font-size:.82rem; font-weight:600; }
+.ewo-info-card .form-control,.ewo-info-card .form-select { min-height:42px; border-color:var(--gray-300); }
+.ewo-info-card textarea.form-control { min-height:82px; resize:vertical; }
+.ewo-info-card .input-group > .btn { min-width:105px; }
+.ewo-info-card .multicolumn-dropdown-menu { z-index:1060; box-shadow:0 10px 25px rgba(16,24,40,.14); }
+.ewo-lines-card { overflow:visible; }
+.ewo-section-title-with-action { align-items:center; margin:0; padding:1.15rem 1.25rem; border-bottom:1px solid var(--gray-200); }
+.ewo-section-title-with-action > div:nth-child(2) { flex:1; }
+.ewo-section-title-with-action .btn,.ewo-heads-actions .btn { display:inline-flex; align-items:center; gap:.4rem; white-space:nowrap; }
+.ewo-table-wrap { min-height:190px; border-radius:0 0 var(--radius-xl) var(--radius-xl); }
+.ewo-table-wrap .table { min-width:980px; margin:0; }
+.ewo-table-wrap thead th,.ewo-heads-table-wrap thead th { padding:.78rem .85rem; color:var(--gray-500); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:.72rem; font-weight:700; letter-spacing:.045em; text-transform:uppercase; white-space:nowrap; }
+.ewo-table-wrap tbody td,.ewo-heads-table-wrap tbody td { padding:.72rem .85rem; border-color:var(--gray-100); }
+.ewo-table-wrap th:first-child { width:27%; }
+.ewo-table-wrap th:nth-child(2) { width:12%; }
+.ewo-table-wrap th:nth-child(3),.ewo-table-wrap th:nth-child(4) { width:14%; }
+.ewo-table-wrap th:nth-child(5) { width:25%; }
+.ewo-table-wrap th:last-child { width:58px; }
+.ewo-table-wrap .form-control,.ewo-table-wrap .form-select,.ewo-heads-table-wrap .form-control { border-color:var(--gray-300); }
+.ewo-table-wrap .multicolumn-dropdown-container { z-index:30; }
+.ewo-table-wrap .multicolumn-dropdown-menu { z-index:1070; max-height:300px; box-shadow:0 10px 25px rgba(16,24,40,.14); }
+.ewo-table-wrap .multicolumn-dropdown-items { max-height:250px; }
+.ewo-table-wrap [data-remove-row],.ewo-heads-table-wrap [data-remove-row] { position:relative; width:34px; height:34px; overflow:hidden; color:transparent; }
+.ewo-table-wrap [data-remove-row]::after,.ewo-heads-table-wrap [data-remove-row]::after { content:"\F78A"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--error-600); font-family:"bootstrap-icons"; }
+.ewo-payment-card { padding:1.15rem 1.25rem 1.25rem; }
+.ewo-payment-heading { margin-bottom:1rem; }
+.ewo-heads-table-wrap { max-width:720px; border:1px solid var(--gray-200); border-radius:.7rem; }
+.ewo-heads-table-wrap .table { min-width:560px; margin:0; }
+.ewo-heads-table-wrap tfoot th { padding:.75rem .85rem; background:var(--gray-50); border-top:1px solid var(--gray-200); }
+.ewo-heads-table-wrap #ewo-heads-total { color:var(--brand-600); font-variant-numeric:tabular-nums; }
+.ewo-heads-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:.85rem; }
+.ewo-form-actions { display:flex; justify-content:flex-end; gap:.65rem; padding:.25rem 0 2rem; }
+.ewo-form-actions .btn { min-width:140px; padding:.65rem 1rem; }
+@media (max-width:767.98px) {
+  .ewo-info-card { padding:1.1rem .9rem .2rem; }
+  .ewo-section-title-with-action { align-items:flex-start; flex-wrap:wrap; padding:1rem; }
+  .ewo-section-title-with-action .btn { width:100%; justify-content:center; }
+  .ewo-payment-card { padding:1rem; }
+  .ewo-heads-actions { flex-direction:column; }
+  .ewo-heads-actions .btn { justify-content:center; }
+  .ewo-form-actions { position:sticky; bottom:0; z-index:20; margin:0 -.5rem; padding:.75rem; background:rgba(249,250,251,.96); border-top:1px solid var(--gray-200); }
+  .ewo-form-actions .btn { flex:1; min-width:0; }
+}

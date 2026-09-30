@@ -6,11 +6,15 @@
     ViewData["Title"] = "Engineer Work Orders";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Engineer Work Orders</h1>
+<div class="procurement-page-header ewo-index-header">
+    <div>
+        <div class="page-eyebrow"><i class="bi bi-tools"></i> Engineering Procurement</div>
+        <h1>Engineer Work Orders</h1>
+        <p>Manage contractor work orders, revisions, billing stages, and statements.</p>
+    </div>
     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderManage))
     {
-        <a asp-action="Create" class="btn btn-primary">New Work Order</a>
+        <a asp-action="Create" class="btn btn-primary procurement-primary-action"><i class="bi bi-plus-lg"></i> New Work Order</a>
     }
 </div>
 
