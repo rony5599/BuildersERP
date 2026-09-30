@@ -6,18 +6,26 @@
     ViewData["Title"] = "Purchase Orders";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="d-flex align-items-center gap-3">
-        <h1 class="h3 mb-0">Purchase Orders</h1>
-        <partial name="_ProcureToPayHelp" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/procurement.css" asp-append-version="true" />
+}
+
+<div class="procurement-page-header">
+    <div>
+        <div class="page-eyebrow"><i class="bi bi-receipt"></i> Procurement</div>
+        <div class="d-flex align-items-center gap-3">
+            <h1>Purchase Orders</h1>
+            <partial name="_ProcureToPayHelp" />
+        </div>
+        <p>Manage supplier commitments, delivery dates and receiving progress.</p>
     </div>
     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderManage))
     {
-        <a asp-action="Create" class="btn btn-primary">New Purchase Order</a>
+        <a asp-action="Create" class="btn btn-primary procurement-primary-action"><i class="bi bi-plus-lg"></i> New Purchase Order</a>
     }
 </div>
 
-<form method="get" asp-action="Index" class="row g-2 mb-3">
+<form method="get" asp-action="Index" class="procurement-filter-card row g-3 align-items-end grid-search-form">
     <div class="col-md-2">
         <label class="form-label small mb-1">PO No</label>
         <input type="text" name="poNumber" value="@ViewBag.PONumber" class="form-control" placeholder="PO No" />
@@ -39,8 +47,8 @@
         <input type="date" name="deliveryDateTo" value="@(((DateTime?)ViewBag.DeliveryDateTo)?.ToString("yyyy-MM-dd"))" class="form-control" />
     </div>
     <div class="col-md-2 d-flex gap-2 align-items-end">
-        <button type="submit" class="btn btn-primary flex-fill">Filter</button>
-        <a asp-action="Index" class="btn btn-outline-secondary flex-fill">Clear</a>
+        <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Filter</button>
+        <a asp-action="Index" class="btn btn-outline-secondary flex-fill">Reset</a>
     </div>
 </form>
 

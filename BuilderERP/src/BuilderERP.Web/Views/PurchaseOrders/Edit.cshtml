@@ -6,14 +6,18 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/procurement.css" asp-append-version="true" />
 }
 
-<h1 class="h3 mb-4">Edit Purchase Order</h1>
+<div class="procurement-form-header">
+    <a asp-action="Index" class="procurement-back"><i class="bi bi-arrow-left"></i></a>
+    <div><div class="page-eyebrow">Purchase Order</div><h1>Edit Purchase Order</h1><p>Review supplier, delivery and commercial details for this order.</p></div>
+</div>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" class="procurement-form">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-    <div class="row col-md-8">
+    <div class="procurement-form-card row g-3">
         <div class="mb-3 col-md-4">
             <label asp-for="PONumber" class="form-label"></label>
             <input asp-for="PONumber" class="form-control" />
@@ -88,8 +92,8 @@
         </div>
     </div>
 
-    <h5 class="mt-4">Line Items</h5>
-    <table class="table table-sm" id="po-details-table">
+    <div class="procurement-section-heading"><div><h5>Line Items</h5><p>Review quantities, prices, discounts and applicable taxes.</p></div><button type="button" class="btn btn-sm btn-outline-primary" data-add-row-for="po-details-table"><i class="bi bi-plus-lg"></i> Add Item</button></div>
+    <div class="procurement-lines"><table class="table table-sm" id="po-details-table">
         <thead>
             <tr>
                 <th style="width: 25%;">Material</th>
@@ -199,12 +203,11 @@
                 <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove-row>Remove</button></td>
             </tr>
         </tbody>
-    </table>
-    <button type="button" class="btn btn-sm btn-outline-primary mb-3" data-add-row-for="po-details-table">Add Row</button>
+    </table></div>
 
-    <div>
-        <button type="submit" class="btn btn-primary">Save</button>
+    <div class="procurement-form-actions">
         <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i> Save Changes</button>
     </div>
 </form>
 

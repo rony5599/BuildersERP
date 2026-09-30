@@ -3,7 +3,10 @@
 @using BuilderERP.Shared.Authorization
 @model PagedResult<BuilderERP.Application.DTOs.PurchaseOrderDto>
 
-<table class="table table-striped table-hover bg-white">
+<div class="procurement-table-card">
+<div class="table-responsive">
+
+<table class="table procurement-table mb-0">
     <thead>
         <tr>
             <th>PO #</th>
@@ -21,41 +24,44 @@
         @foreach (var order in Model.Items)
         {
             <tr>
-                <td>@order.PONumber</td>
-                <td>@order.SupplierName</td>
-                <td>@order.QuotationNumber</td>
-                <td>@order.TotalAmount</td>
-                <td>@order.ReceivedAmount</td>
+                <td><a asp-action="Edit" asp-route-id="@order.Id" class="document-number">@order.PONumber</a><span class="document-subtitle">@order.ProjectName</span></td>
+                <td class="fw-medium">@order.SupplierName</td>
+                <td><span class="reference-chip">@order.QuotationNumber</span></td>
+                <td class="amount-cell">@order.TotalAmount.ToString("N2")</td>
+                <td class="amount-cell">@order.ReceivedAmount.ToString("N2")</td>
                 <td>@order.DeliveryDate.ToString("yyyy-MM-dd")</td>
-                <td>@order.Status</td>
+                <td><span class="procurement-status @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@HumanizeStatus(order.Status)</span></td>
                 <td>
-                    <span class="badge @(order.IsActive ? "bg-success" : "bg-secondary")">
-                        @(order.IsActive ? "Active" : "Inactive")
+                    <span class="procurement-status @(order.IsActive ? "status-success" : "status-neutral")">
+                        <span class="badge-dot"></span>@(order.IsActive ? "Active" : "Inactive")
                     </span>
                 </td>
                 <td class="text-end">
-                    <a asp-action="Print" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary" target="_blank">Print</a>
+                    <div class="procurement-actions"><a asp-action="Print" asp-route-id="@order.Id" class="btn btn-sm btn-light" target="_blank" title="Print"><i class="bi bi-printer"></i></a>
                     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderManage))
                     {
-                        <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-light" title="Edit"><i class="bi bi-pencil"></i></a>
                         <form asp-action="ToggleActive" asp-route-id="@order.Id" asp-route-isActive="@order.IsActive" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                @(order.IsActive ? "Deactivate" : "Activate")
+                            <button type="submit" class="btn btn-sm btn-light @(order.IsActive ? "text-danger" : "text-success")" title="@(order.IsActive ? "Deactivate" : "Activate")">
+                                <i class="bi @(order.IsActive ? "bi-pause-circle" : "bi-play-circle")"></i>
                             </button>
                         </form>
                     }
+                    </div>
                 </td>
             </tr>
         }
         @if (Model.Items.Count == 0)
         {
             <tr>
-                <td colspan="9" class="text-center text-muted">No purchase orders found.</td>
+                <td colspan="9" class="procurement-empty"><i class="bi bi-inbox"></i><strong>No purchase orders found</strong><span>Try adjusting the filters or create a new purchase order.</span></td>
             </tr>
         }
     </tbody>
 </table>
+</div>
 
+<div class="procurement-pagination">
 <partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
 {
     Page = Model.Page,
@@ -65,3 +71,21 @@
     Action = "Index",
     RouteValues = (Dictionary<string, string?>)(ViewBag.FilterRouteValues ?? new Dictionary<string, string?>())
 })" />
+</div>
+</div>
+
+@functions {
+    private static string StatusBadgeClass(BuilderERP.Domain.Enums.PurchaseOrderStatus status) => status switch
+    {
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft => "status-neutral",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved => "status-info",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "status-warning",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Received => "status-success",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Closed => "status-success",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Cancelled => "status-danger",
+        _ => "status-neutral"
+    };
+
+    private static string HumanizeStatus(BuilderERP.Domain.Enums.PurchaseOrderStatus status) =>
+        status == BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived ? "Partially Received" : status.ToString();
+}

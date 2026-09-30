@@ -3,6 +3,13 @@
     ViewData["Title"] = "New PO Bill";
 }
 
-<h1 class="h3 mb-4">New PO Bill</h1>
+<div class="procurement-form-header po-bill-create-header">
+    <a asp-action="Index" class="procurement-back" aria-label="Back to PO bills"><i class="bi bi-arrow-left"></i></a>
+    <div>
+        <div class="page-eyebrow"><i class="bi bi-receipt-cutoff"></i> Accounts Payable</div>
+        <h1>New PO Bill</h1>
+        <p>Record a supplier invoice against received purchase-order quantities.</p>
+    </div>
+</div>
 
 <partial name="_Form" model="Model" />

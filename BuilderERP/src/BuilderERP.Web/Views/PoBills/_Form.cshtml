@@ -8,7 +8,7 @@
     var excludeBillId = isEdit ? Model.Id.ToString() : "";
 }
 
-<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="poBillForm">
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="poBillForm" class="po-bill-form">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     @if (isLocked)
@@ -16,7 +16,12 @@
         <div class="alert alert-info">This bill is @Model.Status and can no longer be edited.</div>
     }
     <fieldset @(isLocked ? "disabled" : null)>
-        <div class="row col-lg-10">
+        <section class="po-bill-details-card">
+            <div class="po-bill-section-title">
+                <span class="po-bill-section-icon"><i class="bi bi-file-earmark-text"></i></span>
+                <div><h5>Bill Information</h5><p>Select the source order and enter the supplier invoice details.</p></div>
+            </div>
+        <div class="row g-3">
             @if (isEdit)
             {
                 <div class="mb-3 col-md-3">
@@ -63,10 +68,14 @@
                 <span asp-validation-for="Remarks" class="text-danger"></span>
             </div>
         </div>
+        </section>
 
-        <h5 class="mt-2">Bill Lines</h5>
-        <p class="text-muted small mb-2">Prices, discount, VAT and tax come from the PO. Enter the quantity to bill on this bill; leave 0 to skip a line.</p>
-        <div class="table-responsive">
+        <section class="po-bill-lines-card">
+        <div class="po-bill-section-title">
+            <span class="po-bill-section-icon"><i class="bi bi-list-check"></i></span>
+            <div><h5>Bill Lines</h5><p>Enter the quantity being invoiced. Pricing and taxes are inherited from the purchase order.</p></div>
+        </div>
+        <div class="table-responsive po-bill-lines-table">
             <table class="table table-sm align-middle" id="billLinesTable">
                 <thead>
                     <tr>
@@ -93,14 +102,15 @@
                 </tfoot>
             </table>
         </div>
+        </section>
     </fieldset>
 
-    <div>
+    <div class="po-bill-form-actions">
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
         @if (!isLocked)
         {
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i> @(isEdit ? "Save Changes" : "Create Bill")</button>
         }
-        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
     </div>
 </form>
 

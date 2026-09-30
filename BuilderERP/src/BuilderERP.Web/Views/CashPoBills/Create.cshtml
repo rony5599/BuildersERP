@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
 }
 
-<h1 class="h3 mb-4">New Cash PO Bill</h1>
+<div class="procurement-form-header po-bill-create-header">
+    <a asp-action="Index" class="procurement-back" aria-label="Back to cash PO bills"><i class="bi bi-arrow-left"></i></a>
+    <div>
+        <div class="page-eyebrow"><i class="bi bi-cash-coin"></i> Cash Procurement</div>
+        <h1>New Cash PO Bill</h1>
+        <p>Record a cash memo against delivered cash purchase-order quantities.</p>
+    </div>
+</div>
 
 <partial name="_Form" model="Model" />

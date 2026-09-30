@@ -1,0 +1,162 @@
+.procurement-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:1.5rem; margin-bottom:1.5rem; }
+.procurement-page-header h1 { margin:.15rem 0 .25rem; font-size:1.75rem; letter-spacing:-.025em; }
+.procurement-page-header p { margin:0; color:var(--gray-500); }
+.page-eyebrow { color:var(--brand-500); font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.page-eyebrow i { margin-right:.3rem; }
+.procurement-primary-action { display:inline-flex; align-items:center; gap:.5rem; padding:.65rem 1rem; box-shadow:0 4px 10px rgba(70,95,255,.18); }
+.procurement-filter-card { margin-bottom:1.5rem; padding:1.15rem 1.25rem; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.procurement-filter-card .form-label { color:var(--gray-600); font-weight:600; }
+.procurement-filter-card .form-control,.procurement-filter-card .form-select { min-height:42px; border-color:var(--gray-300); }
+.procurement-table-card { overflow:hidden; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.procurement-table { vertical-align:middle; }
+.procurement-table thead th { padding:.85rem 1rem; color:var(--gray-500); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:.72rem; font-weight:700; letter-spacing:.045em; text-transform:uppercase; white-space:nowrap; }
+.procurement-table tbody td { padding:.9rem 1rem; border-color:var(--gray-100); color:var(--gray-600); }
+.procurement-table tbody tr:hover { background:var(--brand-25); }
+.document-number { display:block; color:var(--gray-900); font-weight:650; text-decoration:none; white-space:nowrap; }
+.document-number:hover { color:var(--brand-500); }
+.document-subtitle { display:block; max-width:190px; margin-top:.15rem; color:var(--gray-400); font-size:.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.amount-cell { color:var(--gray-900)!important; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
+.reference-chip { display:inline-block; padding:.2rem .5rem; color:var(--gray-600); background:var(--gray-100); border-radius:.35rem; font-size:.8rem; }
+.procurement-status { display:inline-flex; align-items:center; gap:.38rem; padding:.3rem .6rem; border-radius:999px; font-size:.75rem; font-weight:600; white-space:nowrap; }
+.procurement-status .badge-dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+.status-neutral { color:var(--gray-600); background:var(--gray-100); }
+.status-warning { color:var(--warning-600); background:var(--warning-50); }
+.status-success { color:var(--success-600); background:var(--success-50); }
+.status-danger { color:var(--error-600); background:var(--error-50); }
+.status-info { color:var(--brand-600); background:var(--brand-50); }
+.procurement-actions { display:flex; justify-content:flex-end; gap:.35rem; white-space:nowrap; }
+.procurement-actions .btn { width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; padding:0; border:1px solid var(--gray-200); background:#fff; }
+.procurement-actions .btn:hover { border-color:var(--brand-200); background:var(--brand-50); color:var(--brand-600); }
+.procurement-empty { padding:3.5rem 1rem!important; text-align:center; }
+.procurement-empty>i { display:block; margin-bottom:.6rem; color:var(--gray-300); font-size:2rem; }
+.procurement-empty>strong,.procurement-empty>span { display:block; }
+.procurement-empty>strong { color:var(--gray-700); }
+.procurement-empty>span { margin-top:.2rem; color:var(--gray-400); font-size:.85rem; }
+.procurement-pagination { padding:.85rem 1rem; border-top:1px solid var(--gray-100); }
+@media (max-width:767.98px) { .procurement-page-header { align-items:stretch; flex-direction:column; } .procurement-page-header .procurement-primary-action { justify-content:center; } }
+
+/* Create and edit forms */
+.procurement-form-header { display:flex; align-items:flex-start; gap:1rem; margin-bottom:1.5rem; }
+.procurement-form-header h1 { margin:.15rem 0 .25rem; font-size:1.75rem; letter-spacing:-.025em; }
+.procurement-form-header p { margin:0; color:var(--gray-500); }
+.procurement-back { display:inline-flex; flex:0 0 40px; align-items:center; justify-content:center; width:40px; height:40px; margin-top:.15rem; color:var(--gray-600); background:#fff; border:1px solid var(--gray-200); border-radius:.65rem; text-decoration:none; }
+.procurement-back:hover { color:var(--brand-600); background:var(--brand-50); border-color:var(--brand-200); }
+.procurement-form { max-width:1280px; }
+.procurement-form-card { margin:0 0 1.5rem; padding:1.5rem 1.25rem .5rem; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.procurement-form-card>div { margin-bottom:1rem!important; }
+.procurement-form-card .form-label { margin-bottom:.4rem; color:var(--gray-700); font-size:.82rem; font-weight:600; }
+.procurement-form-card .form-control,.procurement-form-card .form-select { min-height:42px; border-color:var(--gray-300); }
+.procurement-form-card textarea.form-control { min-height:84px; }
+.procurement-section-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin:0 0 .75rem; }
+.procurement-section-heading h5 { margin:0 0 .2rem; }
+.procurement-section-heading p { margin:0; color:var(--gray-500); font-size:.85rem; }
+.procurement-section-heading .btn { display:inline-flex; align-items:center; gap:.4rem; white-space:nowrap; }
+.procurement-lines { min-height:400px; margin-bottom:1.25rem; overflow-x:auto; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.procurement-lines table { min-width:850px; margin:0; vertical-align:middle; }
+.procurement-lines thead th { padding:.75rem .8rem; color:var(--gray-500); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; }
+.procurement-lines tbody td { padding:.7rem .8rem; border-color:var(--gray-100); }
+.procurement-lines .form-control,.procurement-lines .form-select { border-color:var(--gray-300); }
+.procurement-lines .multicolumn-dropdown-wrapper,
+.procurement-lines .multicolumn-dropdown-container { z-index:20; }
+.procurement-lines .multicolumn-dropdown-menu { z-index:1050; max-height:300px; box-shadow:0 10px 25px rgba(16,24,40,.14); }
+.procurement-lines .multicolumn-dropdown-items { max-height:250px; }
+.procurement-lines [data-remove-row] { width:34px; height:34px; overflow:hidden; color:transparent; position:relative; }
+.procurement-lines [data-remove-row]::after { content:"\F78A"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--error-600); font-family:"bootstrap-icons"; }
+.procurement-form-actions { display:flex; justify-content:flex-end; gap:.65rem; padding:1rem 0 2rem; }
+.procurement-form-actions .btn { min-width:125px; padding:.65rem 1rem; }
+@media (max-width:767.98px) { .procurement-section-heading { align-items:flex-start; flex-direction:column; } .procurement-form-card { padding:1.15rem .9rem .25rem; } .procurement-form-actions { position:sticky; bottom:0; z-index:10; margin:0 -.5rem; padding:.75rem; background:rgba(249,250,251,.96); border-top:1px solid var(--gray-200); } .procurement-form-actions .btn { flex:1; min-width:0; } }
+
+/* Shared procurement and cash workflow modules */
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > .d-flex:first-child {
+  align-items:flex-end!important; min-height:72px; margin-bottom:1.5rem!important;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > .d-flex:first-child h1,
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > h1:first-of-type {
+  margin:0!important; font-size:1.75rem!important; letter-spacing:-.025em;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > .d-flex:first-child h1::before,
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > h1:first-of-type::before {
+  content:"Procurement"; display:block; margin-bottom:.25rem; color:var(--brand-500); font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > .d-flex:first-child > .btn,
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > .d-flex:first-child > a.btn {
+  padding:.65rem 1rem; box-shadow:0 4px 10px rgba(70,95,255,.15);
+}
+
+/* Existing filter and result cards */
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .card {
+  border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); overflow:visible;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .card > .table,
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .table-responsive > .table {
+  vertical-align:middle;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .table thead th {
+  padding:.82rem 1rem; color:var(--gray-500); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:.72rem; font-weight:700; letter-spacing:.045em; text-transform:uppercase; white-space:nowrap;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .table tbody td {
+  padding:.85rem 1rem; border-color:var(--gray-100);
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .table-striped > tbody > tr:nth-of-type(odd) > * { --bs-table-accent-bg:transparent; }
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .table-hover > tbody > tr:hover > * { --bs-table-accent-bg:var(--brand-25); }
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) .grid-search-form .form-label,
+:is(.controller-supplierledger,.controller-requesterledger) form .form-label { color:var(--gray-600); font-weight:600; }
+
+/* Existing create/edit forms */
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-cashpobills,.controller-cashdisbursements) > h1:first-of-type { margin-bottom:1.5rem!important; }
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-supplierpayments,.controller-cashdisbursements) > form > .row.col-md-8,
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-supplierpayments,.controller-cashdisbursements) > form > .row:not(.detail-row) {
+  width:100%; max-width:1280px; margin:0 0 1.5rem; padding:1.5rem 1.25rem .5rem; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card);
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-supplierpayments,.controller-cashdisbursements) > form > h5 {
+  margin:1.75rem 0 .75rem!important;
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) > form > table[id$="-details-table"] {
+  display:block; min-height:400px; margin-bottom:1rem; overflow-x:auto; background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card);
+}
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) > form > table[id$="-details-table"] thead,
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) > form > table[id$="-details-table"] tbody { display:table; width:100%; min-width:850px; table-layout:fixed; }
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) .multicolumn-dropdown-menu { z-index:1050; max-height:300px; box-shadow:0 10px 25px rgba(16,24,40,.14); }
+:is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) .multicolumn-dropdown-items { max-height:250px; }
+
+/* Bill forms already use cards; refine their hierarchy */
+:is(.controller-pobills,.controller-cashpobills) form .card { margin-bottom:1.25rem!important; }
+:is(.controller-pobills,.controller-cashpobills) form .card-header { padding:.85rem 1.15rem; color:var(--gray-800); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-weight:600; }
+:is(.controller-pobills,.controller-cashpobills) form .card-body { padding:1.25rem; }
+
+@media (max-width:767.98px) {
+  :is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-pobills,.controller-supplierpayments,.controller-supplierledger,.controller-cashpobills,.controller-cashdisbursements,.controller-requesterledger) > .d-flex:first-child { align-items:stretch!important; flex-direction:column; }
+  :is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns,.controller-supplierpayments,.controller-cashdisbursements) > form > .row.col-md-8 { padding:1.15rem .9rem .25rem; }
+}
+
+/* PO bill create/edit */
+.po-bill-create-header { margin-bottom:1.5rem; }
+.po-bill-form { max-width:1280px; }
+.po-bill-form fieldset { display:grid; gap:1.25rem; }
+.po-bill-details-card,.po-bill-lines-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.po-bill-details-card { padding:1.35rem 1.25rem .35rem; }
+.po-bill-section-title { display:flex; align-items:flex-start; gap:.75rem; margin-bottom:1.25rem; }
+.po-bill-section-title h5 { margin:0 0 .18rem; font-size:1rem; }
+.po-bill-section-title p { margin:0; color:var(--gray-500); font-size:.84rem; }
+.po-bill-section-icon { display:inline-flex; flex:0 0 36px; align-items:center; justify-content:center; width:36px; height:36px; color:var(--brand-600); background:var(--brand-50); border-radius:.6rem; }
+.po-bill-details-card .form-label { margin-bottom:.4rem; color:var(--gray-700); font-size:.82rem; font-weight:600; }
+.po-bill-details-card .form-control,.po-bill-details-card .form-select { min-height:42px; border-color:var(--gray-300); }
+.po-bill-details-card textarea.form-control { min-height:76px; }
+.po-bill-lines-card { overflow:hidden; }
+.po-bill-lines-card .po-bill-section-title { margin:0; padding:1.15rem 1.25rem; border-bottom:1px solid var(--gray-200); }
+.po-bill-lines-table { min-height:230px; }
+.po-bill-lines-table .table { min-width:1050px; margin:0; }
+.po-bill-lines-table .table thead th { padding:.75rem .85rem; }
+.po-bill-lines-table .table tbody td { padding:.75rem .85rem; }
+.po-bill-lines-table .table tbody td:first-child { color:var(--gray-800); font-weight:600; }
+.po-bill-lines-table .table tbody td:not(:first-child),.po-bill-lines-table .table tfoot th { font-variant-numeric:tabular-nums; }
+.po-bill-lines-table .bill-qty { min-width:100px; border-color:var(--brand-200); background:var(--brand-25); text-align:right; font-weight:600; }
+.po-bill-lines-table .bill-qty:focus { background:#fff; }
+.po-bill-lines-table tfoot th { padding:1rem .85rem; color:var(--gray-900); background:var(--gray-50); border-top:1px solid var(--gray-200); font-size:.9rem; }
+.po-bill-lines-table #billTotal { color:var(--brand-600); font-size:1.05rem; }
+.cash-po-bill-form .multicolumn-dropdown-container { z-index:30; }
+.cash-po-bill-form .multicolumn-dropdown-menu { z-index:1060; max-height:300px; box-shadow:0 10px 25px rgba(16,24,40,.14); }
+.cash-po-bill-form .multicolumn-dropdown-items { max-height:250px; }
+.po-bill-form-actions { display:flex; justify-content:flex-end; gap:.65rem; padding:.25rem 0 2rem; }
+.po-bill-form-actions .btn { min-width:130px; padding:.65rem 1rem; }
+@media (max-width:767.98px) { .po-bill-details-card { padding:1.1rem .9rem .2rem; } .po-bill-lines-card .po-bill-section-title { padding:1rem; } .po-bill-form-actions { position:sticky; bottom:0; z-index:20; margin:0 -.5rem; padding:.75rem; background:rgba(249,250,251,.96); border-top:1px solid var(--gray-200); } .po-bill-form-actions .btn { flex:1; min-width:0; } }
