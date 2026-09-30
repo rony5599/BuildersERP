@@ -8,6 +8,20 @@
     var excludeBillId = isEdit ? Model.Id.ToString() : "";
 }
 
+<style>
+    #purchaseOrderId-menu .multicolumn-dropdown-column:nth-child(1) {
+        flex: 0 0 150px;
+    }
+
+    #purchaseOrderId-menu .multicolumn-dropdown-column:nth-child(2) {
+        flex: 2;
+    }
+
+    #purchaseOrderId-menu .multicolumn-dropdown-column:nth-child(3) {
+        flex: 1.25;
+    }
+</style>
+
 <form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="poBillForm" class="po-bill-form">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -38,9 +52,39 @@
                 }
                 else
                 {
-                    <select asp-for="PurchaseOrderId" id="purchaseOrderId" asp-items="@((List<SelectListItem>)ViewBag.PurchaseOrders)" class="form-select">
-                        <option value="">-- Select PO (PO # | Supplier | Project) --</option>
-                    </select>
+                    <div class="multicolumn-dropdown-wrapper">
+                        <div class="multicolumn-dropdown-container" id="purchaseOrderId-container">
+                            <input type="hidden" asp-for="PurchaseOrderId" id="purchaseOrderId" />
+                            <div class="multicolumn-dropdown-trigger">
+                                <input type="text"
+                                       class="multicolumn-dropdown-filter form-control"
+                                       placeholder="-- Select PO (PO # | Supplier | Project) --"
+                                       autocomplete="off"
+                                       id="purchaseOrderId-filter" />
+                                <span class="multicolumn-dropdown-icon">
+                                    <i class="bi bi-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div class="multicolumn-dropdown-menu" id="purchaseOrderId-menu" style="display: none;">
+                                <div class="multicolumn-dropdown-header">
+                                    <div class="multicolumn-dropdown-column">PO #</div>
+                                    <div class="multicolumn-dropdown-column">Supplier</div>
+                                    <div class="multicolumn-dropdown-column">Project</div>
+                                </div>
+                                <div class="multicolumn-dropdown-items">
+                                    @foreach (var order in (List<SelectListItem>)ViewBag.PurchaseOrders)
+                                    {
+                                        var parts = order.Text?.Split(" | ") ?? new[] { "", "", "" };
+                                        <div class="multicolumn-dropdown-item" data-value="@order.Value">
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0].Trim() : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1].Trim() : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2].Trim() : "")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
                 <span asp-validation-for="PurchaseOrderId" class="text-danger"></span>
             </div>
@@ -114,8 +158,11 @@
     </div>
 </form>
 
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('purchaseOrderId-container');
+
         var form = document.getElementById('poBillForm');
         var select = document.getElementById('purchaseOrderId');
         var tbody = document.querySelector('#billLinesTable tbody');
