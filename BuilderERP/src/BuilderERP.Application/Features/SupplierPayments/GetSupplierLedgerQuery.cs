@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.SupplierPayments;
 
-public record GetSupplierLedgerQuery(long SupplierId, DateTime? DateFrom = null, DateTime? DateTo = null) : IRequest<SupplierLedgerDto?>;
+public record GetSupplierLedgerQuery(long SupplierId, DateTime? DateFrom = null, DateTime? DateTo = null, SupplierLedgerSource Source = SupplierLedgerSource.All) : IRequest<SupplierLedgerDto?>;
 
-// Computed live from approved PO bills (credit), approved/completed purchase returns (debit)
+// Computed live from approved PO and EWO bills (credit), approved/completed purchase returns (debit)
 // and supplier payments (debit); nothing is stored, so it can never drift from the source documents.
+// Source narrows it to the PO side (bills, returns, their payments) or the EWO side.
 public class GetSupplierLedgerQueryHandler : IRequestHandler<GetSupplierLedgerQuery, SupplierLedgerDto?>
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -32,29 +33,56 @@ public class GetSupplierLedgerQueryHandler : IRequestHandler<GetSupplierLedgerQu
         }
 
         var entries = new List<Entry>();
+        var includePo = request.Source != SupplierLedgerSource.Ewo;
+        var includeEwo = request.Source != SupplierLedgerSource.Po;
 
-        var bills = await _unitOfWork.Repository<PoBill>().Query()
-            .Where(b => b.IsActive && b.Status == PoBillStatus.Approved
-                        && b.PurchaseOrder.VendorQuotation.SupplierId == request.SupplierId)
-            .Select(b => new { b.Id, b.BillDate, b.BillNumber, b.SupplierInvoiceNumber, PO = b.PurchaseOrder.PONumber, b.TotalAmount })
-            .ToListAsync(cancellationToken);
-        entries.AddRange(bills.Select(b => new Entry(b.BillDate.Date, b.Id, "Bill", b.BillNumber,
-            string.IsNullOrWhiteSpace(b.SupplierInvoiceNumber) ? $"PO {b.PO}" : $"PO {b.PO} / Inv {b.SupplierInvoiceNumber}", 0, b.TotalAmount)));
+        if (includePo)
+        {
+            var bills = await _unitOfWork.Repository<PoBill>().Query()
+                .Where(b => b.IsActive && b.Status == PoBillStatus.Approved
+                            && b.PurchaseOrder.VendorQuotation.SupplierId == request.SupplierId)
+                .Select(b => new { b.Id, b.BillDate, b.BillNumber, b.SupplierInvoiceNumber, PO = b.PurchaseOrder.PONumber, b.TotalAmount })
+                .ToListAsync(cancellationToken);
+            entries.AddRange(bills.Select(b => new Entry(b.BillDate.Date, b.Id, "Bill", b.BillNumber,
+                string.IsNullOrWhiteSpace(b.SupplierInvoiceNumber) ? $"PO {b.PO}" : $"PO {b.PO} / Inv {b.SupplierInvoiceNumber}", 0, b.TotalAmount)));
 
-        var returns = await _unitOfWork.Repository<PurchaseReturn>().Query()
-            .Where(r => r.IsActive
-                        && (r.Status == PurchaseReturnStatus.Approved || r.Status == PurchaseReturnStatus.Completed)
-                        && r.GoodsReceive.PurchaseOrder != null
-                        && r.GoodsReceive.PurchaseOrder.VendorQuotation.SupplierId == request.SupplierId)
-            .Select(r => new { r.Id, r.ReturnDate, r.ReturnNumber, PO = r.GoodsReceive.PurchaseOrder!.PONumber, r.ReturnAmount })
-            .ToListAsync(cancellationToken);
-        entries.AddRange(returns.Select(r => new Entry(r.ReturnDate.Date, r.Id, "Purchase Return", r.ReturnNumber, $"PO {r.PO}", r.ReturnAmount, 0)));
+            var returns = await _unitOfWork.Repository<PurchaseReturn>().Query()
+                .Where(r => r.IsActive
+                            && (r.Status == PurchaseReturnStatus.Approved || r.Status == PurchaseReturnStatus.Completed)
+                            && r.GoodsReceive.PurchaseOrder != null
+                            && r.GoodsReceive.PurchaseOrder.VendorQuotation.SupplierId == request.SupplierId)
+                .Select(r => new { r.Id, r.ReturnDate, r.ReturnNumber, PO = r.GoodsReceive.PurchaseOrder!.PONumber, r.ReturnAmount })
+                .ToListAsync(cancellationToken);
+            entries.AddRange(returns.Select(r => new Entry(r.ReturnDate.Date, r.Id, "Purchase Return", r.ReturnNumber, $"PO {r.PO}", r.ReturnAmount, 0)));
+        }
+
+        if (includeEwo)
+        {
+            var ewoBills = await _unitOfWork.Repository<EwoBill>().Query()
+                .Where(b => b.IsActive && b.Status == PoBillStatus.Approved && b.SupplierId == request.SupplierId)
+                .Select(b => new
+                {
+                    b.Id, b.BillDate, b.BillNumber, b.ContractorBillNumber, WorkOrder = b.EngineerWorkOrder.WorkOrderNo, b.NetPayable,
+                    Heads = b.Heads.Select(h => h.HeadName + " " + h.ClaimPercent + "%").ToList()
+                })
+                .ToListAsync(cancellationToken);
+            entries.AddRange(ewoBills.Select(b => new Entry(b.BillDate.Date, b.Id, "EWO Bill", b.BillNumber,
+                $"EWO {b.WorkOrder}"
+                + (string.IsNullOrWhiteSpace(b.ContractorBillNumber) ? "" : $" / Contractor Bill {b.ContractorBillNumber}")
+                + (b.Heads.Count == 0 ? "" : $" / {string.Join(", ", b.Heads)}"), 0, b.NetPayable)));
+        }
 
         var payments = await _unitOfWork.Repository<SupplierPayment>().Query()
-            .Where(p => p.IsActive && p.SupplierId == request.SupplierId)
-            .Select(p => new { p.Id, p.PaymentDate, p.PaymentNumber, p.Method, p.ReferenceNumber, Bill = p.PoBill.BillNumber, p.Amount })
+            .Where(p => p.IsActive && p.SupplierId == request.SupplierId
+                        && ((includePo && p.PoBillId != null) || (includeEwo && p.EwoBillId != null)))
+            .Select(p => new
+            {
+                p.Id, p.PaymentDate, p.PaymentNumber, p.Method, p.ReferenceNumber, p.Amount,
+                IsEwo = p.EwoBillId != null,
+                Bill = p.PoBill != null ? p.PoBill.BillNumber : p.EwoBill!.BillNumber
+            })
             .ToListAsync(cancellationToken);
-        entries.AddRange(payments.Select(p => new Entry(p.PaymentDate.Date, p.Id, "Payment", p.PaymentNumber,
+        entries.AddRange(payments.Select(p => new Entry(p.PaymentDate.Date, p.Id, p.IsEwo ? "EWO Payment" : "Payment", p.PaymentNumber,
             $"Bill {p.Bill} / {p.Method}" + (string.IsNullOrWhiteSpace(p.ReferenceNumber) ? "" : $" / Ref {p.ReferenceNumber}"), p.Amount, 0)));
 
         var from = request.DateFrom?.Date;
@@ -66,7 +94,7 @@ public class GetSupplierLedgerQueryHandler : IRequestHandler<GetSupplierLedgerQu
 
         var inRange = entries
             .Where(e => (!from.HasValue || e.Date >= from.Value) && (!to.HasValue || e.Date <= to.Value))
-            .OrderBy(e => e.Date).ThenBy(e => e.Type == "Bill" ? 0 : 1).ThenBy(e => e.Order)
+            .OrderBy(e => e.Date).ThenBy(e => e.Type is "Bill" or "EWO Bill" ? 0 : 1).ThenBy(e => e.Order)
             .ToList();
 
         var ledger = new SupplierLedgerDto
@@ -77,6 +105,7 @@ public class GetSupplierLedgerQueryHandler : IRequestHandler<GetSupplierLedgerQu
             SupplierPhone = supplier.Phone,
             DateFrom = from,
             DateTo = to,
+            Source = request.Source,
             OpeningBalance = opening
         };
 

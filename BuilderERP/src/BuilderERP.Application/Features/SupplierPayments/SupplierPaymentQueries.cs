@@ -31,13 +31,14 @@ public class GetAllSupplierPaymentsQueryHandler : IRequestHandler<GetAllSupplier
     {
         var query = _unitOfWork.Repository<SupplierPayment>().Query()
             .Include(p => p.PoBill)
+            .Include(p => p.EwoBill)
             .Include(p => p.Supplier)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var term = request.Search.Trim();
-            query = query.Where(p => p.PaymentNumber.Contains(term) || p.PoBill.BillNumber.Contains(term) || p.Supplier.Name.Contains(term));
+            query = query.Where(p => p.PaymentNumber.Contains(term) || (p.PoBill != null && p.PoBill.BillNumber.Contains(term)) || (p.EwoBill != null && p.EwoBill.BillNumber.Contains(term)) || p.Supplier.Name.Contains(term));
         }
 
         if (request.DateFrom.HasValue)
@@ -90,15 +91,31 @@ public class GetPayableBillsQueryHandler : IRequestHandler<GetPayableBillsQuery,
             })
             .ToListAsync(cancellationToken);
 
-        var paid = await _unitOfWork.Repository<SupplierPayment>().Query()
+        bills.AddRange(await _unitOfWork.Repository<EwoBill>().Query()
+            .Where(b => b.IsActive && b.Status == PoBillStatus.Approved)
+            .OrderByDescending(b => b.BillDate)
+            .Select(b => new PayableBillDto
+            {
+                Id = b.Id,
+                IsEwoBill = true,
+                BillNumber = b.BillNumber,
+                PONumber = b.EngineerWorkOrder.WorkOrderNo,
+                SupplierName = b.Supplier.Name,
+                TotalAmount = b.NetPayable
+            })
+            .ToListAsync(cancellationToken));
+
+        var payments = await _unitOfWork.Repository<SupplierPayment>().Query()
             .Where(p => p.IsActive)
-            .GroupBy(p => p.PoBillId)
-            .Select(g => new { g.Key, Amount = g.Sum(x => x.Amount) })
-            .ToDictionaryAsync(x => x.Key, x => x.Amount, cancellationToken);
+            .GroupBy(p => new { p.PoBillId, p.EwoBillId })
+            .Select(g => new { g.Key.PoBillId, g.Key.EwoBillId, Amount = g.Sum(x => x.Amount) })
+            .ToListAsync(cancellationToken);
+        var paidPo = payments.Where(p => p.PoBillId != null).ToDictionary(p => p.PoBillId!.Value, p => p.Amount);
+        var paidEwo = payments.Where(p => p.EwoBillId != null).ToDictionary(p => p.EwoBillId!.Value, p => p.Amount);
 
         foreach (var bill in bills)
         {
-            paid.TryGetValue(bill.Id, out var amount);
+            (bill.IsEwoBill ? paidEwo : paidPo).TryGetValue(bill.Id, out var amount);
             bill.PaidAmount = amount;
         }
 

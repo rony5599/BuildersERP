@@ -80,6 +80,20 @@ Each of the cash pages (Cash Requisitions, Cash Purchase Orders, Cash Disburseme
 
 Steps 2–4 don't have to happen in a fixed order relative to each other — cash can be disbursed before or after the CPO is placed — but each one individually depends on the requisition being Approved, and a bill depends on its own CPO being Approved. Cash PO Bills have their own **Print** view (Accounts copy + Requester copy), separate from the ledger print-out.
 
+### Engineering Work Orders
+**EWO Requisitions → Engineer Work Orders → EWO Bills → Supplier Payments → Supplier Ledger.** An Engineer Work Order (EWO) sets the items and rates for a contractor (the "schedule of rates"). The contractor is paid in stages as the work progresses.
+
+1. **Payment Heads** are the stages the contractor is paid by, e.g. Vertical 18%, Internal 22%, RCC 15%, Roof 15%, Finishing 20%, Security 10%. They must total 100%. Enter them on the work order form. **Use standard split** fills in the six heads above. On an approved work order use the **Payment Heads** button. Heads can be changed until the first bill is raised; after that, revise the work order.
+2. **EWO Bill** (Engineering Work Orders → EWO Bills, or **New Bill** on the work order). Only the latest approved/active revision with payment heads can be billed. A bill has three parts:
+   - **Measurement**: the *total* quantity done so far on each item, not just since the last bill. It starts from the previous bill's measurement. Rates come from the work order, and a quantity can't exceed the work order quantity.
+   - **Heads claimed**: claim a whole head (**Full**) or any part of it (e.g. 9 = half of an 18% head). What earlier bills claimed is shown and can't be claimed again.
+   - **Additions / deductions** (optional): extra work or labour billed by the contractor, or AIT, VAT, advance adjustment, company-supplied materials and other charges billed to the contractor.
+3. **Calculation (cumulative):** *measured total × all heads claimed so far − amounts certified on earlier bills = certified on this bill*, then *+ additions − deductions = net payable*. Example: bill 1 measures 275,080 and claims Vertical + Internal (40%), so it pays 110,032. Bill 2 re-measures 290,000 and claims RCC + Roof. That gives 290,000 × 70% − 110,032 = 92,968, which includes the 5,968 catch-up on the heads already paid.
+4. Only one bill per work order can be **Draft** at a time. Once **Approved**, a bill is locked, can be paid, and appears in the supplier ledger. Only the latest bill of a work order can be deactivated, and only after its payments are voided.
+5. **Pay** the bill from Supplier Payments (EWO bills are listed under their own group), or with **Pay** on the EWO Bills grid. Partial payments are allowed.
+6. **Statement** (on the EWO Bills or Engineer Work Orders grid) shows one work order's position across all revisions: each head's claimed/remaining %, every bill with paid and outstanding amounts, and the value not yet billed. That value is the unclaimed heads, such as Security retention.
+7. **Supplier Ledger** includes approved EWO bills (credit, net payable) and their payments (debit), alongside PO bills. Use the **Source** filter (All / PO only / EWO only) to see one side. **EWO Supplier Ledger** in the menu opens it with EWO pre-selected. Use **All** for the supplier's true balance.
+
 ### Construction Project Management
 **Work Breakdown (WBS) / Gantt Chart → Milestones → BOQ → Daily Progress → Site Photos → Delay Analysis → Budget Lines / Budget vs Actual.** Plan and track construction execution: break the project into WBS tasks (viewable as a Gantt chart), track milestones, manage the Bill of Quantities, log daily site progress with photos, analyze delays, and monitor budget vs. actual spend.
 

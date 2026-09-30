@@ -406,7 +406,8 @@
                     </div>
                 }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">Engineering Work Orders<i class="bi bi-chevron-down nav-section-caret"></i></button>
@@ -418,6 +419,14 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView))
                         {
                             <li class="nav-item"><a asp-controller="EngineerWorkOrders" asp-action="Index" class="@NavClass("EngineerWorkOrders")"><i class="bi bi-file-earmark-ruled"></i> Engineer Work Orders</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
+                        {
+                            <li class="nav-item"><a asp-controller="EwoBills" asp-action="Index" class="@NavClass("EwoBills")"><i class="bi bi-receipt"></i> EWO Bills</a></li>
+                        }
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView))
+                        {
+                            <li class="nav-item"><a asp-controller="SupplierLedger" asp-action="Index" asp-route-source="Ewo" class="nav-link"><i class="bi bi-journal-text"></i> EWO Supplier Ledger</a></li>
                         }
                     </ul>
                     </div>

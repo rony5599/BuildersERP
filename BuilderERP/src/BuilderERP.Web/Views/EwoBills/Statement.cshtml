@@ -1,0 +1,149 @@
+@model BuilderERP.Application.DTOs.EwoStatementDto
+@using BuilderERP.Domain.Enums
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>EWO Statement @Model.WorkOrderNo</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; margin: 0; background: #e9ecef; }
+        .toolbar { padding: 12px 24px; background: #fff; border-bottom: 1px solid #dee2e6; }
+        .toolbar button { padding: 8px 16px; border-radius: 4px; border: 1px solid #0d6efd; background: #0d6efd; color: #fff; font-size: 14px; cursor: pointer; }
+        .sheet { max-width: 900px; margin: 24px auto; background: #fff; padding: 40px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+        .title { text-align: center; font-size: 24px; font-weight: 800; margin: 0; }
+        .subtitle { text-align: center; font-size: 12px; color: #555; }
+        .info { display: flex; justify-content: space-between; gap: 24px; margin-top: 20px; font-size: 12px; }
+        .info td { padding: 2px 12px 2px 0; }
+        .info td.label { font-weight: 700; }
+        .h-title { font-weight: 700; font-size: 13px; margin-top: 24px; }
+        table.items { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        table.items th { background: #0d6efd; color: #fff; text-align: left; padding: 6px 8px; font-size: 11px; }
+        table.items th.num, table.items td.num { text-align: right; }
+        table.items td { padding: 5px 8px; font-size: 11px; border-bottom: 1px solid #adb5bd; }
+        table.items tfoot td { font-weight: 700; }
+        .pending { color: #b35c00; font-weight: 600; }
+        .summary { margin-top: 20px; margin-left: auto; width: 360px; border-collapse: collapse; }
+        .summary td { padding: 4px 0; font-size: 12px; }
+        .summary td.value { text-align: right; }
+        .summary tr.grand td { border-top: 1px solid #333; font-weight: 800; font-size: 14px; }
+        .note { font-size: 10px; color: #666; margin-top: 12px; }
+        .audit-stamp { margin-top: 24px; font-size: 7px; color: #aaa; }
+        @@page { margin: 10mm; }
+        @@media print {
+            body { background: #fff; }
+            .toolbar { display: none; }
+            .sheet { box-shadow: none; margin: 0; max-width: none; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="window.print()">Print</button>
+    </div>
+    <div class="sheet">
+        <div class="title">WORK ORDER BILL STATEMENT</div>
+        <div class="subtitle">@Model.CompanyName</div>
+
+        <div class="info">
+            <table>
+                <tr><td class="label">Work Order :</td><td>@Model.WorkOrderNo</td></tr>
+                <tr><td class="label">Contractor :</td><td>@Model.SupplierName</td></tr>
+                <tr><td class="label">Project :</td><td>@Model.ProjectName</td></tr>
+            </table>
+            <table>
+                <tr><td class="label">Contract Value :</td><td>@Model.ContractAmount.ToString("N2")</td></tr>
+                <tr><td class="label">Latest Measured :</td><td>@Model.LatestMeasuredAmount.ToString("N2")</td></tr>
+                <tr><td class="label">Heads Claimed :</td><td>@Model.ClaimedPercent.ToString("0.##")%</td></tr>
+            </table>
+        </div>
+
+        <div class="h-title">Payment heads</div>
+        <table class="items">
+            <thead>
+                <tr>
+                    <th>Head</th>
+                    <th class="num">Head %</th>
+                    <th class="num">Claimed %</th>
+                    <th class="num">Remaining %</th>
+                    <th>Status</th>
+                    <th>Bills</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in Model.Heads)
+                {
+                    <tr>
+                        <td>@h.HeadName</td>
+                        <td class="num">@h.Percent.ToString("0.##")</td>
+                        <td class="num">@h.ClaimedPercent.ToString("0.##")</td>
+                        <td class="num">@h.RemainingPercent.ToString("0.##")</td>
+                        <td class="@(h.RemainingPercent > 0 ? "pending" : "")">@(h.ClaimedPercent == 0 ? "Pending" : h.RemainingPercent > 0 ? "Partly claimed" : "Claimed")</td>
+                        <td>@h.BillNumbers</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="h-title">Bills and payments</div>
+        <table class="items">
+            <thead>
+                <tr>
+                    <th>Bill #</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Heads</th>
+                    <th class="num">Measured</th>
+                    <th class="num">Net Payable</th>
+                    <th class="num">Paid</th>
+                    <th class="num">Outstanding</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.Bills)
+                {
+                    <tr>
+                        <td>@b.BillNumber</td>
+                        <td>@b.BillDate.ToString("dd-MMM-yyyy")</td>
+                        <td>@b.Status</td>
+                        <td>@b.HeadsSummary</td>
+                        <td class="num">@b.MeasuredAmount.ToString("N2")</td>
+                        <td class="num">@b.NetPayable.ToString("N2")</td>
+                        <td class="num">@b.PaidAmount.ToString("N2")</td>
+                        <td class="num">@(b.Status == PoBillStatus.Approved ? b.Outstanding.ToString("N2") : "-")</td>
+                    </tr>
+                }
+                @if (Model.Bills.Count == 0)
+                {
+                    <tr><td colspan="8">No bills yet.</td></tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="num">Total</td>
+                    <td class="num">@Model.TotalBilled.ToString("N2")</td>
+                    <td class="num">@Model.TotalPaid.ToString("N2")</td>
+                    <td class="num">@Model.Outstanding.ToString("N2")</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <table class="summary">
+            <tr><td>Total billed (net)</td><td class="value">@Model.TotalBilled.ToString("N2")</td></tr>
+            <tr><td>Total paid</td><td class="value">@Model.TotalPaid.ToString("N2")</td></tr>
+            <tr class="grand"><td>Outstanding on bills</td><td class="value">@Model.Outstanding.ToString("N2")</td></tr>
+            <tr><td>Not yet billed (unclaimed heads on latest measurement)</td><td class="value">@Model.UnclaimedAmount.ToString("N2")</td></tr>
+        </table>
+
+        @if (Model.Bills.Any(b => b.Status == PoBillStatus.Draft))
+        {
+            <div class="note">Draft bills are listed but are not payable and do not appear in the supplier ledger until approved.</div>
+        }
+
+        <div class="audit-stamp">Printed by @Model.PrintedBy on @Model.PrintedAt.ToString("dd-MMM-yyyy HH:mm")</div>
+    </div>
+</body>
+</html>

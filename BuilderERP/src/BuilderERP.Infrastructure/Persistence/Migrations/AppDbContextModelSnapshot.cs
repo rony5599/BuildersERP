@@ -2608,6 +2608,57 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.ToTable("EngineerWorkOrderDetails");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderPaymentHead", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EngineerWorkOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HeadName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Percent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EngineerWorkOrderId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.ToTable("EngineerWorkOrderPaymentHeads");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", b =>
                 {
                     b.Property<long>("Id")
@@ -2859,6 +2910,283 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("EquipmentRentals");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBill", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("AdditionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("BillDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("BillNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("CertifiedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ContractorBillNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CumulativeDue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CumulativePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("DeductionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long>("EngineerWorkOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MeasuredAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MrrNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("NetPayable")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PreviouslyCertified")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("RootWorkOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillNumber");
+
+                    b.HasIndex("EngineerWorkOrderId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("RootWorkOrderId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("EwoBills");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBillAdjustment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<long>("EwoBillId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EwoBillId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.ToTable("EwoBillAdjustments");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBillDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EngineerWorkOrderDetailId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EwoBillId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("MaterialId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("MeasuredQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Rate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UnitOfMeasure")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EngineerWorkOrderDetailId");
+
+                    b.HasIndex("EwoBillId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("EwoBillDetails");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBillHead", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("ClaimPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EngineerWorkOrderPaymentHeadId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EwoBillId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HeadName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("HeadPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EngineerWorkOrderPaymentHeadId");
+
+                    b.HasIndex("EwoBillId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.ToTable("EwoBillHeads");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.FlatHandover", b =>
@@ -7575,6 +7903,9 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("EwoBillId")
+                        .HasColumnType("bigint");
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
@@ -7600,7 +7931,7 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<long>("PoBillId")
+                    b.Property<long?>("PoBillId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("ReferenceNumber")
@@ -7614,6 +7945,8 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EwoBillId");
+
                     b.HasIndex("Guid")
                         .IsUnique();
 
@@ -7623,7 +7956,10 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("SupplierPayments");
+                    b.ToTable("SupplierPayments", t =>
+                        {
+                            t.HasCheckConstraint("CK_SupplierPayments_OneBill", "([PoBillId] IS NOT NULL AND [EwoBillId] IS NULL) OR ([PoBillId] IS NULL AND [EwoBillId] IS NOT NULL)");
+                        });
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.TestReport", b =>
@@ -9150,6 +9486,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Material");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderPaymentHead", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "EngineerWorkOrder")
+                        .WithMany("PaymentHeads")
+                        .HasForeignKey("EngineerWorkOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrder");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", b =>
                 {
                     b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
@@ -9204,6 +9551,90 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBill", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "EngineerWorkOrder")
+                        .WithMany()
+                        .HasForeignKey("EngineerWorkOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrder", "RootWorkOrder")
+                        .WithMany()
+                        .HasForeignKey("RootWorkOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrder");
+
+                    b.Navigation("RootWorkOrder");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBillAdjustment", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EwoBill", "EwoBill")
+                        .WithMany("Adjustments")
+                        .HasForeignKey("EwoBillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EwoBill");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBillDetail", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrderDetail", "EngineerWorkOrderDetail")
+                        .WithMany()
+                        .HasForeignKey("EngineerWorkOrderDetailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.EwoBill", "EwoBill")
+                        .WithMany("Details")
+                        .HasForeignKey("EwoBillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrderDetail");
+
+                    b.Navigation("EwoBill");
+
+                    b.Navigation("Material");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBillHead", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.EngineerWorkOrderPaymentHead", "EngineerWorkOrderPaymentHead")
+                        .WithMany()
+                        .HasForeignKey("EngineerWorkOrderPaymentHeadId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.EwoBill", "EwoBill")
+                        .WithMany("Heads")
+                        .HasForeignKey("EwoBillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EngineerWorkOrderPaymentHead");
+
+                    b.Navigation("EwoBill");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.FlatHandover", b =>
@@ -10272,17 +10703,23 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.SupplierPayment", b =>
                 {
+                    b.HasOne("BuilderERP.Domain.Entities.EwoBill", "EwoBill")
+                        .WithMany()
+                        .HasForeignKey("EwoBillId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BuilderERP.Domain.Entities.PoBill", "PoBill")
                         .WithMany()
                         .HasForeignKey("PoBillId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BuilderERP.Domain.Entities.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("EwoBill");
 
                     b.Navigation("PoBill");
 
@@ -10565,12 +11002,23 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Details");
 
+                    b.Navigation("PaymentHeads");
+
                     b.Navigation("Revisions");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.EngineerWorkOrderRequisition", b =>
                 {
                     b.Navigation("Details");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.EwoBill", b =>
+                {
+                    b.Navigation("Adjustments");
+
+                    b.Navigation("Details");
+
+                    b.Navigation("Heads");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Floor", b =>

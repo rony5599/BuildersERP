@@ -12,6 +12,7 @@ public class UpdateEngineerWorkOrderDtoValidator : AbstractValidator<UpdateEngin
         RuleFor(x => x.EngineerWorkOrderRequisitionId).NotEmpty();
         RuleFor(x => x.SupplierId).NotEmpty();
         RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.PaymentHeads).ValidPaymentHeads();
         RuleFor(x => x.Details).NotEmpty().WithMessage("At least one line item is required.");
         RuleForEach(x => x.Details).ChildRules(detail =>
         {

@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
@@ -7,7 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrders;
 
-public record CreateEngineerWorkOrderRevisionCommand(long PreviousWorkOrderId, CreateEngineerWorkOrderDto Dto) : IRequest<CreateEngineerWorkOrderRevisionResult>;
+public record CreateEngineerWorkOrderRevisionCommand(long PreviousWorkOrderId, CreateEngineerWorkOrderDto Dto) : IRequest<CreateEngineerWorkOrderRevisionResult>, IInvalidatesFeatures
+{
+    // Payment heads and revisions feed the EWO bill form and statement (cached under EwoBills).
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["EwoBills"];
+}
 
 public enum CreateEngineerWorkOrderRevisionResult
 {
@@ -87,6 +92,10 @@ public class CreateEngineerWorkOrderRevisionCommandHandler : IRequestHandler<Cre
         }
 
         revision.TotalAmount = totalAmount;
+        foreach (var head in EngineerWorkOrderPaymentHeads.ToEntities(request.Dto.PaymentHeads, revision.Id))
+        {
+            revision.PaymentHeads.Add(head);
+        }
 
         previous.IsLatestRevision = false;
         previous.Status = EngineerWorkOrderStatus.Superseded;

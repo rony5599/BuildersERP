@@ -114,6 +114,9 @@ public static class PermissionNames
     public const string EngineerWorkOrderView = "EngineerWorkOrder.View";
     public const string EngineerWorkOrderManage = "EngineerWorkOrder.Manage";
 
+    public const string EwoBillView = "EwoBill.View";
+    public const string EwoBillManage = "EwoBill.Manage";
+
     public const string GoodsReceiveView = "GoodsReceive.View";
     public const string GoodsReceiveManage = "GoodsReceive.Manage";
 
@@ -371,6 +374,7 @@ public static class PermissionNames
         (CashPurchaseOrderView, "CashPurchaseOrder"), (CashPurchaseOrderManage, "CashPurchaseOrder"),
         (EngineerWorkOrderRequisitionView, "EngineerWorkOrderRequisition"), (EngineerWorkOrderRequisitionManage, "EngineerWorkOrderRequisition"),
         (EngineerWorkOrderView, "EngineerWorkOrder"), (EngineerWorkOrderManage, "EngineerWorkOrder"),
+        (EwoBillView, "EwoBill"), (EwoBillManage, "EwoBill"),
         (GoodsReceiveView, "GoodsReceive"), (GoodsReceiveManage, "GoodsReceive"),
         (PurchaseReturnView, "PurchaseReturn"), (PurchaseReturnManage, "PurchaseReturn"),
         (PoBillView, "PoBill"), (PoBillManage, "PoBill"),
@@ -494,6 +498,7 @@ public static class PermissionNames
         CashPurchaseOrderView, CashPurchaseOrderManage,
         EngineerWorkOrderRequisitionView, EngineerWorkOrderRequisitionManage,
         EngineerWorkOrderView, EngineerWorkOrderManage,
+        EwoBillView, EwoBillManage,
         GoodsReceiveView, GoodsReceiveManage,
         PurchaseReturnView, PurchaseReturnManage,
         PoBillView, PoBillManage,

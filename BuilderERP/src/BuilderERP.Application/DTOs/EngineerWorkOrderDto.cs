@@ -24,6 +24,13 @@ public class EngineerWorkOrderDto
     public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<EngineerWorkOrderDetailDto> Details { get; set; } = new();
+    public List<EngineerWorkOrderPaymentHeadDto> PaymentHeads { get; set; } = new();
+}
+
+public class EngineerWorkOrderPaymentHeadDto
+{
+    public string HeadName { get; set; } = string.Empty;
+    public decimal Percent { get; set; }
 }
 
 public class EngineerWorkOrderDetailDto
@@ -56,6 +63,7 @@ public class CreateEngineerWorkOrderDto
     public string? TermsAndCondition { get; set; }
     public EngineerWorkOrderStatus Status { get; set; } = EngineerWorkOrderStatus.Draft;
     public List<CreateEngineerWorkOrderDetailDto> Details { get; set; } = new();
+    public List<EngineerWorkOrderPaymentHeadDto> PaymentHeads { get; set; } = new();
 }
 
 public class UpdateEngineerWorkOrderDto
@@ -67,6 +75,14 @@ public class UpdateEngineerWorkOrderDto
     public string? TermsAndCondition { get; set; }
     public EngineerWorkOrderStatus Status { get; set; }
     public List<CreateEngineerWorkOrderDetailDto> Details { get; set; } = new();
+    public List<EngineerWorkOrderPaymentHeadDto> PaymentHeads { get; set; } = new();
+}
+
+// Payment heads can still be changed on an approved work order until its first bill is raised.
+public class SaveEngineerWorkOrderPaymentHeadsDto
+{
+    public long EngineerWorkOrderId { get; set; }
+    public List<EngineerWorkOrderPaymentHeadDto> PaymentHeads { get; set; } = new();
 }
 
 public class EngineerWorkOrderPrintDto
@@ -93,6 +109,7 @@ public class EngineerWorkOrderPrintDto
     public DateTime PrintedAt { get; set; }
 
     public List<EngineerWorkOrderPrintLineDto> Lines { get; set; } = new();
+    public List<EngineerWorkOrderPaymentHeadDto> PaymentHeads { get; set; } = new();
 
     public decimal Subtotal => Lines.Sum(l => l.Amount);
     public decimal Total => Subtotal;

@@ -1,0 +1,23 @@
+@model BuilderERP.Application.DTOs.SaveEngineerWorkOrderPaymentHeadsDto
+@{
+    var workOrder = (BuilderERP.Application.DTOs.EngineerWorkOrderDto)ViewBag.WorkOrder;
+    ViewData["Title"] = "Payment Heads";
+}
+
+<h1 class="h3 mb-1">Payment Heads</h1>
+<p class="text-muted mb-4">@workOrder.WorkOrderNo | @workOrder.SupplierName | @workOrder.ProjectName | Contract value @workOrder.TotalAmount.ToString("N2")</p>
+
+<form asp-action="PaymentHeads" method="post">
+    <input type="hidden" asp-for="EngineerWorkOrderId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <p class="small">Payment heads can be changed until the first bill is raised against this work order. After that, create a revision to change them.</p>
+
+    <partial name="_PaymentHeadsTable" model="Model.PaymentHeads" />
+
+    <div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<partial name="_DetailLineItemsScripts" />

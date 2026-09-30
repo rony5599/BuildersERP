@@ -42,6 +42,10 @@
             <img src="~/uploads/padlogo/padlogo.png" class="company-logo" alt="logo" />
             <div class="title">SUPPLIER LEDGER</div>
             <div class="subtitle">@Model.CompanyName</div>
+            @if (Model.Source != BuilderERP.Application.DTOs.SupplierLedgerSource.All)
+            {
+                <div class="subtitle"><strong>@(Model.Source == BuilderERP.Application.DTOs.SupplierLedgerSource.Po ? "PO" : "EWO") transactions only</strong></div>
+            }
             <div class="subtitle">
                 @if (Model.DateFrom.HasValue || Model.DateTo.HasValue)
                 {

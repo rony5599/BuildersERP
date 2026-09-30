@@ -1,0 +1,384 @@
+@model BuilderERP.Application.DTOs.SaveEwoBillDto
+@using BuilderERP.Domain.Enums
+@{
+    var isEdit = Model.Id > 0;
+    var isLocked = ViewBag.IsLocked as bool? ?? false;
+    var initialQtyJson = System.Text.Json.JsonSerializer.Serialize((Dictionary<string, decimal>)ViewBag.InitialQuantities);
+    var initialClaimJson = System.Text.Json.JsonSerializer.Serialize((Dictionary<string, decimal>)ViewBag.InitialClaims);
+    var adjustmentsJson = System.Text.Json.JsonSerializer.Serialize(Model.Adjustments.Select(a => new { type = a.Type.ToString(), a.Description, a.Amount }));
+    var hasPostedLines = Model.Details.Count > 0;
+    var excludeBillId = isEdit ? Model.Id.ToString() : "";
+}
+
+<style>
+    #workOrderId-menu .multicolumn-dropdown-column:nth-child(1) { flex: 0 0 150px; }
+    .calc-table td { padding: 4px 8px; }
+    .calc-table tr.total td { border-top: 1px solid #adb5bd; font-weight: 700; }
+</style>
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="ewoBillForm">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    @if (isLocked)
+    {
+        <div class="alert alert-info">This bill is @Model.Status and can no longer be edited.</div>
+    }
+    <div class="alert alert-warning d-none" id="pendingDraftAlert"></div>
+    <fieldset @(isLocked ? "disabled" : null)>
+        <div class="row col-lg-10">
+            @if (isEdit)
+            {
+                <div class="mb-3 col-md-3">
+                    <label class="form-label">Bill #</label>
+                    <input class="form-control" value="@Model.BillNumber" disabled />
+                </div>
+            }
+            <div class="mb-3 @(isEdit ? "col-md-9" : "col-md-12")">
+                <label asp-for="EngineerWorkOrderId" class="form-label">Approved Engineer Work Order (latest revision, with payment heads)</label>
+                @if (isEdit)
+                {
+                    <input type="hidden" asp-for="EngineerWorkOrderId" id="workOrderId" />
+                    <select asp-items="@((List<SelectListItem>)ViewBag.WorkOrders)" class="form-select" disabled></select>
+                }
+                else
+                {
+                    <div class="multicolumn-dropdown-wrapper">
+                        <div class="multicolumn-dropdown-container" id="workOrderId-container">
+                            <input type="hidden" asp-for="EngineerWorkOrderId" id="workOrderId" />
+                            <div class="multicolumn-dropdown-trigger">
+                                <input type="text"
+                                       class="multicolumn-dropdown-filter form-control"
+                                       placeholder="-- Select Work Order (EWO # | Supplier | Project) --"
+                                       autocomplete="off"
+                                       id="workOrderId-filter" />
+                                <span class="multicolumn-dropdown-icon">
+                                    <i class="bi bi-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div class="multicolumn-dropdown-menu" id="workOrderId-menu" style="display: none;">
+                                <div class="multicolumn-dropdown-header">
+                                    <div class="multicolumn-dropdown-column">EWO #</div>
+                                    <div class="multicolumn-dropdown-column">Supplier</div>
+                                    <div class="multicolumn-dropdown-column">Project</div>
+                                </div>
+                                <div class="multicolumn-dropdown-items">
+                                    @foreach (var order in (List<SelectListItem>)ViewBag.WorkOrders)
+                                    {
+                                        var parts = order.Text?.Split(" | ") ?? new[] { "", "", "" };
+                                        <div class="multicolumn-dropdown-item" data-value="@order.Value">
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 0 ? parts[0].Trim() : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 1 ? parts[1].Trim() : "")</div>
+                                            <div class="multicolumn-dropdown-column">@(parts.Length > 2 ? parts[2].Trim() : "")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <span asp-validation-for="EngineerWorkOrderId" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="BillDate" class="form-label"></label>
+                <input asp-for="BillDate" type="date" class="form-control" />
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="ContractorBillNumber" class="form-label">Contractor Bill #</label>
+                <input asp-for="ContractorBillNumber" class="form-control" />
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="MrrNumber" class="form-label">MRR #</label>
+                <input asp-for="MrrNumber" class="form-control" />
+            </div>
+            <div class="mb-3 col-md-3">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" asp-items="Html.GetEnumSelectList<PoBillStatus>()" class="form-select"></select>
+            </div>
+            <div class="mb-3 col-md-12">
+                <label asp-for="Remarks" class="form-label"></label>
+                <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+
+        <h5 class="mt-2">1. Measurement (work done to date)</h5>
+        <p class="text-muted small mb-2">Enter the <strong>total</strong> quantity completed so far, not only since the last bill. It starts from the previous bill's measurement. Rates come from the work order.</p>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" id="measureTable">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th class="text-end">WO Qty</th>
+                        <th class="text-end">Previous Measured</th>
+                        <th style="width:140px">Measured To Date</th>
+                        <th class="text-end">Rate</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" class="text-center text-muted">Select a work order to load its items.</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="5" class="text-end">Measured Total</th>
+                        <th class="text-end" id="measuredTotal">0.00</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <h5 class="mt-3">2. Payment heads claimed on this bill</h5>
+        <p class="text-muted small mb-2">Claim all or part of a head (e.g. 9 = half of an 18% head). What earlier bills claimed is shown and can't be claimed again.</p>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" id="headTable">
+                <thead>
+                    <tr>
+                        <th>Head</th>
+                        <th class="text-end">Head %</th>
+                        <th class="text-end">Claimed Earlier %</th>
+                        <th class="text-end">Remaining %</th>
+                        <th style="width:170px">Claim Now %</th>
+                        <th class="text-end">Amount (on measured total)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" class="text-center text-muted">Select a work order to load its payment heads.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="mt-3">3. Additional charges and deductions (optional)</h5>
+        <p class="text-muted small mb-2">Additions: extra work or labour billed by the contractor. Deductions: AIT, VAT, advance adjustment, company-supplied materials, other charges billed to the contractor.</p>
+        <table class="table table-sm align-middle" id="adjustmentTable">
+            <thead>
+                <tr>
+                    <th style="width:150px">Type</th>
+                    <th>Description</th>
+                    <th style="width:170px">Amount</th>
+                    <th style="width:90px"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <datalist id="adjustmentSuggestions">
+            <option value="Additional labour / mason"></option>
+            <option value="Extra work"></option>
+            <option value="AIT"></option>
+            <option value="VAT"></option>
+            <option value="Advance adjustment"></option>
+            <option value="Materials supplied by company"></option>
+            <option value="Other charges"></option>
+        </datalist>
+        <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="addAdjustment">Add Line</button>
+
+        <h5 class="mt-2">4. Bill calculation</h5>
+        <table class="calc-table mb-3">
+            <tr><td>Measured total</td><td class="text-end" id="cMeasured">0.00</td></tr>
+            <tr><td>Heads claimed: earlier <span id="cPrevPct">0</span>% + this bill <span id="cNowPct">0</span>% = <strong><span id="cCumPct">0</span>%</strong></td><td></td></tr>
+            <tr><td>Cumulative due (measured &times; cumulative %)</td><td class="text-end" id="cCumDue">0.00</td></tr>
+            <tr><td>Less: certified in earlier bills (<span id="cPrevCount">0</span>)</td><td class="text-end" id="cPrevCert">0.00</td></tr>
+            <tr class="total"><td>Certified on this bill</td><td class="text-end" id="cCertified">0.00</td></tr>
+            <tr><td>Add: additional charges</td><td class="text-end" id="cAdd">0.00</td></tr>
+            <tr><td>Less: deductions</td><td class="text-end" id="cDed">0.00</td></tr>
+            <tr class="total"><td>Net payable</td><td class="text-end" id="cNet">0.00</td></tr>
+        </table>
+    </fieldset>
+
+    <div>
+        @if (!isLocked)
+        {
+            <button type="submit" class="btn btn-primary">Save</button>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('workOrderId-container')) new MultiColumnDropdown('workOrderId-container');
+
+        var form = document.getElementById('ewoBillForm');
+        var select = document.getElementById('workOrderId');
+        var measureBody = document.querySelector('#measureTable tbody');
+        var headBody = document.querySelector('#headTable tbody');
+        var adjBody = document.querySelector('#adjustmentTable tbody');
+        var pendingAlert = document.getElementById('pendingDraftAlert');
+        var initialQty = @Html.Raw(initialQtyJson);
+        var initialClaim = @Html.Raw(initialClaimJson);
+        var initialAdjustments = @Html.Raw(adjustmentsJson);
+        var usePostedValues = @(hasPostedLines || isEdit ? "true" : "false");
+        var excludeBillId = '@excludeBillId';
+        var dataUrl = '@Url.Action("GetBillableData")';
+        var data = null;
+        var round2 = function (n) { return Math.round((n + Number.EPSILON) * 100) / 100; };
+        var fmt = function (n) { return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+        var num = function (el) { return parseFloat(el.value) || 0; };
+        var set = function (id, v) { document.getElementById(id).textContent = v; };
+
+        function recalc() {
+            if (!data) return;
+            var measured = 0;
+            measureBody.querySelectorAll('tr.measure-line').forEach(function (row) {
+                var amt = round2(num(row.querySelector('.measure-qty')) * row._line.rate);
+                row.querySelector('.line-amount').textContent = fmt(amt);
+                measured += amt;
+            });
+            var nowPct = 0;
+            headBody.querySelectorAll('tr.head-line').forEach(function (row) {
+                var pct = num(row.querySelector('.claim-pct'));
+                nowPct += pct;
+                row.querySelector('.head-amount').textContent = fmt(round2(measured * pct / 100));
+            });
+            var adds = 0, deds = 0;
+            adjBody.querySelectorAll('tr').forEach(function (row) {
+                var amt = num(row.querySelector('.adj-amount'));
+                if (row.querySelector('.adj-type').value === 'Addition') adds += amt; else deds += amt;
+            });
+            var cumPct = round2(data.previousCumulativePercent + nowPct);
+            var cumDue = round2(measured * cumPct / 100);
+            var certified = round2(cumDue - data.previouslyCertified);
+            set('measuredTotal', fmt(measured));
+            set('cMeasured', fmt(measured));
+            set('cPrevPct', data.previousCumulativePercent);
+            set('cNowPct', round2(nowPct));
+            set('cCumPct', cumPct);
+            set('cCumDue', fmt(cumDue));
+            set('cPrevCount', data.previousBillCount);
+            set('cPrevCert', fmt(data.previouslyCertified));
+            set('cCertified', fmt(certified));
+            set('cAdd', fmt(adds));
+            set('cDed', fmt(deds));
+            set('cNet', fmt(round2(certified + adds - deds)));
+        }
+
+        function render(d) {
+            data = d;
+            pendingAlert.classList.toggle('d-none', !d.pendingDraftBillNumber);
+            if (d.pendingDraftBillNumber) {
+                pendingAlert.textContent = 'Bill ' + d.pendingDraftBillNumber + ' of this work order is still Draft. Approve or cancel it before raising a new bill.';
+            }
+
+            measureBody.innerHTML = '';
+            d.lines.forEach(function (l) {
+                var tr = document.createElement('tr');
+                tr.className = 'measure-line';
+                tr._line = l;
+                var preset = initialQty[l.engineerWorkOrderDetailId];
+                var qty = usePostedValues ? (preset !== undefined ? preset : 0) : l.previousMeasuredQuantity;
+                tr.innerHTML =
+                    '<td><input type="hidden" class="detail-id" value="' + l.engineerWorkOrderDetailId + '" /></td>' +
+                    '<td class="text-end">' + l.orderedQuantity + '</td>' +
+                    '<td class="text-end">' + l.previousMeasuredQuantity + '</td>' +
+                    '<td><input type="number" step="0.001" min="0" max="' + l.orderedQuantity + '" class="form-control form-control-sm measure-qty" /></td>' +
+                    '<td class="text-end">' + fmt(l.rate) + '</td>' +
+                    '<td class="text-end line-amount">0.00</td>';
+                tr.cells[0].append(l.materialName + ' ');
+                var unit = document.createElement('span');
+                unit.className = 'text-muted small';
+                unit.textContent = '(' + l.unitOfMeasure + ')';
+                tr.cells[0].appendChild(unit);
+                tr.querySelector('.measure-qty').value = qty;
+                measureBody.appendChild(tr);
+            });
+
+            headBody.innerHTML = '';
+            if (!d.heads.length) {
+                headBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">This work order has no payment heads. Set them on the work order first.</td></tr>';
+            }
+            d.heads.forEach(function (h) {
+                var tr = document.createElement('tr');
+                tr.className = 'head-line';
+                var preset = initialClaim[h.engineerWorkOrderPaymentHeadId];
+                tr.innerHTML =
+                    '<td></td>' +
+                    '<td class="text-end">' + h.percent + '</td>' +
+                    '<td class="text-end">' + h.claimedPercent + '</td>' +
+                    '<td class="text-end">' + h.remainingPercent + '</td>' +
+                    '<td><div class="input-group input-group-sm"><input type="number" step="0.01" min="0" max="' + h.remainingPercent + '" class="form-control claim-pct" />' +
+                    '<button type="button" class="btn btn-outline-secondary claim-full"' + (h.remainingPercent > 0 ? '' : ' disabled') + '>Full</button></div></td>' +
+                    '<td class="text-end head-amount">0.00</td>';
+                tr.cells[0].textContent = h.headName;
+                tr.cells[0].insertAdjacentHTML('afterbegin', '<input type="hidden" class="head-id" value="' + h.engineerWorkOrderPaymentHeadId + '" />');
+                var input = tr.querySelector('.claim-pct');
+                input.value = preset !== undefined ? preset : 0;
+                if (h.remainingPercent <= 0 && preset === undefined) input.disabled = true;
+                tr.querySelector('.claim-full').addEventListener('click', function () { input.value = h.remainingPercent; recalc(); });
+                headBody.appendChild(tr);
+            });
+            recalc();
+        }
+
+        function load() {
+            var id = select.value;
+            if (!id) return;
+            var url = dataUrl + '?engineerWorkOrderId=' + encodeURIComponent(id) + (excludeBillId ? '&excludeBillId=' + excludeBillId : '');
+            fetch(url).then(function (r) { return r.json(); }).then(render);
+        }
+
+        function addAdjustment(values) {
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td><select class="form-select form-select-sm adj-type"><option value="Addition">Addition</option><option value="Deduction">Deduction</option></select></td>' +
+                '<td><input class="form-control form-control-sm adj-desc" list="adjustmentSuggestions" maxlength="200" /></td>' +
+                '<td><input type="number" step="0.01" min="0" class="form-control form-control-sm adj-amount" /></td>' +
+                '<td><button type="button" class="btn btn-sm btn-outline-danger adj-remove">Remove</button></td>';
+            if (values) {
+                tr.querySelector('.adj-type').value = values.type;
+                tr.querySelector('.adj-desc').value = values.description;
+                tr.querySelector('.adj-amount').value = values.amount;
+            } else {
+                tr.querySelector('.adj-type').value = 'Deduction';
+            }
+            adjBody.appendChild(tr);
+        }
+
+        initialAdjustments.forEach(addAdjustment);
+        document.getElementById('addAdjustment').addEventListener('click', function () { addAdjustment(); });
+        adjBody.addEventListener('click', function (e) {
+            if (e.target.classList.contains('adj-remove')) { e.target.closest('tr').remove(); recalc(); }
+        });
+        form.addEventListener('input', recalc);
+        form.addEventListener('change', recalc);
+        select.addEventListener('change', function () { initialQty = {}; initialClaim = {}; usePostedValues = false; load(); });
+
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('.generated-input').forEach(function (el) { el.remove(); });
+            function hidden(name, value) {
+                var h = document.createElement('input');
+                h.type = 'hidden';
+                h.className = 'generated-input';
+                h.name = name;
+                h.value = value;
+                form.appendChild(h);
+            }
+            var i = 0;
+            measureBody.querySelectorAll('tr.measure-line').forEach(function (row) {
+                var qty = num(row.querySelector('.measure-qty'));
+                if (qty <= 0) return;
+                hidden('Details[' + i + '].EngineerWorkOrderDetailId', row.querySelector('.detail-id').value);
+                hidden('Details[' + i + '].MeasuredQuantity', qty);
+                i++;
+            });
+            i = 0;
+            headBody.querySelectorAll('tr.head-line').forEach(function (row) {
+                var pct = num(row.querySelector('.claim-pct'));
+                if (pct <= 0) return;
+                hidden('Heads[' + i + '].EngineerWorkOrderPaymentHeadId', row.querySelector('.head-id').value);
+                hidden('Heads[' + i + '].ClaimPercent', pct);
+                i++;
+            });
+            i = 0;
+            adjBody.querySelectorAll('tr').forEach(function (row) {
+                var desc = row.querySelector('.adj-desc').value.trim();
+                var amt = num(row.querySelector('.adj-amount'));
+                if (!desc && amt <= 0) return;
+                hidden('Adjustments[' + i + '].Type', row.querySelector('.adj-type').value);
+                hidden('Adjustments[' + i + '].Description', desc);
+                hidden('Adjustments[' + i + '].Amount', amt);
+                i++;
+            });
+        });
+
+        load();
+    });
+</script>

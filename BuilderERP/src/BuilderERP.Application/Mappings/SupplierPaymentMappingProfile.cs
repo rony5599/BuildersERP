@@ -10,7 +10,7 @@ public class SupplierPaymentMappingProfile : Profile
     {
         CreateMap<SupplierPayment, SupplierPaymentDto>()
             .ForMember(d => d.PreparedBy, o => o.MapFrom(s => s.CreatedBy))
-            .ForMember(d => d.BillNumber, o => o.MapFrom(s => s.PoBill != null ? s.PoBill.BillNumber : string.Empty))
+            .ForMember(d => d.BillNumber, o => o.MapFrom(s => s.PoBill != null ? s.PoBill.BillNumber : s.EwoBill != null ? s.EwoBill.BillNumber : string.Empty))
             .ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier != null ? s.Supplier.Name : string.Empty));
     }
 }

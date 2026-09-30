@@ -12,10 +12,14 @@ public class SupplierPayment : BaseEntity
     public string? Remarks { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public long PoBillId { get; set; }
-    public PoBill PoBill { get; set; } = null!;
+    // Exactly one of PoBillId / EwoBillId is set (enforced by a check constraint).
+    public long? PoBillId { get; set; }
+    public PoBill? PoBill { get; set; }
 
-    // Denormalized from the bill's PO so the supplier ledger can filter without deep joins.
+    public long? EwoBillId { get; set; }
+    public EwoBill? EwoBill { get; set; }
+
+    // Denormalized from the bill's PO / work order so the supplier ledger can filter without deep joins.
     public long SupplierId { get; set; }
     public Supplier Supplier { get; set; } = null!;
 }

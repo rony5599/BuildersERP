@@ -7,7 +7,7 @@ public class CreateSupplierPaymentDtoValidator : AbstractValidator<CreateSupplie
 {
     public CreateSupplierPaymentDtoValidator()
     {
-        RuleFor(x => x.PoBillId).NotEmpty().WithMessage("Select a bill.");
+        RuleFor(x => x).Must(x => (x.PoBillId is > 0) != (x.EwoBillId is > 0)).WithName("Bill").WithMessage("Select a bill.");
         RuleFor(x => x.Amount).GreaterThan(0);
         RuleFor(x => x.Method).IsInEnum();
         RuleFor(x => x.ReferenceNumber).MaximumLength(100);

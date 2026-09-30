@@ -38,10 +38,10 @@ public class SupplierPaymentsController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.SupplierPaymentManage)]
-    public async Task<IActionResult> Create(long? poBillId = null)
+    public async Task<IActionResult> Create(long? poBillId = null, long? ewoBillId = null)
     {
         await PopulateAsync();
-        return View(new CreateSupplierPaymentDto { PoBillId = poBillId ?? 0 });
+        return View(new CreateSupplierPaymentDto { PoBillId = poBillId, EwoBillId = ewoBillId });
     }
 
     [HttpPost]

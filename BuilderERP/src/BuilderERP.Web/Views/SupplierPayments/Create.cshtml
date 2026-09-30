@@ -11,15 +11,22 @@
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row col-lg-10">
         <div class="mb-3 col-md-12">
-            <label asp-for="PoBillId" class="form-label">Approved Bill (with outstanding balance)</label>
-            <select asp-for="PoBillId" id="poBillId" class="form-select">
-                <option value="">-- Select bill (Bill # | Supplier | PO # | Outstanding) --</option>
-                @foreach (var b in bills)
+            <label for="billKey" class="form-label">Approved Bill (with outstanding balance)</label>
+            <input type="hidden" asp-for="PoBillId" id="poBillId" />
+            <input type="hidden" asp-for="EwoBillId" id="ewoBillId" />
+            <select id="billKey" class="form-select">
+                <option value="">-- Select bill (Bill # | Supplier | PO / EWO # | Outstanding) --</option>
+                @foreach (var group in bills.GroupBy(b => b.IsEwoBill).OrderBy(g => g.Key))
                 {
-                    <option value="@b.Id" data-outstanding="@b.Outstanding.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@(b.Id == Model.PoBillId)">@b.BillNumber | @b.SupplierName | @b.PONumber | Outstanding @b.Outstanding.ToString("N2")</option>
+                    <optgroup label="@(group.Key ? "EWO Bills" : "PO Bills")">
+                        @foreach (var b in group)
+                        {
+                            var selected = b.IsEwoBill ? b.Id == Model.EwoBillId : b.Id == Model.PoBillId;
+                            <option value="@(b.IsEwoBill ? "EWO" : "PO"):@b.Id" data-outstanding="@b.Outstanding.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@selected">@b.BillNumber | @b.SupplierName | @b.PONumber | Outstanding @b.Outstanding.ToString("N2")</option>
+                        }
+                    </optgroup>
                 }
             </select>
-            <span asp-validation-for="PoBillId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-3">
             <label asp-for="PaymentDate" class="form-label"></label>
@@ -51,11 +58,23 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var select = document.getElementById('poBillId');
+        var select = document.getElementById('billKey');
+        var poBillId = document.getElementById('poBillId');
+        var ewoBillId = document.getElementById('ewoBillId');
         var amount = document.getElementById('amount');
+        function sync() {
+            var parts = select.value.split(':');
+            poBillId.value = parts[0] === 'PO' ? parts[1] : '';
+            ewoBillId.value = parts[0] === 'EWO' ? parts[1] : '';
+        }
         select.addEventListener('change', function () {
+            sync();
             var opt = select.options[select.selectedIndex];
             if (opt && opt.dataset.outstanding) amount.value = opt.dataset.outstanding;
         });
+        sync();
+        // Opened from a bill's "Pay" link: suggest the outstanding amount.
+        var initial = select.options[select.selectedIndex];
+        if (initial && initial.dataset.outstanding && !(parseFloat(amount.value) > 0)) amount.value = initial.dataset.outstanding;
     });
 </script>

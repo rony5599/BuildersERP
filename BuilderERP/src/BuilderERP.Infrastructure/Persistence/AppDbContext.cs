@@ -91,6 +91,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<EngineerWorkOrderRequisitionDetail> EngineerWorkOrderRequisitionDetails => Set<EngineerWorkOrderRequisitionDetail>();
     public DbSet<EngineerWorkOrder> EngineerWorkOrders => Set<EngineerWorkOrder>();
     public DbSet<EngineerWorkOrderDetail> EngineerWorkOrderDetails => Set<EngineerWorkOrderDetail>();
+    public DbSet<EngineerWorkOrderPaymentHead> EngineerWorkOrderPaymentHeads => Set<EngineerWorkOrderPaymentHead>();
+    public DbSet<EwoBill> EwoBills => Set<EwoBill>();
+    public DbSet<EwoBillDetail> EwoBillDetails => Set<EwoBillDetail>();
+    public DbSet<EwoBillHead> EwoBillHeads => Set<EwoBillHead>();
+    public DbSet<EwoBillAdjustment> EwoBillAdjustments => Set<EwoBillAdjustment>();
     public DbSet<RateContract> RateContracts => Set<RateContract>();
     public DbSet<RunningBill> RunningBills => Set<RunningBill>();
     public DbSet<SecurityDeposit> SecurityDeposits => Set<SecurityDeposit>();
@@ -813,6 +818,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(p => p.SupplierId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Entity<SupplierPayment>()
+            .HasOne(p => p.EwoBill)
+            .WithMany()
+            .HasForeignKey(p => p.EwoBillId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<SupplierPayment>().ToTable(t => t.HasCheckConstraint(
+            "CK_SupplierPayments_OneBill",
+            "([PoBillId] IS NOT NULL AND [EwoBillId] IS NULL) OR ([PoBillId] IS NULL AND [EwoBillId] IS NOT NULL)"));
+
         builder.Entity<SupplierPayment>().Property(p => p.Amount).HasPrecision(18, 2);
         builder.Entity<SupplierPayment>().HasIndex(p => p.PaymentNumber);
         builder.Entity<SupplierPayment>().HasIndex(p => p.SupplierId);
@@ -1223,6 +1238,90 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         builder.Entity<EngineerWorkOrderDetail>().Property(d => d.ReceivedQuantity).HasPrecision(18, 3);
 
         builder.Entity<EngineerWorkOrder>().Property(w => w.ReceivedAmount).HasPrecision(18, 2);
+
+        builder.Entity<EngineerWorkOrderPaymentHead>()
+            .HasOne(h => h.EngineerWorkOrder)
+            .WithMany(w => w.PaymentHeads)
+            .HasForeignKey(h => h.EngineerWorkOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EngineerWorkOrderPaymentHead>().Property(h => h.HeadName).HasMaxLength(100);
+        builder.Entity<EngineerWorkOrderPaymentHead>().Property(h => h.Percent).HasPrecision(5, 2);
+
+        builder.Entity<EwoBill>()
+            .HasOne(b => b.EngineerWorkOrder)
+            .WithMany()
+            .HasForeignKey(b => b.EngineerWorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EwoBill>()
+            .HasOne(b => b.RootWorkOrder)
+            .WithMany()
+            .HasForeignKey(b => b.RootWorkOrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EwoBill>()
+            .HasOne(b => b.Supplier)
+            .WithMany()
+            .HasForeignKey(b => b.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EwoBill>().Property(b => b.MeasuredAmount).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().Property(b => b.CumulativePercent).HasPrecision(5, 2);
+        builder.Entity<EwoBill>().Property(b => b.CumulativeDue).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().Property(b => b.PreviouslyCertified).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().Property(b => b.CertifiedAmount).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().Property(b => b.AdditionAmount).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().Property(b => b.DeductionAmount).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().Property(b => b.NetPayable).HasPrecision(18, 2);
+        builder.Entity<EwoBill>().HasIndex(b => b.BillNumber);
+
+        builder.Entity<EwoBillDetail>()
+            .HasOne(d => d.EwoBill)
+            .WithMany(b => b.Details)
+            .HasForeignKey(d => d.EwoBillId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EwoBillDetail>()
+            .HasOne(d => d.EngineerWorkOrderDetail)
+            .WithMany()
+            .HasForeignKey(d => d.EngineerWorkOrderDetailId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EwoBillDetail>()
+            .HasOne(d => d.Material)
+            .WithMany()
+            .HasForeignKey(d => d.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EwoBillDetail>().Property(d => d.MeasuredQuantity).HasPrecision(18, 3);
+        builder.Entity<EwoBillDetail>().Property(d => d.Rate).HasPrecision(18, 2);
+        builder.Entity<EwoBillDetail>().Property(d => d.Amount).HasPrecision(18, 2);
+
+        builder.Entity<EwoBillHead>()
+            .HasOne(h => h.EwoBill)
+            .WithMany(b => b.Heads)
+            .HasForeignKey(h => h.EwoBillId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EwoBillHead>()
+            .HasOne(h => h.EngineerWorkOrderPaymentHead)
+            .WithMany()
+            .HasForeignKey(h => h.EngineerWorkOrderPaymentHeadId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EwoBillHead>().Property(h => h.HeadName).HasMaxLength(100);
+        builder.Entity<EwoBillHead>().Property(h => h.HeadPercent).HasPrecision(5, 2);
+        builder.Entity<EwoBillHead>().Property(h => h.ClaimPercent).HasPrecision(5, 2);
+
+        builder.Entity<EwoBillAdjustment>()
+            .HasOne(a => a.EwoBill)
+            .WithMany(b => b.Adjustments)
+            .HasForeignKey(a => a.EwoBillId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EwoBillAdjustment>().Property(a => a.Description).HasMaxLength(200);
+        builder.Entity<EwoBillAdjustment>().Property(a => a.Amount).HasPrecision(18, 2);
 
         builder.Entity<RateContract>().Property(r => r.Rate).HasPrecision(18, 2);
 
@@ -1656,7 +1755,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),
             typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),
             typeof(EngineerWorkOrderRequisition), typeof(EngineerWorkOrderRequisitionDetail),
-            typeof(EngineerWorkOrder), typeof(EngineerWorkOrderDetail),
+            typeof(EngineerWorkOrder), typeof(EngineerWorkOrderDetail), typeof(EngineerWorkOrderPaymentHead),
+            typeof(EwoBill), typeof(EwoBillDetail), typeof(EwoBillHead), typeof(EwoBillAdjustment),
             typeof(SecurityDeposit), typeof(PerformanceEvaluation), typeof(ContractorLedger),
             typeof(Worker), typeof(Attendance), typeof(SafetyTraining), typeof(Overtime), typeof(Salary),
             typeof(Equipment), typeof(EquipmentRental), typeof(FuelLog), typeof(MaintenanceRecord), typeof(OperatorAssignment),

@@ -26,6 +26,7 @@ public class GetEngineerWorkOrderByIdQueryHandler : IRequestHandler<GetEngineerW
             .Include(o => o.Supplier)
             .Include(o => o.EngineerWorkOrderRequisition)
             .Include(o => o.Details).ThenInclude(d => d.Material)
+            .Include(o => o.PaymentHeads.OrderBy(h => h.SortOrder))
             .FirstOrDefaultAsync(o => o.Id == request.Id, cancellationToken);
         return workOrder is null ? null : _mapper.Map<EngineerWorkOrderDto>(workOrder);
     }

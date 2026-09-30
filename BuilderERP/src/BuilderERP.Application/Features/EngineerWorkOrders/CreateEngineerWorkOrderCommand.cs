@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
@@ -6,7 +7,11 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrders;
 
-public record CreateEngineerWorkOrderCommand(CreateEngineerWorkOrderDto Dto) : IRequest<long>;
+public record CreateEngineerWorkOrderCommand(CreateEngineerWorkOrderDto Dto) : IRequest<long>, IInvalidatesFeatures
+{
+    // Payment heads and revisions feed the EWO bill form and statement (cached under EwoBills).
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["EwoBills"];
+}
 
 public class CreateEngineerWorkOrderCommandHandler : IRequestHandler<CreateEngineerWorkOrderCommand, long>
 {
@@ -52,6 +57,10 @@ public class CreateEngineerWorkOrderCommandHandler : IRequestHandler<CreateEngin
         }
 
         workOrder.TotalAmount = totalAmount;
+        foreach (var head in EngineerWorkOrderPaymentHeads.ToEntities(request.Dto.PaymentHeads, workOrder.Id))
+        {
+            workOrder.PaymentHeads.Add(head);
+        }
 
         await _unitOfWork.Repository<EngineerWorkOrder>().AddAsync(workOrder);
         await _unitOfWork.SaveChangesAsync();

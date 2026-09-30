@@ -23,6 +23,7 @@ public class GetEngineerWorkOrderPrintDataQueryHandler : IRequestHandler<GetEngi
             .Include(o => o.Supplier)
             .Include(o => o.EngineerWorkOrderRequisition)
             .Include(o => o.Details).ThenInclude(d => d.Material)
+            .Include(o => o.PaymentHeads.OrderBy(h => h.SortOrder))
             .FirstOrDefaultAsync(o => o.Id == request.Id, cancellationToken);
 
         if (workOrder is null)
@@ -60,6 +61,11 @@ public class GetEngineerWorkOrderPrintDataQueryHandler : IRequestHandler<GetEngi
                 Rate = d.Rate,
                 Amount = d.Amount,
                 Remarks = d.Remarks
+            }).ToList(),
+            PaymentHeads = workOrder.PaymentHeads.Select(h => new EngineerWorkOrderPaymentHeadDto
+            {
+                HeadName = h.HeadName,
+                Percent = h.Percent
             }).ToList()
         };
     }

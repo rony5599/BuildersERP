@@ -382,6 +382,24 @@
 
                 <div style="clear: both; text-align: right; margin-top: 8px; font-weight: bold;">In Words: @BuilderERP.Application.Common.AmountInWords.ToBdtWords(Model.Total)</div>
 
+                @if (Model.PaymentHeads.Count > 0)
+                {
+                    <div class="section-label" style="margin-top: 20px;">Payment Methods</div>
+                    <table style="border-collapse: collapse; font-size: 11px; min-width: 260px;">
+                        @foreach (var head in Model.PaymentHeads)
+                        {
+                            <tr>
+                                <td style="border: 1px solid #adb5bd; padding: 3px 8px;">@head.HeadName</td>
+                                <td style="border: 1px solid #adb5bd; padding: 3px 8px; text-align: right;">@head.Percent.ToString("0.00")%</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td style="border: 1px solid #adb5bd; padding: 3px 8px; font-weight: 700;">Total</td>
+                            <td style="border: 1px solid #adb5bd; padding: 3px 8px; text-align: right; font-weight: 700;">@Model.PaymentHeads.Sum(h => h.Percent).ToString("0.00")%</td>
+                        </tr>
+                    </table>
+                }
+
                 <div class="signature-row">
                     <div class="signature">
                         <div class="line"></div>

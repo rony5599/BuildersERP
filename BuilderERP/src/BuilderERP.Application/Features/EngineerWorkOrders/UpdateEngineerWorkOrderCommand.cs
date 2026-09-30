@@ -1,3 +1,4 @@
+using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
@@ -7,7 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrders;
 
-public record UpdateEngineerWorkOrderCommand(UpdateEngineerWorkOrderDto Dto) : IRequest<UpdateEngineerWorkOrderResult>;
+public record UpdateEngineerWorkOrderCommand(UpdateEngineerWorkOrderDto Dto) : IRequest<UpdateEngineerWorkOrderResult>, IInvalidatesFeatures
+{
+    // Payment heads and revisions feed the EWO bill form and statement (cached under EwoBills).
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["EwoBills"];
+}
 
 public enum UpdateEngineerWorkOrderResult
 {
@@ -30,6 +35,7 @@ public class UpdateEngineerWorkOrderCommandHandler : IRequestHandler<UpdateEngin
         var repository = _unitOfWork.Repository<EngineerWorkOrder>();
         var workOrder = await repository.Query()
             .Include(o => o.Details)
+            .Include(o => o.PaymentHeads)
             .FirstOrDefaultAsync(o => o.Id == request.Dto.Id, cancellationToken);
 
         if (workOrder is null)
@@ -73,6 +79,17 @@ public class UpdateEngineerWorkOrderCommandHandler : IRequestHandler<UpdateEngin
         }
 
         workOrder.TotalAmount = totalAmount;
+
+        var headRepository = _unitOfWork.Repository<EngineerWorkOrderPaymentHead>();
+        foreach (var head in workOrder.PaymentHeads.ToList())
+        {
+            headRepository.Remove(head);
+        }
+
+        foreach (var head in EngineerWorkOrderPaymentHeads.ToEntities(request.Dto.PaymentHeads, workOrder.Id))
+        {
+            await headRepository.AddAsync(head);
+        }
 
         repository.Update(workOrder);
         await _unitOfWork.SaveChangesAsync();

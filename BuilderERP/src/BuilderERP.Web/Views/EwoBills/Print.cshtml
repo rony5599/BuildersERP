@@ -1,0 +1,230 @@
+@model BuilderERP.Application.DTOs.EwoBillPrintDto
+@using BuilderERP.Domain.Enums
+@{
+    Layout = null;
+    var copyLabels = new[] { "Accounts Copy", "Contractor Copy" };
+    var additions = Model.Adjustments.Where(a => a.Type == EwoBillAdjustmentType.Addition).ToList();
+    var deductions = Model.Adjustments.Where(a => a.Type == EwoBillAdjustmentType.Deduction).ToList();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>EWO Bill @Model.BillNumber</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; margin: 0; background: #e9ecef; }
+        .toolbar { padding: 12px 24px; background: #fff; border-bottom: 1px solid #dee2e6; }
+        .toolbar button { padding: 8px 16px; border-radius: 4px; border: 1px solid #0d6efd; background: #0d6efd; color: #fff; font-size: 14px; cursor: pointer; }
+        .sheet { position: relative; max-width: 800px; margin: 24px auto; background: #fff; padding: 48px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+        .sheet + .sheet { margin-top: 40px; }
+        .copy-label { position: absolute; top: 16px; right: 16px; border: 1px solid #333; border-radius: 3px; padding: 3px 10px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .letterhead { position: relative; margin-bottom: 24px; }
+        .company-logo { position: absolute; left: 0; top: 0; max-height: 64px; max-width: 140px; object-fit: contain; }
+        .title { text-align: center; font-size: 26px; font-weight: 800; letter-spacing: 1px; margin: 0; }
+        .subtitle { text-align: center; font-size: 12px; color: #555; }
+        .company-name { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+        .company-details, .party-details { font-size: 11px; line-height: 1.5; color: #333; }
+        hr { border: none; border-top: 1px solid #dee2e6; margin: 20px 0; }
+        .meta-row { display: flex; justify-content: space-between; gap: 24px; }
+        .meta-row .party { flex: 1; }
+        .section-label { font-weight: 700; font-size: 12px; margin-bottom: 6px; }
+        .bill-info table { margin-left: auto; }
+        .bill-info td { padding: 2px 0 2px 12px; font-size: 12px; }
+        .bill-info td.label { font-weight: 700; }
+        table.items { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table.items th { background: #0d6efd; color: #fff; text-align: left; padding: 6px 8px; font-size: 11px; }
+        table.items th.num, table.items td.num { text-align: right; }
+        table.items td { padding: 5px 8px; font-size: 11px; border-bottom: 1px solid #adb5bd; }
+        table.items tbody tr:nth-child(even) td { background: #eef1f3; }
+        table.items tfoot td { font-weight: 700; font-size: 12px; border-bottom: none; }
+        .h-title { font-weight: 700; font-size: 12px; margin-top: 20px; }
+        .totals { margin-top: 16px; }
+        .totals table { margin-left: auto; width: 420px; border-collapse: collapse; }
+        .totals td { padding: 4px 0; font-size: 12px; }
+        .totals td.value { text-align: right; }
+        .totals tr.sub td { border-top: 1px solid #adb5bd; font-weight: 700; }
+        .totals tr.grand td { border-top: 1px solid #333; font-size: 14px; font-weight: 800; }
+        .signature-row { margin-top: 70px; display: flex; justify-content: space-between; gap: 24px; }
+        .signature { flex: 1; text-align: center; }
+        .signature .line { display: block; border-bottom: 1px solid #333; height: 40px; }
+        .signature .caption { font-weight: 700; margin-top: 4px; font-size: 12px; }
+        .signature .subcaption { font-size: 10px; color: #555; }
+        .audit-stamp { margin-top: 24px; font-size: 7px; color: #aaa; }
+        @@page { margin: 10mm; }
+        @@media print {
+            body { background: #fff; }
+            .toolbar { display: none; }
+            .sheet { box-shadow: none; margin: 0; max-width: none; padding: 12px; page-break-after: always; }
+            .sheet:last-of-type { page-break-after: auto; }
+            .copy-label { top: 4px; right: 4px; }
+            .company-logo { max-height: 48px; }
+            .title { font-size: 20px; }
+            table.items tr { page-break-inside: avoid; }
+            .signature-row { margin-top: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="window.print()">Print</button>
+    </div>
+
+    @foreach (var copyLabel in copyLabels)
+    {
+        <div class="sheet">
+            <div class="copy-label">@copyLabel</div>
+            <div class="letterhead">
+                <img src="~/uploads/padlogo/padlogo.png" class="company-logo" alt="@Model.CompanyName logo" />
+                <div class="title">WORK ORDER BILL</div>
+                <div class="subtitle">Running Bill No. @Model.BillSequence@(Model.Status != PoBillStatus.Approved ? " (" + Model.Status + ")" : "")</div>
+            </div>
+
+            <div class="company-name">@Model.CompanyName</div>
+            <div class="company-details">
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyAddress)) { <div>@Model.CompanyAddress</div> }
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyPhone)) { <div>Mobile: @Model.CompanyPhone</div> }
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyEmail)) { <div>Email: @Model.CompanyEmail</div> }
+            </div>
+
+            <hr />
+
+            <div class="meta-row">
+                <div class="party">
+                    <div class="section-label">Contractor / Supplier</div>
+                    <div class="party-details">
+                        <div>@Model.SupplierName</div>
+                        @if (!string.IsNullOrWhiteSpace(Model.SupplierAddress)) { <div>@Model.SupplierAddress</div> }
+                        @if (!string.IsNullOrWhiteSpace(Model.SupplierPhone)) { <div>Phone: @Model.SupplierPhone</div> }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.ProjectName))
+                    {
+                        <div class="section-label" style="margin-top: 10px;">Project</div>
+                        <div class="party-details">@Model.ProjectName</div>
+                    }
+                </div>
+                <div class="bill-info">
+                    <table>
+                        <tr><td class="label">Bill No :</td><td>@Model.BillNumber</td></tr>
+                        <tr><td class="label">Bill Date :</td><td>@Model.BillDate.ToString("MMM dd, yyyy")</td></tr>
+                        <tr><td class="label">Work Order :</td><td>@Model.WorkOrderNo</td></tr>
+                        @if (!string.IsNullOrWhiteSpace(Model.ContractorBillNumber)) { <tr><td class="label">Contractor Bill :</td><td>@Model.ContractorBillNumber</td></tr> }
+                        @if (!string.IsNullOrWhiteSpace(Model.MrrNumber)) { <tr><td class="label">MRR No :</td><td>@Model.MrrNumber</td></tr> }
+                    </table>
+                </div>
+            </div>
+
+            <div class="h-title">Measurement of work done to date</div>
+            <table class="items" style="margin-top: 6px;">
+                <thead>
+                    <tr>
+                        <th style="width: 36px;">Sl.</th>
+                        <th>Description</th>
+                        <th style="width: 60px;">Unit</th>
+                        <th class="num" style="width: 70px;">Qty</th>
+                        <th class="num" style="width: 80px;">Rate</th>
+                        <th class="num" style="width: 100px;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var sl = 1; }
+                    @foreach (var line in Model.Lines)
+                    {
+                        <tr>
+                            <td>@sl</td>
+                            <td>@line.Description</td>
+                            <td>@line.UnitOfMeasure</td>
+                            <td class="num">@line.Quantity.ToString("0.###")</td>
+                            <td class="num">@line.Rate.ToString("N2")</td>
+                            <td class="num">@line.Amount.ToString("N2")</td>
+                        </tr>
+                        sl++;
+                    }
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="5" class="num">Total work done</td><td class="num">@Model.MeasuredAmount.ToString("N2")</td></tr>
+                </tfoot>
+            </table>
+
+            <div class="h-title">Payment heads claimed on this bill</div>
+            <table class="items" style="margin-top: 6px;">
+                <thead>
+                    <tr>
+                        <th>Particular</th>
+                        <th class="num" style="width: 110px;">Total Bill</th>
+                        <th class="num" style="width: 80px;">Head %</th>
+                        <th class="num" style="width: 80px;">Payable %</th>
+                        <th class="num" style="width: 100px;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var head in Model.Heads)
+                    {
+                        <tr>
+                            <td>@head.HeadName</td>
+                            <td class="num">@Model.MeasuredAmount.ToString("N2")</td>
+                            <td class="num">@head.HeadPercent.ToString("0.##")%</td>
+                            <td class="num">@head.ClaimPercent.ToString("0.##")%</td>
+                            <td class="num">@Math.Round(Model.MeasuredAmount * head.ClaimPercent / 100, 2).ToString("N2")</td>
+                        </tr>
+                    }
+                    @if (Model.Heads.Count == 0)
+                    {
+                        <tr><td colspan="5">No new head claimed (re-measurement / adjustments only).</td></tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <table>
+                    <tr><td>Cumulative due: @Model.MeasuredAmount.ToString("N2") &times; @Model.CumulativePercent.ToString("0.##")%</td><td class="value">@Model.CumulativeDue.ToString("N2")</td></tr>
+                    <tr><td>Less: certified in earlier bills</td><td class="value">- @Model.PreviouslyCertified.ToString("N2")</td></tr>
+                    <tr class="sub"><td>Certified on this bill</td><td class="value">@Model.CertifiedAmount.ToString("N2")</td></tr>
+                    @foreach (var a in additions)
+                    {
+                        <tr><td>Add: @a.Description</td><td class="value">@a.Amount.ToString("N2")</td></tr>
+                    }
+                    @foreach (var d in deductions)
+                    {
+                        <tr><td>Less: @d.Description</td><td class="value">- @d.Amount.ToString("N2")</td></tr>
+                    }
+                    <tr class="grand"><td>Net Payable</td><td class="value">@Model.NetPayable.ToString("N2")</td></tr>
+                </table>
+            </div>
+
+            <div style="clear: both; text-align: right; margin-top: 8px; font-weight: bold; font-size: 12px;">In Words: @BuilderERP.Application.Common.AmountInWords.ToBdtWords(Model.NetPayable)</div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+            {
+                <div class="section-label" style="margin-top: 20px;">Remarks</div>
+                <div class="party-details">@Model.Remarks</div>
+            }
+
+            <div class="signature-row">
+                <div class="signature">
+                    <div class="line"></div>
+                    <div class="caption">Prepared By: @Model.PreparedBy</div>
+                    <div class="subcaption">Project Engineer</div>
+                </div>
+                <div class="signature">
+                    <div class="line"></div>
+                    <div class="caption">Contractor</div>
+                    <div class="subcaption">@Model.SupplierName</div>
+                </div>
+                <div class="signature">
+                    <div class="line"></div>
+                    <div class="caption">Checked By</div>
+                    <div class="subcaption">MEP / Accounts</div>
+                </div>
+                <div class="signature">
+                    <div class="line"></div>
+                    <div class="caption">Approved By</div>
+                    <div class="subcaption">@Model.CompanyName</div>
+                </div>
+            </div>
+
+            <div class="audit-stamp">Printed by @Model.PrintedBy on @Model.PrintedAt.ToString("dd-MMM-yyyy HH:mm")</div>
+        </div>
+    }
+</body>
+</html>

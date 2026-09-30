@@ -5,20 +5,21 @@
     var supplierId = ViewBag.SupplierId as long?;
     var dateFrom = ViewBag.DateFrom as DateTime?;
     var dateTo = ViewBag.DateTo as DateTime?;
+    var source = ViewBag.Source as BuilderERP.Application.DTOs.SupplierLedgerSource? ?? BuilderERP.Application.DTOs.SupplierLedgerSource.All;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">Supplier Ledger</h1>
     @if (Model is not null)
     {
-        <a asp-action="Print" asp-route-supplierId="@supplierId" asp-route-dateFrom="@(dateFrom?.ToString("yyyy-MM-dd"))" asp-route-dateTo="@(dateTo?.ToString("yyyy-MM-dd"))" class="btn btn-outline-primary" target="_blank">Print</a>
+        <a asp-action="Print" asp-route-supplierId="@supplierId" asp-route-dateFrom="@(dateFrom?.ToString("yyyy-MM-dd"))" asp-route-dateTo="@(dateTo?.ToString("yyyy-MM-dd"))" asp-route-source="@source" class="btn btn-outline-primary" target="_blank">Print</a>
     }
 </div>
 
 <div class="card mb-3">
     <div class="card-body">
         <form asp-action="Index" method="get" class="row gy-3 gx-4 align-items-end">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <label class="form-label small mb-1">Supplier</label>
                 <select name="supplierId" asp-items="@(ViewBag.Suppliers as SelectList)" class="form-select" required>
                     <option value="">-- Select Supplier --</option>
@@ -31,6 +32,14 @@
             <div class="col-6 col-md-2">
                 <label class="form-label small mb-1">To</label>
                 <input type="date" name="dateTo" value="@(dateTo?.ToString("yyyy-MM-dd"))" class="form-control" />
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label small mb-1">Source</label>
+                <select name="source" class="form-select">
+                    <option value="All" selected="@(source == BuilderERP.Application.DTOs.SupplierLedgerSource.All)">All (PO + EWO)</option>
+                    <option value="Po" selected="@(source == BuilderERP.Application.DTOs.SupplierLedgerSource.Po)">PO only</option>
+                    <option value="Ewo" selected="@(source == BuilderERP.Application.DTOs.SupplierLedgerSource.Ewo)">EWO only</option>
+                </select>
             </div>
             <div class="col-12 col-md-2">
                 <button type="submit" class="btn btn-primary w-100">Show Ledger</button>
@@ -95,6 +104,10 @@ else
                 </tfoot>
             </table>
         </div>
-        <div class="card-body pt-2 text-muted small">Balance = amount payable to the supplier (credits &minus; debits). Credits: approved PO bills. Debits: payments and approved/completed purchase returns.</div>
+        <div class="card-body pt-2 text-muted small">Balance = amount payable to the supplier (credits &minus; debits). Credits: approved PO bills and EWO bills (net payable). Debits: payments and approved/completed purchase returns.
+            @if (source != BuilderERP.Application.DTOs.SupplierLedgerSource.All)
+            {
+                <strong>Showing @(source == BuilderERP.Application.DTOs.SupplierLedgerSource.Po ? "PO" : "EWO") transactions only; choose All for the supplier's full balance.</strong>
+            }</div>
     </div>
 }

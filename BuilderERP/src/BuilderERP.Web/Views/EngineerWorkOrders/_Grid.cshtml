@@ -95,6 +95,18 @@
                             @if (order.IsLatestRevision && (order.Status == EngineerWorkOrderStatus.Approved || order.Status == EngineerWorkOrderStatus.Active))
                             {
                                 <a asp-action="Revise" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">Revise</a>
+                                <a asp-action="PaymentHeads" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary">Payment Heads</a>
+                            }
+                        }
+                        @if (order.IsLatestRevision && (order.Status == EngineerWorkOrderStatus.Approved || order.Status == EngineerWorkOrderStatus.Active))
+                        {
+                            @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillManage))
+                            {
+                                <a asp-controller="EwoBills" asp-action="Create" asp-route-engineerWorkOrderId="@order.Id" class="btn btn-sm btn-outline-success">New Bill</a>
+                            }
+                            @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
+                            {
+                                <a asp-controller="EwoBills" asp-action="Statement" asp-route-engineerWorkOrderId="@order.Id" class="btn btn-sm btn-outline-primary" target="_blank">Statement</a>
                             }
                         }
                     </td>

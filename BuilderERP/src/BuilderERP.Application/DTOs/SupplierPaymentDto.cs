@@ -13,7 +13,9 @@ public class SupplierPaymentDto
     public string? Remarks { get; set; }
     public bool IsActive { get; set; }
     public string? PreparedBy { get; set; }
-    public long PoBillId { get; set; }
+    public long? PoBillId { get; set; }
+    public long? EwoBillId { get; set; }
+    public string BillType => EwoBillId.HasValue ? "EWO" : "PO";
     public string BillNumber { get; set; } = string.Empty;
     public string SupplierName { get; set; } = string.Empty;
 }
@@ -25,13 +27,17 @@ public class CreateSupplierPaymentDto
     public PaymentMethod Method { get; set; } = PaymentMethod.BankTransfer;
     public string? ReferenceNumber { get; set; }
     public string? Remarks { get; set; }
-    public long PoBillId { get; set; }
+    // Exactly one of the two is set: the payment is against a PO bill or an EWO bill.
+    public long? PoBillId { get; set; }
+    public long? EwoBillId { get; set; }
 }
 
 public class PayableBillDto
 {
     public long Id { get; set; }
+    public bool IsEwoBill { get; set; }
     public string BillNumber { get; set; } = string.Empty;
+    // PO number for a PO bill, work order number for an EWO bill.
     public string PONumber { get; set; } = string.Empty;
     public string SupplierName { get; set; } = string.Empty;
     public decimal TotalAmount { get; set; }
@@ -59,6 +65,7 @@ public class SupplierLedgerDto
     public string? SupplierPhone { get; set; }
     public DateTime? DateFrom { get; set; }
     public DateTime? DateTo { get; set; }
+    public SupplierLedgerSource Source { get; set; }
     public decimal OpeningBalance { get; set; }
     public List<SupplierLedgerRowDto> Rows { get; set; } = new();
     public decimal TotalDebit => Rows.Sum(r => r.Debit);
@@ -68,4 +75,13 @@ public class SupplierLedgerDto
     public string? CompanyName { get; set; }
     public string? PrintedBy { get; set; }
     public DateTime PrintedAt { get; set; }
+}
+
+// Which documents the supplier ledger includes. All gives the supplier's true balance;
+// PO / EWO show one side (purchase returns belong to PO).
+public enum SupplierLedgerSource
+{
+    All,
+    Po,
+    Ewo
 }

@@ -29,4 +29,5 @@ public class EngineerWorkOrder : BaseEntity
     public EngineerWorkOrder? PreviousWorkOrder { get; set; }
 
     public ICollection<EngineerWorkOrderDetail> Details { get; set; } = new List<EngineerWorkOrderDetail>();
+    public ICollection<EngineerWorkOrderPaymentHead> PaymentHeads { get; set; } = new List<EngineerWorkOrderPaymentHead>();
 }
