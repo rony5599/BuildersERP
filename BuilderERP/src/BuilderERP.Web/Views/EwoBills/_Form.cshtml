@@ -12,20 +12,24 @@
 
 <style>
     #workOrderId-menu .multicolumn-dropdown-column:nth-child(1) { flex: 0 0 150px; }
-    .calc-table td { padding: 4px 8px; }
-    .calc-table tr.total td { border-top: 1px solid #adb5bd; font-weight: 700; }
 </style>
 
 <form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="ewoBillForm">
     <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
     @if (isLocked)
     {
         <div class="alert alert-info">This bill is @Model.Status and can no longer be edited.</div>
     }
     <div class="alert alert-warning d-none" id="pendingDraftAlert"></div>
     <fieldset @(isLocked ? "disabled" : null)>
-        <div class="row col-lg-10">
+        <section class="ewo-form-card">
+            <div class="ewo-form-card-header">
+                <span class="ewo-step"><i class="bi bi-file-earmark-text"></i></span>
+                <div><h2>Bill information</h2><p>Select the approved work order and enter the contractor's document references.</p></div>
+            </div>
+            <div class="ewo-form-card-body">
+        <div class="row">
             @if (isEdit)
             {
                 <div class="mb-3 col-md-3">
@@ -99,9 +103,17 @@
                 <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>
             </div>
         </div>
+            </div>
+        </section>
 
-        <h5 class="mt-2">1. Measurement (work done to date)</h5>
-        <p class="text-muted small mb-2">Enter the <strong>total</strong> quantity completed so far, not only since the last bill. It starts from the previous bill's measurement. Rates come from the work order.</p>
+        <div class="ewo-bill-workspace">
+        <div>
+        <section class="ewo-form-card">
+        <div class="ewo-form-card-header">
+            <span class="ewo-step">1</span>
+            <div><h2>Measurement of work</h2><p>Enter the total quantity completed to date. Previous measurements are carried forward automatically.</p></div>
+        </div>
+        <div class="ewo-form-card-body p-0">
         <div class="table-responsive">
             <table class="table table-sm align-middle" id="measureTable">
                 <thead>
@@ -125,9 +137,15 @@
                 </tfoot>
             </table>
         </div>
+        </div>
+        </section>
 
-        <h5 class="mt-3">2. Payment heads claimed on this bill</h5>
-        <p class="text-muted small mb-2">Claim all or part of a head (e.g. 9 = half of an 18% head). What earlier bills claimed is shown and can't be claimed again.</p>
+        <section class="ewo-form-card">
+        <div class="ewo-form-card-header">
+            <span class="ewo-step">2</span>
+            <div><h2>Payment heads</h2><p>Claim all or part of each head. Amounts claimed on earlier bills remain protected.</p></div>
+        </div>
+        <div class="ewo-form-card-body p-0">
         <div class="table-responsive">
             <table class="table table-sm align-middle" id="headTable">
                 <thead>
@@ -145,9 +163,16 @@
                 </tbody>
             </table>
         </div>
+        </div>
+        </section>
 
-        <h5 class="mt-3">3. Additional charges and deductions (optional)</h5>
-        <p class="text-muted small mb-2">Additions: extra work or labour billed by the contractor. Deductions: AIT, VAT, advance adjustment, company-supplied materials, other charges billed to the contractor.</p>
+        <section class="ewo-form-card">
+        <div class="ewo-form-card-header">
+            <span class="ewo-step">3</span>
+            <div><h2>Adjustments</h2><p>Add extra work or labour, and deduct tax, advances, supplied materials, or other charges.</p></div>
+        </div>
+        <div class="ewo-form-card-body">
+        <div class="table-responsive">
         <table class="table table-sm align-middle" id="adjustmentTable">
             <thead>
                 <tr>
@@ -159,6 +184,7 @@
             </thead>
             <tbody></tbody>
         </table>
+        </div>
         <datalist id="adjustmentSuggestions">
             <option value="Additional labour / mason"></option>
             <option value="Extra work"></option>
@@ -168,9 +194,18 @@
             <option value="Materials supplied by company"></option>
             <option value="Other charges"></option>
         </datalist>
-        <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="addAdjustment">Add Line</button>
+        <button type="button" class="btn btn-sm btn-outline-primary mt-3" id="addAdjustment"><i class="bi bi-plus-lg me-1"></i>Add adjustment</button>
+        </div>
+        </section>
+        </div>
 
-        <h5 class="mt-2">4. Bill calculation</h5>
+        <aside>
+        <section class="ewo-form-card ewo-calculation">
+        <div class="ewo-form-card-header">
+            <span class="ewo-step">4</span>
+            <div><h2>Bill calculation</h2><p>Live certification summary</p></div>
+        </div>
+        <div class="ewo-form-card-body">
         <table class="calc-table mb-3">
             <tr><td>Measured total</td><td class="text-end" id="cMeasured">0.00</td></tr>
             <tr><td>Heads claimed: earlier <span id="cPrevPct">0</span>% + this bill <span id="cNowPct">0</span>% = <strong><span id="cCumPct">0</span>%</strong></td><td></td></tr>
@@ -181,14 +216,18 @@
             <tr><td>Less: deductions</td><td class="text-end" id="cDed">0.00</td></tr>
             <tr class="total"><td>Net payable</td><td class="text-end" id="cNet">0.00</td></tr>
         </table>
+        </div>
+        </section>
+        </aside>
+        </div>
     </fieldset>
 
-    <div>
+    <div class="ewo-form-actions d-flex align-items-center justify-content-end gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancel</a>
         @if (!isLocked)
         {
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check2-circle me-1"></i>Save bill</button>
         }
-        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
     </div>
 </form>
 

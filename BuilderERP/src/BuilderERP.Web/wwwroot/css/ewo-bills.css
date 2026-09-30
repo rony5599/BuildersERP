@@ -1,0 +1,119 @@
+.ewo-page {
+    --ewo-ink: #172033;
+    --ewo-muted: #667085;
+    --ewo-line: #e5e9f0;
+    --ewo-soft: #f7f9fc;
+    --ewo-primary: #2457c5;
+    --ewo-primary-soft: #edf3ff;
+}
+
+.ewo-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.ewo-eyebrow {
+    color: var(--ewo-primary);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.ewo-page-title { color: var(--ewo-ink); font-weight: 750; letter-spacing: -.025em; }
+.ewo-page-subtitle { color: var(--ewo-muted); max-width: 700px; }
+
+.ewo-card {
+    border: 1px solid var(--ewo-line);
+    border-radius: .85rem;
+    box-shadow: 0 3px 14px rgba(23, 32, 51, .045);
+    overflow: hidden;
+}
+
+.ewo-filter-card { background: linear-gradient(135deg, #fff 0%, #f8faff 100%); }
+.ewo-filter-card .form-label { color: #475467; font-weight: 650; }
+.ewo-filter-card .form-control, .ewo-filter-card .form-select { background-color: #fff; }
+
+.ewo-result-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .9rem 1.1rem;
+    border-bottom: 1px solid var(--ewo-line);
+    color: var(--ewo-muted);
+    font-size: .84rem;
+}
+
+.ewo-table { margin: 0; }
+.ewo-table thead th {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--ewo-line);
+    color: #667085;
+    font-size: .7rem;
+    font-weight: 750;
+    letter-spacing: .04em;
+    padding: .75rem .8rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.ewo-table tbody td { border-color: #edf0f4; padding: .85rem .8rem; vertical-align: middle; }
+.ewo-table tbody tr:hover { background: #fafcff; }
+.ewo-document-number { color: var(--ewo-primary); font-weight: 750; }
+.ewo-secondary { color: var(--ewo-muted); font-size: .78rem; }
+.ewo-money { color: var(--ewo-ink); font-variant-numeric: tabular-nums; font-weight: 650; }
+.ewo-money.outstanding { color: #b54708; }
+.ewo-heads { color: #475467; max-width: 240px; }
+
+.ewo-badge {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: .72rem;
+    font-weight: 700;
+    gap: .35rem;
+    padding: .35rem .6rem;
+}
+.ewo-badge::before { background: currentColor; border-radius: 50%; content: ""; height: .4rem; width: .4rem; }
+.ewo-badge-draft { background: #fff7e6; color: #a15c00; }
+.ewo-badge-approved { background: #eaf8ef; color: #157347; }
+.ewo-badge-cancelled, .ewo-badge-inactive { background: #f0f2f5; color: #667085; }
+.ewo-badge-active { background: #eaf8ef; color: #157347; }
+
+.ewo-empty { padding: 4rem 1rem !important; text-align: center; }
+.ewo-empty i { color: #b8c2d1; display: block; font-size: 2.25rem; margin-bottom: .75rem; }
+
+.ewo-form-shell { max-width: 1440px; }
+.ewo-form-card { border: 1px solid var(--ewo-line); border-radius: .85rem; margin-bottom: 1rem; overflow: hidden; }
+.ewo-form-card-header { align-items: flex-start; background: #fbfcfe; border-bottom: 1px solid var(--ewo-line); display: flex; gap: .8rem; padding: 1rem 1.15rem; }
+.ewo-step { align-items: center; background: var(--ewo-primary); border-radius: .55rem; color: #fff; display: inline-flex; flex: 0 0 2rem; font-size: .8rem; font-weight: 800; height: 2rem; justify-content: center; }
+.ewo-form-card-header h2 { color: var(--ewo-ink); font-size: 1rem; font-weight: 750; margin: 0; }
+.ewo-form-card-header p { color: var(--ewo-muted); font-size: .78rem; margin: .2rem 0 0; }
+.ewo-form-card-body { padding: 1.15rem; }
+.ewo-form-card .table { margin-bottom: 0; }
+.ewo-form-card .table thead th { background: #f8fafc; color: #667085; font-size: .7rem; letter-spacing: .035em; text-transform: uppercase; }
+
+.ewo-calculation { background: #172033; border: 0; color: #fff; }
+.ewo-calculation .ewo-form-card-header { background: transparent; border-color: rgba(255,255,255,.12); }
+.ewo-calculation .ewo-form-card-header h2, .ewo-calculation .ewo-form-card-header p { color: #fff; }
+.ewo-calculation .ewo-step { background: rgba(255,255,255,.14); }
+.ewo-calculation .calc-table { width: 100%; }
+.ewo-calculation .calc-table td { color: #d5dbea; padding: .45rem 0; }
+.ewo-calculation .calc-table td:last-child { font-variant-numeric: tabular-nums; }
+.ewo-calculation .calc-table tr.total td { border-color: rgba(255,255,255,.22); color: #fff; }
+.ewo-calculation .calc-table tr:last-child td { color: #9ff0bd; font-size: 1.08rem; padding-top: .75rem; }
+.ewo-form-actions { background: rgba(255,255,255,.96); border-top: 1px solid var(--ewo-line); bottom: 0; margin: 1.5rem -1rem -1rem; padding: 1rem; position: sticky; z-index: 20; }
+
+@media (min-width: 1200px) {
+    .ewo-bill-workspace { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr) 340px; }
+    .ewo-calculation { position: sticky; top: 1rem; }
+}
+
+@media (max-width: 767.98px) {
+    .ewo-page-header { align-items: stretch; flex-direction: column; }
+    .ewo-page-header .btn { width: 100%; }
+    .ewo-result-meta { align-items: flex-start; flex-direction: column; gap: .3rem; }
+    .ewo-form-card-body { padding: .85rem; }
+}

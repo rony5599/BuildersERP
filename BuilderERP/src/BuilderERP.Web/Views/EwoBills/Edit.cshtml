@@ -5,8 +5,18 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ewo-bills.css" asp-append-version="true" />
 }
 
-<h1 class="h3 mb-4">Edit EWO Bill</h1>
+<div class="ewo-page ewo-form-shell">
+    <div class="ewo-page-header">
+        <div>
+            <div class="ewo-eyebrow mb-1">Contractor billing</div>
+            <h1 class="h2 ewo-page-title mb-1">Edit EWO Bill</h1>
+            <p class="ewo-page-subtitle mb-0">Update the draft measurement, payment-head claims, and adjustments.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back to bills</a>
+    </div>
 
-<partial name="_Form" model="Model" />
+    <partial name="_Form" model="Model" />
+</div>

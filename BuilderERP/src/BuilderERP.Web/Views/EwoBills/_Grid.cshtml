@@ -14,8 +14,18 @@
     var canPay = User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierPaymentManage);
 }
 
-<div class="card mb-3">
+<div class="card ewo-card ewo-filter-card mb-3">
     <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <h2 class="h6 mb-1"><i class="bi bi-funnel me-2 text-primary"></i>Find bills</h2>
+                <p class="small text-muted mb-0">Narrow results by document, supplier, status, or date.</p>
+            </div>
+            @if (hasFilters)
+            {
+                <span class="badge text-bg-primary rounded-pill">Filters applied</span>
+            }
+        </div>
         <form asp-action="Index" method="get" class="row gy-3 gx-4 align-items-end grid-search-form">
             <div class="col-12 col-sm-6 col-lg-2">
                 <label class="form-label small mb-1">Bill # / EWO #</label>
@@ -40,7 +50,7 @@
                 <input type="date" name="dateTo" value="@(dateTo?.ToString("yyyy-MM-dd"))" class="form-control" />
             </div>
             <div class="col-12 col-sm-6 col-lg-2 d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-search me-1"></i> Search</button>
                 @if (hasFilters)
                 {
                     <a asp-action="Index" class="btn btn-outline-secondary flex-grow-1">Clear</a>
@@ -50,9 +60,13 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card ewo-card">
+    <div class="ewo-result-meta">
+        <span><strong class="text-dark">@Model.TotalCount</strong> bill@(Model.TotalCount == 1 ? "" : "s") found</span>
+        <span>Page @Model.Page of @Math.Max(Model.TotalPages, 1)</span>
+    </div>
     <div class="table-responsive">
-    <table class="table table-striped table-hover mb-0">
+    <table class="table ewo-table">
         <thead>
             <tr>
                 <th>Bill #</th>
@@ -64,56 +78,72 @@
                 <th class="text-end">Net Payable</th>
                 <th class="text-end">Paid</th>
                 <th>Status</th>
-                <th>Active</th>
-                <th></th>
+                <th>Balance</th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var bill in Model.Items)
             {
                 <tr>
-                    <td>@bill.BillNumber</td>
-                    <td>@bill.BillDate.ToString("dd-MMM-yyyy")</td>
-                    <td>@bill.WorkOrderNo</td>
-                    <td>@bill.SupplierName</td>
-                    <td class="small">@bill.HeadsSummary</td>
-                    <td class="text-end">@bill.MeasuredAmount.ToString("N2")</td>
-                    <td class="text-end">@bill.NetPayable.ToString("N2")</td>
-                    <td class="text-end">@bill.PaidAmount.ToString("N2")</td>
                     <td>
-                        <span class="badge @StatusBadgeClass(bill.Status)"><span class="badge-dot"></span>@bill.Status</span>
+                        <a asp-action="Print" asp-route-id="@bill.Id" target="_blank" class="ewo-document-number text-decoration-none">@bill.BillNumber</a>
+                        @if (!bill.IsActive) { <div class="ewo-secondary">Inactive record</div> }
+                    </td>
+                    <td class="text-nowrap">@bill.BillDate.ToString("dd MMM yyyy")</td>
+                    <td><span class="fw-semibold">@bill.WorkOrderNo</span><div class="ewo-secondary">@bill.ProjectName</div></td>
+                    <td class="fw-semibold">@bill.SupplierName</td>
+                    <td><div class="ewo-heads small">@(string.IsNullOrWhiteSpace(bill.HeadsSummary) ? "No heads claimed" : bill.HeadsSummary)</div></td>
+                    <td class="text-end ewo-money">@bill.MeasuredAmount.ToString("N2")</td>
+                    <td class="text-end ewo-money">@bill.NetPayable.ToString("N2")</td>
+                    <td class="text-end ewo-money">@bill.PaidAmount.ToString("N2")</td>
+                    <td>
+                        <span class="ewo-badge @StatusBadgeClass(bill.Status)">@bill.Status</span>
                     </td>
                     <td>
-                        <span class="badge @(bill.IsActive ? "bg-success" : "bg-secondary")">
-                            <span class="badge-dot"></span>@(bill.IsActive ? "Active" : "Inactive")
-                        </span>
+                        <div class="ewo-money outstanding">@bill.Outstanding.ToString("N2")</div>
+                        <span class="ewo-secondary">@(bill.IsActive ? "Outstanding" : "Inactive")</span>
                     </td>
                     <td class="text-end text-nowrap">
-                        <a asp-action="Print" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-primary" target="_blank">Print</a>
-                        <a asp-action="Statement" asp-route-engineerWorkOrderId="@bill.EngineerWorkOrderId" class="btn btn-sm btn-outline-primary" target="_blank">Statement</a>
                         @if (canPay && bill.IsActive && bill.Status == PoBillStatus.Approved && bill.Outstanding > 0)
                         {
-                            <a asp-controller="SupplierPayments" asp-action="Create" asp-route-ewoBillId="@bill.Id" class="btn btn-sm btn-outline-success">Pay</a>
+                            <a asp-controller="SupplierPayments" asp-action="Create" asp-route-ewoBillId="@bill.Id" class="btn btn-sm btn-success me-1"><i class="bi bi-credit-card me-1"></i>Pay</a>
                         }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillManage))
-                        {
-                            @if (bill.Status == PoBillStatus.Draft)
-                            {
-                                <a asp-action="Edit" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                            }
-                            <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    @(bill.IsActive ? "Deactivate" : "Activate")
-                                </button>
-                            </form>
-                        }
+                        <div class="dropdown d-inline-block">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for @bill.BillNumber">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li><a asp-action="Print" asp-route-id="@bill.Id" class="dropdown-item" target="_blank"><i class="bi bi-printer me-2"></i>Print bill</a></li>
+                                <li><a asp-action="Statement" asp-route-engineerWorkOrderId="@bill.EngineerWorkOrderId" class="dropdown-item" target="_blank"><i class="bi bi-file-earmark-bar-graph me-2"></i>View statement</a></li>
+                                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillManage))
+                                {
+                                    @if (bill.Status == PoBillStatus.Draft)
+                                    {
+                                        <li><a asp-action="Edit" asp-route-id="@bill.Id" class="dropdown-item"><i class="bi bi-pencil me-2"></i>Edit draft</a></li>
+                                    }
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post">
+                                            <button type="submit" class="dropdown-item @(bill.IsActive ? "text-danger" : "text-success")">
+                                                <i class="bi @(bill.IsActive ? "bi-slash-circle" : "bi-check-circle") me-2"></i>@(bill.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </td>
                 </tr>
             }
             @if (Model.Items.Count == 0)
             {
                 <tr>
-                    <td colspan="11" class="text-center text-muted">No EWO bills found.</td>
+                    <td colspan="11" class="ewo-empty">
+                        <i class="bi bi-receipt"></i>
+                        <div class="fw-semibold text-dark">No EWO bills found</div>
+                        <div class="small text-muted mt-1">Try adjusting the filters or create a new bill.</div>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -146,9 +176,9 @@
 
     private static string StatusBadgeClass(PoBillStatus status) => status switch
     {
-        PoBillStatus.Draft => "bg-warning",
-        PoBillStatus.Approved => "bg-success",
-        PoBillStatus.Cancelled => "bg-secondary",
-        _ => "bg-secondary"
+        PoBillStatus.Draft => "ewo-badge-draft",
+        PoBillStatus.Approved => "ewo-badge-approved",
+        PoBillStatus.Cancelled => "ewo-badge-cancelled",
+        _ => "ewo-badge-cancelled"
     };
 }
