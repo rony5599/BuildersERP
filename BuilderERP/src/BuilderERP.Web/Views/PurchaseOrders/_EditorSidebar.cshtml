@@ -1,0 +1,41 @@
+@using BuilderERP.Web.Models
+@{
+    var assignments = ViewBag.ApprovalAssignments as IReadOnlyCollection<PurchaseOrderApprovalAssignmentViewModel>
+        ?? Array.Empty<PurchaseOrderApprovalAssignmentViewModel>();
+}
+
+<aside class="po-editor-sidebar">
+    <section class="po-side-card">
+        <div class="po-card-heading">
+            <h5>Order summary</h5>
+            <p>Automatically calculated.</p>
+        </div>
+        <div class="po-summary-body">
+            <div><span>Subtotal</span><strong id="po-summary-subtotal">৳ 0.00</strong></div>
+            <div><span>Discount</span><strong id="po-summary-discount">− ৳ 0.00</strong></div>
+            <div><span>VAT</span><strong id="po-summary-vat">৳ 0.00</strong></div>
+            <div><span>Tax</span><strong id="po-summary-tax">৳ 0.00</strong></div>
+            <div class="po-summary-total"><span>Grand total</span><strong id="po-summary-total">৳ 0.00</strong></div>
+        </div>
+    </section>
+
+    <section class="po-side-card">
+        <div class="po-card-heading">
+            <h5>Approval assignment</h5>
+            <p>Actions are enabled by user and status.</p>
+        </div>
+        <div class="po-assignment-list">
+            @if (assignments.Count == 0)
+            {
+                <div class="po-assignment-empty">No workflow users assigned.</div>
+            }
+            @foreach (var item in assignments)
+            {
+                <div class="po-assignment-item">
+                    <span class="po-assignment-avatar">@item.Initials</span>
+                    <span><strong>@item.FullName</strong><small>@item.Actions</small></span>
+                </div>
+            }
+        </div>
+    </section>
+</aside>

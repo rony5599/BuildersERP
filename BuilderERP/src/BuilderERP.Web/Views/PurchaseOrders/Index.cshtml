@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="~/css/procurement.css" asp-append-version="true" />
 }
 
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success">@statusMessage</div>
+}
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
 <div class="procurement-page-header">
     <div>
         <div class="page-eyebrow"><i class="bi bi-receipt"></i> Procurement</div>
@@ -19,7 +28,8 @@
         </div>
         <p>Manage supplier commitments, delivery dates and receiving progress.</p>
     </div>
-    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderManage))
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderManage)
+        && (ViewBag.ActionAssignment?.CanDraftEdit ?? false))
     {
         <a asp-action="Create" class="btn btn-primary procurement-primary-action"><i class="bi bi-plus-lg"></i> New Purchase Order</a>
     }
@@ -55,3 +65,23 @@
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('submit', function (event) {
+            const form = event.target;
+            if (!form.classList.contains('workflow-action-form')) return;
+            if (form.dataset.submitting === 'true') {
+                event.preventDefault();
+                return;
+            }
+
+            form.dataset.submitting = 'true';
+            const button = form.querySelector('button[type="submit"]');
+            if (button) {
+                button.disabled = true;
+                button.setAttribute('aria-busy', 'true');
+            }
+        });
+    </script>
+}

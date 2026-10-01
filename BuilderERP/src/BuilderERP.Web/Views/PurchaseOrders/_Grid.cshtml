@@ -1,7 +1,12 @@
 @using BuilderERP.Application.Common
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Entities
+@using BuilderERP.Web.Models
 @model PagedResult<BuilderERP.Application.DTOs.PurchaseOrderDto>
+@{
+    var assignment = ViewBag.ActionAssignment as PurchaseOrderActionAssignment;
+}
 
 <div class="procurement-table-card">
 <div class="table-responsive">
@@ -24,7 +29,10 @@
         @foreach (var order in Model.Items)
         {
             <tr>
-                <td><a asp-action="Edit" asp-route-id="@order.Id" class="document-number">@order.PONumber</a><span class="document-subtitle">@order.ProjectName</span></td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@order.Id" class="document-number" title="View purchase order">@order.PONumber</a>
+                    <span class="document-subtitle">@order.ProjectName</span>
+                </td>
                 <td class="fw-medium">@order.SupplierName</td>
                 <td><span class="reference-chip">@order.QuotationNumber</span></td>
                 <td class="amount-cell">@order.TotalAmount.ToString("N2")</td>
@@ -37,10 +45,33 @@
                     </span>
                 </td>
                 <td class="text-end">
-                    <div class="procurement-actions"><a asp-action="Print" asp-route-id="@order.Id" class="btn btn-sm btn-light" target="_blank" title="Print"><i class="bi bi-printer"></i></a>
+                    <div class="procurement-actions"><a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-light" title="View"><i class="bi bi-eye"></i></a><a asp-action="Print" asp-route-id="@order.Id" class="btn btn-sm btn-light" target="_blank" title="Print"><i class="bi bi-printer"></i></a>
                     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderManage))
                     {
-                        <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-light" title="Edit"><i class="bi bi-pencil"></i></a>
+                        @if (assignment?.CanDraftEdit == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft)
+                        {
+                            <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-light" title="Edit"><i class="bi bi-pencil"></i></a>
+                        }
+                        @if (assignment?.CanSubmit == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft)
+                        {
+                            <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "submit", "Submit", "btn-outline-primary"))" />
+                        }
+                        @if (assignment?.CanRequestApproval == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted)
+                        {
+                            <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "request", "Request approval", "btn-outline-primary"))" />
+                        }
+                        @if (assignment?.CanApprove == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval)
+                        {
+                            <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "approve", "Approve", "btn-success"))" />
+                        }
+                        @if (assignment?.CanReject == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval)
+                        {
+                            <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", "btn-outline-danger"))" />
+                        }
+                        @if (assignment?.CanCancel == true && order.Status is BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft or BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted or BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval or BuilderERP.Domain.Enums.PurchaseOrderStatus.Rejected)
+                        {
+                            <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "cancel", "Cancel", "btn-outline-danger"))" />
+                        }
                         <form asp-action="ToggleActive" asp-route-id="@order.Id" asp-route-isActive="@order.IsActive" method="post" class="d-inline">
                             <button type="submit" class="btn btn-sm btn-light @(order.IsActive ? "text-danger" : "text-success")" title="@(order.IsActive ? "Deactivate" : "Activate")">
                                 <i class="bi @(order.IsActive ? "bi-pause-circle" : "bi-play-circle")"></i>
@@ -78,7 +109,10 @@
     private static string StatusBadgeClass(BuilderERP.Domain.Enums.PurchaseOrderStatus status) => status switch
     {
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft => "status-neutral",
-        BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved => "status-info",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted => "status-info",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval => "status-warning",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved => "status-success",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Rejected => "status-danger",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "status-warning",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Received => "status-success",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Closed => "status-success",
@@ -87,5 +121,10 @@
     };
 
     private static string HumanizeStatus(BuilderERP.Domain.Enums.PurchaseOrderStatus status) =>
-        status == BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived ? "Partially Received" : status.ToString();
+        status switch
+        {
+            BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "Partially Received",
+            BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval => "Awaiting Approval",
+            _ => status.ToString()
+        };
 }

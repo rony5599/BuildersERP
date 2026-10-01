@@ -82,22 +82,24 @@ public class UsersController : Controller
     }
 
     [PermissionAuthorize(PermissionNames.UserManage)]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(string? returnUrl = null)
     {
         await PopulateDropdownsAsync();
+        ViewBag.ReturnUrl = returnUrl;
         return View(new CreateUserDto());
     }
 
     [HttpPost]
     [PermissionAuthorize(PermissionNames.UserManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateUserDto dto)
+    public async Task<IActionResult> Create(CreateUserDto dto, string? returnUrl = null)
     {
         var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
             validationResult.AddToModelState(ModelState);
             await PopulateDropdownsAsync();
+            ViewBag.ReturnUrl = returnUrl;
             return View(dto);
         }
 
@@ -120,10 +122,16 @@ public class UsersController : Controller
             }
 
             await PopulateDropdownsAsync();
+            ViewBag.ReturnUrl = returnUrl;
             return View(dto);
         }
 
         await _userManager.AddToRoleAsync(user, dto.Role);
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
         return RedirectToAction(nameof(Index));
     }
 

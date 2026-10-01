@@ -1,0 +1,85 @@
+@model BuilderERP.Application.DTOs.PurchaseOrderDto
+@{
+    ViewData["Title"] = $"Purchase Order {Model.PONumber}";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/procurement.css" asp-append-version="true" />
+}
+
+<div class="procurement-form-header">
+    <a asp-action="Index" class="procurement-back" title="Back to purchase orders"><i class="bi bi-arrow-left"></i></a>
+    <div class="flex-grow-1">
+        <div class="page-eyebrow">Purchase Order</div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <h1 class="mb-0">@Model.PONumber</h1>
+            <span class="procurement-status @StatusBadgeClass(Model.Status)"><span class="badge-dot"></span>@HumanizeStatus(Model.Status)</span>
+        </div>
+        <p>View supplier, delivery and commercial details for this order.</p>
+    </div>
+    <a asp-action="Print" asp-route-id="@Model.Id" class="btn btn-outline-primary" target="_blank"><i class="bi bi-printer"></i> Print</a>
+</div>
+
+<div class="procurement-form">
+    <div class="procurement-form-card row g-3">
+        <div class="col-md-4"><div class="form-label">Supplier</div><div class="fw-semibold">@Model.SupplierName</div></div>
+        <div class="col-md-4"><div class="form-label">Quotation</div><div>@Model.QuotationNumber</div></div>
+        <div class="col-md-4"><div class="form-label">Project</div><div>@Model.ProjectName</div></div>
+        <div class="col-md-3"><div class="form-label">Order Date</div><div>@Model.OrderDate.ToString("dd MMM yyyy")</div></div>
+        <div class="col-md-3"><div class="form-label">Delivery Date</div><div>@Model.DeliveryDate.ToString("dd MMM yyyy")</div></div>
+        <div class="col-md-3"><div class="form-label">Total Amount</div><div class="amount-cell">@Model.TotalAmount.ToString("N2")</div></div>
+        <div class="col-md-3"><div class="form-label">Received Amount</div><div class="amount-cell">@Model.ReceivedAmount.ToString("N2")</div></div>
+        <div class="col-md-4"><div class="form-label">Terms of Payment / Delivery</div><div>@Display(Model.TermsOfPayment)</div></div>
+        <div class="col-md-4"><div class="form-label">Dispatched Through</div><div>@Display(Model.DispatchedThrough)</div></div>
+        <div class="col-md-4"><div class="form-label">Destination</div><div>@Display(Model.Destination)</div></div>
+        <div class="col-12"><div class="form-label">Remarks</div><div>@Display(Model.Remarks)</div></div>
+    </div>
+
+    <div class="procurement-section-heading"><div><h5>Line Items</h5><p>Ordered, received and remaining quantities.</p></div></div>
+    <div class="procurement-lines">
+        <table class="table mb-0">
+            <thead><tr><th>Material</th><th class="text-end">Ordered</th><th>Unit</th><th class="text-end">Received</th><th class="text-end">Remaining</th><th class="text-end">Unit Price</th><th class="text-end">Discount</th><th class="text-end">VAT</th><th class="text-end">Tax</th><th class="text-end">Line Total</th></tr></thead>
+            <tbody>
+            @foreach (var line in Model.Details)
+            {
+                <tr>
+                    <td class="fw-semibold">@line.MaterialName</td>
+                    <td class="text-end">@line.OrderedQuantity.ToString("N3")</td>
+                    <td>@line.UnitOfMeasure</td>
+                    <td class="text-end">@line.ReceivedQuantity.ToString("N3")</td>
+                    <td class="text-end">@line.RemainingQuantity.ToString("N3")</td>
+                    <td class="text-end">@line.UnitPrice.ToString("N2")</td>
+                    <td class="text-end">@line.DiscountAmount.ToString("N2")</td>
+                    <td class="text-end">@line.VatAmount.ToString("N2")</td>
+                    <td class="text-end">@line.TaxAmount.ToString("N2")</td>
+                    <td class="text-end amount-cell">@line.LineTotal.ToString("N2")</td>
+                </tr>
+            }
+            </tbody>
+            <tfoot><tr><th colspan="9" class="text-end">Total</th><th class="text-end amount-cell">@Model.TotalAmount.ToString("N2")</th></tr></tfoot>
+        </table>
+    </div>
+</div>
+
+@functions {
+    private static string Display(string? value) => string.IsNullOrWhiteSpace(value) ? "—" : value;
+
+    private static string StatusBadgeClass(BuilderERP.Domain.Enums.PurchaseOrderStatus status) => status switch
+    {
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft => "status-neutral",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted => "status-info",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval => "status-warning",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved => "status-success",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Rejected or BuilderERP.Domain.Enums.PurchaseOrderStatus.Cancelled => "status-danger",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "status-warning",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Received or BuilderERP.Domain.Enums.PurchaseOrderStatus.Closed => "status-success",
+        _ => "status-neutral"
+    };
+
+    private static string HumanizeStatus(BuilderERP.Domain.Enums.PurchaseOrderStatus status) => status switch
+    {
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "Partially Received",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval => "Awaiting Approval",
+        _ => status.ToString()
+    };
+}

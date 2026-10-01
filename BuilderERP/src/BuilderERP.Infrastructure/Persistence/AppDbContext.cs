@@ -47,6 +47,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Rfq> Rfqs => Set<Rfq>();
     public DbSet<VendorQuotation> VendorQuotations => Set<VendorQuotation>();
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
+    public DbSet<PurchaseOrderActionAssignment> PurchaseOrderActionAssignments => Set<PurchaseOrderActionAssignment>();
     public DbSet<CashPurchaseOrder> CashPurchaseOrders => Set<CashPurchaseOrder>();
     public DbSet<CashPurchaseOrderDetail> CashPurchaseOrderDetails => Set<CashPurchaseOrderDetail>();
     public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
@@ -168,6 +169,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.HasOne(rp => rp.Permission)
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PurchaseOrderActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

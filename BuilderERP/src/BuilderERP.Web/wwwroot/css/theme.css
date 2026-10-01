@@ -1,19 +1,19 @@
 /* ============================================================
    BuilderERP theme — visual language matching the TailAdmin
-   dashboard template (white sidebar/topbar, brand blue accent,
+   dashboard template (white sidebar/topbar, brand green accent,
    rounded cards, soft pill badges, TailAdmin-style form controls).
    ============================================================ */
 
 :root {
-  --brand-25: #f2f7ff;
-  --brand-50: #ecf3ff;
-  --brand-100: #dde9ff;
-  --brand-200: #c2d6ff;
-  --brand-300: #9cb9ff;
-  --brand-400: #7592ff;
-  --brand-500: #465fff;
-  --brand-600: #3641f5;
-  --brand-700: #2a31d8;
+  --brand-25: #f6fbf6;
+  --brand-50: #eaf6ea;
+  --brand-100: #d4ecd4;
+  --brand-200: #abd9ab;
+  --brand-300: #7cc37c;
+  --brand-400: #4da84d;
+  --brand-500: #228b22;
+  --brand-600: #1b6e1b;
+  --brand-700: #155815;
 
   --success-50: #ecfdf3;
   --success-500: #12b76a;
@@ -24,8 +24,9 @@
   --error-50: #fef3f2;
   --error-500: #f04438;
   --error-600: #d92d20;
-  --info-50: #ecf3ff;
-  --info-500: #465fff;
+  --info-50: #eff8ff;
+  --info-500: #2e90fa;
+  --info-600: #175cd3;
 
   --gray-25: #fcfcfd;
   --gray-50: #f9fafb;
@@ -469,6 +470,19 @@ a:hover {
   border-color: var(--brand-600) !important;
 }
 
+.btn-outline-primary {
+  color: var(--brand-600);
+  border-color: var(--brand-500);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  color: #fff !important;
+  background-color: var(--brand-500) !important;
+  border-color: var(--brand-500) !important;
+}
+
 .btn-outline-secondary {
   color: var(--gray-600);
   border-color: var(--gray-300);
@@ -586,7 +600,7 @@ a:hover {
 .badge.bg-warning { background-color: var(--warning-50) !important; color: var(--warning-600) !important; }
 .badge.bg-secondary { background-color: var(--gray-100) !important; color: var(--gray-600) !important; }
 .badge.bg-primary { background-color: var(--brand-50) !important; color: var(--brand-600) !important; }
-.badge.bg-info { background-color: var(--info-50) !important; color: var(--brand-600) !important; }
+.badge.bg-info { background-color: var(--info-50) !important; color: var(--info-600) !important; }
 
 .badge-dot {
   display: inline-block;

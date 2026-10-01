@@ -46,7 +46,6 @@ public class UpdatePurchaseOrderCommandHandler : IRequestHandler<UpdatePurchaseO
         order.PONumber = request.Dto.PONumber;
         order.OrderDate = request.Dto.OrderDate;
         order.DeliveryDate = request.Dto.DeliveryDate;
-        order.Status = request.Dto.Status;
         order.TermsOfPayment = request.Dto.TermsOfPayment;
         order.DispatchedThrough = request.Dto.DispatchedThrough;
         order.Destination = request.Dto.Destination;
