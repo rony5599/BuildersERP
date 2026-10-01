@@ -268,3 +268,35 @@
   .ewo-form-actions { position:sticky; bottom:0; z-index:20; margin:0 -.5rem; padding:.75rem; background:rgba(249,250,251,.96); border-top:1px solid var(--gray-200); }
   .ewo-form-actions .btn { flex:1; min-width:0; }
 }
+
+/* Engineer work order register */
+.ewo-filter-card,.ewo-list-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card); }
+.ewo-filter-card { margin-bottom:1.25rem; }
+.ewo-filter-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem 1.15rem; color:var(--gray-700); border-bottom:1px solid var(--gray-200); font-size:.85rem; font-weight:600; }
+.ewo-filter-heading > div { display:flex; align-items:center; gap:.4rem; }
+.ewo-filter-heading i { color:var(--brand-600); }
+.ewo-clear-filters { color:var(--gray-500); font-size:.78rem; font-weight:500; text-decoration:none; }
+.ewo-clear-filters:hover { color:var(--brand-600); }
+.ewo-filter-body { padding:1rem 1.15rem 1.15rem; }
+.ewo-filter-body .form-label { color:var(--gray-600); font-weight:600; }
+.ewo-filter-body .form-control,.ewo-filter-body .form-select { min-height:42px; border-color:var(--gray-300); }
+.ewo-list-card { overflow:visible; }
+.ewo-list-card > .table-responsive { overflow:visible; }
+.ewo-list-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 1.15rem; border-bottom:1px solid var(--gray-200); }
+.ewo-list-heading h5 { margin:0 0 .2rem; color:var(--gray-900); font-size:1rem; }
+.ewo-list-heading p { margin:0; color:var(--gray-500); font-size:.8rem; }
+.ewo-list-table { min-width:920px; vertical-align:middle; }
+.ewo-list-table thead th { padding:.82rem 1rem; color:var(--gray-600); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:.72rem; font-weight:700; letter-spacing:.045em; text-transform:uppercase; white-space:nowrap; }
+.ewo-list-table tbody td { padding:.9rem 1rem; color:var(--gray-600); border-color:var(--gray-100); }
+.ewo-list-table tbody tr:hover > * { --bs-table-accent-bg:var(--brand-25); }
+.ewo-list-table :is(th,td):last-child { width:72px; }
+.ewo-row-actions .btn { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; color:var(--gray-600); background:#fff; border:1px solid var(--gray-200); }
+.ewo-row-actions .btn:hover,.ewo-row-actions .btn[aria-expanded="true"] { color:var(--brand-600); background:var(--brand-50); border-color:var(--brand-200); }
+.ewo-row-actions .dropdown-item { display:flex; align-items:center; gap:.5rem; font-size:.84rem; }
+@media (max-width:767.98px) {
+  .ewo-filter-heading,.ewo-filter-body,.ewo-list-heading { padding-right:.9rem; padding-left:.9rem; }
+}
+@media (max-width:991.98px) {
+  .ewo-list-card > .table-responsive { overflow-x:auto; }
+  .ewo-list-card > .table-responsive:has(.ewo-row-actions .dropdown-menu.show) { padding-bottom:11rem; }
+}
