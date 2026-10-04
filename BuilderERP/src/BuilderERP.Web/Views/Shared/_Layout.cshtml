@@ -8,6 +8,8 @@
         controllers.Any(c => string.Equals(c, CurrentController, StringComparison.OrdinalIgnoreCase))
             ? "nav-link active"
             : "nav-link";
+    bool IsEwoSupplierLedger = string.Equals(CurrentController, "SupplierLedger", StringComparison.OrdinalIgnoreCase)
+        && string.Equals(Context.Request.Query["source"], "Ewo", StringComparison.OrdinalIgnoreCase);
 }
 <head>
     <meta charset="utf-8" />
@@ -276,7 +278,10 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RequesterLedgerView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView))
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
                 {
                     <div class="nav-section">
                         <button type="button" class="nav-section-title">Procurement<i class="bi bi-chevron-down nav-section-caret"></i></button>
@@ -285,41 +290,113 @@
                         {
                             <li class="nav-item"><a asp-controller="Suppliers" asp-action="Index" class="@NavClass("Suppliers")"><i class="bi bi-truck"></i> Suppliers</a></li>
                         }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView))
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PoBillView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
                         {
-                            <li class="nav-item"><a asp-controller="PurchaseRequisitions" asp-action="Index" class="@NavClass("PurchaseRequisitions")"><i class="bi bi-clipboard-check"></i> Purchase Requisitions</a></li>
+                            <li class="nav-item nav-subsection">
+                                <button type="button" class="nav-subsection-title" aria-expanded="false">
+                                    <span><i class="bi bi-cart-check"></i> Purchase Order</span>
+                                    <i class="bi bi-chevron-down nav-subsection-caret"></i>
+                                </button>
+                                <ul class="nav flex-column nav-subsection-body">
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="PurchaseRequisitions" asp-action="Index" class="@NavClass("PurchaseRequisitions")"><i class="bi bi-clipboard-check"></i> Purchase Requisitions</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="Rfqs" asp-action="Index" class="@NavClass("Rfqs")"><i class="bi bi-envelope-paper"></i> RFQs</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="VendorQuotations" asp-action="Index" class="@NavClass("VendorQuotations")"><i class="bi bi-file-earmark-ruled"></i> Vendor Quotations</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="PurchaseOrders" asp-action="Index" class="@NavClass("PurchaseOrders")"><i class="bi bi-cart-check"></i> Purchase Orders</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PoBillView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="PoBills" asp-action="Index" class="@NavClass("PoBills")"><i class="bi bi-receipt"></i> PO Bills</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="PurchaseReturns" asp-action="Index" class="@NavClass("PurchaseReturns")"><i class="bi bi-arrow-return-left"></i> Purchase Returns</a></li>
+                                    }
+                                </ul>
+                            </li>
                         }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashRequisitionView))
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashRequisitionView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPurchaseOrderView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RequesterLedgerView))
                         {
-                            <li class="nav-item"><a asp-controller="CashRequisitions" asp-action="Index" class="@NavClass("CashRequisitions")"><i class="bi bi-cash-coin"></i> Cash Requisitions</a></li>
+                            <li class="nav-item nav-subsection">
+                                <button type="button" class="nav-subsection-title" aria-expanded="false">
+                                    <span><i class="bi bi-cash-stack"></i> Cash PO</span>
+                                    <i class="bi bi-chevron-down nav-subsection-caret"></i>
+                                </button>
+                                <ul class="nav flex-column nav-subsection-body">
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashRequisitionView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="CashRequisitions" asp-action="Index" class="@NavClass("CashRequisitions")"><i class="bi bi-cash-coin"></i> Cash Requisitions</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPurchaseOrderView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="CashPurchaseOrders" asp-action="Index" class="@NavClass("CashPurchaseOrders")"><i class="bi bi-cash-stack"></i> Cash Purchase Orders</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="CashPoBills" asp-action="Index" class="@NavClass("CashPoBills")"><i class="bi bi-receipt-cutoff"></i> Cash PO Bills</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="CashDisbursements" asp-action="Index" class="@NavClass("CashDisbursements")"><i class="bi bi-cash-coin"></i> Cash Disbursements</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RequesterLedgerView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="RequesterLedger" asp-action="Index" class="@NavClass("RequesterLedger")"><i class="bi bi-person-lines-fill"></i> Requester Ledger</a></li>
+                                    }
+                                </ul>
+                            </li>
                         }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView))
+                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView)
+                            || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
                         {
-                            <li class="nav-item"><a asp-controller="Rfqs" asp-action="Index" class="@NavClass("Rfqs")"><i class="bi bi-envelope-paper"></i> RFQs</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationView))
-                        {
-                            <li class="nav-item"><a asp-controller="VendorQuotations" asp-action="Index" class="@NavClass("VendorQuotations")"><i class="bi bi-file-earmark-ruled"></i> Vendor Quotations</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseOrderView))
-                        {
-                            <li class="nav-item"><a asp-controller="PurchaseOrders" asp-action="Index" class="@NavClass("PurchaseOrders")"><i class="bi bi-cart-check"></i> Purchase Orders</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPurchaseOrderView))
-                        {
-                            <li class="nav-item"><a asp-controller="CashPurchaseOrders" asp-action="Index" class="@NavClass("CashPurchaseOrders")"><i class="bi bi-cash-stack"></i> Cash Purchase Orders</a></li>
+                            <li class="nav-item nav-subsection">
+                                <button type="button" class="nav-subsection-title" aria-expanded="false">
+                                    <span><i class="bi bi-file-earmark-ruled"></i> Work Order</span>
+                                    <i class="bi bi-chevron-down nav-subsection-caret"></i>
+                                </button>
+                                <ul class="nav flex-column nav-subsection-body">
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="EngineerWorkOrderRequisitions" asp-action="Index" class="@NavClass("EngineerWorkOrderRequisitions")"><i class="bi bi-file-earmark-text"></i> Engineer Work Order Requisitions</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="EngineerWorkOrders" asp-action="Index" class="@NavClass("EngineerWorkOrders")"><i class="bi bi-file-earmark-ruled"></i> Engineer Work Orders</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="EwoBills" asp-action="Index" class="@NavClass("EwoBills")"><i class="bi bi-receipt"></i> EWO Bills</a></li>
+                                    }
+                                    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView))
+                                    {
+                                        <li class="nav-item"><a asp-controller="SupplierLedger" asp-action="Index" asp-route-source="Ewo" class="@(IsEwoSupplierLedger ? "nav-link active" : "nav-link")"><i class="bi bi-journal-text"></i> EWO Supplier Ledger</a></li>
+                                    }
+                                </ul>
+                            </li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.GoodsReceiveView))
                         {
                             <li class="nav-item"><a asp-controller="GoodsReceives" asp-action="Index" class="@NavClass("GoodsReceives")"><i class="bi bi-box-seam"></i> Goods Receives</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseReturnView))
-                        {
-                            <li class="nav-item"><a asp-controller="PurchaseReturns" asp-action="Index" class="@NavClass("PurchaseReturns")"><i class="bi bi-arrow-return-left"></i> Purchase Returns</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PoBillView))
-                        {
-                            <li class="nav-item"><a asp-controller="PoBills" asp-action="Index" class="@NavClass("PoBills")"><i class="bi bi-receipt"></i> PO Bills</a></li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierPaymentView))
                         {
@@ -327,19 +404,7 @@
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView))
                         {
-                            <li class="nav-item"><a asp-controller="SupplierLedger" asp-action="Index" class="@NavClass("SupplierLedger")"><i class="bi bi-journal-text"></i> Supplier Ledger</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillView))
-                        {
-                            <li class="nav-item"><a asp-controller="CashPoBills" asp-action="Index" class="@NavClass("CashPoBills")"><i class="bi bi-receipt-cutoff"></i> Cash PO Bills</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashDisbursementView))
-                        {
-                            <li class="nav-item"><a asp-controller="CashDisbursements" asp-action="Index" class="@NavClass("CashDisbursements")"><i class="bi bi-cash-coin"></i> Cash Disbursements</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RequesterLedgerView))
-                        {
-                            <li class="nav-item"><a asp-controller="RequesterLedger" asp-action="Index" class="@NavClass("RequesterLedger")"><i class="bi bi-person-lines-fill"></i> Requester Ledger</a></li>
+                            <li class="nav-item"><a asp-controller="SupplierLedger" asp-action="Index" class="@(IsEwoSupplierLedger ? "nav-link" : NavClass("SupplierLedger"))"><i class="bi bi-journal-text"></i> Supplier Ledger</a></li>
                         }
                     </ul>
                     </div>
@@ -407,32 +472,6 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DrawingApprovalView))
                         {
                             <li class="nav-item"><a asp-controller="DrawingApprovals" asp-action="Index" class="@NavClass("DrawingApprovals")"><i class="bi bi-patch-check"></i> Approvals</a></li>
-                        }
-                    </ul>
-                    </div>
-                }
-                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView)
-                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
-                {
-                    <div class="nav-section">
-                        <button type="button" class="nav-section-title">Engineering Work Orders<i class="bi bi-chevron-down nav-section-caret"></i></button>
-                        <ul class="nav flex-column mb-0 nav-section-body">
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionView))
-                        {
-                            <li class="nav-item"><a asp-controller="EngineerWorkOrderRequisitions" asp-action="Index" class="@NavClass("EngineerWorkOrderRequisitions")"><i class="bi bi-file-earmark-text"></i> Engineer Work Order Requisitions</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderView))
-                        {
-                            <li class="nav-item"><a asp-controller="EngineerWorkOrders" asp-action="Index" class="@NavClass("EngineerWorkOrders")"><i class="bi bi-file-earmark-ruled"></i> Engineer Work Orders</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillView))
-                        {
-                            <li class="nav-item"><a asp-controller="EwoBills" asp-action="Index" class="@NavClass("EwoBills")"><i class="bi bi-receipt"></i> EWO Bills</a></li>
-                        }
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierLedgerView))
-                        {
-                            <li class="nav-item"><a asp-controller="SupplierLedger" asp-action="Index" asp-route-source="Ewo" class="nav-link"><i class="bi bi-journal-text"></i> EWO Supplier Ledger</a></li>
                         }
                     </ul>
                     </div>
@@ -910,6 +949,24 @@
             });
 
             saveState();
+        })();
+
+        (function () {
+            var sidebar = document.querySelector('.app-sidebar');
+            if (!sidebar) return;
+
+            sidebar.querySelectorAll('.nav-subsection').forEach(function (subsection) {
+                var button = subsection.querySelector('.nav-subsection-title');
+                var hasActive = !!subsection.querySelector('.nav-link.active');
+
+                subsection.classList.toggle('collapsed', !hasActive);
+                button.setAttribute('aria-expanded', hasActive ? 'true' : 'false');
+
+                button.addEventListener('click', function () {
+                    var isCollapsed = subsection.classList.toggle('collapsed');
+                    button.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+                });
+            });
         })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)

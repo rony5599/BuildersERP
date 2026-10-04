@@ -75,7 +75,7 @@
 @media (max-width:767.98px) { .procurement-section-heading { align-items:flex-start; flex-direction:column; } .procurement-form-card { padding:1.15rem .9rem .25rem; } .procurement-form-actions { position:sticky; bottom:0; z-index:10; margin:0 -.5rem; padding:.75rem; background:rgba(249,250,251,.96); border-top:1px solid var(--gray-200); } .procurement-form-actions .btn { flex:1; min-width:0; } }
 
 /* Purchase order editor */
-.controller-purchaseorders .procurement-form { max-width:none; }
+.controller-purchaseorders .po-editor-form { max-width:none; }
 .po-editor-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; align-items:start; gap:1rem; }
 .po-editor-main { display:grid; min-width:0; gap:1rem; }
 .po-details-card { margin:0; padding:0; overflow:visible; }
