@@ -91,6 +91,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<EngineerWorkOrderRequisition> EngineerWorkOrderRequisitions => Set<EngineerWorkOrderRequisition>();
     public DbSet<EngineerWorkOrderRequisitionDetail> EngineerWorkOrderRequisitionDetails => Set<EngineerWorkOrderRequisitionDetail>();
     public DbSet<EngineerWorkOrder> EngineerWorkOrders => Set<EngineerWorkOrder>();
+    public DbSet<EngineerWorkOrderActionAssignment> EngineerWorkOrderActionAssignments => Set<EngineerWorkOrderActionAssignment>();
     public DbSet<EngineerWorkOrderDetail> EngineerWorkOrderDetails => Set<EngineerWorkOrderDetail>();
     public DbSet<EngineerWorkOrderPaymentHead> EngineerWorkOrderPaymentHeads => Set<EngineerWorkOrderPaymentHead>();
     public DbSet<EwoBill> EwoBills => Set<EwoBill>();
@@ -173,6 +174,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         });
 
         builder.Entity<PurchaseOrderActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<EngineerWorkOrderActionAssignment>(entity =>
         {
             entity.HasIndex(a => a.UserId).IsUnique();
             entity.HasOne(a => a.User)

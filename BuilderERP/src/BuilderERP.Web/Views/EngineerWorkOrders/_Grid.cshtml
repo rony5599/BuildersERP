@@ -2,6 +2,8 @@
 @using BuilderERP.Domain.Enums
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Entities
+@using BuilderERP.Web.Models
 @using Microsoft.AspNetCore.Mvc.Rendering
 @model PagedResult<BuilderERP.Application.DTOs.EngineerWorkOrderDto>
 @{
@@ -11,6 +13,7 @@
     var dateFrom = ViewBag.DateFrom as DateTime?;
     var dateTo = ViewBag.DateTo as DateTime?;
     var hasFilters = !string.IsNullOrWhiteSpace(workOrderNo) || projectId.HasValue || status.HasValue || dateFrom.HasValue || dateTo.HasValue;
+    var assignment = ViewBag.ActionAssignment as EngineerWorkOrderActionAssignment;
 }
 
 <div class="ewo-filter-card">
@@ -95,7 +98,7 @@
                     </td>
                     <td class="amount-cell">@order.TotalAmount.ToString("N2")</td>
                     <td>
-                        <span class="procurement-status @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@order.Status</span>
+                        <span class="procurement-status @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@HumanizeStatus(order.Status)</span>
                     </td>
                     <td class="text-end">
                         <div class="dropdown ewo-row-actions">
@@ -106,10 +109,36 @@
                                 <li><a asp-action="Print" asp-route-id="@order.Id" class="dropdown-item" target="_blank"><i class="bi bi-printer"></i> Print Work Order</a></li>
                                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderManage))
                                 {
-                                    <li><a asp-action="Edit" asp-route-id="@order.Id" class="dropdown-item"><i class="bi bi-pencil"></i> Edit</a></li>
+                                    @if (assignment?.CanDraftEdit == true && order.Status == EngineerWorkOrderStatus.Draft)
+                                    {
+                                        <li><a asp-action="Edit" asp-route-id="@order.Id" class="dropdown-item"><i class="bi bi-pencil"></i> Edit</a></li>
+                                    }
+                                    @if (assignment?.CanSubmit == true && order.Status == EngineerWorkOrderStatus.Draft)
+                                    {
+                                        <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "submit", "Submit", ""))" /></li>
+                                    }
+                                    @if (assignment?.CanRequestApproval == true && order.Status == EngineerWorkOrderStatus.Submitted)
+                                    {
+                                        <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "request", "Request approval", ""))" /></li>
+                                    }
+                                    @if (assignment?.CanApprove == true && order.Status == EngineerWorkOrderStatus.UnderApproval)
+                                    {
+                                        <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "approve", "Approve", ""))" /></li>
+                                    }
+                                    @if (assignment?.CanReject == true && order.Status == EngineerWorkOrderStatus.UnderApproval)
+                                    {
+                                        <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", ""))" /></li>
+                                    }
+                                    @if (assignment?.CanCancel == true && order.Status is EngineerWorkOrderStatus.Draft or EngineerWorkOrderStatus.Submitted or EngineerWorkOrderStatus.UnderApproval or EngineerWorkOrderStatus.Rejected)
+                                    {
+                                        <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "cancel", "Cancel", ""))" /></li>
+                                    }
                                     @if (order.IsLatestRevision && (order.Status == EngineerWorkOrderStatus.Approved || order.Status == EngineerWorkOrderStatus.Active))
                                     {
-                                        <li><a asp-action="Revise" asp-route-id="@order.Id" class="dropdown-item"><i class="bi bi-arrow-repeat"></i> Create Revision</a></li>
+                                        @if (assignment?.CanDraftEdit == true)
+                                        {
+                                            <li><a asp-action="Revise" asp-route-id="@order.Id" class="dropdown-item"><i class="bi bi-arrow-repeat"></i> Create Revision</a></li>
+                                        }
                                         <li><a asp-action="PaymentHeads" asp-route-id="@order.Id" class="dropdown-item"><i class="bi bi-percent"></i> Payment Heads</a></li>
                                     }
                                 }
@@ -176,5 +205,8 @@
         EngineerWorkOrderStatus.Rejected => "status-danger",
         _ => "status-neutral"
     };
+
+    private static string HumanizeStatus(EngineerWorkOrderStatus status) =>
+        status == EngineerWorkOrderStatus.UnderApproval ? "Under Approval" : status.ToString();
 }
 

@@ -6,13 +6,18 @@ using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Suppliers;
 using BuilderERP.Domain.Enums;
+using BuilderERP.Domain.Entities;
+using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
+using BuilderERP.Web.Models;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -24,23 +29,27 @@ public class EngineerWorkOrdersController : Controller
     private readonly IValidator<UpdateEngineerWorkOrderDto> _updateValidator;
     private readonly IValidator<SaveEngineerWorkOrderPaymentHeadsDto> _paymentHeadsValidator;
     private readonly EngineerWorkOrderPdfExporter _pdfExporter;
+    private readonly AppDbContext _db;
 
     public EngineerWorkOrdersController(
         IMediator mediator,
         IValidator<CreateEngineerWorkOrderDto> createValidator,
         IValidator<UpdateEngineerWorkOrderDto> updateValidator,
         IValidator<SaveEngineerWorkOrderPaymentHeadsDto> paymentHeadsValidator,
-        EngineerWorkOrderPdfExporter pdfExporter)
+        EngineerWorkOrderPdfExporter pdfExporter,
+        AppDbContext db)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _paymentHeadsValidator = paymentHeadsValidator;
         _pdfExporter = pdfExporter;
+        _db = db;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? workOrderNo = null, long? projectId = null, EngineerWorkOrderStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
+        ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var workOrders = await _mediator.Send(new GetAllEngineerWorkOrdersQuery(page, pageSize, workOrderNo, projectId, status, dateFrom, dateTo));
 
         ViewBag.WorkOrderNo = workOrderNo;
@@ -64,6 +73,7 @@ public class EngineerWorkOrdersController : Controller
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
     public async Task<IActionResult> Create()
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         await PopulateDropdownsAsync();
         return View(new CreateEngineerWorkOrderDto());
     }
@@ -73,6 +83,8 @@ public class EngineerWorkOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateEngineerWorkOrderDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = EngineerWorkOrderStatus.Draft;
         var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -88,6 +100,7 @@ public class EngineerWorkOrdersController : Controller
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
     public async Task<IActionResult> Edit(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var workOrder = await _mediator.Send(new GetEngineerWorkOrderByIdQuery(id));
         if (workOrder is null)
         {
@@ -122,6 +135,8 @@ public class EngineerWorkOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(UpdateEngineerWorkOrderDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = EngineerWorkOrderStatus.Draft;
         var validationResult = await _updateValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -149,6 +164,7 @@ public class EngineerWorkOrdersController : Controller
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
     public async Task<IActionResult> Revise(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var workOrder = await _mediator.Send(new GetEngineerWorkOrderByIdQuery(id));
         if (workOrder is null)
         {
@@ -189,6 +205,8 @@ public class EngineerWorkOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Revise(long previousWorkOrderId, CreateEngineerWorkOrderDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = EngineerWorkOrderStatus.Draft;
         var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -215,6 +233,77 @@ public class EngineerWorkOrdersController : Controller
             return View("Create", dto);
         }
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        if (assignment is null) return Forbid();
+
+        var workOrder = await _db.EngineerWorkOrders.FirstOrDefaultAsync(o => o.Id == id && !o.IsDeleted);
+        if (workOrder is null) return NotFound();
+
+        var action = workflowAction?.Trim().ToLowerInvariant();
+        var canPerform = action switch
+        {
+            "submit" => assignment.CanSubmit,
+            "request" => assignment.CanRequestApproval,
+            "approve" => assignment.CanApprove,
+            "reject" => assignment.CanReject,
+            "cancel" => assignment.CanCancel,
+            _ => false
+        };
+
+        if (!canPerform)
+        {
+            TempData["ErrorMessage"] = "You are not assigned to perform that action.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (!workOrder.IsLatestRevision)
+        {
+            TempData["ErrorMessage"] = $"Work Order {workOrder.WorkOrderNo} is not the latest revision.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var transition = action switch
+        {
+            "submit" => (From: EngineerWorkOrderStatus.Draft, To: EngineerWorkOrderStatus.Submitted),
+            "request" => (From: EngineerWorkOrderStatus.Submitted, To: EngineerWorkOrderStatus.UnderApproval),
+            "approve" => (From: EngineerWorkOrderStatus.UnderApproval, To: EngineerWorkOrderStatus.Approved),
+            "reject" => (From: EngineerWorkOrderStatus.UnderApproval, To: EngineerWorkOrderStatus.Rejected),
+            "cancel" when workOrder.Status is EngineerWorkOrderStatus.Draft
+                or EngineerWorkOrderStatus.Submitted or EngineerWorkOrderStatus.UnderApproval or EngineerWorkOrderStatus.Rejected
+                => (From: workOrder.Status, To: EngineerWorkOrderStatus.Cancelled),
+            "cancel" => (From: EngineerWorkOrderStatus.Draft, To: EngineerWorkOrderStatus.Cancelled),
+            _ => (From: workOrder.Status, To: workOrder.Status)
+        };
+
+        if (workOrder.Status == transition.To)
+        {
+            TempData["StatusMessage"] = $"Work Order {workOrder.WorkOrderNo} is already {transition.To}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (workOrder.Status != transition.From)
+        {
+            TempData["ErrorMessage"] = $"This action is no longer available because Work Order {workOrder.WorkOrderNo} is {workOrder.Status}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var updated = await _mediator.Send(new SetEngineerWorkOrderStatusCommand(
+            workOrder.Id, transition.From, transition.To, User.Identity?.Name));
+        if (!updated)
+        {
+            TempData["ErrorMessage"] = $"Work Order {workOrder.WorkOrderNo} changed while this action was being processed. Please try again.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        TempData["StatusMessage"] = $"Work Order {workOrder.WorkOrderNo} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -349,5 +438,43 @@ public class EngineerWorkOrdersController : Controller
             Value = m.Id.ToString(),
             Text = $"{m.MaterialCode} | {m.Name} | {m.CategoryName}"
         }).ToList();
+
+        var actionUsers = await (
+            from action in _db.EngineerWorkOrderActionAssignments.AsNoTracking()
+            join user in _db.Users.AsNoTracking() on action.UserId equals user.Id
+            where user.IsActive && (action.CanSubmit || action.CanRequestApproval || action.CanApprove || action.CanReject)
+            orderby user.FullName
+            select new { user.FullName, action.CanSubmit, action.CanRequestApproval, action.CanApprove, action.CanReject })
+            .ToListAsync();
+
+        ViewBag.ApprovalAssignments = actionUsers.Select(x =>
+        {
+            var actions = new List<string>();
+            if (x.CanSubmit) actions.Add("submits EWO");
+            if (x.CanRequestApproval) actions.Add("requests approval");
+            if (x.CanApprove) actions.Add("approves");
+            if (x.CanReject) actions.Add("rejects");
+            var nameParts = x.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return new EngineerWorkOrderApprovalAssignmentViewModel
+            {
+                FullName = x.FullName,
+                Actions = string.Join(" and ", actions),
+                Initials = string.Concat(nameParts.Take(2).Select(p => char.ToUpperInvariant(p[0])))
+            };
+        }).ToList();
+    }
+
+    private async Task<EngineerWorkOrderActionAssignment?> GetCurrentAssignmentAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId)
+            ? await _db.EngineerWorkOrderActionAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId)
+            : null;
+    }
+
+    private async Task<bool> HasActionAsync(Func<EngineerWorkOrderActionAssignment, bool> predicate)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        return assignment is not null && predicate(assignment);
     }
 }

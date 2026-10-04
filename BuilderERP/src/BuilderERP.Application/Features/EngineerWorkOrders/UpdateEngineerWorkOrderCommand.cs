@@ -43,8 +43,7 @@ public class UpdateEngineerWorkOrderCommandHandler : IRequestHandler<UpdateEngin
             return UpdateEngineerWorkOrderResult.NotFound;
         }
 
-        if (workOrder.Status is EngineerWorkOrderStatus.Approved or EngineerWorkOrderStatus.Active
-            or EngineerWorkOrderStatus.Superseded or EngineerWorkOrderStatus.Cancelled or EngineerWorkOrderStatus.Rejected)
+        if (workOrder.Status != EngineerWorkOrderStatus.Draft)
         {
             return UpdateEngineerWorkOrderResult.Locked;
         }
@@ -53,7 +52,7 @@ public class UpdateEngineerWorkOrderCommandHandler : IRequestHandler<UpdateEngin
         workOrder.EngineerWorkOrderRequisitionId = request.Dto.EngineerWorkOrderRequisitionId;
         workOrder.SupplierId = request.Dto.SupplierId;
         workOrder.TermsAndCondition = request.Dto.TermsAndCondition;
-        workOrder.Status = request.Dto.Status;
+        workOrder.Status = EngineerWorkOrderStatus.Draft;
 
         var detailRepository = _unitOfWork.Repository<EngineerWorkOrderDetail>();
         foreach (var detail in workOrder.Details.ToList())

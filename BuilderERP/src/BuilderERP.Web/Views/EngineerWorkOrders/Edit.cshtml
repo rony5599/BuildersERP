@@ -6,6 +6,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/procurement.css" asp-append-version="true" />
     <style>
         #requisition-menu .multicolumn-dropdown-column:nth-child(1) { flex: 0 0 150px; }
         #requisition-menu .multicolumn-dropdown-column:nth-child(2) { flex: 1; }
@@ -24,19 +25,21 @@
 <form asp-action="Edit" method="post" class="ewo-form">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="ewo-editor-layout">
+    <div class="ewo-editor-main">
     <section class="ewo-card ewo-info-card">
-        <div class="ewo-section-title">
-            <span class="ewo-section-icon"><i class="bi bi-file-earmark-text"></i></span>
-            <div><h5>Work Order Information</h5><p>Review the document reference, source requisition, contractor, and status.</p></div>
+        <div class="ewo-card-heading">
+            <h5>Work order details</h5>
+            <p>Document reference, source requisition, contractor, and commercial terms.</p>
         </div>
-    <div class="row g-3">
+    <div class="row g-3 ewo-details-grid">
         <div class="mb-3 col-md-4">
-            <label asp-for="WorkOrderNo" class="form-label"></label>
+            <label asp-for="WorkOrderNo" class="form-label">Work Order No.</label>
             <input asp-for="WorkOrderNo" class="form-control" />
             <span asp-validation-for="WorkOrderNo" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
-            <label asp-for="EngineerWorkOrderRequisitionId" class="form-label"></label>
+            <label asp-for="EngineerWorkOrderRequisitionId" class="form-label">Engineering Requisition</label>
             <div class="input-group">
                 <div class="multicolumn-dropdown-wrapper" style="width: 1%; flex: 1 1 auto;">
                     <div class="multicolumn-dropdown-container" id="requisition-container">
@@ -72,26 +75,22 @@
             <span asp-validation-for="EngineerWorkOrderRequisitionId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
-            <label asp-for="SupplierId" class="form-label"></label>
+            <label asp-for="SupplierId" class="form-label">Contractor / Supplier</label>
             <select asp-for="SupplierId" asp-items="ViewBag.Suppliers" class="form-select">
                 <option value="">-- Select Supplier --</option>
             </select>
             <span asp-validation-for="SupplierId" class="text-danger"></span>
         </div>
-        <div class="mb-3 col-md-4">
-            <label asp-for="Status" class="form-label"></label>
-            <select asp-for="Status" asp-items="Html.GetEnumSelectList<EngineerWorkOrderStatus>()" class="form-select"></select>
-        </div>
-        <div class="mb-3 col-md-8">
-            <label asp-for="TermsAndCondition" class="form-label"></label>
-            <textarea asp-for="TermsAndCondition" class="form-control"></textarea>
+        <input asp-for="Status" type="hidden" value="@EngineerWorkOrderStatus.Draft" />
+        <div class="mb-3 col-12">
+            <label asp-for="TermsAndCondition" class="form-label">Terms and Conditions</label>
+            <textarea asp-for="TermsAndCondition" class="form-control" rows="3" placeholder="Enter commercial terms, scope notes, and conditions"></textarea>
         </div>
     </div>
     </section>
 
     <section class="ewo-card ewo-lines-card">
         <div class="ewo-section-title ewo-section-title-with-action">
-            <span class="ewo-section-icon"><i class="bi bi-list-check"></i></span>
             <div><h5>Line Items</h5><p>Update the materials, quantities, rates, and scope remarks.</p></div>
             <button type="button" class="btn btn-sm btn-outline-primary" data-add-row-for="ewo-details-table"><i class="bi bi-plus-lg"></i> Add Item</button>
         </div>
@@ -207,10 +206,13 @@
     <section class="ewo-card ewo-payment-card">
         <partial name="_PaymentHeadsTable" model="Model.PaymentHeads" />
     </section>
+    </div>
+    <partial name="_EditorSidebar" />
+    </div>
 
-    <div class="ewo-form-actions">
-        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-        <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i> Save Changes</button>
+    <div class="procurement-form-actions ewo-form-actions">
+        <a asp-action="Index" class="btn btn-outline-secondary">Discard changes</a>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i> Save draft</button>
     </div>
 </form>
 
@@ -221,6 +223,25 @@
         new MultiColumnDropdown('requisition-container');
 
         initDetailTable('ewo-details-table', 'Details');
+
+        function updateWorkOrderSummary() {
+            var total = 0;
+            var rows = document.querySelectorAll('#ewo-details-table tbody tr.detail-row');
+            rows.forEach(function (row) {
+                var qty = Number(row.querySelector('[name$=".Qty"]')?.value || 0);
+                var rate = Number(row.querySelector('[name$=".Rate"]')?.value || 0);
+                total += qty * rate;
+            });
+            document.getElementById('ewo-summary-lines').textContent = rows.length;
+            document.getElementById('ewo-summary-total').textContent = '৳ ' + total.toLocaleString('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        updateWorkOrderSummary();
+        document.getElementById('ewo-details-table').addEventListener('input', updateWorkOrderSummary);
+        document.getElementById('ewo-details-table').addEventListener('change', updateWorkOrderSummary);
+        document.getElementById('ewo-details-table').addEventListener('click', function (event) {
+            if (event.target.closest('[data-remove-row]')) setTimeout(updateWorkOrderSummary, 0);
+        });
 
         // Initialize material dropdowns in a specific row
         function initializeDropdownsInRow(row) {
@@ -246,6 +267,7 @@
                     var lastRow = rows[rows.length - 1];
                     if (lastRow) {
                         initializeDropdownsInRow(lastRow);
+                        updateWorkOrderSummary();
                     }
                 }, 10);
             });
@@ -280,6 +302,7 @@
                                 initializeDropdownsInRow(row);
                             }
                         });
+                        updateWorkOrderSummary();
                     })
                     .catch(function (err) {
                         alert(err.message);

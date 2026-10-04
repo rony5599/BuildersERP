@@ -1,0 +1,18 @@
+@model BuilderERP.Web.Models.EngineerWorkOrderWorkflowButtonViewModel
+@{
+    var iconClass = Model.WorkflowAction switch
+    {
+        "submit" => "bi-send",
+        "request" => "bi-person-check",
+        "approve" => "bi-check-lg",
+        "reject" => "bi-x-lg",
+        "cancel" => "bi-slash-circle",
+        _ => "bi-arrow-right"
+    };
+}
+<form asp-action="WorkflowAction" asp-route-id="@Model.Id" method="post" class="d-inline workflow-action-form">
+    <input type="hidden" name="workflowAction" value="@Model.WorkflowAction" />
+    <button type="submit" class="dropdown-item workflow-action" data-workflow-action="@Model.WorkflowAction">
+        <i class="bi @iconClass" aria-hidden="true"></i> @Model.Label
+    </button>
+</form>

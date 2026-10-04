@@ -1,0 +1,38 @@
+@using BuilderERP.Web.Models
+@{
+    var assignments = ViewBag.ApprovalAssignments as IReadOnlyCollection<EngineerWorkOrderApprovalAssignmentViewModel>
+        ?? Array.Empty<EngineerWorkOrderApprovalAssignmentViewModel>();
+}
+
+<aside class="ewo-editor-sidebar">
+    <section class="ewo-side-card">
+        <div class="ewo-card-heading">
+            <h5>Work order summary</h5>
+            <p>Automatically calculated from line items.</p>
+        </div>
+        <div class="ewo-summary-body">
+            <div><span>Line items</span><strong id="ewo-summary-lines">0</strong></div>
+            <div class="ewo-summary-total"><span>Total amount</span><strong id="ewo-summary-total">৳ 0.00</strong></div>
+        </div>
+    </section>
+
+    <section class="ewo-side-card">
+        <div class="ewo-card-heading">
+            <h5>Approval assignment</h5>
+            <p>Actions are enabled by user and status.</p>
+        </div>
+        <div class="ewo-assignment-list">
+            @if (assignments.Count == 0)
+            {
+                <div class="ewo-assignment-empty">No workflow users assigned.</div>
+            }
+            @foreach (var item in assignments)
+            {
+                <div class="ewo-assignment-item">
+                    <span class="ewo-assignment-avatar">@item.Initials</span>
+                    <span><strong>@item.FullName</strong><small>@item.Actions</small></span>
+                </div>
+            }
+        </div>
+    </section>
+</aside>

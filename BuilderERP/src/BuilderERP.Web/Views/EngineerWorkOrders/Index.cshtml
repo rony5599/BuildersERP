@@ -12,7 +12,8 @@
         <h1>Engineer Work Orders</h1>
         <p>Manage contractor work orders, revisions, billing stages, and statements.</p>
     </div>
-    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderManage))
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderManage)
+        && (ViewBag.ActionAssignment?.CanDraftEdit ?? false))
     {
         <a asp-action="Create" class="btn btn-primary procurement-primary-action"><i class="bi bi-plus-lg"></i> New Work Order</a>
     }
@@ -21,6 +22,14 @@
 @if (TempData["Error"] is string error)
 {
     <div class="alert alert-danger">@error</div>
+}
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success">@statusMessage</div>
+}
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-danger">@errorMessage</div>
 }
 
 <div data-grid-container>
@@ -47,6 +56,21 @@
 @section Scripts {
     <script>
         (function () {
+            document.addEventListener('submit', function (event) {
+                var form = event.target;
+                if (!form.classList.contains('workflow-action-form')) return;
+                if (form.dataset.submitting === 'true') {
+                    event.preventDefault();
+                    return;
+                }
+                form.dataset.submitting = 'true';
+                var button = form.querySelector('button[type="submit"]');
+                if (button) {
+                    button.disabled = true;
+                    button.setAttribute('aria-busy', 'true');
+                }
+            });
+
             var modalEl = document.getElementById('wo-details-modal');
             var bodyEl = document.getElementById('wo-details-modal-body');
             var backBtn = document.getElementById('wo-details-back-btn');
