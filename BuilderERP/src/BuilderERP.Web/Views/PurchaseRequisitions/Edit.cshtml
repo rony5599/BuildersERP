@@ -39,7 +39,7 @@
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="Status" class="form-label"></label>
-            <select asp-for="Status" asp-items="Html.GetEnumSelectList<RequisitionStatus>()" class="form-select"></select>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<RequisitionStatus>()" class="form-select" disabled></select>
         </div>
         <div class="mb-3 col-md-4">
             <label asp-for="RequestDate" class="form-label"></label>

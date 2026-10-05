@@ -99,10 +99,13 @@
                 <label asp-for="MrrNumber" class="form-label">MRR #</label>
                 <input asp-for="MrrNumber" class="form-control" />
             </div>
-            <div class="mb-3 col-md-3">
-                <label asp-for="Status" class="form-label"></label>
-                <select asp-for="Status" asp-items="Html.GetEnumSelectList<PoBillStatus>()" class="form-select"></select>
-            </div>
+            @if (isEdit)
+            {
+                <div class="mb-3 col-md-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" asp-items="Html.GetEnumSelectList<PoBillStatus>()" class="form-select" disabled></select>
+                </div>
+            }
             <div class="mb-3 col-md-12">
                 <label asp-for="Remarks" class="form-label"></label>
                 <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>

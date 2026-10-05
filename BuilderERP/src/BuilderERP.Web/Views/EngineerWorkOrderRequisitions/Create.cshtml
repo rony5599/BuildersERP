@@ -21,10 +21,6 @@
             <span asp-validation-for="ProjectId" class="text-danger"></span>
         </div>
         <div class="mb-3 col-md-4">
-            <label asp-for="Status" class="form-label"></label>
-            <select asp-for="Status" asp-items="Html.GetEnumSelectList<RequisitionStatus>()" class="form-select"></select>
-        </div>
-        <div class="mb-3 col-md-4">
             <label asp-for="RequestDate" class="form-label"></label>
             <input asp-for="RequestDate" type="date" class="form-control" />
         </div>
