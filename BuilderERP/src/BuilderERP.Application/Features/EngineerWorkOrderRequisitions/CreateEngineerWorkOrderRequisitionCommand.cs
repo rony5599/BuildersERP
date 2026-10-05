@@ -2,6 +2,7 @@ using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 
 namespace BuilderERP.Application.Features.EngineerWorkOrderRequisitions;
@@ -24,6 +25,7 @@ public class CreateEngineerWorkOrderRequisitionCommandHandler : IRequestHandler<
     public async Task<long> Handle(CreateEngineerWorkOrderRequisitionCommand request, CancellationToken cancellationToken)
     {
         var requisition = _mapper.Map<EngineerWorkOrderRequisition>(request.Dto);
+        requisition.Status = RequisitionStatus.Draft;
         requisition.RequisitionNumber = await _numberGenerator.GenerateAsync(request.Dto.ProjectId, "EWR", cancellationToken);
 
         decimal estimatedAmount = 0;

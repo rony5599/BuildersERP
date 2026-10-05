@@ -48,6 +48,13 @@ public class UpdateEngineerWorkOrderCommandHandler : IRequestHandler<UpdateEngin
             return UpdateEngineerWorkOrderResult.Locked;
         }
 
+        var requisitionIsApproved = await _unitOfWork.Repository<EngineerWorkOrderRequisition>().Query()
+            .AnyAsync(r => r.Id == request.Dto.EngineerWorkOrderRequisitionId && r.Status == RequisitionStatus.Approved, cancellationToken);
+        if (!requisitionIsApproved)
+        {
+            return UpdateEngineerWorkOrderResult.Locked;
+        }
+
         workOrder.WorkOrderNo = request.Dto.WorkOrderNo;
         workOrder.EngineerWorkOrderRequisitionId = request.Dto.EngineerWorkOrderRequisitionId;
         workOrder.SupplierId = request.Dto.SupplierId;

@@ -42,7 +42,7 @@ public class UpdateCashRequisitionCommandHandler : IRequestHandler<UpdateCashReq
             return UpdateCashRequisitionResult.NotFound;
         }
 
-        if (requisition.Status is RequisitionStatus.Approved or RequisitionStatus.Rejected or RequisitionStatus.Converted)
+        if (requisition.Status != RequisitionStatus.Draft)
         {
             return UpdateCashRequisitionResult.Locked;
         }

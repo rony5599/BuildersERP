@@ -158,6 +158,10 @@ public class CashPurchaseOrdersController : Controller
         {
             return NotFound();
         }
+        if (requisition.Status != RequisitionStatus.Approved)
+        {
+            return BadRequest("Only approved Cash Requisitions can be used.");
+        }
 
         var details = requisition.Details.Select(d => new
         {
@@ -213,7 +217,7 @@ public class CashPurchaseOrdersController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var requisitions = await _mediator.Send(new GetAllCashRequisitionsQuery(PageSize: int.MaxValue));
+        var requisitions = await _mediator.Send(new GetAllCashRequisitionsQuery(PageSize: int.MaxValue, Status: RequisitionStatus.Approved));
         ViewBag.CashRequisitions = requisitions.Items.Select(r => new SelectListItem
         {
             Value = r.Id.ToString(),

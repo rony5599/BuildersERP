@@ -406,6 +406,10 @@ public class EngineerWorkOrdersController : Controller
         {
             return NotFound();
         }
+        if (requisition.Status != RequisitionStatus.Approved)
+        {
+            return BadRequest("Only approved Engineer Work Order requisitions can be used.");
+        }
 
         var items = requisition.Details.Select(d => new
         {
@@ -421,7 +425,7 @@ public class EngineerWorkOrdersController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var requisitions = await _mediator.Send(new GetAllEngineerWorkOrderRequisitionsQuery(PageSize: int.MaxValue));
+        var requisitions = await _mediator.Send(new GetAllEngineerWorkOrderRequisitionsQuery(PageSize: int.MaxValue, Status: RequisitionStatus.Approved));
         ViewBag.EngineerWorkOrderRequisitions = requisitions.Items.Select(r => new SelectListItem
         {
             Value = r.Id.ToString(),

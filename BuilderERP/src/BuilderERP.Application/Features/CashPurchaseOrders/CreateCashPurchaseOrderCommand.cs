@@ -4,6 +4,7 @@ using BuilderERP.Application.Common;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +32,7 @@ public class CreateCashPurchaseOrderCommandHandler : IRequestHandler<CreateCashP
     public async Task<long> Handle(CreateCashPurchaseOrderCommand request, CancellationToken cancellationToken)
     {
         var projectId = await _unitOfWork.Repository<CashRequisition>().Query()
-            .Where(r => r.Id == request.Dto.CashRequisitionId)
+            .Where(r => r.Id == request.Dto.CashRequisitionId && r.Status == RequisitionStatus.Approved)
             .Select(r => r.ProjectId)
             .SingleAsync(cancellationToken);
 

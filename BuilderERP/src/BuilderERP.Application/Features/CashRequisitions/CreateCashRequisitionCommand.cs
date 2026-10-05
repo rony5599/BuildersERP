@@ -3,6 +3,7 @@ using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 
 namespace BuilderERP.Application.Features.CashRequisitions;
@@ -29,6 +30,7 @@ public class CreateCashRequisitionCommandHandler : IRequestHandler<CreateCashReq
     public async Task<long> Handle(CreateCashRequisitionCommand request, CancellationToken cancellationToken)
     {
         var requisition = _mapper.Map<CashRequisition>(request.Dto);
+        requisition.Status = RequisitionStatus.Draft;
         requisition.RequisitionNumber = await _numberGenerator.GenerateAsync(request.Dto.ProjectId, "CR", cancellationToken);
 
         decimal estimatedAmount = 0;

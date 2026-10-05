@@ -37,7 +37,7 @@ public class UpdateEngineerWorkOrderRequisitionCommandHandler : IRequestHandler<
             return UpdateEngineerWorkOrderRequisitionResult.NotFound;
         }
 
-        if (requisition.Status is RequisitionStatus.Approved or RequisitionStatus.Rejected or RequisitionStatus.Converted)
+        if (requisition.Status != RequisitionStatus.Draft)
         {
             return UpdateEngineerWorkOrderRequisitionResult.Locked;
         }

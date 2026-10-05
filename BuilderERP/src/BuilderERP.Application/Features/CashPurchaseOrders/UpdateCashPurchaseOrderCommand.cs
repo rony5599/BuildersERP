@@ -48,6 +48,10 @@ public class UpdateCashPurchaseOrderCommandHandler : IRequestHandler<UpdateCashP
             return UpdateCashPurchaseOrderResult.Locked;
         }
 
+        var requisitionIsApproved = await _unitOfWork.Repository<CashRequisition>().Query()
+            .AnyAsync(r => r.Id == request.Dto.CashRequisitionId && r.Status == RequisitionStatus.Approved, cancellationToken);
+        if (!requisitionIsApproved) return UpdateCashPurchaseOrderResult.Locked;
+
         order.CPONumber = request.Dto.CPONumber;
         order.OrderDate = request.Dto.OrderDate;
         order.DeliveryDate = request.Dto.DeliveryDate;

@@ -2,17 +2,22 @@
 @model PagedResult<BuilderERP.Application.DTOs.EngineerWorkOrderRequisitionDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Entities
 @{
     ViewData["Title"] = "Engineer Work Order Requisitions";
+    var assignment = ViewBag.ActionAssignment as EngineerWorkOrderRequisitionActionAssignment;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">Engineer Work Order Requisitions</h1>
-    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionManage))
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EngineerWorkOrderRequisitionManage) && assignment?.CanDraftEdit == true)
     {
         <a asp-action="Create" class="btn btn-primary">New Requisition</a>
     }
 </div>
+
+@if (TempData["StatusMessage"] is string statusMessage) { <div class="alert alert-success">@statusMessage</div> }
+@if (TempData["ErrorMessage"] is string errorMessage) { <div class="alert alert-danger">@errorMessage</div> }
 
 <div data-grid-container>
     <partial name="_Grid" model="Model" />

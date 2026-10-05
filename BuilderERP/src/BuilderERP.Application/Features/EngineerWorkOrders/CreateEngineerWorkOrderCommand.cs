@@ -2,6 +2,7 @@ using AutoMapper;
 using BuilderERP.Application.Common.Caching;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
+using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 
@@ -30,6 +31,8 @@ public class CreateEngineerWorkOrderCommandHandler : IRequestHandler<CreateEngin
     {
         var requisition = await _unitOfWork.Repository<EngineerWorkOrderRequisition>().GetByIdAsync(request.Dto.EngineerWorkOrderRequisitionId)
             ?? throw new InvalidOperationException("Engineer work order requisition not found.");
+        if (requisition.Status != RequisitionStatus.Approved)
+            throw new InvalidOperationException("Only approved Engineer Work Order requisitions can be converted to a work order.");
 
         var workOrder = _mapper.Map<EngineerWorkOrder>(request.Dto);
         workOrder.WorkOrderNo = await _numberGenerator.GenerateAsync(requisition.ProjectId, "EWO", cancellationToken);
