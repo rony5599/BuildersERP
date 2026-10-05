@@ -72,6 +72,7 @@
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.ProjectView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CostCenterView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserView)
+                    || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserManage)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.DeviceApprovalView))
                 {
@@ -112,15 +113,25 @@
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserManage))
                         {
-                            <li class="nav-item"><a asp-controller="PurchaseOrderActionAssignments" asp-action="Index" class="@NavClass("PurchaseOrderActionAssignments")"><i class="bi bi-person-check"></i> PO Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="PurchaseRequisitionActionAssignments" asp-action="Index" class="@NavClass("PurchaseRequisitionActionAssignments")"><i class="bi bi-clipboard-check"></i> PR Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="CashRequisitionActionAssignments" asp-action="Index" class="@NavClass("CashRequisitionActionAssignments")"><i class="bi bi-cash-coin"></i> Cash Req. Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="CashPurchaseOrderActionAssignments" asp-action="Index" class="@NavClass("CashPurchaseOrderActionAssignments")"><i class="bi bi-cart-check"></i> Cash PO Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="PoBillActionAssignments" asp-action="Index" class="@NavClass("PoBillActionAssignments")"><i class="bi bi-receipt"></i> PO Bill Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="CashPoBillActionAssignments" asp-action="Index" class="@NavClass("CashPoBillActionAssignments")"><i class="bi bi-receipt-cutoff"></i> Cash PO Bill Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="EwoBillActionAssignments" asp-action="Index" class="@NavClass("EwoBillActionAssignments")"><i class="bi bi-receipt"></i> EWO Bill Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="EngineerWorkOrderActionAssignments" asp-action="Index" class="@NavClass("EngineerWorkOrderActionAssignments")"><i class="bi bi-person-gear"></i> EWO Action Assignment</a></li>
-                            <li class="nav-item"><a asp-controller="EngineerWorkOrderRequisitionActionAssignments" asp-action="Index" class="@NavClass("EngineerWorkOrderRequisitionActionAssignments")"><i class="bi bi-file-earmark-check"></i> EWO Req. Action Assignment</a></li>
+                            <li class="nav-item nav-subsection">
+                                <button type="button" class="nav-subsection-title" aria-expanded="false">
+                                    <span><i class="bi bi-diagram-3"></i> Approval Workflow</span>
+                                    <i class="bi bi-chevron-down nav-subsection-caret"></i>
+                                </button>
+                                <ul class="nav flex-column nav-subsection-body">
+                                    <li class="nav-item"><a asp-controller="PurchaseRequisitionActionAssignments" asp-action="Index" class="@NavClass("PurchaseRequisitionActionAssignments")"><i class="bi bi-clipboard-check"></i> PR Action Assignment</a></li>
+                                    <li class="nav-item"><a asp-controller="PurchaseOrderActionAssignments" asp-action="Index" class="@NavClass("PurchaseOrderActionAssignments")"><i class="bi bi-person-check"></i> PO Action Assignment</a></li>
+                                    <li class="nav-item"><a asp-controller="PoBillActionAssignments" asp-action="Index" class="@NavClass("PoBillActionAssignments")"><i class="bi bi-receipt"></i> PO Bill Action Assignment</a></li>
+
+                                    <li class="nav-item mt-1"><a asp-controller="CashRequisitionActionAssignments" asp-action="Index" class="@NavClass("CashRequisitionActionAssignments")"><i class="bi bi-cash-coin"></i> Cash Req. Action Assignment</a></li>
+                                    <li class="nav-item"><a asp-controller="CashPurchaseOrderActionAssignments" asp-action="Index" class="@NavClass("CashPurchaseOrderActionAssignments")"><i class="bi bi-cart-check"></i> Cash PO Action Assignment</a></li>
+                                    <li class="nav-item"><a asp-controller="CashPoBillActionAssignments" asp-action="Index" class="@NavClass("CashPoBillActionAssignments")"><i class="bi bi-receipt-cutoff"></i> Cash PO Bill Action Assignment</a></li>
+
+                                    <li class="nav-item mt-1"><a asp-controller="EngineerWorkOrderRequisitionActionAssignments" asp-action="Index" class="@NavClass("EngineerWorkOrderRequisitionActionAssignments")"><i class="bi bi-file-earmark-check"></i> EWO Req. Action Assignment</a></li>
+                                    <li class="nav-item"><a asp-controller="EngineerWorkOrderActionAssignments" asp-action="Index" class="@NavClass("EngineerWorkOrderActionAssignments")"><i class="bi bi-person-gear"></i> EWO Action Assignment</a></li>
+                                    <li class="nav-item"><a asp-controller="EwoBillActionAssignments" asp-action="Index" class="@NavClass("EwoBillActionAssignments")"><i class="bi bi-receipt"></i> EWO Bill Action Assignment</a></li>
+                                </ul>
+                            </li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))
                         {
