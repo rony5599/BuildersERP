@@ -173,6 +173,30 @@
 :is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) .multicolumn-dropdown-menu { z-index:1050; max-height:300px; box-shadow:0 10px 25px rgba(16,24,40,.14); }
 :is(.controller-cashrequisitions,.controller-rfqs,.controller-vendorquotations,.controller-goodsreceives,.controller-purchasereturns) .multicolumn-dropdown-items { max-height:250px; }
 
+/* Cash PO line items: the scrollable header and body are separate table groups,
+   so both must receive identical column widths to remain aligned. */
+.controller-cashpurchaseorders > form > #cpo-details-table {
+  display:block; min-height:400px; margin-bottom:1rem; overflow-x:auto; background:#fff;
+  border:1px solid var(--gray-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-card);
+}
+.controller-cashpurchaseorders #cpo-details-table thead,
+.controller-cashpurchaseorders #cpo-details-table tbody {
+  display:table; width:100%; min-width:1050px; table-layout:fixed;
+}
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(1) { width:25%; }
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(2) { width:11%; }
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(3) { width:11%; }
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(4) { width:12%; }
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(5),
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(6),
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(7) { width:10%; }
+.controller-cashpurchaseorders #cpo-details-table :is(th,td):nth-child(8) { width:10%; text-align:center; }
+.controller-cashpurchaseorders #cpo-details-table td { vertical-align:middle; }
+.controller-cashpurchaseorders #cpo-details-table .form-control,
+.controller-cashpurchaseorders #cpo-details-table .form-select,
+.controller-cashpurchaseorders #cpo-details-table .multicolumn-dropdown-wrapper { width:100%; min-width:0; }
+.controller-cashpurchaseorders #cpo-details-table [data-remove-row] { white-space:nowrap; }
+
 /* Bill forms already use cards; refine their hierarchy */
 :is(.controller-pobills,.controller-cashpobills) form .card { margin-bottom:1.25rem!important; }
 :is(.controller-pobills,.controller-cashpobills) form .card-header { padding:.85rem 1.15rem; color:var(--gray-800); background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-weight:600; }
