@@ -213,7 +213,6 @@ public class GoodsReceivesController : Controller
         {
             return NotFound();
         }
-
         var lines = order.Details.Select(d => new
         {
             detailId = d.Id,
@@ -259,6 +258,10 @@ public class GoodsReceivesController : Controller
         {
             return NotFound();
         }
+        if (order.Status is not (PurchaseOrderStatus.Approved or PurchaseOrderStatus.PartiallyReceived))
+        {
+            return BadRequest("Only approved Cash Purchase Orders can be received.");
+        }
 
         var lines = order.Details.Select(d => new
         {
@@ -290,7 +293,9 @@ public class GoodsReceivesController : Controller
         }).ToList();
 
         var cashOrders = await _mediator.Send(new GetAllCashPurchaseOrdersQuery(PageSize: int.MaxValue));
-        ViewBag.CashPurchaseOrders = cashOrders.Items.Select(o => new SelectListItem
+        ViewBag.CashPurchaseOrders = cashOrders.Items
+            .Where(o => o.Status is PurchaseOrderStatus.Approved or PurchaseOrderStatus.PartiallyReceived)
+            .Select(o => new SelectListItem
         {
             Value = o.Id.ToString(),
             Text = $"{o.CPONumber} | {o.ProjectName}"

@@ -37,6 +37,7 @@ public class CreateCashPurchaseOrderCommandHandler : IRequestHandler<CreateCashP
             .SingleAsync(cancellationToken);
 
         var order = _mapper.Map<CashPurchaseOrder>(request.Dto);
+        order.Status = PurchaseOrderStatus.Draft;
         order.CPONumber = await _numberGenerator.GenerateAsync(projectId, "CPO", cancellationToken);
 
         decimal totalAmount = 0;

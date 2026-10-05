@@ -5,7 +5,9 @@ using BuilderERP.Application.Features.CashRequisitions;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.Suppliers;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
+using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -13,6 +15,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -23,21 +27,24 @@ public class CashPurchaseOrdersController : Controller
     private readonly IValidator<CreateCashPurchaseOrderDto> _createValidator;
     private readonly IValidator<UpdateCashPurchaseOrderDto> _updateValidator;
     private readonly CashPurchaseOrderPdfExporter _pdfExporter;
+    private readonly AppDbContext _db;
 
     public CashPurchaseOrdersController(
         IMediator mediator,
         IValidator<CreateCashPurchaseOrderDto> createValidator,
         IValidator<UpdateCashPurchaseOrderDto> updateValidator,
-        CashPurchaseOrderPdfExporter pdfExporter)
+        CashPurchaseOrderPdfExporter pdfExporter, AppDbContext db)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _pdfExporter = pdfExporter;
+        _db = db;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? cpoNumber = null, long? projectId = null, PurchaseOrderStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
+        ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var orders = await _mediator.Send(new GetAllCashPurchaseOrdersQuery(page, pageSize, cpoNumber, projectId, status, dateFrom, dateTo));
 
         ViewBag.CpoNumber = cpoNumber;
@@ -61,6 +68,7 @@ public class CashPurchaseOrdersController : Controller
     [PermissionAuthorize(PermissionNames.CashPurchaseOrderManage)]
     public async Task<IActionResult> Create()
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         await PopulateDropdownsAsync();
         return View(new CreateCashPurchaseOrderDto());
     }
@@ -70,6 +78,8 @@ public class CashPurchaseOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateCashPurchaseOrderDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PurchaseOrderStatus.Draft;
         var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -85,6 +95,7 @@ public class CashPurchaseOrdersController : Controller
     [PermissionAuthorize(PermissionNames.CashPurchaseOrderManage)]
     public async Task<IActionResult> Edit(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var order = await _mediator.Send(new GetCashPurchaseOrderByIdQuery(id));
         if (order is null)
         {
@@ -125,6 +136,8 @@ public class CashPurchaseOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(UpdateCashPurchaseOrderDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PurchaseOrderStatus.Draft;
         var validationResult = await _updateValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -186,6 +199,36 @@ public class CashPurchaseOrdersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.CashPurchaseOrderManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        if (assignment is null) return Forbid();
+        var order = await _db.CashPurchaseOrders.FirstOrDefaultAsync(o => o.Id == id && !o.IsDeleted);
+        if (order is null) return NotFound();
+        var action = workflowAction?.Trim().ToLowerInvariant();
+        var canPerform = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
+        if (!canPerform) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        var transition = action switch
+        {
+            "submit" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Submitted),
+            "request" => (From: PurchaseOrderStatus.Submitted, To: PurchaseOrderStatus.AwaitingApproval),
+            "approve" => (From: PurchaseOrderStatus.AwaitingApproval, To: PurchaseOrderStatus.Approved),
+            "reject" => (From: PurchaseOrderStatus.AwaitingApproval, To: PurchaseOrderStatus.Rejected),
+            "cancel" when order.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Submitted or PurchaseOrderStatus.AwaitingApproval or PurchaseOrderStatus.Rejected => (From: order.Status, To: PurchaseOrderStatus.Cancelled),
+            "cancel" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Cancelled),
+            _ => (From: order.Status, To: order.Status)
+        };
+        if (order.Status == transition.To) { TempData["StatusMessage"] = $"Cash Purchase Order {order.CPONumber} is already {transition.To}."; return RedirectToAction(nameof(Index)); }
+        if (order.Status != transition.From) { TempData["ErrorMessage"] = $"This action is no longer available because Cash Purchase Order {order.CPONumber} is {order.Status}."; return RedirectToAction(nameof(Index)); }
+        var updated = await _mediator.Send(new SetCashPurchaseOrderStatusCommand(order.Id, transition.From, transition.To, User.Identity?.Name));
+        if (!updated) { TempData["ErrorMessage"] = $"Cash Purchase Order {order.CPONumber} changed while this action was being processed. Please try again."; return RedirectToAction(nameof(Index)); }
+        TempData["StatusMessage"] = $"Cash Purchase Order {order.CPONumber} is now {transition.To}.";
+        return RedirectToAction(nameof(Index));
+    }
+
     public async Task<IActionResult> Print(long id)
     {
         var data = await _mediator.Send(new GetCashPurchaseOrderPrintDataQuery(id));
@@ -235,5 +278,16 @@ public class CashPurchaseOrdersController : Controller
             Text = $"{m.MaterialCode} | {m.Name} | {m.CategoryName}"
         }).ToList();
         ViewBag.Materials = formattedMaterials;
+    }
+
+    private async Task<CashPurchaseOrderActionAssignment?> GetCurrentAssignmentAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId) ? await _db.CashPurchaseOrderActionAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId) : null;
+    }
+    private async Task<bool> HasActionAsync(Func<CashPurchaseOrderActionAssignment, bool> predicate)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        return assignment is not null && predicate(assignment);
     }
 }

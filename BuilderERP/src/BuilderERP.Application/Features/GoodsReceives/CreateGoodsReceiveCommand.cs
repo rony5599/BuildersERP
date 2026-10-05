@@ -77,7 +77,7 @@ public class CreateGoodsReceiveCommandHandler : IRequestHandler<CreateGoodsRecei
                 .Select(o => o.EngineerWorkOrderRequisition.ProjectId)
                 .SingleAsync(cancellationToken),
             GrnSourceType.CashPurchaseOrder => await _unitOfWork.Repository<CashPurchaseOrder>().Query()
-                .Where(o => o.Id == dto.CashPurchaseOrderId)
+                .Where(o => o.Id == dto.CashPurchaseOrderId && (o.Status == PurchaseOrderStatus.Approved || o.Status == PurchaseOrderStatus.PartiallyReceived))
                 .Select(o => o.CashRequisition.ProjectId)
                 .SingleAsync(cancellationToken),
             _ => throw new ArgumentOutOfRangeException(nameof(dto.SourceType))

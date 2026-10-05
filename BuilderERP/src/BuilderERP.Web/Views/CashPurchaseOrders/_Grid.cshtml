@@ -2,8 +2,11 @@
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using BuilderERP.Domain.Entities
+@using BuilderERP.Web.Models
 @model PagedResult<BuilderERP.Application.DTOs.CashPurchaseOrderDto>
 @{
+    var assignment = ViewBag.ActionAssignment as CashPurchaseOrderActionAssignment;
     var cpoNumber = ViewBag.CpoNumber as string;
     var projectId = ViewBag.ProjectId as long?;
     var status = ViewBag.Status as BuilderERP.Domain.Enums.PurchaseOrderStatus?;
@@ -78,7 +81,7 @@
                     <td>@order.ReceivedAmount</td>
                     <td>@order.DeliveryDate.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <span class="badge @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@order.Status</span>
+                        <span class="badge @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@HumanizeStatus(order.Status)</span>
                     </td>
                     <td>
                         <span class="badge @(order.IsActive ? "bg-success" : "bg-secondary")">
@@ -89,7 +92,12 @@
                         <a asp-action="Print" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary" target="_blank">Print</a>
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPurchaseOrderManage))
                         {
-                            <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            @if (assignment?.CanDraftEdit == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft) { <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary">Edit</a> }
+                            @if (assignment?.CanSubmit == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "submit", "Submit", "btn-outline-primary"))" /> }
+                            @if (assignment?.CanRequestApproval == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "request", "Request approval", "btn-outline-primary"))" /> }
+                            @if (assignment?.CanApprove == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "approve", "Approve", "btn-success"))" /> }
+                            @if (assignment?.CanReject == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", "btn-outline-danger"))" /> }
+                            @if (assignment?.CanCancel == true && order.Status is BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft or BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted or BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval or BuilderERP.Domain.Enums.PurchaseOrderStatus.Rejected) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "cancel", "Cancel", "btn-outline-danger"))" /> }
                             <form asp-action="ToggleActive" asp-route-id="@order.Id" asp-route-isActive="@order.IsActive" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     @(order.IsActive ? "Deactivate" : "Activate")
@@ -135,11 +143,20 @@
     private static string StatusBadgeClass(BuilderERP.Domain.Enums.PurchaseOrderStatus status) => status switch
     {
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft => "bg-secondary",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted => "bg-primary",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval => "bg-warning",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved => "bg-primary",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.Rejected => "bg-danger",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "bg-warning",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Received => "bg-success",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Closed => "bg-secondary",
         BuilderERP.Domain.Enums.PurchaseOrderStatus.Cancelled => "bg-danger",
         _ => "bg-secondary"
+    };
+    private static string HumanizeStatus(BuilderERP.Domain.Enums.PurchaseOrderStatus status) => status switch
+    {
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval => "Awaiting Approval",
+        BuilderERP.Domain.Enums.PurchaseOrderStatus.PartiallyReceived => "Partially Received",
+        _ => status.ToString()
     };
 }

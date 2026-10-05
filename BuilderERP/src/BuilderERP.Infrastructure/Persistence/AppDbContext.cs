@@ -51,6 +51,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<PurchaseOrderActionAssignment> PurchaseOrderActionAssignments => Set<PurchaseOrderActionAssignment>();
     public DbSet<CashPurchaseOrder> CashPurchaseOrders => Set<CashPurchaseOrder>();
+    public DbSet<CashPurchaseOrderActionAssignment> CashPurchaseOrderActionAssignments => Set<CashPurchaseOrderActionAssignment>();
     public DbSet<CashPurchaseOrderDetail> CashPurchaseOrderDetails => Set<CashPurchaseOrderDetail>();
     public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
     public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
@@ -186,6 +187,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         });
 
         builder.Entity<CashRequisitionActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CashPurchaseOrderActionAssignment>(entity =>
         {
             entity.HasIndex(a => a.UserId).IsUnique();
             entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
