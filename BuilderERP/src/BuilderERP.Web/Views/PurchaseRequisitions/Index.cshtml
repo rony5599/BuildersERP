@@ -2,8 +2,10 @@
 @model PagedResult<BuilderERP.Application.DTOs.PurchaseRequisitionDto>
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
+@using BuilderERP.Domain.Entities
 @{
     ViewData["Title"] = "Purchase Requisitions";
+    var assignment = ViewBag.ActionAssignment as PurchaseRequisitionActionAssignment;
 }
 
 @section Styles {
@@ -16,11 +18,20 @@
         <h1>Purchase Requisitions</h1>
         <p>Plan, review and track material requests across your projects.</p>
     </div>
-    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionManage))
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionManage) && assignment?.CanDraftEdit == true)
     {
         <a asp-action="Create" class="btn btn-primary procurement-primary-action"><i class="bi bi-plus-lg"></i> New Requisition</a>
     }
 </div>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success">@statusMessage</div>
+}
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
 
 <div data-grid-container>
     <partial name="_Grid" model="Model" />

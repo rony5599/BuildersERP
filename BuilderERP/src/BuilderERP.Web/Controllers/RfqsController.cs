@@ -203,7 +203,7 @@ public class RfqsController : Controller
 
     private async Task PopulateDropdownsAsync()
     {
-        var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery(PageSize: int.MaxValue));
+        var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery(PageSize: int.MaxValue, Status: RequisitionStatus.Approved));
         ViewBag.PurchaseRequisitions = requisitions.Items.Select(r => new SelectListItem
         {
             Value = r.Id.ToString(),

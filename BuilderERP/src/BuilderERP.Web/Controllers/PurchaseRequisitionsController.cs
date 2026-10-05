@@ -4,7 +4,9 @@ using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
 using BuilderERP.Application.Features.PurchaseRequisitions;
 using BuilderERP.Application.Features.PurchaseRequisitions.Export;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
+using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -12,6 +14,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -22,21 +26,25 @@ public class PurchaseRequisitionsController : Controller
     private readonly IValidator<CreatePurchaseRequisitionDto> _createValidator;
     private readonly IValidator<UpdatePurchaseRequisitionDto> _updateValidator;
     private readonly PurchaseRequisitionPdfExporter _pdfExporter;
+    private readonly AppDbContext _db;
 
     public PurchaseRequisitionsController(
         IMediator mediator,
         IValidator<CreatePurchaseRequisitionDto> createValidator,
         IValidator<UpdatePurchaseRequisitionDto> updateValidator,
-        PurchaseRequisitionPdfExporter pdfExporter)
+        PurchaseRequisitionPdfExporter pdfExporter,
+        AppDbContext db)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _pdfExporter = pdfExporter;
+        _db = db;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? requisitionNumber = null, long? projectId = null, RequisitionStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
+        ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var requisitions = await _mediator.Send(new GetAllPurchaseRequisitionsQuery(page, pageSize, requisitionNumber, projectId, status, dateFrom, dateTo));
 
         ViewBag.RequisitionNumber = requisitionNumber;
@@ -60,6 +68,7 @@ public class PurchaseRequisitionsController : Controller
     [PermissionAuthorize(PermissionNames.PurchaseRequisitionManage)]
     public async Task<IActionResult> Create()
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         await PopulateDropdownsAsync();
         return View(new CreatePurchaseRequisitionDto());
     }
@@ -69,6 +78,8 @@ public class PurchaseRequisitionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreatePurchaseRequisitionDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = RequisitionStatus.Draft;
         var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -84,6 +95,7 @@ public class PurchaseRequisitionsController : Controller
     [PermissionAuthorize(PermissionNames.PurchaseRequisitionManage)]
     public async Task<IActionResult> Edit(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var requisition = await _mediator.Send(new GetPurchaseRequisitionByIdQuery(id));
         if (requisition is null)
         {
@@ -119,6 +131,8 @@ public class PurchaseRequisitionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(UpdatePurchaseRequisitionDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = RequisitionStatus.Draft;
         var validationResult = await _updateValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -135,7 +149,7 @@ public class PurchaseRequisitionsController : Controller
 
         if (result == UpdatePurchaseRequisitionResult.Locked)
         {
-            ModelState.AddModelError(string.Empty, "This requisition has already been approved, rejected, or converted and cannot be edited.");
+            ModelState.AddModelError(string.Empty, "Only Draft requisitions can be edited.");
             await PopulateDropdownsAsync();
             return View(dto);
         }
@@ -149,6 +163,71 @@ public class PurchaseRequisitionsController : Controller
     public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetPurchaseRequisitionActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.PurchaseRequisitionManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        if (assignment is null) return Forbid();
+
+        var requisition = await _db.PurchaseRequisitions.FirstOrDefaultAsync(r => r.Id == id && !r.IsDeleted);
+        if (requisition is null) return NotFound();
+
+        var action = workflowAction?.Trim().ToLowerInvariant();
+        var canPerform = action switch
+        {
+            "submit" => assignment.CanSubmit,
+            "request" => assignment.CanRequestApproval,
+            "approve" => assignment.CanApprove,
+            "reject" => assignment.CanReject,
+            "cancel" => assignment.CanCancel,
+            _ => false
+        };
+
+        if (!canPerform)
+        {
+            TempData["ErrorMessage"] = "You are not assigned to perform that action.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var transition = action switch
+        {
+            "submit" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Submitted),
+            "request" => (From: RequisitionStatus.Submitted, To: RequisitionStatus.AwaitingApproval),
+            "approve" => (From: RequisitionStatus.AwaitingApproval, To: RequisitionStatus.Approved),
+            "reject" => (From: RequisitionStatus.AwaitingApproval, To: RequisitionStatus.Rejected),
+            "cancel" when requisition.Status is RequisitionStatus.Draft or RequisitionStatus.Submitted
+                or RequisitionStatus.AwaitingApproval or RequisitionStatus.Rejected
+                => (From: requisition.Status, To: RequisitionStatus.Cancelled),
+            "cancel" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Cancelled),
+            _ => (From: requisition.Status, To: requisition.Status)
+        };
+
+        if (requisition.Status == transition.To)
+        {
+            TempData["StatusMessage"] = $"Purchase Requisition {requisition.RequisitionNumber} is already {transition.To}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (requisition.Status != transition.From)
+        {
+            TempData["ErrorMessage"] = $"This action is no longer available because Purchase Requisition {requisition.RequisitionNumber} is {requisition.Status}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var updated = await _mediator.Send(new SetPurchaseRequisitionStatusCommand(
+            requisition.Id, transition.From, transition.To, User.Identity?.Name));
+        if (!updated)
+        {
+            TempData["ErrorMessage"] = $"Purchase Requisition {requisition.RequisitionNumber} changed while this action was being processed. Please try again.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        TempData["StatusMessage"] = $"Purchase Requisition {requisition.RequisitionNumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -197,5 +276,19 @@ public class PurchaseRequisitionsController : Controller
 
         var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name");
+    }
+
+    private async Task<PurchaseRequisitionActionAssignment?> GetCurrentAssignmentAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId)
+            ? await _db.PurchaseRequisitionActionAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId)
+            : null;
+    }
+
+    private async Task<bool> HasActionAsync(Func<PurchaseRequisitionActionAssignment, bool> predicate)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        return assignment is not null && predicate(assignment);
     }
 }

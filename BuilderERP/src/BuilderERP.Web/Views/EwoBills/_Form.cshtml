@@ -5,7 +5,12 @@
     var isLocked = ViewBag.IsLocked as bool? ?? false;
     var initialQtyJson = System.Text.Json.JsonSerializer.Serialize((Dictionary<string, decimal>)ViewBag.InitialQuantities);
     var initialClaimJson = System.Text.Json.JsonSerializer.Serialize((Dictionary<string, decimal>)ViewBag.InitialClaims);
-    var adjustmentsJson = System.Text.Json.JsonSerializer.Serialize(Model.Adjustments.Select(a => new { type = a.Type.ToString(), a.Description, a.Amount }));
+    var adjustmentsJson = System.Text.Json.JsonSerializer.Serialize(Model.Adjustments.Select(a => new
+    {
+        type = a.Type.ToString(),
+        description = a.Description,
+        amount = a.Amount
+    }));
     var hasPostedLines = Model.Details.Count > 0;
     var excludeBillId = isEdit ? Model.Id.ToString() : "";
 }
@@ -363,8 +368,8 @@
                 '<td><button type="button" class="btn btn-sm btn-outline-danger adj-remove">Remove</button></td>';
             if (values) {
                 tr.querySelector('.adj-type').value = values.type;
-                tr.querySelector('.adj-desc').value = values.description;
-                tr.querySelector('.adj-amount').value = values.amount;
+                tr.querySelector('.adj-desc').value = values.description ?? values.Description ?? '';
+                tr.querySelector('.adj-amount').value = values.amount ?? values.Amount ?? '';
             } else {
                 tr.querySelector('.adj-type').value = 'Deduction';
             }

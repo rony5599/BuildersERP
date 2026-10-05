@@ -2,6 +2,7 @@ using AutoMapper;
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 
 namespace BuilderERP.Application.Features.PurchaseRequisitions;
@@ -24,6 +25,7 @@ public class CreatePurchaseRequisitionCommandHandler : IRequestHandler<CreatePur
     public async Task<long> Handle(CreatePurchaseRequisitionCommand request, CancellationToken cancellationToken)
     {
         var requisition = _mapper.Map<PurchaseRequisition>(request.Dto);
+        requisition.Status = RequisitionStatus.Draft;
         requisition.RequisitionNumber = await _numberGenerator.GenerateAsync(request.Dto.ProjectId, "PR", cancellationToken);
 
         decimal estimatedAmount = 0;

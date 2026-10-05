@@ -2,8 +2,11 @@
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using BuilderERP.Domain.Entities
+@using BuilderERP.Web.Models
 @model PagedResult<BuilderERP.Application.DTOs.PurchaseRequisitionDto>
 @{
+    var assignment = ViewBag.ActionAssignment as PurchaseRequisitionActionAssignment;
     var requisitionNumber = ViewBag.RequisitionNumber as string;
     var projectId = ViewBag.ProjectId as long?;
     var status = ViewBag.Status as BuilderERP.Domain.Enums.RequisitionStatus?;
@@ -68,12 +71,12 @@
             @foreach (var requisition in Model.Items)
             {
                 <tr>
-                    <td><a asp-action="Edit" asp-route-id="@requisition.Id" class="document-number">@requisition.RequisitionNumber</a><span class="document-subtitle">@requisition.ProjectName</span></td>
+                    <td><a asp-action="Print" asp-route-id="@requisition.Id" target="_blank" class="document-number">@requisition.RequisitionNumber</a><span class="document-subtitle">@requisition.ProjectName</span></td>
                     <td class="fw-medium">@requisition.DepartmentName</td>
                     <td>@requisition.RequiredByDate.ToString("yyyy-MM-dd")</td>
                     <td class="amount-cell">@requisition.EstimatedAmount.ToString("N2")</td>
                     <td>
-                        <span class="procurement-status @StatusBadgeClass(requisition.Status)"><span class="badge-dot"></span>@requisition.Status</span>
+                        <span class="procurement-status @StatusBadgeClass(requisition.Status)"><span class="badge-dot"></span>@HumanizeStatus(requisition.Status)</span>
                     </td>
                     <td>
                         <span class="procurement-status @(requisition.IsActive ? "status-success" : "status-neutral")">
@@ -84,7 +87,30 @@
                         <div class="procurement-actions"><a asp-action="Print" asp-route-id="@requisition.Id" class="btn btn-sm btn-light" target="_blank" title="Print"><i class="bi bi-printer"></i></a>
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionManage))
                         {
-                            <a asp-action="Edit" asp-route-id="@requisition.Id" class="btn btn-sm btn-light" title="Edit"><i class="bi bi-pencil"></i></a>
+                            @if (assignment?.CanDraftEdit == true && requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.Draft)
+                            {
+                                <a asp-action="Edit" asp-route-id="@requisition.Id" class="btn btn-sm btn-light" title="Edit"><i class="bi bi-pencil"></i></a>
+                            }
+                            @if (assignment?.CanSubmit == true && requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.Draft)
+                            {
+                                <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "submit", "Submit", "btn-outline-primary"))" />
+                            }
+                            @if (assignment?.CanRequestApproval == true && requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.Submitted)
+                            {
+                                <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "request", "Request approval", "btn-outline-primary"))" />
+                            }
+                            @if (assignment?.CanApprove == true && requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval)
+                            {
+                                <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "approve", "Approve", "btn-success"))" />
+                            }
+                            @if (assignment?.CanReject == true && requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval)
+                            {
+                                <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "reject", "Reject", "btn-outline-danger"))" />
+                            }
+                            @if (assignment?.CanCancel == true && requisition.Status is BuilderERP.Domain.Enums.RequisitionStatus.Draft or BuilderERP.Domain.Enums.RequisitionStatus.Submitted or BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval or BuilderERP.Domain.Enums.RequisitionStatus.Rejected)
+                            {
+                                <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "cancel", "Cancel", "btn-outline-danger"))" />
+                            }
                             <form asp-action="ToggleActive" asp-route-id="@requisition.Id" asp-route-isActive="@requisition.IsActive" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-light @(requisition.IsActive ? "text-danger" : "text-success")" title="@(requisition.IsActive ? "Deactivate" : "Activate")">
                                     <i class="bi @(requisition.IsActive ? "bi-pause-circle" : "bi-play-circle")"></i>
@@ -133,9 +159,14 @@
     {
         BuilderERP.Domain.Enums.RequisitionStatus.Draft => "status-neutral",
         BuilderERP.Domain.Enums.RequisitionStatus.Submitted => "status-warning",
+        BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval => "status-warning",
         BuilderERP.Domain.Enums.RequisitionStatus.Approved => "status-success",
         BuilderERP.Domain.Enums.RequisitionStatus.Rejected => "status-danger",
         BuilderERP.Domain.Enums.RequisitionStatus.Converted => "status-info",
+        BuilderERP.Domain.Enums.RequisitionStatus.Cancelled => "status-danger",
         _ => "status-neutral"
     };
+
+    private static string HumanizeStatus(BuilderERP.Domain.Enums.RequisitionStatus status) =>
+        status == BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval ? "Awaiting Approval" : status.ToString();
 }

@@ -113,6 +113,7 @@
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.UserManage))
                         {
                             <li class="nav-item"><a asp-controller="PurchaseOrderActionAssignments" asp-action="Index" class="@NavClass("PurchaseOrderActionAssignments")"><i class="bi bi-person-check"></i> PO Action Assignment</a></li>
+                            <li class="nav-item"><a asp-controller="PurchaseRequisitionActionAssignments" asp-action="Index" class="@NavClass("PurchaseRequisitionActionAssignments")"><i class="bi bi-clipboard-check"></i> PR Action Assignment</a></li>
                             <li class="nav-item"><a asp-controller="EngineerWorkOrderActionAssignments" asp-action="Index" class="@NavClass("EngineerWorkOrderActionAssignments")"><i class="bi bi-person-gear"></i> EWO Action Assignment</a></li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RoleView))

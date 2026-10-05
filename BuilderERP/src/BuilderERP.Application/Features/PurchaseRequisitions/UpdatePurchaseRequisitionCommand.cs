@@ -37,7 +37,7 @@ public class UpdatePurchaseRequisitionCommandHandler : IRequestHandler<UpdatePur
             return UpdatePurchaseRequisitionResult.NotFound;
         }
 
-        if (requisition.Status is RequisitionStatus.Approved or RequisitionStatus.Rejected or RequisitionStatus.Converted)
+        if (requisition.Status != RequisitionStatus.Draft)
         {
             return UpdatePurchaseRequisitionResult.Locked;
         }
