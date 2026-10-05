@@ -1,5 +1,4 @@
 @model BuilderERP.Application.DTOs.SavePoBillDto
-@using BuilderERP.Domain.Enums
 @{
     var isEdit = Model.Id > 0;
     var isLocked = ViewBag.IsLocked as bool? ?? false;
@@ -97,15 +96,18 @@
                 <input asp-for="DueDate" type="date" class="form-control" />
                 <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
-            <div class="mb-3 col-md-3">
+            <div class="mb-3 @(isEdit ? "col-md-3" : "col-md-6")">
                 <label asp-for="SupplierInvoiceNumber" class="form-label">Supplier Invoice #</label>
                 <input asp-for="SupplierInvoiceNumber" class="form-control" />
                 <span asp-validation-for="SupplierInvoiceNumber" class="text-danger"></span>
             </div>
-            <div class="mb-3 col-md-3">
-                <label asp-for="Status" class="form-label"></label>
-                <select asp-for="Status" asp-items="Html.GetEnumSelectList<PoBillStatus>()" class="form-select"></select>
-            </div>
+            @if (isEdit)
+            {
+                <div class="mb-3 col-md-3">
+                    <label class="form-label">Status</label>
+                    <input class="form-control" value="@Model.Status" disabled />
+                </div>
+            }
             <div class="mb-3 col-md-12">
                 <label asp-for="Remarks" class="form-label"></label>
                 <textarea asp-for="Remarks" class="form-control" rows="2"></textarea>

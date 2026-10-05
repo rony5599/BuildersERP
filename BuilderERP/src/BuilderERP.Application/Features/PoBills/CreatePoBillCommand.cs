@@ -1,6 +1,7 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +41,7 @@ public class CreatePoBillCommandHandler : IRequestHandler<CreatePoBillCommand, P
             DueDate = dto.DueDate,
             SupplierInvoiceNumber = dto.SupplierInvoiceNumber,
             Remarks = dto.Remarks,
-            Status = dto.Status,
+            Status = PoBillStatus.Draft,
             PurchaseOrderId = dto.PurchaseOrderId,
             TotalAmount = total
         };

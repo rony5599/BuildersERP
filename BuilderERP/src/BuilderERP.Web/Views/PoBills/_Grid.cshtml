@@ -3,8 +3,11 @@
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using BuilderERP.Domain.Entities
+@using BuilderERP.Web.Models
 @model PagedResult<BuilderERP.Application.DTOs.PoBillDto>
 @{
+    var assignment = ViewBag.ActionAssignment as PoBillActionAssignment;
     var billNumber = ViewBag.BillNumber as string;
     var supplier = ViewBag.Supplier as string;
     var status = ViewBag.Status as PoBillStatus?;
@@ -77,7 +80,7 @@
                     <td class="text-end">@bill.TotalAmount.ToString("N2")</td>
                     <td>@bill.PreparedBy</td>
                     <td>
-                        <span class="badge @StatusBadgeClass(bill.Status)"><span class="badge-dot"></span>@bill.Status</span>
+                        <span class="badge @StatusBadgeClass(bill.Status)"><span class="badge-dot"></span>@HumanizeStatus(bill.Status)</span>
                     </td>
                     <td>
                         <span class="badge @(bill.IsActive ? "bg-success" : "bg-secondary")">
@@ -88,7 +91,12 @@
                         <a asp-action="Print" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-primary" target="_blank">Print</a>
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PoBillManage))
                         {
-                            <a asp-action="Edit" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-secondary">@(bill.Status == PoBillStatus.Draft ? "Edit" : "View")</a>
+                            @if (assignment?.CanDraftEdit == true && bill.Status == PoBillStatus.Draft) { <a asp-action="Edit" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-secondary">Edit</a> }
+                            @if (assignment?.CanSubmit == true && bill.Status == PoBillStatus.Draft) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "submit", "Submit", "btn-outline-primary"))" /> }
+                            @if (assignment?.CanRequestApproval == true && bill.Status == PoBillStatus.Submitted) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "request", "Request approval", "btn-outline-primary"))" /> }
+                            @if (assignment?.CanApprove == true && bill.Status == PoBillStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "approve", "Approve", "btn-success"))" /> }
+                            @if (assignment?.CanReject == true && bill.Status == PoBillStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "reject", "Reject", "btn-outline-danger"))" /> }
+                            @if (assignment?.CanCancel == true && bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "cancel", "Cancel", "btn-outline-danger"))" /> }
                             <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     @(bill.IsActive ? "Deactivate" : "Activate")
@@ -134,8 +142,12 @@
     private static string StatusBadgeClass(PoBillStatus status) => status switch
     {
         PoBillStatus.Draft => "bg-warning",
+        PoBillStatus.Submitted => "bg-primary",
+        PoBillStatus.AwaitingApproval => "bg-warning",
         PoBillStatus.Approved => "bg-success",
+        PoBillStatus.Rejected => "bg-danger",
         PoBillStatus.Cancelled => "bg-secondary",
         _ => "bg-secondary"
     };
+    private static string HumanizeStatus(PoBillStatus status) => status == PoBillStatus.AwaitingApproval ? "Awaiting Approval" : status.ToString();
 }

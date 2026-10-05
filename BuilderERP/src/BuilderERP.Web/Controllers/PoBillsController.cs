@@ -1,6 +1,8 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.PoBills;
+using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Enums;
+using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -8,6 +10,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -16,15 +20,18 @@ public class PoBillsController : Controller
 {
     private readonly IMediator _mediator;
     private readonly IValidator<SavePoBillDto> _validator;
+    private readonly AppDbContext _db;
 
-    public PoBillsController(IMediator mediator, IValidator<SavePoBillDto> validator)
+    public PoBillsController(IMediator mediator, IValidator<SavePoBillDto> validator, AppDbContext db)
     {
         _mediator = mediator;
         _validator = validator;
+        _db = db;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? billNumber = null, string? supplier = null, PoBillStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
+        ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var bills = await _mediator.Send(new GetAllPoBillsQuery(page, pageSize, billNumber, supplier, status, dateFrom, dateTo));
 
         ViewBag.BillNumber = billNumber;
@@ -45,6 +52,7 @@ public class PoBillsController : Controller
     [PermissionAuthorize(PermissionNames.PoBillManage)]
     public async Task<IActionResult> Create(long? purchaseOrderId = null)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         await PopulateAsync(purchaseOrderId, null);
         return View(new SavePoBillDto { PurchaseOrderId = purchaseOrderId ?? 0 });
     }
@@ -54,6 +62,8 @@ public class PoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SavePoBillDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PoBillStatus.Draft;
         var validationResult = await _validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -76,6 +86,7 @@ public class PoBillsController : Controller
     [PermissionAuthorize(PermissionNames.PoBillManage)]
     public async Task<IActionResult> Edit(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var bill = await _mediator.Send(new GetPoBillByIdQuery(id));
         if (bill is null)
         {
@@ -109,6 +120,8 @@ public class PoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(SavePoBillDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PoBillStatus.Draft;
         var validationResult = await _validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -128,7 +141,7 @@ public class PoBillsController : Controller
 
         ModelState.AddModelError(string.Empty, result switch
         {
-            UpdatePoBillResult.Locked => "This bill is already approved or cancelled and cannot be edited.",
+            UpdatePoBillResult.Locked => "Only Draft bills can be edited.",
             UpdatePoBillResult.OverBilled => BuildErrorMessage(PoBillBuildResult.OverBilled),
             UpdatePoBillResult.PurchaseOrderNotBillable => BuildErrorMessage(PoBillBuildResult.PurchaseOrderNotBillable),
             _ => BuildErrorMessage(PoBillBuildResult.InvalidLine)
@@ -144,6 +157,36 @@ public class PoBillsController : Controller
     public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetPoBillActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.PoBillManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        if (assignment is null) return Forbid();
+        var bill = await _db.PoBills.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
+        if (bill is null) return NotFound();
+        var action = workflowAction?.Trim().ToLowerInvariant();
+        var canPerform = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
+        if (!canPerform) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        var transition = action switch
+        {
+            "submit" => (From: PoBillStatus.Draft, To: PoBillStatus.Submitted),
+            "request" => (From: PoBillStatus.Submitted, To: PoBillStatus.AwaitingApproval),
+            "approve" => (From: PoBillStatus.AwaitingApproval, To: PoBillStatus.Approved),
+            "reject" => (From: PoBillStatus.AwaitingApproval, To: PoBillStatus.Rejected),
+            "cancel" when bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected => (From: bill.Status, To: PoBillStatus.Cancelled),
+            "cancel" => (From: PoBillStatus.Draft, To: PoBillStatus.Cancelled),
+            _ => (From: bill.Status, To: bill.Status)
+        };
+        if (bill.Status == transition.To) { TempData["StatusMessage"] = $"PO Bill {bill.BillNumber} is already {transition.To}."; return RedirectToAction(nameof(Index)); }
+        if (bill.Status != transition.From) { TempData["ErrorMessage"] = $"This action is no longer available because PO Bill {bill.BillNumber} is {bill.Status}."; return RedirectToAction(nameof(Index)); }
+        var updated = await _mediator.Send(new SetPoBillStatusCommand(bill.Id, transition.From, transition.To, User.Identity?.Name));
+        if (!updated) { TempData["ErrorMessage"] = $"PO Bill {bill.BillNumber} changed while this action was being processed. Please try again."; return RedirectToAction(nameof(Index)); }
+        TempData["StatusMessage"] = $"PO Bill {bill.BillNumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -200,5 +243,16 @@ public class PoBillsController : Controller
         ViewBag.InitialQuantities = (dto?.Details ?? new())
             .GroupBy(d => d.PurchaseOrderDetailId)
             .ToDictionary(g => g.Key, g => g.Sum(x => x.BilledQuantity));
+    }
+
+    private async Task<PoBillActionAssignment?> GetCurrentAssignmentAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId) ? await _db.PoBillActionAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId) : null;
+    }
+    private async Task<bool> HasActionAsync(Func<PoBillActionAssignment, bool> predicate)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        return assignment is not null && predicate(assignment);
     }
 }

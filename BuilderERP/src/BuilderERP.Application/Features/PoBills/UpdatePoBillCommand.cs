@@ -76,7 +76,7 @@ public class UpdatePoBillCommandHandler : IRequestHandler<UpdatePoBillCommand, U
         bill.DueDate = dto.DueDate;
         bill.SupplierInvoiceNumber = dto.SupplierInvoiceNumber;
         bill.Remarks = dto.Remarks;
-        bill.Status = dto.Status;
+        bill.Status = PoBillStatus.Draft;
         bill.TotalAmount = total;
         repository.Update(bill);
 

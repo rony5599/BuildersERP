@@ -83,6 +83,7 @@ public static class PoBillLineBuilder
             .Where(d => d.PoBill.PurchaseOrderId == purchaseOrderId
                         && d.PoBill.IsActive
                         && d.PoBill.Status != PoBillStatus.Cancelled
+                        && d.PoBill.Status != PoBillStatus.Rejected
                         && (excludeBillId == null || d.PoBillId != excludeBillId))
             .GroupBy(d => d.PurchaseOrderDetailId)
             .Select(g => new { g.Key, Qty = g.Sum(x => x.BilledQuantity) })

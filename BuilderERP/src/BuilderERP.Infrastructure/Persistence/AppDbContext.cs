@@ -56,6 +56,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<GoodsReceive> GoodsReceives => Set<GoodsReceive>();
     public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
     public DbSet<PoBill> PoBills => Set<PoBill>();
+    public DbSet<PoBillActionAssignment> PoBillActionAssignments => Set<PoBillActionAssignment>();
     public DbSet<SupplierPayment> SupplierPayments => Set<SupplierPayment>();
     public DbSet<CashPoBill> CashPoBills => Set<CashPoBill>();
     public DbSet<CashDisbursement> CashDisbursements => Set<CashDisbursement>();
@@ -184,6 +185,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                 .WithMany()
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PoBillActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<CashRequisitionActionAssignment>(entity =>
