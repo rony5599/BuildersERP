@@ -3,6 +3,8 @@
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using BuilderERP.Domain.Entities
+@using BuilderERP.Web.Models
 @model PagedResult<BuilderERP.Application.DTOs.EwoBillDto>
 @{
     var billNumber = ViewBag.BillNumber as string;
@@ -12,6 +14,7 @@
     var dateTo = ViewBag.DateTo as DateTime?;
     var hasFilters = !string.IsNullOrWhiteSpace(billNumber) || !string.IsNullOrWhiteSpace(supplier) || status.HasValue || dateFrom.HasValue || dateTo.HasValue;
     var canPay = User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierPaymentManage);
+    var assignment = ViewBag.ActionAssignment as EwoBillActionAssignment;
 }
 
 <div class="card ewo-card ewo-filter-card mb-3">
@@ -85,6 +88,13 @@
         <tbody>
             @foreach (var bill in Model.Items)
             {
+                var canEdit = assignment?.CanDraftEdit == true && bill.Status == PoBillStatus.Draft;
+                var canSubmit = assignment?.CanSubmit == true && bill.Status == PoBillStatus.Draft;
+                var canRequest = assignment?.CanRequestApproval == true && bill.Status == PoBillStatus.Submitted;
+                var canApprove = assignment?.CanApprove == true && bill.Status == PoBillStatus.AwaitingApproval;
+                var canReject = assignment?.CanReject == true && bill.Status == PoBillStatus.AwaitingApproval;
+                var canCancel = assignment?.CanCancel == true && bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected;
+                var hasWorkflowActions = canSubmit || canRequest || canApprove || canReject || canCancel;
                 <tr>
                     <td>
                         <a asp-action="Print" asp-route-id="@bill.Id" target="_blank" class="ewo-document-number text-decoration-none">@bill.BillNumber</a>
@@ -98,7 +108,7 @@
                     <td class="text-end ewo-money">@bill.NetPayable.ToString("N2")</td>
                     <td class="text-end ewo-money">@bill.PaidAmount.ToString("N2")</td>
                     <td>
-                        <span class="ewo-badge @StatusBadgeClass(bill.Status)">@bill.Status</span>
+                        <span class="ewo-badge @StatusBadgeClass(bill.Status)">@HumanizeStatus(bill.Status)</span>
                     </td>
                     <td>
                         <div class="ewo-money outstanding">@bill.Outstanding.ToString("N2")</div>
@@ -109,22 +119,29 @@
                         {
                             <a asp-controller="SupplierPayments" asp-action="Create" asp-route-ewoBillId="@bill.Id" class="btn btn-sm btn-success me-1"><i class="bi bi-credit-card me-1"></i>Pay</a>
                         }
-                        <div class="dropdown d-inline-block">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for @bill.BillNumber">
-                                <i class="bi bi-three-dots"></i>
+                        <div class="dropdown d-inline-block ewo-actions">
+                            <button class="btn btn-sm ewo-actions-trigger" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for @bill.BillNumber">
+                                <i class="bi bi-three-dots" aria-hidden="true"></i><span class="visually-hidden">Open actions</span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                            <ul class="dropdown-menu dropdown-menu-end ewo-actions-menu">
+                                <li><h6 class="dropdown-header">@bill.BillNumber</h6></li>
                                 <li><a asp-action="Print" asp-route-id="@bill.Id" class="dropdown-item" target="_blank"><i class="bi bi-printer me-2"></i>Print bill</a></li>
                                 <li><a asp-action="Statement" asp-route-engineerWorkOrderId="@bill.EngineerWorkOrderId" class="dropdown-item" target="_blank"><i class="bi bi-file-earmark-bar-graph me-2"></i>View statement</a></li>
                                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillManage))
                                 {
-                                    @if (bill.Status == PoBillStatus.Draft)
+                                    @if (canEdit)
                                     {
                                         <li><a asp-action="Edit" asp-route-id="@bill.Id" class="dropdown-item"><i class="bi bi-pencil me-2"></i>Edit draft</a></li>
                                     }
+                                    @if (hasWorkflowActions) { <li><hr class="dropdown-divider" /></li> }
+                                    @if (canSubmit) { <li><partial name="_WorkflowButton" model="@(new EwoBillWorkflowButtonViewModel(bill.Id, "submit", "Submit bill", ""))" /></li> }
+                                    @if (canRequest) { <li><partial name="_WorkflowButton" model="@(new EwoBillWorkflowButtonViewModel(bill.Id, "request", "Request approval", ""))" /></li> }
+                                    @if (canApprove) { <li><partial name="_WorkflowButton" model="@(new EwoBillWorkflowButtonViewModel(bill.Id, "approve", "Approve bill", ""))" /></li> }
+                                    @if (canReject) { <li><partial name="_WorkflowButton" model="@(new EwoBillWorkflowButtonViewModel(bill.Id, "reject", "Reject bill", ""))" /></li> }
+                                    @if (canCancel) { <li><partial name="_WorkflowButton" model="@(new EwoBillWorkflowButtonViewModel(bill.Id, "cancel", "Cancel bill", ""))" /></li> }
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
-                                        <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post">
+                                        <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post" class="ewo-toggle-form" data-bill-number="@bill.BillNumber" data-deactivating="@bill.IsActive.ToString().ToLowerInvariant()">
                                             <button type="submit" class="dropdown-item @(bill.IsActive ? "text-danger" : "text-success")">
                                                 <i class="bi @(bill.IsActive ? "bi-slash-circle" : "bi-check-circle") me-2"></i>@(bill.IsActive ? "Deactivate" : "Activate")
                                             </button>
@@ -179,6 +196,11 @@
         PoBillStatus.Draft => "ewo-badge-draft",
         PoBillStatus.Approved => "ewo-badge-approved",
         PoBillStatus.Cancelled => "ewo-badge-cancelled",
+        PoBillStatus.Submitted => "ewo-badge-submitted",
+        PoBillStatus.AwaitingApproval => "ewo-badge-awaiting",
+        PoBillStatus.Rejected => "ewo-badge-rejected",
         _ => "ewo-badge-cancelled"
     };
+
+    private static string HumanizeStatus(PoBillStatus status) => status == PoBillStatus.AwaitingApproval ? "Awaiting Approval" : status.ToString();
 }

@@ -11,11 +11,14 @@
         <h1 class="h3 mb-0">Cash PO Bills</h1>
         <partial name="_CashWorkflowHelp" />
     </div>
-    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillManage))
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.CashPoBillManage) && (ViewBag.ActionAssignment as BuilderERP.Domain.Entities.CashPoBillActionAssignment)?.CanDraftEdit == true)
     {
         <a asp-action="Create" class="btn btn-primary">New Cash PO Bill</a>
     }
 </div>
+
+@if (TempData["ErrorMessage"] is string error) { <div class="alert alert-danger">@error</div> }
+@if (TempData["StatusMessage"] is string message) { <div class="alert alert-success">@message</div> }
 
 <div data-grid-container>
     <partial name="_Grid" model="Model" />

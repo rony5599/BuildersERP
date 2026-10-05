@@ -202,6 +202,6 @@ public static class EwoBillBuilder
             bills.SelectMany(b => b.Heads).Sum(h => h.ClaimPercent),
             bills.Sum(b => b.CertifiedAmount),
             claimed,
-            bills.FirstOrDefault(b => b.Status == PoBillStatus.Draft)?.BillNumber);
+            bills.FirstOrDefault(b => b.Status != PoBillStatus.Approved)?.BillNumber);
     }
 }

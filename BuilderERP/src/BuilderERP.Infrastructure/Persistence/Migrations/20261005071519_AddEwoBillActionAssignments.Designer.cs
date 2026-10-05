@@ -4,6 +4,7 @@ using BuilderERP.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuilderERP.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261005071519_AddEwoBillActionAssignments")]
+    partial class AddEwoBillActionAssignments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -812,64 +815,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("RequesterEmployeeId");
 
                     b.ToTable("CashPoBills");
-                });
-
-            modelBuilder.Entity("BuilderERP.Domain.Entities.CashPoBillActionAssignment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("CanApprove")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanCancel")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanDraftEdit")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanReject")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanRequestApproval")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanSubmit")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Guid")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("CashPoBillActionAssignments");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CashPoBillDetail", b =>
@@ -9591,17 +9536,6 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("CashPurchaseOrder");
 
                     b.Navigation("RequesterEmployee");
-                });
-
-            modelBuilder.Entity("BuilderERP.Domain.Entities.CashPoBillActionAssignment", b =>
-                {
-                    b.HasOne("BuilderERP.Domain.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.CashPoBillDetail", b =>

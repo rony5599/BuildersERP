@@ -1,6 +1,8 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.EwoBills;
 using BuilderERP.Domain.Enums;
+using BuilderERP.Domain.Entities;
+using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -8,6 +10,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -16,15 +20,18 @@ public class EwoBillsController : Controller
 {
     private readonly IMediator _mediator;
     private readonly IValidator<SaveEwoBillDto> _validator;
+    private readonly AppDbContext _db;
 
-    public EwoBillsController(IMediator mediator, IValidator<SaveEwoBillDto> validator)
+    public EwoBillsController(IMediator mediator, IValidator<SaveEwoBillDto> validator, AppDbContext db)
     {
         _mediator = mediator;
         _validator = validator;
+        _db = db;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? billNumber = null, string? supplier = null, PoBillStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
+        ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var bills = await _mediator.Send(new GetAllEwoBillsQuery(page, pageSize, billNumber, supplier, status, dateFrom, dateTo));
 
         ViewBag.BillNumber = billNumber;
@@ -45,6 +52,7 @@ public class EwoBillsController : Controller
     [PermissionAuthorize(PermissionNames.EwoBillManage)]
     public async Task<IActionResult> Create(long? engineerWorkOrderId = null)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var dto = new SaveEwoBillDto { EngineerWorkOrderId = engineerWorkOrderId ?? 0 };
         await PopulateAsync(dto);
         return View(dto);
@@ -55,6 +63,8 @@ public class EwoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaveEwoBillDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PoBillStatus.Draft;
         var validationResult = await _validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -77,6 +87,7 @@ public class EwoBillsController : Controller
     [PermissionAuthorize(PermissionNames.EwoBillManage)]
     public async Task<IActionResult> Edit(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var bill = await _mediator.Send(new GetEwoBillByIdQuery(id));
         if (bill is null)
         {
@@ -121,6 +132,8 @@ public class EwoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(SaveEwoBillDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PoBillStatus.Draft;
         var validationResult = await _validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -164,6 +177,36 @@ public class EwoBillsController : Controller
             TempData["Error"] = error;
         }
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.EwoBillManage)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        if (assignment is null) return Forbid();
+        var bill = await _db.EwoBills.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
+        if (bill is null) return NotFound();
+        var action = workflowAction?.Trim().ToLowerInvariant();
+        var canPerform = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
+        if (!canPerform) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        var transition = action switch
+        {
+            "submit" => (From: PoBillStatus.Draft, To: PoBillStatus.Submitted),
+            "request" => (From: PoBillStatus.Submitted, To: PoBillStatus.AwaitingApproval),
+            "approve" => (From: PoBillStatus.AwaitingApproval, To: PoBillStatus.Approved),
+            "reject" => (From: PoBillStatus.AwaitingApproval, To: PoBillStatus.Rejected),
+            "cancel" when bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected => (From: bill.Status, To: PoBillStatus.Cancelled),
+            "cancel" => (From: PoBillStatus.Draft, To: PoBillStatus.Cancelled),
+            _ => (From: bill.Status, To: bill.Status)
+        };
+        if (bill.Status == transition.To) { TempData["StatusMessage"] = $"EWO Bill {bill.BillNumber} is already {transition.To}."; return RedirectToAction(nameof(Index)); }
+        if (bill.Status != transition.From) { TempData["ErrorMessage"] = $"This action is no longer available because EWO Bill {bill.BillNumber} is {bill.Status}."; return RedirectToAction(nameof(Index)); }
+        var updated = await _mediator.Send(new SetEwoBillStatusCommand(bill.Id, transition.From, transition.To, User.Identity?.Name));
+        if (!updated) { TempData["ErrorMessage"] = $"EWO Bill {bill.BillNumber} changed while this action was being processed. Please try again."; return RedirectToAction(nameof(Index)); }
+        TempData["StatusMessage"] = $"EWO Bill {bill.BillNumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -237,7 +280,7 @@ public class EwoBillsController : Controller
     {
         EwoBillBuildResult.OrderNotBillable => "The work order is not approved/active, or it has been revised. Bill the latest approved revision.",
         EwoBillBuildResult.NoPaymentHeads => "The work order has no payment heads. Set its payment heads (Engineer Work Orders > Payment Heads) before billing.",
-        EwoBillBuildResult.PendingDraft => "Another bill of this work order is still Draft. Approve or cancel it before raising a new bill.",
+        EwoBillBuildResult.PendingDraft => "Another bill of this work order is not yet approved. Approve or cancel it before raising a new bill.",
         EwoBillBuildResult.OverMeasured => "A measured quantity is more than the work order quantity. Revise the work order if the work exceeds it.",
         EwoBillBuildResult.OverClaimed => "A claimed percent is more than what is left of that payment head.",
         EwoBillBuildResult.NothingPayable => "The net payable of this bill is zero or negative. Claim a payment head, increase the measurement or adjust the deductions.",
@@ -260,5 +303,17 @@ public class EwoBillsController : Controller
         ViewBag.InitialClaims = dto.Heads
             .GroupBy(h => h.EngineerWorkOrderPaymentHeadId)
             .ToDictionary(g => g.Key.ToString(), g => g.Sum(x => x.ClaimPercent));
+    }
+
+    private async Task<EwoBillActionAssignment?> GetCurrentAssignmentAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId) ? await _db.EwoBillActionAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId) : null;
+    }
+
+    private async Task<bool> HasActionAsync(Func<EwoBillActionAssignment, bool> predicate)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        return assignment is not null && predicate(assignment);
     }
 }

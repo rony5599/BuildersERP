@@ -59,6 +59,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PoBillActionAssignment> PoBillActionAssignments => Set<PoBillActionAssignment>();
     public DbSet<SupplierPayment> SupplierPayments => Set<SupplierPayment>();
     public DbSet<CashPoBill> CashPoBills => Set<CashPoBill>();
+    public DbSet<CashPoBillActionAssignment> CashPoBillActionAssignments => Set<CashPoBillActionAssignment>();
     public DbSet<CashDisbursement> CashDisbursements => Set<CashDisbursement>();
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();
@@ -100,6 +101,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<EngineerWorkOrderDetail> EngineerWorkOrderDetails => Set<EngineerWorkOrderDetail>();
     public DbSet<EngineerWorkOrderPaymentHead> EngineerWorkOrderPaymentHeads => Set<EngineerWorkOrderPaymentHead>();
     public DbSet<EwoBill> EwoBills => Set<EwoBill>();
+    public DbSet<EwoBillActionAssignment> EwoBillActionAssignments => Set<EwoBillActionAssignment>();
     public DbSet<EwoBillDetail> EwoBillDetails => Set<EwoBillDetail>();
     public DbSet<EwoBillHead> EwoBillHeads => Set<EwoBillHead>();
     public DbSet<EwoBillAdjustment> EwoBillAdjustments => Set<EwoBillAdjustment>();
@@ -188,6 +190,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         });
 
         builder.Entity<PoBillActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<EwoBillActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CashPoBillActionAssignment>(entity =>
         {
             entity.HasIndex(a => a.UserId).IsUnique();
             entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);

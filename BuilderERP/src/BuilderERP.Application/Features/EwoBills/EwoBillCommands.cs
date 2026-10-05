@@ -240,3 +240,28 @@ public class SetEwoBillActiveCommandHandler : IRequestHandler<SetEwoBillActiveCo
         return SetEwoBillActiveResult.Success;
     }
 }
+
+public record SetEwoBillStatusCommand(long Id, PoBillStatus ExpectedStatus, PoBillStatus NewStatus, string? ModifiedBy)
+    : IRequest<bool>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["SupplierPayments", "SupplierLedger"];
+}
+
+public class SetEwoBillStatusCommandHandler : IRequestHandler<SetEwoBillStatusCommand, bool>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    public SetEwoBillStatusCommandHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+
+    public async Task<bool> Handle(SetEwoBillStatusCommand request, CancellationToken cancellationToken)
+    {
+        var repository = _unitOfWork.Repository<EwoBill>();
+        var bill = await repository.GetByIdAsync(request.Id);
+        if (bill is null || bill.Status != request.ExpectedStatus) return false;
+        bill.Status = request.NewStatus;
+        bill.ModifiedAt = DateTime.UtcNow;
+        bill.ModifiedBy = request.ModifiedBy;
+        repository.Update(bill);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+}

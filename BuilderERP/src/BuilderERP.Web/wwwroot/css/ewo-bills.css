@@ -78,9 +78,32 @@
 }
 .ewo-badge::before { background: currentColor; border-radius: 50%; content: ""; height: .4rem; width: .4rem; }
 .ewo-badge-draft { background: #fff7e6; color: #a15c00; }
+.ewo-badge-submitted { background: #edf3ff; color: #2457c5; }
+.ewo-badge-awaiting { background: #fff7e6; color: #a15c00; }
+.ewo-badge-rejected { background: #fff0f0; color: #b42318; }
 .ewo-badge-approved { background: #eaf8ef; color: #157347; }
 .ewo-badge-cancelled, .ewo-badge-inactive { background: #f0f2f5; color: #667085; }
 .ewo-badge-active { background: #eaf8ef; color: #157347; }
+
+.ewo-actions-trigger {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #d6dce6;
+    border-radius: .55rem;
+    color: #475467;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    padding: 0;
+    width: 2.5rem;
+}
+.ewo-actions-trigger:hover, .ewo-actions-trigger[aria-expanded="true"] { background: #f2f5f9; border-color: #aeb8c7; color: #172033; }
+.ewo-actions-menu { border: 1px solid #e0e5ed; border-radius: .7rem; box-shadow: 0 12px 32px rgba(16, 24, 40, .14); min-width: 13.5rem; padding: .4rem; }
+.ewo-actions-menu .dropdown-header { color: #667085; font-size: .68rem; font-weight: 750; letter-spacing: .05em; padding: .4rem .65rem; text-transform: uppercase; }
+.ewo-actions-menu .dropdown-item { align-items: center; border-radius: .45rem; display: flex; font-size: .875rem; gap: .65rem; padding: .55rem .65rem; }
+.ewo-actions-menu .dropdown-item i { font-size: 1rem; margin: 0 !important; text-align: center; width: 1.1rem; }
+.ewo-actions-menu form { display: block; margin: 0; width: 100%; }
+.ewo-actions-menu .dropdown-divider { border-color: #edf0f4; margin: .35rem .2rem; }
 
 .ewo-empty { padding: 4rem 1rem !important; text-align: center; }
 .ewo-empty i { color: #b8c2d1; display: block; font-size: 2.25rem; margin-bottom: .75rem; }

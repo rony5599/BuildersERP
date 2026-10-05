@@ -17,16 +17,59 @@
         <h1 class="h2 ewo-page-title mb-1">Engineer Work Order Bills</h1>
         <p class="ewo-page-subtitle mb-0">Track running bills, certified amounts, payments, and outstanding balances.</p>
     </div>
-    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillManage))
+    @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.EwoBillManage) && (ViewBag.ActionAssignment as BuilderERP.Domain.Entities.EwoBillActionAssignment)?.CanDraftEdit == true)
     {
         <a asp-action="Create" class="btn btn-primary px-3"><i class="bi bi-plus-lg me-1"></i> New EWO Bill</a>
     }
 </div>
 
+@section Scripts {
+    <script>
+        (function () {
+            var confirmations = {
+                approve: 'Approve this EWO bill? It will become available for payment.',
+                reject: 'Reject this EWO bill?',
+                cancel: 'Cancel this EWO bill? This action cannot be continued through the approval workflow.'
+            };
+
+            document.addEventListener('submit', function (event) {
+                var form = event.target;
+                if (form.classList.contains('workflow-action-form')) {
+                    var action = form.querySelector('[name="workflowAction"]')?.value;
+                    if (confirmations[action] && !window.confirm(confirmations[action])) {
+                        event.preventDefault();
+                        return;
+                    }
+                } else if (form.classList.contains('ewo-toggle-form') && form.dataset.deactivating === 'true') {
+                    if (!window.confirm('Deactivate ' + form.dataset.billNumber + '? It will be removed from active billing and payment views.')) {
+                        event.preventDefault();
+                        return;
+                    }
+                } else {
+                    return;
+                }
+
+                if (form.dataset.submitting === 'true') {
+                    event.preventDefault();
+                    return;
+                }
+                form.dataset.submitting = 'true';
+                var button = form.querySelector('button[type="submit"]');
+                if (button) {
+                    button.disabled = true;
+                    button.setAttribute('aria-busy', 'true');
+                }
+            });
+        })();
+    </script>
+}
+
 @if (TempData["Error"] is string error)
 {
     <div class="alert alert-danger">@error</div>
 }
+@if (TempData["ErrorMessage"] is string workflowError) { <div class="alert alert-danger">@workflowError</div> }
+@if (TempData["StatusMessage"] is string statusMessage) { <div class="alert alert-success">@statusMessage</div> }
 
 <div data-grid-container>
     <partial name="_Grid" model="Model" />

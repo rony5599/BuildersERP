@@ -1,6 +1,8 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.CashPoBills;
 using BuilderERP.Domain.Enums;
+using BuilderERP.Domain.Entities;
+using BuilderERP.Infrastructure.Persistence;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -8,6 +10,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -16,15 +20,18 @@ public class CashPoBillsController : Controller
 {
     private readonly IMediator _mediator;
     private readonly IValidator<SaveCashPoBillDto> _validator;
+    private readonly AppDbContext _db;
 
-    public CashPoBillsController(IMediator mediator, IValidator<SaveCashPoBillDto> validator)
+    public CashPoBillsController(IMediator mediator, IValidator<SaveCashPoBillDto> validator, AppDbContext db)
     {
         _mediator = mediator;
         _validator = validator;
+        _db = db;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? billNumber = null, string? requester = null, PoBillStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
+        ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var bills = await _mediator.Send(new GetAllCashPoBillsQuery(page, pageSize, billNumber, requester, status, dateFrom, dateTo));
 
         ViewBag.BillNumber = billNumber;
@@ -45,6 +52,7 @@ public class CashPoBillsController : Controller
     [PermissionAuthorize(PermissionNames.CashPoBillManage)]
     public async Task<IActionResult> Create(long? cashPurchaseOrderId = null)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         await PopulateAsync(cashPurchaseOrderId, null);
         return View(new SaveCashPoBillDto { CashPurchaseOrderId = cashPurchaseOrderId ?? 0 });
     }
@@ -54,6 +62,8 @@ public class CashPoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaveCashPoBillDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PoBillStatus.Draft;
         var validationResult = await _validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -76,6 +86,7 @@ public class CashPoBillsController : Controller
     [PermissionAuthorize(PermissionNames.CashPoBillManage)]
     public async Task<IActionResult> Edit(long id)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
         var bill = await _mediator.Send(new GetCashPoBillByIdQuery(id));
         if (bill is null)
         {
@@ -108,6 +119,8 @@ public class CashPoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(SaveCashPoBillDto dto)
     {
+        if (!await HasActionAsync(a => a.CanDraftEdit)) return Forbid();
+        dto.Status = PoBillStatus.Draft;
         var validationResult = await _validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
         {
@@ -143,6 +156,31 @@ public class CashPoBillsController : Controller
     public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
         await _mediator.Send(new SetCashPoBillActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost, PermissionAuthorize(PermissionNames.CashPoBillManage), ValidateAntiForgeryToken]
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    {
+        var assignment = await GetCurrentAssignmentAsync();
+        if (assignment is null) return Forbid();
+        var bill = await _db.CashPoBills.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
+        if (bill is null) return NotFound();
+        var action = workflowAction?.Trim().ToLowerInvariant();
+        var permitted = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
+        if (!permitted) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        var transition = action switch
+        {
+            "submit" => (PoBillStatus.Draft, PoBillStatus.Submitted),
+            "request" => (PoBillStatus.Submitted, PoBillStatus.AwaitingApproval),
+            "approve" => (PoBillStatus.AwaitingApproval, PoBillStatus.Approved),
+            "reject" => (PoBillStatus.AwaitingApproval, PoBillStatus.Rejected),
+            "cancel" when bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected => (bill.Status, PoBillStatus.Cancelled),
+            _ => (bill.Status, bill.Status)
+        };
+        if (transition.Item1 == transition.Item2 || bill.Status != transition.Item1) { TempData["ErrorMessage"] = $"This action is not available because Cash PO Bill {bill.BillNumber} is {bill.Status}."; return RedirectToAction(nameof(Index)); }
+        if (!await _mediator.Send(new SetCashPoBillStatusCommand(id, transition.Item1, transition.Item2, User.Identity?.Name))) { TempData["ErrorMessage"] = "The bill changed while this action was processed. Please try again."; return RedirectToAction(nameof(Index)); }
+        TempData["StatusMessage"] = $"Cash PO Bill {bill.BillNumber} is now {transition.Item2}.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -199,5 +237,15 @@ public class CashPoBillsController : Controller
         ViewBag.InitialQuantities = (dto?.Details ?? new())
             .GroupBy(d => d.CashPurchaseOrderDetailId)
             .ToDictionary(g => g.Key, g => g.Sum(x => x.BilledQuantity));
+    }
+
+    private async Task<CashPoBillActionAssignment?> GetCurrentAssignmentAsync()
+    {
+        var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(id, out var userId) ? await _db.CashPoBillActionAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId) : null;
+    }
+    private async Task<bool> HasActionAsync(Func<CashPoBillActionAssignment, bool> predicate)
+    {
+        var assignment = await GetCurrentAssignmentAsync(); return assignment is not null && predicate(assignment);
     }
 }

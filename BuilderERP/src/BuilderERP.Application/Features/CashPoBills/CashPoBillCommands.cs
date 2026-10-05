@@ -167,3 +167,23 @@ public class SetCashPoBillActiveCommandHandler : IRequestHandler<SetCashPoBillAc
         return true;
     }
 }
+
+public record SetCashPoBillStatusCommand(long Id, PoBillStatus ExpectedStatus, PoBillStatus NewStatus, string? ModifiedBy)
+    : IRequest<bool>, IInvalidatesFeatures
+{
+    public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["RequesterLedger"];
+}
+
+public class SetCashPoBillStatusCommandHandler : IRequestHandler<SetCashPoBillStatusCommand, bool>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    public SetCashPoBillStatusCommandHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+    public async Task<bool> Handle(SetCashPoBillStatusCommand request, CancellationToken cancellationToken)
+    {
+        var repository = _unitOfWork.Repository<CashPoBill>();
+        var bill = await repository.GetByIdAsync(request.Id);
+        if (bill is null || bill.Status != request.ExpectedStatus) return false;
+        bill.Status = request.NewStatus; bill.ModifiedAt = DateTime.UtcNow; bill.ModifiedBy = request.ModifiedBy;
+        repository.Update(bill); await _unitOfWork.SaveChangesAsync(); return true;
+    }
+}
