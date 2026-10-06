@@ -11,6 +11,9 @@ public class PurchaseOrder : BaseEntity
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Draft;
     public bool IsActive { get; set; } = true;
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
 
     public string? TermsOfPayment { get; set; }
     public string? DispatchedThrough { get; set; }

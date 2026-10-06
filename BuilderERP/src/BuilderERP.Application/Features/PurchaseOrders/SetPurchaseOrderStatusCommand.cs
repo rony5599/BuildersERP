@@ -9,7 +9,8 @@ public record SetPurchaseOrderStatusCommand(
     long Id,
     PurchaseOrderStatus ExpectedStatus,
     PurchaseOrderStatus NewStatus,
-    string? ModifiedBy) : IRequest<bool>;
+    string? ModifiedBy,
+    string? RejectionReason = null) : IRequest<bool>;
 
 /// <summary>
 /// Bumps the Purchase Orders query-cache version without changing an order.
@@ -45,6 +46,12 @@ public class SetPurchaseOrderStatusCommandHandler : IRequestHandler<SetPurchaseO
         order.Status = request.NewStatus;
         order.ModifiedAt = DateTime.UtcNow;
         order.ModifiedBy = request.ModifiedBy;
+        if (!string.IsNullOrWhiteSpace(request.RejectionReason))
+        {
+            order.RejectionReason = request.RejectionReason.Trim();
+            order.RejectedBy = request.ModifiedBy;
+            order.RejectedAt = DateTime.UtcNow;
+        }
         repository.Update(order);
         await _unitOfWork.SaveChangesAsync();
         return true;

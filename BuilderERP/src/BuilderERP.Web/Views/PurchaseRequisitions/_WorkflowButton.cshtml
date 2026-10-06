@@ -10,9 +10,18 @@
         _ => "bi-arrow-right"
     };
 }
-<form asp-action="WorkflowAction" asp-route-id="@Model.Id" method="post" class="d-inline workflow-action-form">
-    <input type="hidden" name="workflowAction" value="@Model.WorkflowAction" />
-    <button type="submit" class="btn btn-sm @Model.Css workflow-action" data-workflow-action="@Model.WorkflowAction" title="@Model.Label" aria-label="@Model.Label">
+@if (Model.WorkflowAction == "reject")
+{
+    <button type="button" class="btn btn-sm @Model.Css workflow-action" data-bs-toggle="modal" data-bs-target="#reject-requisition-modal" data-requisition-id="@Model.Id" title="@Model.Label" aria-label="@Model.Label">
         <i class="bi @iconClass" aria-hidden="true"></i>
     </button>
-</form>
+}
+else
+{
+    <form asp-action="WorkflowAction" asp-route-id="@Model.Id" method="post" class="d-inline workflow-action-form">
+        <input type="hidden" name="workflowAction" value="@Model.WorkflowAction" />
+        <button type="submit" class="btn btn-sm @Model.Css workflow-action" data-workflow-action="@Model.WorkflowAction" title="@Model.Label" aria-label="@Model.Label">
+            <i class="bi @iconClass" aria-hidden="true"></i>
+        </button>
+    </form>
+}

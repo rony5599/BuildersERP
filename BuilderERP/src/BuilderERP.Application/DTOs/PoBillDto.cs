@@ -13,6 +13,9 @@ public class PoBillDto
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public string? PreparedBy { get; set; }
     public long PurchaseOrderId { get; set; }
     public string PONumber { get; set; } = string.Empty;
@@ -53,6 +56,9 @@ public class SavePoBillDto
     public string? SupplierInvoiceNumber { get; set; }
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; } = PoBillStatus.Draft;
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long PurchaseOrderId { get; set; }
     public List<PoBillLineInputDto> Details { get; set; } = new();
 }

@@ -36,3 +36,39 @@
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>
+
+<div class="modal fade" id="reject-requisition-modal" tabindex="-1" aria-labelledby="reject-requisition-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="WorkflowAction" method="post" id="reject-requisition-form">
+                <div class="modal-header">
+                    <div><h2 class="modal-title fs-5" id="reject-requisition-title">Return for revision</h2><p class="small text-muted mb-0">The requisition will return to Draft so the preparer can correct and resubmit it.</p></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="reject-requisition-id" />
+                    <input type="hidden" name="workflowAction" value="reject" />
+                    <label for="rejection-reason" class="form-label fw-semibold">Reason for rejection <span class="text-danger">*</span></label>
+                    <textarea id="rejection-reason" name="rejectionReason" class="form-control" rows="4" maxlength="1000" required placeholder="Explain what must be corrected before resubmission."></textarea>
+                    <div class="form-text">This reason will be visible to the requisition preparer.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep pending</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-arrow-counterclockwise me-1"></i> Return to Draft</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('reject-requisition-modal')?.addEventListener('show.bs.modal', function (event) {
+            document.getElementById('reject-requisition-id').value = event.relatedTarget.getAttribute('data-requisition-id');
+            document.getElementById('rejection-reason').value = '';
+        });
+        document.getElementById('reject-requisition-modal')?.addEventListener('shown.bs.modal', function () {
+            document.getElementById('rejection-reason').focus();
+        });
+    </script>
+}

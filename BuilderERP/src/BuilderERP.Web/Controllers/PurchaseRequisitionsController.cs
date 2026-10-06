@@ -110,6 +110,9 @@ public class PurchaseRequisitionsController : Controller
             RequiredByDate = requisition.RequiredByDate,
             Description = requisition.Description,
             Status = requisition.Status,
+            RejectionReason = requisition.RejectionReason,
+            RejectedBy = requisition.RejectedBy,
+            RejectedAt = requisition.RejectedAt,
             DepartmentId = requisition.DepartmentId,
             ProjectId = requisition.ProjectId,
             Details = requisition.Details.Select(d => new CreatePurchaseRequisitionDetailDto
@@ -169,7 +172,7 @@ public class PurchaseRequisitionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PurchaseRequisitionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -194,12 +197,26 @@ public class PurchaseRequisitionsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason))
+        {
+            TempData["ErrorMessage"] = "A rejection reason is required before returning the requisition for revision.";
+            return RedirectToAction(nameof(Index));
+        }
+        if (rejectionReason?.Length > 1000)
+        {
+            TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters.";
+            return RedirectToAction(nameof(Index));
+        }
+
         var transition = action switch
         {
             "submit" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Submitted),
             "request" => (From: RequisitionStatus.Submitted, To: RequisitionStatus.AwaitingApproval),
             "approve" => (From: RequisitionStatus.AwaitingApproval, To: RequisitionStatus.Approved),
-            "reject" => (From: RequisitionStatus.AwaitingApproval, To: RequisitionStatus.Rejected),
+            "reject" when requisition.Status is RequisitionStatus.Submitted
+                or RequisitionStatus.AwaitingApproval or RequisitionStatus.Approved
+                => (From: requisition.Status, To: RequisitionStatus.Draft),
+            "reject" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Draft),
             "cancel" when requisition.Status is RequisitionStatus.Draft or RequisitionStatus.Submitted
                 or RequisitionStatus.AwaitingApproval or RequisitionStatus.Rejected
                 => (From: requisition.Status, To: RequisitionStatus.Cancelled),
@@ -220,14 +237,17 @@ public class PurchaseRequisitionsController : Controller
         }
 
         var updated = await _mediator.Send(new SetPurchaseRequisitionStatusCommand(
-            requisition.Id, transition.From, transition.To, User.Identity?.Name));
+            requisition.Id, transition.From, transition.To, User.Identity?.Name,
+            action == "reject" ? rejectionReason : null));
         if (!updated)
         {
             TempData["ErrorMessage"] = $"Purchase Requisition {requisition.RequisitionNumber} changed while this action was being processed. Please try again.";
             return RedirectToAction(nameof(Index));
         }
 
-        TempData["StatusMessage"] = $"Purchase Requisition {requisition.RequisitionNumber} is now {transition.To}.";
+        TempData["StatusMessage"] = action == "reject"
+            ? $"Purchase Requisition {requisition.RequisitionNumber} was returned to Draft for revision."
+            : $"Purchase Requisition {requisition.RequisitionNumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 

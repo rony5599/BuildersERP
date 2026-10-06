@@ -38,7 +38,10 @@
                 <td class="amount-cell">@order.TotalAmount.ToString("N2")</td>
                 <td class="amount-cell">@order.ReceivedAmount.ToString("N2")</td>
                 <td>@order.DeliveryDate.ToString("yyyy-MM-dd")</td>
-                <td><span class="procurement-status @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@HumanizeStatus(order.Status)</span></td>
+                <td>
+                    <span class="procurement-status @(order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft && !string.IsNullOrWhiteSpace(order.RejectionReason) ? "status-danger" : StatusBadgeClass(order.Status))"><span class="badge-dot"></span>@(order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft && !string.IsNullOrWhiteSpace(order.RejectionReason) ? "Revision Required" : HumanizeStatus(order.Status))</span>
+                    @if (!string.IsNullOrWhiteSpace(order.RejectionReason)) { <span class="document-subtitle text-danger mt-1" title="@order.RejectionReason"><i class="bi bi-arrow-counterclockwise"></i> Returned: @order.RejectionReason</span> }
+                </td>
                 <td>
                     <span class="procurement-status @(order.IsActive ? "status-success" : "status-neutral")">
                         <span class="badge-dot"></span>@(order.IsActive ? "Active" : "Inactive")
@@ -64,7 +67,9 @@
                         {
                             <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "approve", "Approve", "btn-success"))" />
                         }
-                        @if (assignment?.CanReject == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval)
+                        @if (assignment?.CanReject == true && order.Status is BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted
+                            or BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval
+                            or BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved)
                         {
                             <partial name="_WorkflowButton" model="@(new PurchaseOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", "btn-outline-danger"))" />
                         }

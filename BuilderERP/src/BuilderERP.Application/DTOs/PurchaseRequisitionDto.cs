@@ -12,6 +12,9 @@ public class PurchaseRequisitionDto
     public decimal EstimatedAmount { get; set; }
     public RequisitionStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long DepartmentId { get; set; }
     public string DepartmentName { get; set; } = string.Empty;
     public long ProjectId { get; set; }
@@ -59,6 +62,9 @@ public class UpdatePurchaseRequisitionDto
     public DateTime RequiredByDate { get; set; }
     public string? Description { get; set; }
     public RequisitionStatus Status { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long DepartmentId { get; set; }
     public long ProjectId { get; set; }
     public List<CreatePurchaseRequisitionDetailDto> Details { get; set; } = new();

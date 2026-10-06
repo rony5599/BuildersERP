@@ -80,7 +80,8 @@
                     <td class="text-end">@bill.TotalAmount.ToString("N2")</td>
                     <td>@bill.PreparedBy</td>
                     <td>
-                        <span class="badge @StatusBadgeClass(bill.Status)"><span class="badge-dot"></span>@HumanizeStatus(bill.Status)</span>
+                        <span class="badge @(bill.Status == PoBillStatus.Draft && !string.IsNullOrWhiteSpace(bill.RejectionReason) ? "bg-danger" : StatusBadgeClass(bill.Status))"><span class="badge-dot"></span>@(bill.Status == PoBillStatus.Draft && !string.IsNullOrWhiteSpace(bill.RejectionReason) ? "Revision Required" : HumanizeStatus(bill.Status))</span>
+                        @if (!string.IsNullOrWhiteSpace(bill.RejectionReason)) { <div class="small text-danger mt-1" title="@bill.RejectionReason"><i class="bi bi-arrow-counterclockwise"></i> Returned: @bill.RejectionReason</div> }
                     </td>
                     <td>
                         <span class="badge @(bill.IsActive ? "bg-success" : "bg-secondary")">
@@ -95,7 +96,7 @@
                             @if (assignment?.CanSubmit == true && bill.Status == PoBillStatus.Draft) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "submit", "Submit", "btn-outline-primary"))" /> }
                             @if (assignment?.CanRequestApproval == true && bill.Status == PoBillStatus.Submitted) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "request", "Request approval", "btn-outline-primary"))" /> }
                             @if (assignment?.CanApprove == true && bill.Status == PoBillStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "approve", "Approve", "btn-success"))" /> }
-                            @if (assignment?.CanReject == true && bill.Status == PoBillStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "reject", "Reject", "btn-outline-danger"))" /> }
+                            @if (assignment?.CanReject == true && bill.Status is PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Approved) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "reject", "Reject", "btn-outline-danger"))" /> }
                             @if (assignment?.CanCancel == true && bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected) { <partial name="_WorkflowButton" model="@(new PoBillWorkflowButtonViewModel(bill.Id, "cancel", "Cancel", "btn-outline-danger"))" /> }
                             <form asp-action="ToggleActive" asp-route-id="@bill.Id" asp-route-isActive="@bill.IsActive" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">

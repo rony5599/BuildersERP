@@ -76,7 +76,13 @@
                     <td>@requisition.RequiredByDate.ToString("yyyy-MM-dd")</td>
                     <td class="amount-cell">@requisition.EstimatedAmount.ToString("N2")</td>
                     <td>
-                        <span class="procurement-status @StatusBadgeClass(requisition.Status)"><span class="badge-dot"></span>@HumanizeStatus(requisition.Status)</span>
+                        <span class="procurement-status @(requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.Draft && !string.IsNullOrWhiteSpace(requisition.RejectionReason) ? "status-danger" : StatusBadgeClass(requisition.Status))"><span class="badge-dot"></span>@(requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.Draft && !string.IsNullOrWhiteSpace(requisition.RejectionReason) ? "Revision Required" : HumanizeStatus(requisition.Status))</span>
+                        @if (!string.IsNullOrWhiteSpace(requisition.RejectionReason))
+                        {
+                            <span class="document-subtitle text-danger mt-1" title="@requisition.RejectionReason">
+                                <i class="bi bi-arrow-counterclockwise"></i> Returned: @requisition.RejectionReason
+                            </span>
+                        }
                     </td>
                     <td>
                         <span class="procurement-status @(requisition.IsActive ? "status-success" : "status-neutral")">
@@ -103,7 +109,9 @@
                             {
                                 <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "approve", "Approve", "btn-success"))" />
                             }
-                            @if (assignment?.CanReject == true && requisition.Status == BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval)
+                            @if (assignment?.CanReject == true && requisition.Status is BuilderERP.Domain.Enums.RequisitionStatus.Submitted
+                                or BuilderERP.Domain.Enums.RequisitionStatus.AwaitingApproval
+                                or BuilderERP.Domain.Enums.RequisitionStatus.Approved)
                             {
                                 <partial name="_WorkflowButton" model="@(new PurchaseRequisitionWorkflowButtonViewModel(requisition.Id, "reject", "Reject", "btn-outline-danger"))" />
                             }

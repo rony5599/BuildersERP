@@ -21,3 +21,16 @@
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
 </div>
+
+<div class="modal fade" id="reject-po-bill-modal" tabindex="-1" aria-labelledby="reject-po-bill-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form asp-action="WorkflowAction" method="post">
+        <div class="modal-header"><div><h2 class="modal-title fs-5" id="reject-po-bill-title">Return PO Bill for revision</h2><p class="small text-muted mb-0">The bill will return to Draft for correction and resubmission.</p></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body"><input type="hidden" name="id" id="reject-po-bill-id" /><input type="hidden" name="workflowAction" value="reject" /><label for="po-bill-rejection-reason" class="form-label fw-semibold">Reason for rejection <span class="text-danger">*</span></label><textarea id="po-bill-rejection-reason" name="rejectionReason" class="form-control" rows="4" maxlength="1000" required placeholder="Explain what must be corrected before resubmission."></textarea><div class="form-text">This reason will be visible to the bill preparer.</div></div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep pending</button><button type="submit" class="btn btn-danger"><i class="bi bi-arrow-counterclockwise me-1"></i> Return to Draft</button></div>
+    </form></div></div>
+</div>
+
+@section Scripts { <script>
+document.getElementById('reject-po-bill-modal')?.addEventListener('show.bs.modal', function(event) { document.getElementById('reject-po-bill-id').value = event.relatedTarget.getAttribute('data-bill-id'); document.getElementById('po-bill-rejection-reason').value = ''; });
+document.getElementById('reject-po-bill-modal')?.addEventListener('shown.bs.modal', function() { document.getElementById('po-bill-rejection-reason').focus(); });
+</script> }

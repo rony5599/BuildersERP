@@ -129,6 +129,9 @@ public class PurchaseOrdersController : Controller
             OrderDate = order.OrderDate,
             DeliveryDate = order.DeliveryDate,
             Status = order.Status,
+            RejectionReason = order.RejectionReason,
+            RejectedBy = order.RejectedBy,
+            RejectedAt = order.RejectedAt,
             TermsOfPayment = order.TermsOfPayment,
             DispatchedThrough = order.DispatchedThrough,
             Destination = order.Destination,
@@ -219,7 +222,7 @@ public class PurchaseOrdersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.PurchaseOrderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -244,12 +247,26 @@ public class PurchaseOrdersController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason))
+        {
+            TempData["ErrorMessage"] = "A rejection reason is required before returning the purchase order for revision.";
+            return RedirectToAction(nameof(Index));
+        }
+        if (rejectionReason?.Length > 1000)
+        {
+            TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters.";
+            return RedirectToAction(nameof(Index));
+        }
+
         var transition = action switch
         {
             "submit" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Submitted),
             "request" => (From: PurchaseOrderStatus.Submitted, To: PurchaseOrderStatus.AwaitingApproval),
             "approve" => (From: PurchaseOrderStatus.AwaitingApproval, To: PurchaseOrderStatus.Approved),
-            "reject" => (From: PurchaseOrderStatus.AwaitingApproval, To: PurchaseOrderStatus.Rejected),
+            "reject" when order.Status is PurchaseOrderStatus.Submitted
+                or PurchaseOrderStatus.AwaitingApproval or PurchaseOrderStatus.Approved
+                => (From: order.Status, To: PurchaseOrderStatus.Draft),
+            "reject" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Draft),
             "cancel" when order.Status is PurchaseOrderStatus.Draft
                 or PurchaseOrderStatus.Submitted or PurchaseOrderStatus.AwaitingApproval or PurchaseOrderStatus.Rejected
                 => (From: order.Status, To: PurchaseOrderStatus.Cancelled),
@@ -273,14 +290,17 @@ public class PurchaseOrdersController : Controller
         }
 
         var updated = await _mediator.Send(new SetPurchaseOrderStatusCommand(
-            order.Id, transition.From, transition.To, User.Identity?.Name));
+            order.Id, transition.From, transition.To, User.Identity?.Name,
+            action == "reject" ? rejectionReason : null));
         if (!updated)
         {
             TempData["ErrorMessage"] = $"Purchase Order {order.PONumber} changed while this action was being processed. Please try again.";
             return RedirectToAction(nameof(Index));
         }
 
-        TempData["StatusMessage"] = $"Purchase Order {order.PONumber} is now {transition.To}.";
+        TempData["StatusMessage"] = action == "reject"
+            ? $"Purchase Order {order.PONumber} was returned to Draft for revision."
+            : $"Purchase Order {order.PONumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 

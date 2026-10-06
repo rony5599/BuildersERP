@@ -551,6 +551,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<PurchaseRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseRequisition>().Property(r => r.RejectionReason).HasMaxLength(1000);
 
         builder.Entity<Rfq>()
             .HasOne(q => q.PurchaseRequisition)
@@ -682,6 +683,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         builder.Entity<PurchaseOrder>().Property(o => o.TotalAmount).HasPrecision(18, 2);
         builder.Entity<PurchaseOrder>().Property(o => o.ReceivedAmount).HasPrecision(18, 2);
+        builder.Entity<PurchaseOrder>().Property(o => o.RejectionReason).HasMaxLength(1000);
 
         builder.Entity<PurchaseOrderDetail>()
             .HasOne(d => d.PurchaseOrder)
@@ -851,6 +853,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<PoBill>().Property(b => b.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<PoBill>().Property(b => b.RejectionReason).HasMaxLength(1000);
         builder.Entity<PoBill>().HasIndex(b => b.BillNumber);
 
         builder.Entity<PoBillDetail>()

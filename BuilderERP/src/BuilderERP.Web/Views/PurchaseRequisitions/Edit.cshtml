@@ -14,6 +14,21 @@
     <div><div class="page-eyebrow">Purchase Requisition</div><h1>Edit Requisition</h1><p>Review the request details and update its material requirements.</p></div>
 </div>
 
+@if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+{
+    <div class="alert alert-danger d-flex gap-3 align-items-start" role="alert">
+        <i class="bi bi-arrow-counterclockwise fs-4"></i>
+        <div>
+            <div class="fw-semibold">Returned for revision</div>
+            <div>@Model.RejectionReason</div>
+            @if (Model.RejectedAt.HasValue)
+            {
+                <div class="small mt-1 opacity-75">Returned by @(Model.RejectedBy ?? "Approver") on @Model.RejectedAt.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div>
+            }
+        </div>
+    </div>
+}
+
 <form asp-action="Edit" method="post" class="procurement-form">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
