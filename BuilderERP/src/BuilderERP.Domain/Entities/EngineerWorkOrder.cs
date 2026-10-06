@@ -24,6 +24,9 @@ public class EngineerWorkOrder : BaseEntity
     public EngineerWorkOrderStatus Status { get; set; } = EngineerWorkOrderStatus.Draft;
     public decimal TotalAmount { get; set; }
     public decimal ReceivedAmount { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
 
     public long? PreviousWorkOrderId { get; set; }
     public EngineerWorkOrder? PreviousWorkOrder { get; set; }

@@ -12,9 +12,14 @@
     var toneClass = Model.WorkflowAction is "reject" or "cancel" ? "text-danger" :
         Model.WorkflowAction == "approve" ? "text-success" : "text-primary";
 }
+@if (Model.WorkflowAction == "reject")
+{ <button type="button" class="dropdown-item workflow-action text-danger" data-bs-toggle="modal" data-bs-target="#cash-reject-modal" data-document-id="@Model.Id"><i class="bi @iconClass"></i><span>@Model.Label</span></button> }
+else
+{
 <form asp-action="WorkflowAction" asp-route-id="@Model.Id" method="post" class="workflow-action-form">
     <input type="hidden" name="workflowAction" value="@Model.WorkflowAction" />
     <button type="submit" class="dropdown-item workflow-action @toneClass" data-workflow-action="@Model.WorkflowAction">
         <i class="bi @iconClass" aria-hidden="true"></i><span>@Model.Label</span>
     </button>
 </form>
+}

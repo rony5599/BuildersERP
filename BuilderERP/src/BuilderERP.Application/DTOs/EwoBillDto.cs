@@ -12,6 +12,9 @@ public class EwoBillDto
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public string? PreparedBy { get; set; }
     public long EngineerWorkOrderId { get; set; }
     public long RootWorkOrderId { get; set; }
@@ -79,6 +82,9 @@ public class SaveEwoBillDto
     public string? MrrNumber { get; set; }
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; } = PoBillStatus.Draft;
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long EngineerWorkOrderId { get; set; }
     public List<EwoBillMeasurementInputDto> Details { get; set; } = new();
     public List<EwoBillHeadInputDto> Heads { get; set; } = new();

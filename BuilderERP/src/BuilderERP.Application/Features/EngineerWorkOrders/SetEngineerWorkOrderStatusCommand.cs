@@ -10,7 +10,8 @@ public record SetEngineerWorkOrderStatusCommand(
     long Id,
     EngineerWorkOrderStatus ExpectedStatus,
     EngineerWorkOrderStatus NewStatus,
-    string? ModifiedBy) : IRequest<bool>, IInvalidatesFeatures
+    string? ModifiedBy,
+    string? RejectionReason = null) : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["EwoBills"];
 }
@@ -36,6 +37,7 @@ public class SetEngineerWorkOrderStatusCommandHandler : IRequestHandler<SetEngin
         workOrder.Status = request.NewStatus;
         workOrder.ModifiedAt = DateTime.UtcNow;
         workOrder.ModifiedBy = request.ModifiedBy;
+        if (!string.IsNullOrWhiteSpace(request.RejectionReason)) { workOrder.RejectionReason = request.RejectionReason.Trim(); workOrder.RejectedBy = request.ModifiedBy; workOrder.RejectedAt = DateTime.UtcNow; }
         repository.Update(workOrder);
         await _unitOfWork.SaveChangesAsync();
         return true;

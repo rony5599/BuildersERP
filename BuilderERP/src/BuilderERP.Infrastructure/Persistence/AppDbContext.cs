@@ -1258,6 +1258,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<EngineerWorkOrderRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
+        builder.Entity<EngineerWorkOrderRequisition>().Property(r => r.RejectionReason).HasMaxLength(1000);
 
         builder.Entity<EngineerWorkOrderRequisitionDetail>()
             .HasOne(d => d.EngineerWorkOrderRequisition)
@@ -1300,6 +1301,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<EngineerWorkOrder>().Property(w => w.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<EngineerWorkOrder>().Property(w => w.RejectionReason).HasMaxLength(1000);
+        builder.Entity<EwoBill>().Property(b => b.RejectionReason).HasMaxLength(1000);
 
         builder.Entity<EngineerWorkOrderDetail>()
             .HasOne(d => d.EngineerWorkOrder)

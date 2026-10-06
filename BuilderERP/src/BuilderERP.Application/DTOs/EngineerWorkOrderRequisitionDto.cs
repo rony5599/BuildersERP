@@ -12,6 +12,9 @@ public class EngineerWorkOrderRequisitionDto
     public decimal EstimatedAmount { get; set; }
     public RequisitionStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
     public List<EngineerWorkOrderRequisitionDetailDto> Details { get; set; } = new();
@@ -56,6 +59,9 @@ public class UpdateEngineerWorkOrderRequisitionDto
     public DateTime RequiredByDate { get; set; }
     public string? Description { get; set; }
     public RequisitionStatus Status { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long ProjectId { get; set; }
     public List<CreateEngineerWorkOrderRequisitionDetailDto> Details { get; set; } = new();
 }

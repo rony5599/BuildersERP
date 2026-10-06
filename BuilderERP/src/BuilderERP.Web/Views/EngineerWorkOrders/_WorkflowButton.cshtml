@@ -10,9 +10,14 @@
         _ => "bi-arrow-right"
     };
 }
+@if (Model.WorkflowAction == "reject")
+{ <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#cash-reject-modal" data-document-id="@Model.Id"><i class="bi @iconClass"></i> @Model.Label</button> }
+else
+{
 <form asp-action="WorkflowAction" asp-route-id="@Model.Id" method="post" class="d-inline workflow-action-form">
     <input type="hidden" name="workflowAction" value="@Model.WorkflowAction" />
     <button type="submit" class="dropdown-item workflow-action" data-workflow-action="@Model.WorkflowAction">
         <i class="bi @iconClass" aria-hidden="true"></i> @Model.Label
     </button>
 </form>
+}

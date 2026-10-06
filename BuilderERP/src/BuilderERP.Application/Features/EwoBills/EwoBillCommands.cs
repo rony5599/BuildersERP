@@ -241,7 +241,7 @@ public class SetEwoBillActiveCommandHandler : IRequestHandler<SetEwoBillActiveCo
     }
 }
 
-public record SetEwoBillStatusCommand(long Id, PoBillStatus ExpectedStatus, PoBillStatus NewStatus, string? ModifiedBy)
+public record SetEwoBillStatusCommand(long Id, PoBillStatus ExpectedStatus, PoBillStatus NewStatus, string? ModifiedBy, string? RejectionReason = null)
     : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["SupplierPayments", "SupplierLedger"];
@@ -260,6 +260,7 @@ public class SetEwoBillStatusCommandHandler : IRequestHandler<SetEwoBillStatusCo
         bill.Status = request.NewStatus;
         bill.ModifiedAt = DateTime.UtcNow;
         bill.ModifiedBy = request.ModifiedBy;
+        if (!string.IsNullOrWhiteSpace(request.RejectionReason)) { bill.RejectionReason = request.RejectionReason.Trim(); bill.RejectedBy = request.ModifiedBy; bill.RejectedAt = DateTime.UtcNow; }
         repository.Update(bill);
         await _unitOfWork.SaveChangesAsync();
         return true;

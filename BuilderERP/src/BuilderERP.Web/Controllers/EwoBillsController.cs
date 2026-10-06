@@ -109,6 +109,7 @@ public class EwoBillsController : Controller
             MrrNumber = bill.MrrNumber,
             Remarks = bill.Remarks,
             Status = bill.Status,
+            RejectionReason = bill.RejectionReason, RejectedBy = bill.RejectedBy, RejectedAt = bill.RejectedAt,
             EngineerWorkOrderId = bill.EngineerWorkOrderId,
             Details = bill.Details.Select(d => new EwoBillMeasurementInputDto
             {
@@ -183,7 +184,7 @@ public class EwoBillsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.EwoBillManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -192,21 +193,25 @@ public class EwoBillsController : Controller
         var action = workflowAction?.Trim().ToLowerInvariant();
         var canPerform = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
         if (!canPerform) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason)) { TempData["ErrorMessage"] = "A rejection reason is required."; return RedirectToAction(nameof(Index)); }
+        if (rejectionReason?.Length > 1000) { TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && bill.Status == PoBillStatus.Approved && await _db.SupplierPayments.AnyAsync(p => p.EwoBillId == id && p.IsActive)) { TempData["ErrorMessage"] = "This approved EWO Bill has active payments and cannot be returned to Draft."; return RedirectToAction(nameof(Index)); }
         var transition = action switch
         {
             "submit" => (From: PoBillStatus.Draft, To: PoBillStatus.Submitted),
             "request" => (From: PoBillStatus.Submitted, To: PoBillStatus.AwaitingApproval),
             "approve" => (From: PoBillStatus.AwaitingApproval, To: PoBillStatus.Approved),
-            "reject" => (From: PoBillStatus.AwaitingApproval, To: PoBillStatus.Rejected),
+            "reject" when bill.Status is PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Approved => (From: bill.Status, To: PoBillStatus.Draft),
+            "reject" => (From: PoBillStatus.Draft, To: PoBillStatus.Draft),
             "cancel" when bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected => (From: bill.Status, To: PoBillStatus.Cancelled),
             "cancel" => (From: PoBillStatus.Draft, To: PoBillStatus.Cancelled),
             _ => (From: bill.Status, To: bill.Status)
         };
         if (bill.Status == transition.To) { TempData["StatusMessage"] = $"EWO Bill {bill.BillNumber} is already {transition.To}."; return RedirectToAction(nameof(Index)); }
         if (bill.Status != transition.From) { TempData["ErrorMessage"] = $"This action is no longer available because EWO Bill {bill.BillNumber} is {bill.Status}."; return RedirectToAction(nameof(Index)); }
-        var updated = await _mediator.Send(new SetEwoBillStatusCommand(bill.Id, transition.From, transition.To, User.Identity?.Name));
+        var updated = await _mediator.Send(new SetEwoBillStatusCommand(bill.Id, transition.From, transition.To, User.Identity?.Name, action == "reject" ? rejectionReason : null));
         if (!updated) { TempData["ErrorMessage"] = $"EWO Bill {bill.BillNumber} changed while this action was being processed. Please try again."; return RedirectToAction(nameof(Index)); }
-        TempData["StatusMessage"] = $"EWO Bill {bill.BillNumber} is now {transition.To}.";
+        TempData["StatusMessage"] = action == "reject" ? $"EWO Bill {bill.BillNumber} was returned to Draft for revision." : $"EWO Bill {bill.BillNumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 

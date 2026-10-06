@@ -9,6 +9,7 @@
 }
 
 <h1 class="h3 mb-4">Edit Engineer Work Order Requisition</h1>
+@if (!string.IsNullOrWhiteSpace(Model.RejectionReason)) { <div class="alert alert-danger"><strong>Returned for revision:</strong> @Model.RejectionReason@if (Model.RejectedAt.HasValue) { <div class="small">By @(Model.RejectedBy ?? "Approver") on @Model.RejectedAt.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div> }</div> }
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />

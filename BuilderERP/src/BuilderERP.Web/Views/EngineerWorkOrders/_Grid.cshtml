@@ -98,7 +98,8 @@
                     </td>
                     <td class="amount-cell">@order.TotalAmount.ToString("N2")</td>
                     <td>
-                        <span class="procurement-status @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@HumanizeStatus(order.Status)</span>
+                        <span class="procurement-status @(order.Status == EngineerWorkOrderStatus.Draft && !string.IsNullOrWhiteSpace(order.RejectionReason) ? "status-danger" : StatusBadgeClass(order.Status))"><span class="badge-dot"></span>@(order.Status == EngineerWorkOrderStatus.Draft && !string.IsNullOrWhiteSpace(order.RejectionReason) ? "Revision Required" : HumanizeStatus(order.Status))</span>
+                        @if (!string.IsNullOrWhiteSpace(order.RejectionReason)) { <span class="document-subtitle text-danger">Returned: @order.RejectionReason</span> }
                     </td>
                     <td class="text-end">
                         <div class="dropdown ewo-row-actions">
@@ -125,7 +126,7 @@
                                     {
                                         <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "approve", "Approve", ""))" /></li>
                                     }
-                                    @if (assignment?.CanReject == true && order.Status == EngineerWorkOrderStatus.UnderApproval)
+                                    @if (assignment?.CanReject == true && order.Status is EngineerWorkOrderStatus.Submitted or EngineerWorkOrderStatus.UnderApproval or EngineerWorkOrderStatus.Approved or EngineerWorkOrderStatus.Active)
                                     {
                                         <li><partial name="_WorkflowButton" model="@(new EngineerWorkOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", ""))" /></li>
                                     }

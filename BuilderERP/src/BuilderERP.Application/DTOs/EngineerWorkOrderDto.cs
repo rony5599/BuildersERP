@@ -20,6 +20,9 @@ public class EngineerWorkOrderDto
     public EngineerWorkOrderStatus Status { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal ReceivedAmount { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long? PreviousWorkOrderId { get; set; }
     public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -74,6 +77,9 @@ public class UpdateEngineerWorkOrderDto
     public long SupplierId { get; set; }
     public string? TermsAndCondition { get; set; }
     public EngineerWorkOrderStatus Status { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public List<CreateEngineerWorkOrderDetailDto> Details { get; set; } = new();
     public List<EngineerWorkOrderPaymentHeadDto> PaymentHeads { get; set; } = new();
 }

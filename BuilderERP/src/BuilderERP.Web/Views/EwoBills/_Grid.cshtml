@@ -92,7 +92,7 @@
                 var canSubmit = assignment?.CanSubmit == true && bill.Status == PoBillStatus.Draft;
                 var canRequest = assignment?.CanRequestApproval == true && bill.Status == PoBillStatus.Submitted;
                 var canApprove = assignment?.CanApprove == true && bill.Status == PoBillStatus.AwaitingApproval;
-                var canReject = assignment?.CanReject == true && bill.Status == PoBillStatus.AwaitingApproval;
+                var canReject = assignment?.CanReject == true && bill.Status is PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Approved;
                 var canCancel = assignment?.CanCancel == true && bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected;
                 var hasWorkflowActions = canSubmit || canRequest || canApprove || canReject || canCancel;
                 <tr>
@@ -108,7 +108,8 @@
                     <td class="text-end ewo-money">@bill.NetPayable.ToString("N2")</td>
                     <td class="text-end ewo-money">@bill.PaidAmount.ToString("N2")</td>
                     <td>
-                        <span class="ewo-badge @StatusBadgeClass(bill.Status)">@HumanizeStatus(bill.Status)</span>
+                        <span class="ewo-badge @(bill.Status == PoBillStatus.Draft && !string.IsNullOrWhiteSpace(bill.RejectionReason) ? "ewo-badge-rejected" : StatusBadgeClass(bill.Status))">@(bill.Status == PoBillStatus.Draft && !string.IsNullOrWhiteSpace(bill.RejectionReason) ? "Revision Required" : HumanizeStatus(bill.Status))</span>
+                        @if (!string.IsNullOrWhiteSpace(bill.RejectionReason)) { <div class="ewo-secondary text-danger mt-1">Returned: @bill.RejectionReason</div> }
                     </td>
                     <td>
                         <div class="ewo-money outstanding">@bill.Outstanding.ToString("N2")</div>

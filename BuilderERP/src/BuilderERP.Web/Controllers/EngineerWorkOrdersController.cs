@@ -115,6 +115,7 @@ public class EngineerWorkOrdersController : Controller
             SupplierId = workOrder.SupplierId,
             TermsAndCondition = workOrder.TermsAndCondition,
             Status = workOrder.Status,
+            RejectionReason = workOrder.RejectionReason, RejectedBy = workOrder.RejectedBy, RejectedAt = workOrder.RejectedAt,
             Details = workOrder.Details.Select(d => new CreateEngineerWorkOrderDetailDto
             {
                 MaterialId = d.MaterialId,
@@ -239,7 +240,7 @@ public class EngineerWorkOrdersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.EngineerWorkOrderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -263,6 +264,9 @@ public class EngineerWorkOrdersController : Controller
             TempData["ErrorMessage"] = "You are not assigned to perform that action.";
             return RedirectToAction(nameof(Index));
         }
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason)) { TempData["ErrorMessage"] = "A rejection reason is required."; return RedirectToAction(nameof(Index)); }
+        if (rejectionReason?.Length > 1000) { TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && workOrder.Status is EngineerWorkOrderStatus.Approved or EngineerWorkOrderStatus.Active && await _db.EwoBills.AnyAsync(b => b.RootWorkOrderId == (workOrder.MotherWorkOrderId ?? workOrder.Id) && b.IsActive && b.Status != PoBillStatus.Cancelled)) { TempData["ErrorMessage"] = "This EWO has active bills and cannot be returned to Draft."; return RedirectToAction(nameof(Index)); }
 
         if (!workOrder.IsLatestRevision)
         {
@@ -275,7 +279,8 @@ public class EngineerWorkOrdersController : Controller
             "submit" => (From: EngineerWorkOrderStatus.Draft, To: EngineerWorkOrderStatus.Submitted),
             "request" => (From: EngineerWorkOrderStatus.Submitted, To: EngineerWorkOrderStatus.UnderApproval),
             "approve" => (From: EngineerWorkOrderStatus.UnderApproval, To: EngineerWorkOrderStatus.Approved),
-            "reject" => (From: EngineerWorkOrderStatus.UnderApproval, To: EngineerWorkOrderStatus.Rejected),
+            "reject" when workOrder.Status is EngineerWorkOrderStatus.Submitted or EngineerWorkOrderStatus.UnderApproval or EngineerWorkOrderStatus.Approved or EngineerWorkOrderStatus.Active => (From: workOrder.Status, To: EngineerWorkOrderStatus.Draft),
+            "reject" => (From: EngineerWorkOrderStatus.Draft, To: EngineerWorkOrderStatus.Draft),
             "cancel" when workOrder.Status is EngineerWorkOrderStatus.Draft
                 or EngineerWorkOrderStatus.Submitted or EngineerWorkOrderStatus.UnderApproval or EngineerWorkOrderStatus.Rejected
                 => (From: workOrder.Status, To: EngineerWorkOrderStatus.Cancelled),
@@ -296,14 +301,14 @@ public class EngineerWorkOrdersController : Controller
         }
 
         var updated = await _mediator.Send(new SetEngineerWorkOrderStatusCommand(
-            workOrder.Id, transition.From, transition.To, User.Identity?.Name));
+            workOrder.Id, transition.From, transition.To, User.Identity?.Name, action == "reject" ? rejectionReason : null));
         if (!updated)
         {
             TempData["ErrorMessage"] = $"Work Order {workOrder.WorkOrderNo} changed while this action was being processed. Please try again.";
             return RedirectToAction(nameof(Index));
         }
 
-        TempData["StatusMessage"] = $"Work Order {workOrder.WorkOrderNo} is now {transition.To}.";
+        TempData["StatusMessage"] = action == "reject" ? $"Work Order {workOrder.WorkOrderNo} was returned to Draft for revision." : $"Work Order {workOrder.WorkOrderNo} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 

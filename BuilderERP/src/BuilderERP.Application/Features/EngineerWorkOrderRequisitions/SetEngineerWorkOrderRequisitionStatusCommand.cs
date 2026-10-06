@@ -6,7 +6,7 @@ using MediatR;
 namespace BuilderERP.Application.Features.EngineerWorkOrderRequisitions;
 
 public record SetEngineerWorkOrderRequisitionStatusCommand(
-    long Id, RequisitionStatus ExpectedStatus, RequisitionStatus NewStatus, string? ModifiedBy) : IRequest<bool>;
+    long Id, RequisitionStatus ExpectedStatus, RequisitionStatus NewStatus, string? ModifiedBy, string? RejectionReason = null) : IRequest<bool>;
 
 public class SetEngineerWorkOrderRequisitionStatusCommandHandler : IRequestHandler<SetEngineerWorkOrderRequisitionStatusCommand, bool>
 {
@@ -22,6 +22,7 @@ public class SetEngineerWorkOrderRequisitionStatusCommandHandler : IRequestHandl
         requisition.Status = request.NewStatus;
         requisition.ModifiedAt = DateTime.UtcNow;
         requisition.ModifiedBy = request.ModifiedBy;
+        if (!string.IsNullOrWhiteSpace(request.RejectionReason)) { requisition.RejectionReason = request.RejectionReason.Trim(); requisition.RejectedBy = request.ModifiedBy; requisition.RejectedAt = DateTime.UtcNow; }
         repository.Update(requisition);
         await _unitOfWork.SaveChangesAsync();
         return true;

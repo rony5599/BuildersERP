@@ -15,6 +15,9 @@ public class EwoBill : BaseEntity
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; } = PoBillStatus.Draft;
     public bool IsActive { get; set; } = true;
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
 
     public decimal MeasuredAmount { get; set; }
     public decimal CumulativePercent { get; set; }

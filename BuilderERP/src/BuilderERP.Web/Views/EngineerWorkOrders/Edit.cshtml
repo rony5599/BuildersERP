@@ -22,6 +22,8 @@
     </div>
 </div>
 
+@if (!string.IsNullOrWhiteSpace(Model.RejectionReason)) { <div class="alert alert-danger"><strong>Returned for revision:</strong> @Model.RejectionReason@if (Model.RejectedAt.HasValue) { <div class="small">By @(Model.RejectedBy ?? "Approver") on @Model.RejectedAt.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div> }</div> }
+
 <form asp-action="Edit" method="post" class="ewo-form">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
