@@ -1,0 +1,11 @@
+<div class="modal fade" id="cash-reject-modal" tabindex="-1" aria-labelledby="cash-reject-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form asp-action="WorkflowAction" method="post">
+        <div class="modal-header"><div><h2 class="modal-title fs-5" id="cash-reject-title">Return for revision</h2><p class="small text-muted mb-0">The document will return to Draft for correction and resubmission.</p></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body"><input type="hidden" name="id" id="cash-reject-id" /><input type="hidden" name="workflowAction" value="reject" /><label for="cash-rejection-reason" class="form-label fw-semibold">Reason for rejection <span class="text-danger">*</span></label><textarea id="cash-rejection-reason" name="rejectionReason" class="form-control" rows="4" maxlength="1000" required placeholder="Explain what must be corrected before resubmission."></textarea><div class="form-text">This reason will be visible to the preparer.</div></div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep pending</button><button type="submit" class="btn btn-danger"><i class="bi bi-arrow-counterclockwise me-1"></i> Return to Draft</button></div>
+    </form></div></div>
+</div>
+<script>
+document.getElementById('cash-reject-modal')?.addEventListener('show.bs.modal', function(event) { document.getElementById('cash-reject-id').value = event.relatedTarget.getAttribute('data-document-id'); document.getElementById('cash-rejection-reason').value = ''; });
+document.getElementById('cash-reject-modal')?.addEventListener('shown.bs.modal', function() { document.getElementById('cash-rejection-reason').focus(); });
+</script>

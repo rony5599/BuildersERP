@@ -101,6 +101,7 @@ public class CashPoBillsController : Controller
             MemoNumber = bill.MemoNumber,
             Remarks = bill.Remarks,
             Status = bill.Status,
+            RejectionReason = bill.RejectionReason, RejectedBy = bill.RejectedBy, RejectedAt = bill.RejectedAt,
             CashPurchaseOrderId = bill.CashPurchaseOrderId,
             Details = bill.Details.Select(d => new CashPoBillLineInputDto
             {
@@ -160,7 +161,7 @@ public class CashPoBillsController : Controller
     }
 
     [HttpPost, PermissionAuthorize(PermissionNames.CashPoBillManage), ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -169,18 +170,21 @@ public class CashPoBillsController : Controller
         var action = workflowAction?.Trim().ToLowerInvariant();
         var permitted = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
         if (!permitted) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason)) { TempData["ErrorMessage"] = "A rejection reason is required."; return RedirectToAction(nameof(Index)); }
+        if (rejectionReason?.Length > 1000) { TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters."; return RedirectToAction(nameof(Index)); }
         var transition = action switch
         {
             "submit" => (PoBillStatus.Draft, PoBillStatus.Submitted),
             "request" => (PoBillStatus.Submitted, PoBillStatus.AwaitingApproval),
             "approve" => (PoBillStatus.AwaitingApproval, PoBillStatus.Approved),
-            "reject" => (PoBillStatus.AwaitingApproval, PoBillStatus.Rejected),
+            "reject" when bill.Status is PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Approved => (bill.Status, PoBillStatus.Draft),
+            "reject" => (PoBillStatus.Draft, PoBillStatus.Draft),
             "cancel" when bill.Status is PoBillStatus.Draft or PoBillStatus.Submitted or PoBillStatus.AwaitingApproval or PoBillStatus.Rejected => (bill.Status, PoBillStatus.Cancelled),
             _ => (bill.Status, bill.Status)
         };
         if (transition.Item1 == transition.Item2 || bill.Status != transition.Item1) { TempData["ErrorMessage"] = $"This action is not available because Cash PO Bill {bill.BillNumber} is {bill.Status}."; return RedirectToAction(nameof(Index)); }
-        if (!await _mediator.Send(new SetCashPoBillStatusCommand(id, transition.Item1, transition.Item2, User.Identity?.Name))) { TempData["ErrorMessage"] = "The bill changed while this action was processed. Please try again."; return RedirectToAction(nameof(Index)); }
-        TempData["StatusMessage"] = $"Cash PO Bill {bill.BillNumber} is now {transition.Item2}.";
+        if (!await _mediator.Send(new SetCashPoBillStatusCommand(id, transition.Item1, transition.Item2, User.Identity?.Name, action == "reject" ? rejectionReason : null))) { TempData["ErrorMessage"] = "The bill changed while this action was processed. Please try again."; return RedirectToAction(nameof(Index)); }
+        TempData["StatusMessage"] = action == "reject" ? $"Cash PO Bill {bill.BillNumber} was returned to Draft for revision." : $"Cash PO Bill {bill.BillNumber} is now {transition.Item2}.";
         return RedirectToAction(nameof(Index));
     }
 

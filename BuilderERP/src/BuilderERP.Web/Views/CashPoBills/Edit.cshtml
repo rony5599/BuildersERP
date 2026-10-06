@@ -8,5 +8,6 @@
 }
 
 <h1 class="h3 mb-4">Edit Cash PO Bill</h1>
+@if (!string.IsNullOrWhiteSpace(Model.RejectionReason)) { <div class="alert alert-danger"><strong>Returned for revision:</strong> @Model.RejectionReason@if (Model.RejectedAt.HasValue) { <div class="small">By @(Model.RejectedBy ?? "Approver") on @Model.RejectedAt.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div> }</div> }
 
 <partial name="_Form" model="Model" />

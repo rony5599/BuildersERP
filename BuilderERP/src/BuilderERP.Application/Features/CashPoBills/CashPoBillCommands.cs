@@ -168,7 +168,7 @@ public class SetCashPoBillActiveCommandHandler : IRequestHandler<SetCashPoBillAc
     }
 }
 
-public record SetCashPoBillStatusCommand(long Id, PoBillStatus ExpectedStatus, PoBillStatus NewStatus, string? ModifiedBy)
+public record SetCashPoBillStatusCommand(long Id, PoBillStatus ExpectedStatus, PoBillStatus NewStatus, string? ModifiedBy, string? RejectionReason = null)
     : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["RequesterLedger"];
@@ -184,6 +184,7 @@ public class SetCashPoBillStatusCommandHandler : IRequestHandler<SetCashPoBillSt
         var bill = await repository.GetByIdAsync(request.Id);
         if (bill is null || bill.Status != request.ExpectedStatus) return false;
         bill.Status = request.NewStatus; bill.ModifiedAt = DateTime.UtcNow; bill.ModifiedBy = request.ModifiedBy;
+        if (!string.IsNullOrWhiteSpace(request.RejectionReason)) { bill.RejectionReason = request.RejectionReason.Trim(); bill.RejectedBy = request.ModifiedBy; bill.RejectedAt = DateTime.UtcNow; }
         repository.Update(bill); await _unitOfWork.SaveChangesAsync(); return true;
     }
 }

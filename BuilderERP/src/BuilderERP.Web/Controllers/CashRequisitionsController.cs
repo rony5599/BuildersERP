@@ -110,6 +110,7 @@ public class CashRequisitionsController : Controller
             RequiredByDate = requisition.RequiredByDate,
             Description = requisition.Description,
             Status = requisition.Status,
+            RejectionReason = requisition.RejectionReason, RejectedBy = requisition.RejectedBy, RejectedAt = requisition.RejectedAt,
             RequesterEmployeeId = requisition.RequesterEmployeeId,
             PaymentMethod = requisition.PaymentMethod,
             DepartmentId = requisition.DepartmentId,
@@ -171,7 +172,7 @@ public class CashRequisitionsController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CashRequisitionManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -180,21 +181,25 @@ public class CashRequisitionsController : Controller
         var action = workflowAction?.Trim().ToLowerInvariant();
         var canPerform = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
         if (!canPerform) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason)) { TempData["ErrorMessage"] = "A rejection reason is required."; return RedirectToAction(nameof(Index)); }
+        if (rejectionReason?.Length > 1000) { TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && requisition.Status == RequisitionStatus.Approved && await _db.CashDisbursements.AnyAsync(d => d.CashRequisitionId == id && d.IsActive)) { TempData["ErrorMessage"] = "This approved requisition has active disbursements and cannot be returned to Draft."; return RedirectToAction(nameof(Index)); }
         var transition = action switch
         {
             "submit" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Submitted),
             "request" => (From: RequisitionStatus.Submitted, To: RequisitionStatus.AwaitingApproval),
             "approve" => (From: RequisitionStatus.AwaitingApproval, To: RequisitionStatus.Approved),
-            "reject" => (From: RequisitionStatus.AwaitingApproval, To: RequisitionStatus.Rejected),
+            "reject" when requisition.Status is RequisitionStatus.Submitted or RequisitionStatus.AwaitingApproval or RequisitionStatus.Approved => (From: requisition.Status, To: RequisitionStatus.Draft),
+            "reject" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Draft),
             "cancel" when requisition.Status is RequisitionStatus.Draft or RequisitionStatus.Submitted or RequisitionStatus.AwaitingApproval or RequisitionStatus.Rejected => (From: requisition.Status, To: RequisitionStatus.Cancelled),
             "cancel" => (From: RequisitionStatus.Draft, To: RequisitionStatus.Cancelled),
             _ => (From: requisition.Status, To: requisition.Status)
         };
         if (requisition.Status == transition.To) { TempData["StatusMessage"] = $"Cash Requisition {requisition.RequisitionNumber} is already {transition.To}."; return RedirectToAction(nameof(Index)); }
         if (requisition.Status != transition.From) { TempData["ErrorMessage"] = $"This action is no longer available because Cash Requisition {requisition.RequisitionNumber} is {requisition.Status}."; return RedirectToAction(nameof(Index)); }
-        var updated = await _mediator.Send(new SetCashRequisitionStatusCommand(requisition.Id, transition.From, transition.To, User.Identity?.Name));
+        var updated = await _mediator.Send(new SetCashRequisitionStatusCommand(requisition.Id, transition.From, transition.To, User.Identity?.Name, action == "reject" ? rejectionReason : null));
         if (!updated) { TempData["ErrorMessage"] = $"Cash Requisition {requisition.RequisitionNumber} changed while this action was being processed. Please try again."; return RedirectToAction(nameof(Index)); }
-        TempData["StatusMessage"] = $"Cash Requisition {requisition.RequisitionNumber} is now {transition.To}.";
+        TempData["StatusMessage"] = action == "reject" ? $"Cash Requisition {requisition.RequisitionNumber} was returned to Draft for revision." : $"Cash Requisition {requisition.RequisitionNumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 

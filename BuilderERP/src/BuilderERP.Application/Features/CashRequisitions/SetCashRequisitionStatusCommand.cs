@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BuilderERP.Application.Features.CashRequisitions;
 
-public record SetCashRequisitionStatusCommand(long Id, RequisitionStatus ExpectedStatus, RequisitionStatus NewStatus, string? ModifiedBy)
+public record SetCashRequisitionStatusCommand(long Id, RequisitionStatus ExpectedStatus, RequisitionStatus NewStatus, string? ModifiedBy, string? RejectionReason = null)
     : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["RequesterLedger", "CashDisbursements"];
@@ -24,6 +24,7 @@ public class SetCashRequisitionStatusCommandHandler : IRequestHandler<SetCashReq
         requisition.Status = request.NewStatus;
         requisition.ModifiedAt = DateTime.UtcNow;
         requisition.ModifiedBy = request.ModifiedBy;
+        if (!string.IsNullOrWhiteSpace(request.RejectionReason)) { requisition.RejectionReason = request.RejectionReason.Trim(); requisition.RejectedBy = request.ModifiedBy; requisition.RejectedAt = DateTime.UtcNow; }
         repository.Update(requisition);
         await _unitOfWork.SaveChangesAsync();
         return true;

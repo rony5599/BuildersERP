@@ -11,6 +11,9 @@ public class CashPoBill : BaseEntity
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; } = PoBillStatus.Draft;
     public bool IsActive { get; set; } = true;
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
 
     public long CashPurchaseOrderId { get; set; }
     public CashPurchaseOrder CashPurchaseOrder { get; set; } = null!;

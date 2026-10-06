@@ -81,7 +81,8 @@
                     <td>@order.ReceivedAmount</td>
                     <td>@order.DeliveryDate.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <span class="badge @StatusBadgeClass(order.Status)"><span class="badge-dot"></span>@HumanizeStatus(order.Status)</span>
+                        <span class="badge @(order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft && !string.IsNullOrWhiteSpace(order.RejectionReason) ? "bg-danger" : StatusBadgeClass(order.Status))"><span class="badge-dot"></span>@(order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft && !string.IsNullOrWhiteSpace(order.RejectionReason) ? "Revision Required" : HumanizeStatus(order.Status))</span>
+                        @if (!string.IsNullOrWhiteSpace(order.RejectionReason)) { <div class="small text-danger mt-1" title="@order.RejectionReason">Returned: @order.RejectionReason</div> }
                     </td>
                     <td>
                         <span class="badge @(order.IsActive ? "bg-success" : "bg-secondary")">
@@ -96,7 +97,7 @@
                             @if (assignment?.CanSubmit == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "submit", "Submit", "btn-outline-primary"))" /> }
                             @if (assignment?.CanRequestApproval == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "request", "Request approval", "btn-outline-primary"))" /> }
                             @if (assignment?.CanApprove == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "approve", "Approve", "btn-success"))" /> }
-                            @if (assignment?.CanReject == true && order.Status == BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", "btn-outline-danger"))" /> }
+                            @if (assignment?.CanReject == true && order.Status is BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted or BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval or BuilderERP.Domain.Enums.PurchaseOrderStatus.Approved) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "reject", "Reject", "btn-outline-danger"))" /> }
                             @if (assignment?.CanCancel == true && order.Status is BuilderERP.Domain.Enums.PurchaseOrderStatus.Draft or BuilderERP.Domain.Enums.PurchaseOrderStatus.Submitted or BuilderERP.Domain.Enums.PurchaseOrderStatus.AwaitingApproval or BuilderERP.Domain.Enums.PurchaseOrderStatus.Rejected) { <partial name="_WorkflowButton" model="@(new CashPurchaseOrderWorkflowButtonViewModel(order.Id, "cancel", "Cancel", "btn-outline-danger"))" /> }
                             <form asp-action="ToggleActive" asp-route-id="@order.Id" asp-route-isActive="@order.IsActive" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">

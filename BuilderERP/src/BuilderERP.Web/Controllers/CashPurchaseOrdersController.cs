@@ -109,6 +109,7 @@ public class CashPurchaseOrdersController : Controller
             OrderDate = order.OrderDate,
             DeliveryDate = order.DeliveryDate,
             Status = order.Status,
+            RejectionReason = order.RejectionReason, RejectedBy = order.RejectedBy, RejectedAt = order.RejectedAt,
             TermsOfPayment = order.TermsOfPayment,
             DispatchedThrough = order.DispatchedThrough,
             Destination = order.Destination,
@@ -202,7 +203,7 @@ public class CashPurchaseOrdersController : Controller
     [HttpPost]
     [PermissionAuthorize(PermissionNames.CashPurchaseOrderManage)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> WorkflowAction(long id, string workflowAction)
+    public async Task<IActionResult> WorkflowAction(long id, string workflowAction, string? rejectionReason)
     {
         var assignment = await GetCurrentAssignmentAsync();
         if (assignment is null) return Forbid();
@@ -211,21 +212,25 @@ public class CashPurchaseOrdersController : Controller
         var action = workflowAction?.Trim().ToLowerInvariant();
         var canPerform = action switch { "submit" => assignment.CanSubmit, "request" => assignment.CanRequestApproval, "approve" => assignment.CanApprove, "reject" => assignment.CanReject, "cancel" => assignment.CanCancel, _ => false };
         if (!canPerform) { TempData["ErrorMessage"] = "You are not assigned to perform that action."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason)) { TempData["ErrorMessage"] = "A rejection reason is required."; return RedirectToAction(nameof(Index)); }
+        if (rejectionReason?.Length > 1000) { TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && order.Status == PurchaseOrderStatus.Approved && (order.ReceivedAmount > 0 || await _db.CashPoBills.AnyAsync(b => b.CashPurchaseOrderId == id && b.IsActive && b.Status != PoBillStatus.Cancelled))) { TempData["ErrorMessage"] = "This approved Cash PO has receipts or bills and cannot be returned to Draft."; return RedirectToAction(nameof(Index)); }
         var transition = action switch
         {
             "submit" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Submitted),
             "request" => (From: PurchaseOrderStatus.Submitted, To: PurchaseOrderStatus.AwaitingApproval),
             "approve" => (From: PurchaseOrderStatus.AwaitingApproval, To: PurchaseOrderStatus.Approved),
-            "reject" => (From: PurchaseOrderStatus.AwaitingApproval, To: PurchaseOrderStatus.Rejected),
+            "reject" when order.Status is PurchaseOrderStatus.Submitted or PurchaseOrderStatus.AwaitingApproval or PurchaseOrderStatus.Approved => (From: order.Status, To: PurchaseOrderStatus.Draft),
+            "reject" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Draft),
             "cancel" when order.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Submitted or PurchaseOrderStatus.AwaitingApproval or PurchaseOrderStatus.Rejected => (From: order.Status, To: PurchaseOrderStatus.Cancelled),
             "cancel" => (From: PurchaseOrderStatus.Draft, To: PurchaseOrderStatus.Cancelled),
             _ => (From: order.Status, To: order.Status)
         };
         if (order.Status == transition.To) { TempData["StatusMessage"] = $"Cash Purchase Order {order.CPONumber} is already {transition.To}."; return RedirectToAction(nameof(Index)); }
         if (order.Status != transition.From) { TempData["ErrorMessage"] = $"This action is no longer available because Cash Purchase Order {order.CPONumber} is {order.Status}."; return RedirectToAction(nameof(Index)); }
-        var updated = await _mediator.Send(new SetCashPurchaseOrderStatusCommand(order.Id, transition.From, transition.To, User.Identity?.Name));
+        var updated = await _mediator.Send(new SetCashPurchaseOrderStatusCommand(order.Id, transition.From, transition.To, User.Identity?.Name, action == "reject" ? rejectionReason : null));
         if (!updated) { TempData["ErrorMessage"] = $"Cash Purchase Order {order.CPONumber} changed while this action was being processed. Please try again."; return RedirectToAction(nameof(Index)); }
-        TempData["StatusMessage"] = $"Cash Purchase Order {order.CPONumber} is now {transition.To}.";
+        TempData["StatusMessage"] = action == "reject" ? $"Cash Purchase Order {order.CPONumber} was returned to Draft for revision." : $"Cash Purchase Order {order.CPONumber} is now {transition.To}.";
         return RedirectToAction(nameof(Index));
     }
 

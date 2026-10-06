@@ -12,6 +12,9 @@ public class CashPoBillDto
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public string? PreparedBy { get; set; }
     public long CashPurchaseOrderId { get; set; }
     public string CPONumber { get; set; } = string.Empty;
@@ -52,6 +55,9 @@ public class SaveCashPoBillDto
     public string? MemoNumber { get; set; }
     public string? Remarks { get; set; }
     public PoBillStatus Status { get; set; } = PoBillStatus.Draft;
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public long CashPurchaseOrderId { get; set; }
     public List<CashPoBillLineInputDto> Details { get; set; } = new();
 }

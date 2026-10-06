@@ -12,6 +12,9 @@ public class CashPurchaseOrderDto
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
     public bool IsActive { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public string? TermsOfPayment { get; set; }
     public string? DispatchedThrough { get; set; }
     public string? Destination { get; set; }
@@ -76,6 +79,9 @@ public class UpdateCashPurchaseOrderDto
     public DateTime OrderDate { get; set; }
     public DateTime DeliveryDate { get; set; }
     public PurchaseOrderStatus Status { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
     public string? TermsOfPayment { get; set; }
     public string? DispatchedThrough { get; set; }
     public string? Destination { get; set; }

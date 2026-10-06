@@ -622,6 +622,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<CashRequisition>().Property(r => r.EstimatedAmount).HasPrecision(18, 2);
+        builder.Entity<CashRequisition>().Property(r => r.RejectionReason).HasMaxLength(1000);
 
         builder.Entity<CashRequisitionDetail>()
             .HasOne(d => d.CashRequisition)
@@ -722,6 +723,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         builder.Entity<CashPurchaseOrder>().Property(o => o.TotalAmount).HasPrecision(18, 2);
         builder.Entity<CashPurchaseOrder>().Property(o => o.ReceivedAmount).HasPrecision(18, 2);
+        builder.Entity<CashPurchaseOrder>().Property(o => o.RejectionReason).HasMaxLength(1000);
 
         builder.Entity<CashPurchaseOrderDetail>()
             .HasOne(d => d.CashPurchaseOrder)
@@ -923,6 +925,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<CashPoBill>().Property(b => b.TotalAmount).HasPrecision(18, 2);
+        builder.Entity<CashPoBill>().Property(b => b.RejectionReason).HasMaxLength(1000);
         builder.Entity<CashPoBill>().HasIndex(b => b.BillNumber);
         builder.Entity<CashPoBill>().HasIndex(b => b.RequesterEmployeeId);
 
