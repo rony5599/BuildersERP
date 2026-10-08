@@ -1,15 +1,15 @@
 @model BuilderERP.Application.DTOs.CreateSupplierDto
 @{
-    ViewData["Title"] = "New Supplier";
+    ViewData["Title"] = "New Supplier/Contractor";
 }
 
-<h1 class="h3 mb-4">New Supplier</h1>
+<h1 class="h3 mb-4">New Supplier/Contractor</h1>
 
 <form asp-action="Create" method="post" class="col-md-8">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row">
         <div class="mb-3 col-md-4">
-            <label asp-for="SupplierCode" class="form-label"></label>
+            <label asp-for="SupplierCode" class="form-label">Supplier/Contractor Code</label>
             <input asp-for="SupplierCode" class="form-control" />
             <span asp-validation-for="SupplierCode" class="text-danger"></span>
         </div>

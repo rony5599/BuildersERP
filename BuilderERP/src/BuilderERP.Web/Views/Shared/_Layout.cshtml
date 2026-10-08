@@ -307,7 +307,7 @@
                         <ul class="nav flex-column mb-0 nav-section-body">
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierView))
                         {
-                            <li class="nav-item"><a asp-controller="Suppliers" asp-action="Index" class="@NavClass("Suppliers")"><i class="bi bi-truck"></i> Suppliers</a></li>
+                            <li class="nav-item"><a asp-controller="Suppliers" asp-action="Index" class="@NavClass("Suppliers")"><i class="bi bi-truck"></i> Supplier/Contractor</a></li>
                         }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.PurchaseRequisitionView)
                             || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.RfqView)

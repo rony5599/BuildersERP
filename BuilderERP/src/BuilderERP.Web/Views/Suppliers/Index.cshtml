@@ -3,14 +3,14 @@
 @using BuilderERP.Shared.Constants
 @using BuilderERP.Shared.Authorization
 @{
-    ViewData["Title"] = "Suppliers";
+    ViewData["Title"] = "Supplier/Contractor";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Suppliers</h1>
+    <h1 class="h3 mb-0">Supplier/Contractor</h1>
     @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierManage))
     {
-        <a asp-action="Create" class="btn btn-primary">New Supplier</a>
+        <a asp-action="Create" class="btn btn-primary">New Supplier/Contractor</a>
     }
 </div>
 
