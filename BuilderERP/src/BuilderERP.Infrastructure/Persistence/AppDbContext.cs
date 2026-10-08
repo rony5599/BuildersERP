@@ -85,6 +85,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Milestone> Milestones => Set<Milestone>();
     public DbSet<BoqItem> BoqItems => Set<BoqItem>();
     public DbSet<BoqHeader> BoqHeaders => Set<BoqHeader>();
+    public DbSet<BoqActionAssignment> BoqActionAssignments => Set<BoqActionAssignment>();
     public DbSet<WorkGroup> WorkGroups => Set<WorkGroup>();
     public DbSet<DailyProgress> DailyProgresses => Set<DailyProgress>();
     public DbSet<SitePhoto> SitePhotos => Set<SitePhoto>();
@@ -228,6 +229,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                 .WithMany()
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<BoqActionAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<EngineerWorkOrderActionAssignment>(entity =>
@@ -1179,6 +1186,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.Property(x => x.VersionNumber).HasDefaultValue(1);
             entity.Property(x => x.ContingencyPercent).HasPrecision(5, 2).HasDefaultValue(2m);
             entity.Property(x => x.IsActive).HasDefaultValue(true);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).HasDefaultValue(BuilderERP.Domain.Enums.BoqStatus.Draft);
+            entity.Property(x => x.RejectionReason).HasMaxLength(1000);
             entity.HasIndex(x => new { x.ProjectId, x.BoqName, x.VersionNumber }).IsUnique();
             entity.HasOne(x => x.Project)
                 .WithMany()

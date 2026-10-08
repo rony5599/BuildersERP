@@ -383,6 +383,64 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.BoqActionAssignment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("CanApprove")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanCancel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanDraftEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanReject")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanRequestApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanSubmit")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("BoqActionAssignments");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.BoqHeader", b =>
                 {
                     b.Property<long>("Id")
@@ -390,6 +448,12 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BoqName")
                         .IsRequired()
@@ -427,6 +491,23 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RejectedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("Draft");
 
                     b.Property<int>("VersionNumber")
                         .ValueGeneratedOnAdd()
@@ -9719,6 +9800,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("PropertyUnit");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.BoqActionAssignment", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.BoqHeader", b =>

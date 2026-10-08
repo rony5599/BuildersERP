@@ -1,53 +1,41 @@
 @using BuilderERP.Application.Common
+@using BuilderERP.Domain.Enums
 @using BuilderERP.Shared.Authorization
 @using BuilderERP.Shared.Constants
 @model PagedResult<BuilderERP.Application.DTOs.BoqSummaryDto>
-
-<div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
-    <div><span class="fw-semibold">BOQ masters</span>@if (ViewBag.SelectedProjectId != null || !string.IsNullOrWhiteSpace(ViewBag.SelectedBoqName as string)) { <span class="badge bg-light text-dark border ms-2">Filtered</span> }</div>
-    <span class="text-muted small">@Model.TotalCount BOQ@(Model.TotalCount == 1 ? "" : "s") found</span>
-</div>
-<div class="table-responsive">
-    <table class="table table-hover align-middle mb-0" style="min-width:900px">
-        <thead class="table-light"><tr><th class="ps-3">BOQ</th><th>Project</th><th>Created</th><th class="text-end">Items</th><th class="text-end">Subtotal (৳)</th><th class="text-end">Contingency</th><th class="text-end">Estimated total (৳)</th><th class="text-end pe-3">Actions</th></tr></thead>
-        <tbody>
-            @foreach (var boq in Model.Items)
-            {
-                <tr>
-                    <td class="ps-3"><div class="fw-semibold">@boq.BoqName</div><span class="badge bg-light text-dark border">Version @boq.VersionNumber</span> <span class="badge @(boq.IsActive ? "bg-success" : "bg-secondary")">@(boq.IsActive ? "Active" : "Inactive")</span></td>
-                    <td>@boq.ProjectName</td>
-                    <td>@boq.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
-                    <td class="text-end">@boq.ItemCount</td>
-                    <td class="text-end">@boq.Subtotal.ToString("N2")</td>
-                    <td class="text-end">@boq.ContingencyPercent.ToString("N2")%</td>
-                    <td class="text-end fw-semibold">@boq.EstimatedTotal.ToString("N2")</td>
-                    <td class="text-end pe-3">
-                        @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BoqItemManage))
-                        {
-                            <div class="d-inline-flex gap-1">
-                                <a asp-action="Edit" asp-route-id="@boq.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square me-1"></i>Edit</a>
-                                <form asp-action="ToggleActive" method="post" class="d-inline" onsubmit="return confirm('@(boq.IsActive ? "Deactivate" : "Activate") this BOQ?');">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@boq.Id" />
-                                    <input type="hidden" name="isActive" value="@boq.IsActive.ToString().ToLowerInvariant()" />
-                                    <button type="submit" class="btn btn-sm @(boq.IsActive ? "btn-outline-danger" : "btn-outline-success")">@(boq.IsActive ? "Deactivate" : "Activate")</button>
-                                </form>
-                            </div>
-                        }
-                    </td>
-                </tr>
-            }
-            @if (Model.Items.Count == 0)
-            {
-                <tr><td colspan="8" class="text-center py-5"><i class="bi bi-clipboard-x d-block fs-2 text-muted mb-2"></i><div class="fw-semibold">No BOQs found</div><div class="text-muted small">Create a BOQ or change the current filters.</div></td></tr>
-            }
-        </tbody>
-    </table>
-</div>
-<div class="card-footer bg-white px-3 py-3">
-    <partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel
+@{ var assignment = User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BoqItemManage) ? ViewBag.ActionAssignment as BuilderERP.Domain.Entities.BoqActionAssignment : null; }
+<div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3"><span class="fw-semibold">BOQ masters</span><span class="text-muted small">@Model.TotalCount BOQ@(Model.TotalCount == 1 ? "" : "s") found</span></div>
+<div class="table-responsive"><table class="table table-hover align-middle mb-0" style="min-width:1050px"><thead class="table-light"><tr><th class="ps-3">BOQ</th><th>Project</th><th>Status</th><th>Created</th><th class="text-end">Items</th><th class="text-end">Subtotal (৳)</th><th class="text-end">Contingency</th><th class="text-end">Estimated total (৳)</th><th class="text-end pe-3">Actions</th></tr></thead><tbody>
+@foreach (var boq in Model.Items) { <tr>
+<td class="ps-3"><div class="fw-semibold">@boq.BoqName</div><span class="badge bg-light text-dark border">Version @boq.VersionNumber</span> <span class="badge @(boq.IsActive ? "bg-success" : "bg-secondary")">@(boq.IsActive ? "Active" : "Inactive")</span></td><td>@boq.ProjectName</td>
+<td>
+    <span class="badge @StatusCss(boq.Status)">@StatusText(boq.Status)</span>
+    @if (boq.Status == BoqStatus.Draft && !string.IsNullOrWhiteSpace(boq.RejectionReason))
     {
-        Page = Model.Page, PageSize = Model.PageSize, TotalPages = Model.TotalPages, TotalCount = Model.TotalCount, Action = "Index",
-        RouteValues = new Dictionary<string, string?> { ["projectId"] = ViewBag.SelectedProjectId?.ToString(), ["boqName"] = ViewBag.SelectedBoqName as string }
-    })" />
-</div>
+        <div class="small text-danger mt-1" style="max-width:260px; white-space:normal">
+            <i class="bi bi-arrow-counterclockwise me-1"></i><strong>Reason:</strong> @boq.RejectionReason
+        </div>
+        @if (!string.IsNullOrWhiteSpace(boq.RejectedBy) || boq.RejectedAt.HasValue)
+        {
+            <div class="small text-muted mt-1">
+                Returned
+                @if (!string.IsNullOrWhiteSpace(boq.RejectedBy)) { <span>by @boq.RejectedBy</span> }
+                @if (boq.RejectedAt.HasValue) { <span>on @boq.RejectedAt.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span> }
+            </div>
+        }
+    }
+</td>
+<td>@boq.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td><td class="text-end">@boq.ItemCount</td><td class="text-end">@boq.Subtotal.ToString("N2")</td><td class="text-end">@boq.ContingencyPercent.ToString("N2")%</td><td class="text-end fw-semibold">@boq.EstimatedTotal.ToString("N2")</td>
+<td class="text-end pe-3"><div class="d-inline-flex gap-1">
+@if (assignment?.CanDraftEdit == true && boq.Status == BoqStatus.Draft) { <a asp-action="Edit" asp-route-id="@boq.Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-square"></i></a> }
+@if (assignment?.CanSubmit == true && boq.Status == BoqStatus.Draft) { <form asp-action="WorkflowAction" asp-route-id="@boq.Id" method="post"><input type="hidden" name="workflowAction" value="submit" /><button class="btn btn-sm btn-outline-primary" title="Submit"><i class="bi bi-send"></i></button></form> }
+@if (assignment?.CanRequestApproval == true && boq.Status == BoqStatus.Submitted) { <form asp-action="WorkflowAction" asp-route-id="@boq.Id" method="post"><input type="hidden" name="workflowAction" value="request" /><button class="btn btn-sm btn-outline-primary" title="Request approval"><i class="bi bi-person-check"></i></button></form> }
+@if (assignment?.CanApprove == true && boq.Status == BoqStatus.AwaitingApproval) { <form asp-action="WorkflowAction" asp-route-id="@boq.Id" method="post"><input type="hidden" name="workflowAction" value="approve" /><button class="btn btn-sm btn-success" title="Approve"><i class="bi bi-check-lg"></i></button></form> }
+@if (assignment?.CanReject == true && boq.Status is BoqStatus.Submitted or BoqStatus.AwaitingApproval or BoqStatus.Approved) { <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" data-bs-toggle="modal" data-bs-target="#reject-boq-modal" data-boq-id="@boq.Id"><i class="bi bi-x-lg"></i></button> }
+@if (assignment?.CanCancel == true && boq.Status is BoqStatus.Draft or BoqStatus.Submitted or BoqStatus.AwaitingApproval) { <form asp-action="WorkflowAction" asp-route-id="@boq.Id" method="post" onsubmit="return confirm('Cancel this BOQ?');"><input type="hidden" name="workflowAction" value="cancel" /><button class="btn btn-sm btn-outline-danger" title="Cancel"><i class="bi bi-slash-circle"></i></button></form> }
+@if (assignment?.CanDraftEdit == true && boq.Status == BoqStatus.Draft) { <form asp-action="ToggleActive" method="post" onsubmit="return confirm('@(boq.IsActive ? "Deactivate" : "Activate") this BOQ?');"><input type="hidden" name="id" value="@boq.Id" /><input type="hidden" name="isActive" value="@boq.IsActive.ToString().ToLowerInvariant()" /><button class="btn btn-sm @(boq.IsActive ? "btn-outline-danger" : "btn-outline-success")">@(boq.IsActive ? "Deactivate" : "Activate")</button></form> }
+</div></td></tr> }
+@if (Model.Items.Count == 0) { <tr><td colspan="9" class="text-center py-5"><i class="bi bi-clipboard-x d-block fs-2 text-muted mb-2"></i><div class="fw-semibold">No BOQs found</div><div class="text-muted small">Create a BOQ or change the current filters.</div></td></tr> }
+</tbody></table></div>
+<div class="card-footer bg-white px-3 py-3"><partial name="_Pagination" model="@(new BuilderERP.Web.Models.PaginationViewModel { Page = Model.Page, PageSize = Model.PageSize, TotalPages = Model.TotalPages, TotalCount = Model.TotalCount, Action = "Index", RouteValues = new Dictionary<string, string?> { ["projectId"] = ViewBag.SelectedProjectId?.ToString(), ["boqName"] = ViewBag.SelectedBoqName as string } })" /></div>
+@functions { static string StatusCss(BoqStatus s) => s switch { BoqStatus.Draft => "bg-secondary", BoqStatus.Submitted => "bg-primary", BoqStatus.AwaitingApproval => "bg-warning text-dark", BoqStatus.Approved => "bg-success", BoqStatus.Cancelled => "bg-danger", _ => "bg-secondary" }; static string StatusText(BoqStatus s) => s == BoqStatus.AwaitingApproval ? "Awaiting Approval" : s.ToString(); }

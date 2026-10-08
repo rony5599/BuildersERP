@@ -45,7 +45,13 @@ public class GetAllBoqsQueryHandler : IRequestHandler<GetAllBoqsQuery, PagedResu
                 ItemCount = x.Items.Count,
                 Subtotal = x.Items.Sum(i => i.Quantity * i.Rate),
                 ContingencyPercent = x.ContingencyPercent
-                ,IsActive = x.IsActive
+                ,IsActive = x.IsActive,
+                Status = x.Status,
+                RejectionReason = x.RejectionReason,
+                RejectedBy = x.RejectedBy,
+                RejectedAt = x.RejectedAt,
+                ApprovedBy = x.ApprovedBy,
+                ApprovedAt = x.ApprovedAt
             })
             .ToListAsync(cancellationToken);
 

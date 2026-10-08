@@ -1,5 +1,6 @@
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 
 namespace BuilderERP.Application.Features.BoqItems;
@@ -19,7 +20,7 @@ public class SetBoqItemActiveCommandHandler : IRequestHandler<SetBoqItemActiveCo
     {
         var repository = _unitOfWork.Repository<BoqHeader>();
         var boq = await repository.GetByIdAsync(request.Id);
-        if (boq is null)
+        if (boq is null || boq.Status != BoqStatus.Draft)
         {
             return false;
         }

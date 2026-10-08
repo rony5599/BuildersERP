@@ -54,6 +54,10 @@ public class UpdateBoqDto : CreateBoqDto
 {
     public long Id { get; set; }
     public bool IsActive { get; set; }
+    public BoqStatus Status { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
 }
 
 public class BoqSummaryDto
@@ -70,6 +74,12 @@ public class BoqSummaryDto
     public decimal ContingencyAmount => Subtotal * ContingencyPercent / 100m;
     public decimal EstimatedTotal => Subtotal + ContingencyAmount;
     public bool IsActive { get; set; }
+    public BoqStatus Status { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
+    public string? ApprovedBy { get; set; }
+    public DateTime? ApprovedAt { get; set; }
 }
 
 public class WorkGroupOptionDto

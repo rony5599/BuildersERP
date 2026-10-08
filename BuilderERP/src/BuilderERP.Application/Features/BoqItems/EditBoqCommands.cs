@@ -25,6 +25,10 @@ public class GetBoqForEditQueryHandler : IRequestHandler<GetBoqForEditQuery, Upd
                 VersionNumber = x.VersionNumber,
                 ContingencyPercent = x.ContingencyPercent,
                 IsActive = x.IsActive,
+                Status = x.Status,
+                RejectionReason = x.RejectionReason,
+                RejectedBy = x.RejectedBy,
+                RejectedAt = x.RejectedAt,
                 Items = x.Items.OrderBy(i => i.Id).Select(i => new CreateBoqItemDto
                 {
                     WorkGroupId = i.WorkGroupId,
@@ -51,6 +55,7 @@ public class UpdateBoqCommandHandler : IRequestHandler<UpdateBoqCommand, bool>
         var header = await headerRepository.Query().Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == request.Dto.Id, cancellationToken);
         if (header is null) return false;
+        if (header.Status != Domain.Enums.BoqStatus.Draft) return false;
 
         header.ProjectId = request.Dto.ProjectId;
         header.BoqName = request.Dto.BoqName.Trim();

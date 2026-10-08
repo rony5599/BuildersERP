@@ -1,6 +1,7 @@
 using BuilderERP.Application.DTOs;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Domain.Interfaces;
+using BuilderERP.Domain.Enums;
 using MediatR;
 
 namespace BuilderERP.Application.Features.BoqItems;
@@ -22,6 +23,7 @@ public class CreateBoqCommandHandler : IRequestHandler<CreateBoqCommand, long>
             VersionNumber = request.Dto.VersionNumber,
             ContingencyPercent = request.Dto.ContingencyPercent,
             IsActive = true,
+            Status = BoqStatus.Draft,
             Items = request.Dto.Items.Select(x => new BoqItem
             {
                 WorkGroupId = x.WorkGroupId,

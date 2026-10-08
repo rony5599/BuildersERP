@@ -13,7 +13,7 @@
 
 <div class="d-flex justify-content-between align-items-start mb-4">
     <div><h1 class="h3 mb-1">@(isEdit ? "Edit Bill of Quantities" : "Create Bill of Quantities")</h1><p class="text-muted mb-0">Set the BOQ details and estimate costs by work group.</p></div>
-    <span class="badge bg-light text-dark border px-3 py-2">@(isEdit && Model is UpdateBoqDto edit && edit.IsActive ? "Active" : "Draft")</span>
+    <span class="badge bg-light text-dark border px-3 py-2">@(isEdit && Model is UpdateBoqDto edit ? edit.Status : BoqStatus.Draft)</span>
 </div>
 
 <form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="boq-form">
