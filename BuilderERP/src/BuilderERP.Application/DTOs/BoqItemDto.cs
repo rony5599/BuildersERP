@@ -91,3 +91,40 @@ public class WorkGroupOptionDto
     public int Depth { get; set; }
     public string DisplayName => $"{new string('—', Depth)}{(Depth > 0 ? " " : "")}{GroupCode} — {GroupName}";
 }
+
+public class BoqPrintDto
+{
+    public long Id { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyAddress { get; set; }
+    public string? CompanyPhone { get; set; }
+    public string? CompanyEmail { get; set; }
+    public string BoqName { get; set; } = string.Empty;
+    public int VersionNumber { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public BoqStatus Status { get; set; }
+    public decimal ContingencyPercent { get; set; }
+    public string? ApprovedBy { get; set; }
+    public DateTime? ApprovedAt { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? RejectedBy { get; set; }
+    public DateTime? RejectedAt { get; set; }
+    public string? PrintedBy { get; set; }
+    public DateTime PrintedAt { get; set; }
+    public List<BoqPrintLineDto> Lines { get; set; } = new();
+    public decimal Subtotal => Lines.Sum(x => x.Amount);
+    public decimal ContingencyAmount => Subtotal * ContingencyPercent / 100m;
+    public decimal EstimatedTotal => Subtotal + ContingencyAmount;
+}
+
+public class BoqPrintLineDto
+{
+    public string WorkGroupCode { get; set; } = string.Empty;
+    public string WorkGroupName { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public UnitOfMeasure UnitOfMeasure { get; set; }
+    public decimal Quantity { get; set; }
+    public decimal Rate { get; set; }
+    public decimal Amount => Quantity * Rate;
+}

@@ -27,6 +27,7 @@
 </td>
 <td>@boq.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td><td class="text-end">@boq.ItemCount</td><td class="text-end">@boq.Subtotal.ToString("N2")</td><td class="text-end">@boq.ContingencyPercent.ToString("N2")%</td><td class="text-end fw-semibold">@boq.EstimatedTotal.ToString("N2")</td>
 <td class="text-end pe-3"><div class="d-inline-flex gap-1">
+<a asp-action="Print" asp-route-id="@boq.Id" target="_blank" class="btn btn-sm btn-outline-secondary" title="Print BOQ"><i class="bi bi-printer"></i></a>
 @if (assignment?.CanDraftEdit == true && boq.Status == BoqStatus.Draft) { <a asp-action="Edit" asp-route-id="@boq.Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-square"></i></a> }
 @if (assignment?.CanSubmit == true && boq.Status == BoqStatus.Draft) { <form asp-action="WorkflowAction" asp-route-id="@boq.Id" method="post"><input type="hidden" name="workflowAction" value="submit" /><button class="btn btn-sm btn-outline-primary" title="Submit"><i class="bi bi-send"></i></button></form> }
 @if (assignment?.CanRequestApproval == true && boq.Status == BoqStatus.Submitted) { <form asp-action="WorkflowAction" asp-route-id="@boq.Id" method="post"><input type="hidden" name="workflowAction" value="request" /><button class="btn btn-sm btn-outline-primary" title="Request approval"><i class="bi bi-person-check"></i></button></form> }

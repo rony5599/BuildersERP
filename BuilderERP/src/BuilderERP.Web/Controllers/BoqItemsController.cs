@@ -128,6 +128,16 @@ public class BoqItemsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Print(long id)
+    {
+        var model = await _mediator.Send(new GetBoqPrintQuery(id));
+        if (model is null) return NotFound();
+        model.PrintedBy = User.Identity?.Name;
+        model.PrintedAt = DateTime.Now;
+        return View(model);
+    }
+
     [HttpPost]
     [PermissionAuthorize(PermissionNames.BoqItemManage)]
     [ValidateAntiForgeryToken]
