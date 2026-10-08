@@ -17,15 +17,15 @@ public class SetBoqItemActiveCommandHandler : IRequestHandler<SetBoqItemActiveCo
 
     public async Task<bool> Handle(SetBoqItemActiveCommand request, CancellationToken cancellationToken)
     {
-        var repository = _unitOfWork.Repository<BoqItem>();
-        var item = await repository.GetByIdAsync(request.Id);
-        if (item is null)
+        var repository = _unitOfWork.Repository<BoqHeader>();
+        var boq = await repository.GetByIdAsync(request.Id);
+        if (boq is null)
         {
             return false;
         }
 
-        item.IsActive = request.IsActive;
-        repository.Update(item);
+        boq.IsActive = request.IsActive;
+        repository.Update(boq);
         await _unitOfWork.SaveChangesAsync();
         return true;
     }

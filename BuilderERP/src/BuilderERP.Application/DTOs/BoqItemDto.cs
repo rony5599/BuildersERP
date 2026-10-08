@@ -5,37 +5,79 @@ namespace BuilderERP.Application.DTOs;
 public class BoqItemDto
 {
     public long Id { get; set; }
-    public string ItemCode { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public UnitOfMeasure UnitOfMeasure { get; set; }
     public decimal Quantity { get; set; }
     public decimal Rate { get; set; }
     public decimal Amount { get; set; }
-    public string? Category { get; set; }
-    public bool IsActive { get; set; }
+    public long BoqId { get; set; }
+    public string BoqName { get; set; } = string.Empty;
+    public int VersionNumber { get; set; }
+    public long WorkGroupId { get; set; }
+    public string WorkGroupCode { get; set; } = string.Empty;
+    public string WorkGroupName { get; set; } = string.Empty;
     public long ProjectId { get; set; }
     public string ProjectName { get; set; } = string.Empty;
 }
 
 public class CreateBoqItemDto
 {
-    public string ItemCode { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public UnitOfMeasure UnitOfMeasure { get; set; } = UnitOfMeasure.Piece;
     public decimal Quantity { get; set; }
     public decimal Rate { get; set; }
-    public string? Category { get; set; }
-    public long ProjectId { get; set; }
+    public long BoqId { get; set; }
+    public long WorkGroupId { get; set; }
 }
 
 public class UpdateBoqItemDto
 {
     public long Id { get; set; }
-    public string ItemCode { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public UnitOfMeasure UnitOfMeasure { get; set; }
     public decimal Quantity { get; set; }
     public decimal Rate { get; set; }
-    public string? Category { get; set; }
+    public long BoqId { get; set; }
+    public long WorkGroupId { get; set; }
+}
+
+public class CreateBoqDto
+{
     public long ProjectId { get; set; }
+    public string BoqName { get; set; } = string.Empty;
+    public int VersionNumber { get; set; } = 1;
+    public decimal ContingencyPercent { get; set; } = 2m;
+    public List<CreateBoqItemDto> Items { get; set; } = new();
+}
+
+public class UpdateBoqDto : CreateBoqDto
+{
+    public long Id { get; set; }
+    public bool IsActive { get; set; }
+}
+
+public class BoqSummaryDto
+{
+    public long Id { get; set; }
+    public long ProjectId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string BoqName { get; set; } = string.Empty;
+    public int VersionNumber { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public int ItemCount { get; set; }
+    public decimal Subtotal { get; set; }
+    public decimal ContingencyPercent { get; set; }
+    public decimal ContingencyAmount => Subtotal * ContingencyPercent / 100m;
+    public decimal EstimatedTotal => Subtotal + ContingencyAmount;
+    public bool IsActive { get; set; }
+}
+
+public class WorkGroupOptionDto
+{
+    public long Id { get; set; }
+    public long? ParentGroupId { get; set; }
+    public string GroupCode { get; set; } = string.Empty;
+    public string GroupName { get; set; } = string.Empty;
+    public int Depth { get; set; }
+    public string DisplayName => $"{new string('—', Depth)}{(Depth > 0 ? " " : "")}{GroupCode} — {GroupName}";
 }

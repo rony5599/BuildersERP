@@ -1,50 +1,57 @@
-@model BuilderERP.Application.DTOs.CreateBoqItemDto
+@model BuilderERP.Application.DTOs.CreateBoqDto
+@using BuilderERP.Application.DTOs
 @using BuilderERP.Domain.Enums
+@using System.Text.Json
 @{
-    ViewData["Title"] = "New BOQ Item";
+    var isEdit = (bool?)(ViewBag.IsEdit) == true;
+    ViewData["Title"] = isEdit ? "Edit BOQ" : "Create BOQ";
+    var groups = (IReadOnlyList<WorkGroupOptionDto>)(ViewBag.WorkGroups ?? Array.Empty<WorkGroupOptionDto>());
+    var units = Html.GetEnumSelectList<UnitOfMeasure>().Select(x => new { x.Value, x.Text });
 }
 
-<h1 class="h3 mb-4">New BOQ Item</h1>
+@section Styles { <link rel="stylesheet" href="~/css/work-group-picker.css" asp-append-version="true" /> }
 
-<form asp-action="Create" method="post" class="col-md-6">
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-    <div class="mb-3">
-        <label asp-for="ProjectId" class="form-label"></label>
-        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
-            <option value="">-- Select Project --</option>
-        </select>
-        <span asp-validation-for="ProjectId" class="text-danger"></span>
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div><h1 class="h3 mb-1">@(isEdit ? "Edit Bill of Quantities" : "Create Bill of Quantities")</h1><p class="text-muted mb-0">Set the BOQ details and estimate costs by work group.</p></div>
+    <span class="badge bg-light text-dark border px-3 py-2">@(isEdit && Model is UpdateBoqDto edit && edit.IsActive ? "Active" : "Draft")</span>
+</div>
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="boq-form">
+    @if (isEdit && Model is UpdateBoqDto updateDto) { <input type="hidden" name="Id" value="@updateDto.Id" /> }
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white fw-semibold">BOQ details</div>
+        <div class="card-body"><div class="row g-3">
+            <div class="col-lg-4"><label asp-for="ProjectId" class="form-label">Project <span class="text-danger">*</span></label><select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select"><option value="">Select a project</option></select><span asp-validation-for="ProjectId" class="text-danger"></span></div>
+            <div class="col-lg-4"><label asp-for="BoqName" class="form-label">BOQ name <span class="text-danger">*</span></label><input asp-for="BoqName" class="form-control" placeholder="e.g. Main Building Construction BOQ"><span asp-validation-for="BoqName" class="text-danger"></span></div>
+            <div class="col-lg-2"><label asp-for="VersionNumber" class="form-label">Version</label><input asp-for="VersionNumber" class="form-control" min="1"></div>
+            <div class="col-lg-2"><label asp-for="ContingencyPercent" class="form-label">Contingency %</label><input asp-for="ContingencyPercent" class="form-control" min="0" max="100" step="0.01"><span asp-validation-for="ContingencyPercent" class="text-danger"></span></div>
+        </div></div>
     </div>
-    <div class="mb-3">
-        <label asp-for="ItemCode" class="form-label"></label>
-        <input asp-for="ItemCode" class="form-control" />
-        <span asp-validation-for="ItemCode" class="text-danger"></span>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center"><div><span class="fw-semibold">BOQ items</span><small class="text-muted ms-2">Amounts calculate automatically</small></div><span id="item-count" class="badge bg-secondary">0 items</span></div>
+        <div class="table-responsive"><table class="table table-hover align-middle mb-0" style="min-width:1100px"><thead class="table-light"><tr><th style="width:45px">#</th><th style="width:260px">Work group</th><th>Item description</th><th style="width:120px">Unit</th><th style="width:135px" class="text-end">Quantity</th><th style="width:145px" class="text-end">Unit rate (৳)</th><th style="width:150px" class="text-end">Total (৳)</th><th style="width:50px"></th></tr></thead><tbody id="boq-rows"></tbody></table></div>
+        <div class="card-body border-top"><button type="button" id="add-row" class="btn btn-outline-primary">+ Add BOQ item</button></div>
+        <div class="card-footer bg-white d-flex justify-content-end"><div style="min-width:340px"><div class="d-flex justify-content-between"><span>Subtotal</span><span id="subtotal">৳0.00</span></div><div class="d-flex justify-content-between"><span>Contingency</span><span id="contingency-total">৳0.00</span></div><hr class="my-2"><div class="d-flex justify-content-between fs-5 fw-bold"><span>Estimated total</span><span id="grand-total">৳0.00</span></div></div></div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="UnitOfMeasure" class="form-label"></label>
-        <select asp-for="UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select"></select>
-        <span asp-validation-for="UnitOfMeasure" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Quantity" class="form-label"></label>
-        <input asp-for="Quantity" class="form-control" />
-        <span asp-validation-for="Quantity" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Rate" class="form-label"></label>
-        <input asp-for="Rate" class="form-control" />
-        <span asp-validation-for="Rate" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Category" class="form-label"></label>
-        <input asp-for="Category" class="form-control" />
-        <span asp-validation-for="Category" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <div class="d-flex justify-content-end gap-2 mt-4"><a asp-action="Index" class="btn btn-outline-secondary">Cancel</a><button type="submit" class="btn btn-primary">@(isEdit ? "Save changes" : "Save BOQ")</button></div>
 </form>
+
+<template id="boq-row-template"><tr><td class="row-number text-muted fw-semibold"></td><td><select class="form-select work-group" data-field="WorkGroupId" data-work-group-picker required><option value="">Select work group</option>@foreach(var group in groups){<option value="@group.Id" data-code="@group.GroupCode" data-name="@group.GroupName" data-depth="@group.Depth">@group.DisplayName</option>}</select></td><td><textarea class="form-control description" data-field="Description" rows="1" maxlength="500" required placeholder="Describe the work item"></textarea></td><td><select class="form-select" data-field="UnitOfMeasure">@foreach(var unit in units){<option value="@unit.Value">@unit.Text</option>}</select></td><td><input class="form-control text-end qty" data-field="Quantity" type="number" min="0.0001" step="0.0001" value="0" required></td><td><input class="form-control text-end rate" data-field="Rate" type="number" min="0" step="0.0001" value="0" required></td><td class="line-total text-end fw-semibold">৳0.00</td><td><button type="button" class="btn btn-sm btn-outline-danger remove-row" aria-label="Remove item">×</button></td></tr></template>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script src="~/js/work-group-picker.js" asp-append-version="true"></script>
+<script>
+(() => {
+  const body=document.querySelector('#boq-rows'),template=document.querySelector('#boq-row-template'),contingencyInput=document.querySelector('#ContingencyPercent'),money=new Intl.NumberFormat('en-BD',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const existing=@Html.Raw(JsonSerializer.Serialize(Model.Items.Select(x => new { x.WorkGroupId, Description=x.Description, UnitOfMeasure=(int)x.UnitOfMeasure, x.Quantity, x.Rate })));
+  function reindex(){[...body.rows].forEach((row,i)=>{row.querySelector('.row-number').textContent=i+1;row.querySelectorAll('[data-field]').forEach(el=>el.name=`Items[${i}].${el.dataset.field}`)});document.querySelector('#item-count').textContent=`${body.rows.length} item${body.rows.length===1?'':'s'}`}
+  function calculate(){let subtotal=0;[...body.rows].forEach(row=>{const amount=(Number(row.querySelector('.qty').value)||0)*(Number(row.querySelector('.rate').value)||0);subtotal+=amount;row.querySelector('.line-total').textContent='৳'+money.format(amount)});const contingency=subtotal*(Number(contingencyInput.value)||0)/100;document.querySelector('#subtotal').textContent='৳'+money.format(subtotal);document.querySelector('#contingency-total').textContent='৳'+money.format(contingency);document.querySelector('#grand-total').textContent='৳'+money.format(subtotal+contingency)}
+  function addRow(data={}){const fragment=template.content.cloneNode(true),row=fragment.querySelector('tr');body.append(fragment);for(const field of ['WorkGroupId','Description','UnitOfMeasure','Quantity','Rate'])if(data[field]!==undefined&&data[field]!==null)row.querySelector(`[data-field="${field}"]`).value=data[field];WorkGroupPicker.init(row.querySelector('[data-work-group-picker]'));reindex();calculate()}
+  document.querySelector('#add-row').addEventListener('click',()=>addRow());body.addEventListener('input',calculate);contingencyInput.addEventListener('input',calculate);body.addEventListener('click',e=>{const button=e.target.closest('.remove-row');if(!button)return;button.closest('tr').remove();reindex();calculate();if(!body.rows.length)addRow()});
+  (existing.length?existing:[{}]).forEach(addRow);
+})();
+</script>
+}

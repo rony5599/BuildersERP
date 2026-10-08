@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuilderERP.Application.Features.BoqItems;
 
-public record GetAllBoqItemsQuery(long? ProjectId = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BoqItemDto>>;
+public record GetAllBoqItemsQuery(long? ProjectId = null, string? BoqName = null, int Page = 1, int PageSize = 25) : IRequest<PagedResult<BoqItemDto>>;
 
 public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, PagedResult<BoqItemDto>>
 {
@@ -23,11 +23,19 @@ public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, P
 
     public async Task<PagedResult<BoqItemDto>> Handle(GetAllBoqItemsQuery request, CancellationToken cancellationToken)
     {
-        var query = _unitOfWork.Repository<BoqItem>().Query().Include(x => x.Project).AsQueryable();
+        var query = _unitOfWork.Repository<BoqItem>().Query()
+            .Include(x => x.Boq).ThenInclude(x => x.Project)
+            .Include(x => x.WorkGroup).AsQueryable();
 
         if (request.ProjectId.HasValue)
         {
-            query = query.Where(x => x.ProjectId == request.ProjectId.Value);
+            query = query.Where(x => x.Boq.ProjectId == request.ProjectId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.BoqName))
+        {
+            var boqName = request.BoqName.Trim();
+            query = query.Where(x => x.Boq.BoqName.Contains(boqName));
         }
 
         var page = request.Page < 1 ? 1 : request.Page;
@@ -35,7 +43,7 @@ public class GetAllBoqItemsQueryHandler : IRequestHandler<GetAllBoqItemsQuery, P
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
-            .OrderBy(x => x.ItemCode)
+            .OrderBy(x => x.Boq.BoqName).ThenBy(x => x.WorkGroup.GroupCode).ThenBy(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

@@ -22,7 +22,6 @@ public class CreateBoqItemCommandHandler : IRequestHandler<CreateBoqItemCommand,
     public async Task<long> Handle(CreateBoqItemCommand request, CancellationToken cancellationToken)
     {
         var item = _mapper.Map<BoqItem>(request.Dto);
-        item.Amount = item.Quantity * item.Rate;
         await _unitOfWork.Repository<BoqItem>().AddAsync(item);
         await _unitOfWork.SaveChangesAsync();
         return item.Id;

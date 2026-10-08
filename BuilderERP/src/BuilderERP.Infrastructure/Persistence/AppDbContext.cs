@@ -84,6 +84,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<WbsTask> WbsTasks => Set<WbsTask>();
     public DbSet<Milestone> Milestones => Set<Milestone>();
     public DbSet<BoqItem> BoqItems => Set<BoqItem>();
+    public DbSet<BoqHeader> BoqHeaders => Set<BoqHeader>();
+    public DbSet<WorkGroup> WorkGroups => Set<WorkGroup>();
     public DbSet<DailyProgress> DailyProgresses => Set<DailyProgress>();
     public DbSet<SitePhoto> SitePhotos => Set<SitePhoto>();
     public DbSet<DelayEvent> DelayEvents => Set<DelayEvent>();
@@ -1160,15 +1162,50 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(m => m.ProjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<BoqItem>().Property(b => b.Quantity).HasPrecision(18, 3);
-        builder.Entity<BoqItem>().Property(b => b.Rate).HasPrecision(18, 2);
-        builder.Entity<BoqItem>().Property(b => b.Amount).HasPrecision(18, 2);
+        builder.Entity<WorkGroup>(entity =>
+        {
+            entity.Property(x => x.GroupCode).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.GroupName).HasMaxLength(255).IsRequired();
+            entity.HasIndex(x => x.GroupCode).IsUnique();
+            entity.HasOne(x => x.ParentGroup)
+                .WithMany(x => x.Children)
+                .HasForeignKey(x => x.ParentGroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        builder.Entity<BoqItem>()
-            .HasOne(b => b.Project)
-            .WithMany()
-            .HasForeignKey(b => b.ProjectId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<BoqHeader>(entity =>
+        {
+            entity.Property(x => x.BoqName).HasMaxLength(255).IsRequired();
+            entity.Property(x => x.VersionNumber).HasDefaultValue(1);
+            entity.Property(x => x.ContingencyPercent).HasPrecision(5, 2).HasDefaultValue(2m);
+            entity.Property(x => x.IsActive).HasDefaultValue(true);
+            entity.HasIndex(x => new { x.ProjectId, x.BoqName, x.VersionNumber }).IsUnique();
+            entity.HasOne(x => x.Project)
+                .WithMany()
+                .HasForeignKey(x => x.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<BoqItem>(entity =>
+        {
+            entity.Property(x => x.Description).HasColumnName("ItemDescription").IsRequired();
+            entity.Property(x => x.UnitOfMeasure).HasColumnName("Unit").HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Quantity).HasPrecision(18, 4).HasDefaultValue(0m);
+            entity.Property(x => x.Rate).HasColumnName("UnitRate").HasPrecision(18, 4).HasDefaultValue(0m);
+            entity.Property(x => x.Amount)
+                .HasColumnName("TotalAmount")
+                .HasPrecision(38, 8)
+                .HasComputedColumnSql("[Quantity] * [UnitRate]", stored: true);
+            entity.HasIndex(x => x.BoqId);
+            entity.HasOne(x => x.Boq)
+                .WithMany(x => x.Items)
+                .HasForeignKey(x => x.BoqId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.WorkGroup)
+                .WithMany(x => x.BoqItems)
+                .HasForeignKey(x => x.WorkGroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
         builder.Entity<DailyProgress>().Property(d => d.PercentComplete).HasPrecision(5, 2);
 
@@ -1834,7 +1871,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             typeof(RfqVendor), typeof(RfqDetail), typeof(VendorQuotationDetail),
             typeof(PurchaseOrderDetail), typeof(GoodsReceiveDetail), typeof(PurchaseReturnDetail), typeof(PoBillDetail), typeof(CashPoBillDetail),
             typeof(InventoryTransaction),
-            typeof(WbsTask), typeof(Milestone), typeof(BoqItem), typeof(DailyProgress),
+            typeof(WbsTask), typeof(Milestone), typeof(BoqHeader), typeof(BoqItem), typeof(WorkGroup), typeof(DailyProgress),
             typeof(SitePhoto), typeof(DelayEvent), typeof(BudgetLine),
             typeof(Drawing), typeof(DrawingRevision), typeof(DrawingApproval),
             typeof(Contractor), typeof(WorkOrder), typeof(RateContract), typeof(RunningBill),

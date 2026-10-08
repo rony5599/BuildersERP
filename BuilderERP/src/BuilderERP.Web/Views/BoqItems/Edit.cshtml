@@ -1,51 +1,128 @@
 @model BuilderERP.Application.DTOs.UpdateBoqItemDto
+@using BuilderERP.Application.DTOs
 @using BuilderERP.Domain.Enums
 @{
     ViewData["Title"] = "Edit BOQ Item";
+    var groups = (IReadOnlyList<WorkGroupOptionDto>)(ViewBag.WorkGroups ?? Array.Empty<WorkGroupOptionDto>());
 }
 
-<h1 class="h3 mb-4">Edit BOQ Item</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/work-group-picker.css" asp-append-version="true" />
+}
 
-<form asp-action="Edit" method="post" class="col-md-6">
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Edit BOQ Item</h1>
+        <p class="text-muted mb-0">Update the work group, measurement and rate for this line item.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to BOQ items</a>
+</div>
+
+<form asp-action="Edit" method="post" id="edit-boq-item-form">
     <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-    <div class="mb-3">
-        <label asp-for="ProjectId" class="form-label"></label>
-        <select asp-for="ProjectId" asp-items="ViewBag.Projects" class="form-select">
-            <option value="">-- Select Project --</option>
-        </select>
-        <span asp-validation-for="ProjectId" class="text-danger"></span>
+    <input type="hidden" asp-for="BoqId" />
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white fw-semibold">BOQ details</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-lg-5">
+                    <label class="form-label text-muted">Project</label>
+                    <div class="form-control bg-light">@(ViewBag.ProjectName ?? "—")</div>
+                </div>
+                <div class="col-lg-5">
+                    <label class="form-label text-muted">BOQ name</label>
+                    <div class="form-control bg-light">@(ViewBag.BoqName ?? "—")</div>
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label text-muted">Version</label>
+                    <div class="form-control bg-light">v@(ViewBag.VersionNumber ?? 1)</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="ItemCode" class="form-label"></label>
-        <input asp-for="ItemCode" class="form-control" />
-        <span asp-validation-for="ItemCode" class="text-danger"></span>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white fw-semibold">Item details</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12">
+                    <label asp-for="WorkGroupId" class="form-label">Work group <span class="text-danger">*</span></label>
+                    <select asp-for="WorkGroupId" class="form-select" data-work-group-picker>
+                        <option value="">Select work group</option>
+                        @foreach (var group in groups)
+                        {
+                            <option value="@group.Id" data-code="@group.GroupCode" data-name="@group.GroupName" data-depth="@group.Depth">@group.DisplayName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="WorkGroupId" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label">Item description <span class="text-danger">*</span></label>
+                    <textarea asp-for="Description" class="form-control" rows="3" maxlength="500" required placeholder="Describe the work item"></textarea>
+                    <div class="d-flex justify-content-between">
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                        <small class="text-muted"><span id="description-count">0</span>/500</small>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="UnitOfMeasure" class="form-label">Unit of measure <span class="text-danger">*</span></label>
+                    <select asp-for="UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select"></select>
+                    <span asp-validation-for="UnitOfMeasure" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                    <input asp-for="Quantity" class="form-control text-end" type="number" min="0" step="0.0001" inputmode="decimal" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Rate" class="form-label">Unit rate (৳) <span class="text-danger">*</span></label>
+                    <input asp-for="Rate" class="form-control text-end" type="number" min="0" step="0.0001" inputmode="decimal" />
+                    <span asp-validation-for="Rate" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-end">
+            <div class="d-flex align-items-center justify-content-between gap-5" style="min-width:320px">
+                <span class="text-muted">Line total</span>
+                <strong class="fs-5" id="line-total">৳0.00</strong>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save changes</button>
     </div>
-    <div class="mb-3">
-        <label asp-for="UnitOfMeasure" class="form-label"></label>
-        <select asp-for="UnitOfMeasure" asp-items="Html.GetEnumSelectList<UnitOfMeasure>()" class="form-select"></select>
-        <span asp-validation-for="UnitOfMeasure" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Quantity" class="form-label"></label>
-        <input asp-for="Quantity" class="form-control" />
-        <span asp-validation-for="Quantity" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Rate" class="form-label"></label>
-        <input asp-for="Rate" class="form-control" />
-        <span asp-validation-for="Rate" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Category" class="form-label"></label>
-        <input asp-for="Category" class="form-control" />
-        <span asp-validation-for="Category" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/work-group-picker.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const quantity = document.querySelector('#Quantity');
+            const rate = document.querySelector('#Rate');
+            const description = document.querySelector('#Description');
+            const total = document.querySelector('#line-total');
+            const count = document.querySelector('#description-count');
+            const money = new Intl.NumberFormat('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            const updateTotal = () => {
+                const amount = (Number(quantity.value) || 0) * (Number(rate.value) || 0);
+                total.textContent = `৳${money.format(amount)}`;
+            };
+            const updateCount = () => count.textContent = description.value.length;
+
+            quantity.addEventListener('input', updateTotal);
+            rate.addEventListener('input', updateTotal);
+            description.addEventListener('input', updateCount);
+            updateTotal();
+            updateCount();
+        })();
+    </script>
+}

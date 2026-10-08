@@ -23,7 +23,8 @@ public class GetBoqItemByIdQueryHandler : IRequestHandler<GetBoqItemByIdQuery, B
     public async Task<BoqItemDto?> Handle(GetBoqItemByIdQuery request, CancellationToken cancellationToken)
     {
         var item = await _unitOfWork.Repository<BoqItem>().Query()
-            .Include(x => x.Project)
+            .Include(x => x.Boq).ThenInclude(x => x.Project)
+            .Include(x => x.WorkGroup)
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         return item is null ? null : _mapper.Map<BoqItemDto>(item);
     }

@@ -25,14 +25,12 @@ public class UpdateBoqItemCommandHandler : IRequestHandler<UpdateBoqItemCommand,
             return false;
         }
 
-        item.ItemCode = request.Dto.ItemCode;
         item.Description = request.Dto.Description;
         item.UnitOfMeasure = request.Dto.UnitOfMeasure;
         item.Quantity = request.Dto.Quantity;
         item.Rate = request.Dto.Rate;
-        item.Category = request.Dto.Category;
-        item.ProjectId = request.Dto.ProjectId;
-        item.Amount = item.Quantity * item.Rate;
+        item.BoqId = request.Dto.BoqId;
+        item.WorkGroupId = request.Dto.WorkGroupId;
 
         repository.Update(item);
         await _unitOfWork.SaveChangesAsync();
