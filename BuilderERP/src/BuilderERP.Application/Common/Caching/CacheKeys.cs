@@ -17,6 +17,15 @@ public interface IInvalidatesFeatures
 }
 
 /// <summary>
+/// Allows an explicit user refresh to skip a cached value while still writing
+/// the newly generated response back under the normal cache key.
+/// </summary>
+public interface IBypassesCacheRead
+{
+    bool BypassCacheRead { get; }
+}
+
+/// <summary>
 /// Builds Redis cache keys grouped by feature (e.g. "Customers", "RunningBills").
 /// Each feature has a version counter; commands bump it so every cached query
 /// under that feature is invalidated at once, without tracking individual keys.

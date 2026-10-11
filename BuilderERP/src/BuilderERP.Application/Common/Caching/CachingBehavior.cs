@@ -42,7 +42,8 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
             var version = await CacheKeys.GetFeatureVersionAsync(_cache, feature, cancellationToken);
             cacheKey = CacheKeys.BuildQueryKey(feature, version, requestType.Name, request);
 
-            var cached = await _cache.GetStringAsync(cacheKey, cancellationToken);
+            var bypassCacheRead = request is IBypassesCacheRead { BypassCacheRead: true };
+            var cached = bypassCacheRead ? null : await _cache.GetStringAsync(cacheKey, cancellationToken);
             if (cached is not null)
             {
                 var deserialized = JsonSerializer.Deserialize<TResponse>(cached);
