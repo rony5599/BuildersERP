@@ -44,16 +44,198 @@
     </div>
 </form>
 
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-primary border-4"><div class="card-body"><div class="text-muted small">PO Requisitions</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.PurchaseRequisitionAmount.ToString("N0")</strong><span class="badge bg-primary">@Model.PurchaseRequisitionCount docs</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-success border-4"><div class="card-body"><div class="text-muted small">Purchase Orders</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.PurchaseOrderAmount.ToString("N0")</strong><span class="badge bg-success">@Model.PurchaseOrderCount docs</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-info border-4"><div class="card-body"><div class="text-muted small">EWO Requisitions</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.EwoRequisitionAmount.ToString("N0")</strong><span class="badge bg-info text-dark">@Model.EwoRequisitionCount docs</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-warning border-4"><div class="card-body"><div class="text-muted small">Engineer Work Orders</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.EwoAmount.ToString("N0")</strong><span class="badge bg-warning text-dark">@Model.EwoCount docs</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-secondary border-4"><div class="card-body"><div class="text-muted small">Cash PO Requisitions</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.CashRequisitionAmount.ToString("N0")</strong><span class="badge bg-secondary">@Model.CashRequisitionCount docs</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-danger border-4"><div class="card-body"><div class="text-muted small">Cash Purchase Orders</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.CashPurchaseOrderAmount.ToString("N0")</strong><span class="badge bg-danger">@Model.CashPurchaseOrderCount docs</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-success border-4"><div class="card-body"><div class="text-muted small">PO Bills</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.PoBillAmount.ToString("N0")</strong><span class="badge bg-success">@Model.PoBillCount bills</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-warning border-4"><div class="card-body"><div class="text-muted small">EWO Bills (Net Payable)</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.EwoBillAmount.ToString("N0")</strong><span class="badge bg-warning text-dark">@Model.EwoBillCount bills</span></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="card h-100 border-start border-danger border-4"><div class="card-body"><div class="text-muted small">Cash PO Bills</div><div class="d-flex justify-content-between align-items-end"><strong class="h4 mb-0">@Model.CashPoBillAmount.ToString("N0")</strong><span class="badge bg-danger">@Model.CashPoBillCount bills</span></div></div></div></div>
+<div class="row g-3 mb-4 procurement-kpi-grid">
+    <div class="col-md-4">
+        <div class="d-grid gap-3 h-100">
+            <div class="procurement-kpi po-req"><i class="bi bi-clipboard-check procurement-kpi-icon"></i><div class="procurement-kpi-title">PO Requisitions</div><div class="procurement-kpi-value">@Model.PurchaseRequisitionAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.PurchaseRequisitionCount docs</span></div>
+            <div class="procurement-kpi po-order"><i class="bi bi-cart-check procurement-kpi-icon"></i><div class="procurement-kpi-title">Purchase Orders</div><div class="procurement-kpi-value">@Model.PurchaseOrderAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.PurchaseOrderCount docs</span></div>
+            <div class="procurement-kpi po-bill"><i class="bi bi-receipt procurement-kpi-icon"></i><div class="procurement-kpi-title">PO Bills</div><div class="procurement-kpi-value">@Model.PoBillAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.PoBillCount bills</span></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="d-grid gap-3 h-100">
+            <div class="procurement-kpi ewo-req"><i class="bi bi-file-earmark-text procurement-kpi-icon"></i><div class="procurement-kpi-title">EWO Requisitions</div><div class="procurement-kpi-value">@Model.EwoRequisitionAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.EwoRequisitionCount docs</span></div>
+            <div class="procurement-kpi ewo-order"><i class="bi bi-tools procurement-kpi-icon"></i><div class="procurement-kpi-title">Engineer Work Orders</div><div class="procurement-kpi-value">@Model.EwoAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.EwoCount docs</span></div>
+            <div class="procurement-kpi ewo-bill"><i class="bi bi-receipt-cutoff procurement-kpi-icon"></i><div class="procurement-kpi-title">EWO Bills (Net Payable)</div><div class="procurement-kpi-value">@Model.EwoBillAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.EwoBillCount bills</span></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="d-grid gap-3 h-100">
+            <div class="procurement-kpi cash-req"><i class="bi bi-cash-coin procurement-kpi-icon"></i><div class="procurement-kpi-title">Cash PO Requisitions</div><div class="procurement-kpi-value">@Model.CashRequisitionAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.CashRequisitionCount docs</span></div>
+            <div class="procurement-kpi cash-order"><i class="bi bi-bag-check procurement-kpi-icon"></i><div class="procurement-kpi-title">Cash Purchase Orders</div><div class="procurement-kpi-value">@Model.CashPurchaseOrderAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.CashPurchaseOrderCount docs</span></div>
+            <div class="procurement-kpi cash-bill"><i class="bi bi-wallet2 procurement-kpi-icon"></i><div class="procurement-kpi-title">Cash PO Bills</div><div class="procurement-kpi-value">@Model.CashPoBillAmount.ToString("N0")</div><span class="procurement-kpi-count">@Model.CashPoBillCount bills</span></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .procurement-kpi {
+        position: relative;
+        min-height: 150px;
+        overflow: hidden;
+        padding: 1.15rem 1.2rem;
+        border-radius: 1rem;
+        color: #fff;
+        box-shadow: 0 .65rem 1.35rem rgba(31, 45, 61, .16);
+        isolation: isolate;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .procurement-kpi::after {
+        content: "";
+        position: absolute;
+        right: -35px;
+        bottom: -55px;
+        width: 145px;
+        height: 145px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.13);
+        z-index: -1;
+    }
+    .procurement-kpi:hover { transform: translateY(-3px); box-shadow: 0 .9rem 1.65rem rgba(31, 45, 61, .22); }
+    .procurement-kpi-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        margin-bottom: .75rem;
+        border-radius: 14px;
+        background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.18));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 .3rem .65rem rgba(0,0,0,.12);
+        font-size: 1.45rem;
+        text-shadow: 0 1px 2px rgba(0,0,0,.12);
+    }
+    .procurement-kpi-title { font-size: .82rem; font-weight: 600; opacity: .9; }
+    .procurement-kpi-value { margin-top: .12rem; font-size: 1.55rem; font-weight: 750; line-height: 1.15; }
+    .procurement-kpi-count {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        padding: .28rem .6rem;
+        border: 1px solid rgba(255,255,255,.24);
+        border-radius: 999px;
+        background: rgba(255,255,255,.2);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.24);
+        font-size: .72rem;
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+    }
+    .po-req { background: linear-gradient(145deg, #69b9ff, #3294e8); }
+    .po-order { background: linear-gradient(145deg, #338fea, #1768c5); }
+    .po-bill { background: linear-gradient(145deg, #185db8, #0b347f); }
+    .ewo-req { background: linear-gradient(145deg, #ffd86a, #f2ad22); color:#3d3000; }
+    .ewo-order { background: linear-gradient(145deg, #f5ae2b, #dc7414); }
+    .ewo-bill { background: linear-gradient(145deg, #c9680e, #823600); }
+    .cash-req { background: linear-gradient(145deg, #f58b9a, #dc6174); }
+    .cash-order { background: linear-gradient(145deg, #da5268, #b72c45); }
+    .cash-bill { background: linear-gradient(145deg, #a72440, #67112a); }
+
+    .procurement-flow .nav-link { color: var(--bs-secondary-color); font-weight: 600; }
+    .procurement-flow .nav-link.active { color: var(--bs-primary); }
+    .procurement-flow-step {
+        min-width: 0;
+        padding: 1rem !important;
+        border: 1px solid transparent;
+        border-radius: .75rem;
+        box-shadow: 0 .2rem .65rem rgba(33, 37, 41, .08);
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .procurement-flow-step:hover { transform: translateY(-2px); box-shadow: 0 .35rem .9rem rgba(33, 37, 41, .13); }
+    .procurement-flow-step .text-uppercase { font-weight: 700; letter-spacing: .04em; }
+    .procurement-flow-arrow { color: var(--bs-secondary-color); font-size: 1.2rem; }
+    .procurement-flow-amount { font-size: 1.15rem; font-weight: 700; text-decoration: none; }
+    .procurement-flow-amount:hover { text-decoration: underline; }
+
+    /* All: neutral progression across the combined workflow. */
+    #flow-all .procurement-flow-step:nth-child(1) { background:#f8f9fa; border-color:#dee2e6; }
+    #flow-all .procurement-flow-step:nth-child(3) { background:#e9ecef; border-color:#ced4da; }
+    #flow-all .procurement-flow-step:nth-child(5) { background:#495057; border-color:#495057; color:#fff; }
+    #flow-all .procurement-flow-step:nth-child(5) .text-muted,
+    #flow-all .procurement-flow-step:nth-child(5) .procurement-flow-amount { color:#fff !important; }
+
+    /* PO: light blue requisition, stronger blue order, deep blue bill. */
+    #flow-po .procurement-flow-step:nth-child(1) { background:#e7f1ff; border-color:#b6d4fe; }
+    #flow-po .procurement-flow-step:nth-child(3) { background:#6ea8fe; border-color:#3d8bfd; color:#052c65; }
+    #flow-po .procurement-flow-step:nth-child(5) { background:#0d6efd; border-color:#0a58ca; color:#fff; }
+    #flow-po .procurement-flow-step:nth-child(1) .procurement-flow-amount { color:#0a58ca; }
+    #flow-po .procurement-flow-step:nth-child(3) .text-muted,
+    #flow-po .procurement-flow-step:nth-child(3) .procurement-flow-amount { color:#052c65 !important; }
+    #flow-po .procurement-flow-step:nth-child(5) .text-muted,
+    #flow-po .procurement-flow-step:nth-child(5) .procurement-flow-amount { color:#fff !important; }
+
+    /* EWO: light amber requisition, gold order, deep amber bill. */
+    #flow-ewo .procurement-flow-step:nth-child(1) { background:#fff3cd; border-color:#ffecb5; }
+    #flow-ewo .procurement-flow-step:nth-child(3) { background:#ffca2c; border-color:#ffc107; color:#3d3000; }
+    #flow-ewo .procurement-flow-step:nth-child(5) { background:#a95600; border-color:#854500; color:#fff; }
+    #flow-ewo .procurement-flow-step:nth-child(1) .procurement-flow-amount { color:#854500; }
+    #flow-ewo .procurement-flow-step:nth-child(3) .text-muted,
+    #flow-ewo .procurement-flow-step:nth-child(3) .procurement-flow-amount { color:#3d3000 !important; }
+    #flow-ewo .procurement-flow-step:nth-child(5) .text-muted,
+    #flow-ewo .procurement-flow-step:nth-child(5) .procurement-flow-amount { color:#fff !important; }
+
+    /* Cash PO: light red requisition, rose order, deep red bill. */
+    #flow-cpo .procurement-flow-step:nth-child(1) { background:#f8d7da; border-color:#f1aeb5; }
+    #flow-cpo .procurement-flow-step:nth-child(3) { background:#ea868f; border-color:#e35d6a; color:#58151c; }
+    #flow-cpo .procurement-flow-step:nth-child(5) { background:#b02a37; border-color:#842029; color:#fff; }
+    #flow-cpo .procurement-flow-step:nth-child(1) .procurement-flow-amount { color:#842029; }
+    #flow-cpo .procurement-flow-step:nth-child(3) .text-muted,
+    #flow-cpo .procurement-flow-step:nth-child(3) .procurement-flow-amount { color:#58151c !important; }
+    #flow-cpo .procurement-flow-step:nth-child(5) .text-muted,
+    #flow-cpo .procurement-flow-step:nth-child(5) .procurement-flow-amount { color:#fff !important; }
+
+    @@media (max-width: 767.98px) {
+        .procurement-flow-arrow { transform: rotate(90deg); }
+        .procurement-flow-step { width: 100%; }
+    }
+</style>
+
+<div class="card procurement-flow mb-4">
+    <div class="card-header bg-white pb-0">
+        <ul class="nav nav-tabs border-bottom-0" id="procurement-flow-tabs" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="flow-all-tab" data-bs-toggle="tab" data-bs-target="#flow-all" type="button" role="tab" aria-controls="flow-all" aria-selected="true">All</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="flow-po-tab" data-bs-toggle="tab" data-bs-target="#flow-po" type="button" role="tab" aria-controls="flow-po" aria-selected="false">PO</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="flow-ewo-tab" data-bs-toggle="tab" data-bs-target="#flow-ewo" type="button" role="tab" aria-controls="flow-ewo" aria-selected="false">Engineer Work Order</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="flow-cpo-tab" data-bs-toggle="tab" data-bs-target="#flow-cpo" type="button" role="tab" aria-controls="flow-cpo" aria-selected="false">Cash PO</button></li>
+        </ul>
+    </div>
+    <div class="card-body tab-content" id="procurement-flow-content">
+        <div class="tab-pane fade show active" id="flow-all" role="tabpanel" aria-labelledby="flow-all-tab" tabindex="0">
+            <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-3">
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Requisitions</div><div class="small mb-1">@(Model.PurchaseRequisitionCount + Model.EwoRequisitionCount + Model.CashRequisitionCount) documents</div><a class="procurement-flow-amount" href="#project-wise-report" title="View the project-wise breakdown">@((Model.PurchaseRequisitionAmount + Model.EwoRequisitionAmount + Model.CashRequisitionAmount).ToString("N0"))</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Orders</div><div class="small mb-1">@(Model.PurchaseOrderCount + Model.EwoCount + Model.CashPurchaseOrderCount) documents</div><a class="procurement-flow-amount" href="#project-wise-report" title="View the project-wise breakdown">@Model.TotalCommittedAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Bills</div><div class="small mb-1">@(Model.PoBillCount + Model.EwoBillCount + Model.CashPoBillCount) documents</div><a class="procurement-flow-amount" href="#project-wise-report" title="View the project-wise breakdown">@Model.TotalBilledAmount.ToString("N0")</a></div>
+            </div>
+            <div class="small text-muted text-center mt-2">Choose a document type tab to open its filtered lists.</div>
+        </div>
+        <div class="tab-pane fade" id="flow-po" role="tabpanel" aria-labelledby="flow-po-tab" tabindex="0">
+            <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-3">
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Requisitions</div><div class="small mb-1">@Model.PurchaseRequisitionCount documents</div><a class="procurement-flow-amount" asp-controller="PurchaseRequisitions" asp-action="Index" asp-route-projectId="@Model.ProjectId" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.PurchaseRequisitionAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Orders</div><div class="small mb-1">@Model.PurchaseOrderCount documents</div><a class="procurement-flow-amount" asp-controller="PurchaseOrders" asp-action="Index" asp-route-orderDateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-orderDateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.PurchaseOrderAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Bills</div><div class="small mb-1">@Model.PoBillCount documents</div><a class="procurement-flow-amount" asp-controller="PoBills" asp-action="Index" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.PoBillAmount.ToString("N0")</a></div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="flow-ewo" role="tabpanel" aria-labelledby="flow-ewo-tab" tabindex="0">
+            <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-3">
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Requisitions</div><div class="small mb-1">@Model.EwoRequisitionCount documents</div><a class="procurement-flow-amount" asp-controller="EngineerWorkOrderRequisitions" asp-action="Index" asp-route-projectId="@Model.ProjectId" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.EwoRequisitionAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Orders</div><div class="small mb-1">@Model.EwoCount documents</div><a class="procurement-flow-amount" asp-controller="EngineerWorkOrders" asp-action="Index" asp-route-projectId="@Model.ProjectId" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.EwoAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Bills</div><div class="small mb-1">@Model.EwoBillCount documents</div><a class="procurement-flow-amount" asp-controller="EwoBills" asp-action="Index" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.EwoBillAmount.ToString("N0")</a></div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="flow-cpo" role="tabpanel" aria-labelledby="flow-cpo-tab" tabindex="0">
+            <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-3">
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Requisitions</div><div class="small mb-1">@Model.CashRequisitionCount documents</div><a class="procurement-flow-amount" asp-controller="CashRequisitions" asp-action="Index" asp-route-projectId="@Model.ProjectId" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.CashRequisitionAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Orders</div><div class="small mb-1">@Model.CashPurchaseOrderCount documents</div><a class="procurement-flow-amount" asp-controller="CashPurchaseOrders" asp-action="Index" asp-route-projectId="@Model.ProjectId" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.CashPurchaseOrderAmount.ToString("N0")</a></div>
+                <i class="bi bi-arrow-right procurement-flow-arrow align-self-center" aria-hidden="true"></i>
+                <div class="procurement-flow-step flex-fill text-center p-2"><div class="text-muted small text-uppercase">Bills</div><div class="small mb-1">@Model.CashPoBillCount documents</div><a class="procurement-flow-amount" asp-controller="CashPoBills" asp-action="Index" asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")" asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@Model.CashPoBillAmount.ToString("N0")</a></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="card mb-4">
@@ -64,9 +246,21 @@
         </span>
     </div>
     <div class="card-body">
-        <div style="position:relative; min-height:360px">
-            <canvas id="boq-commitment-chart" aria-label="Project-wise BOQ budget compared with PO, EWO and CPO committed amount" role="img"></canvas>
-        </div>
+        @foreach (var row in Model.Rows.OrderByDescending(x => x.BudgetUtilizationPercent))
+        {
+            var utilizationWidth = Math.Min(row.BudgetUtilizationPercent, 100m);
+            var utilizationWidthCss = utilizationWidth.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+            <div class="mb-3">
+                <div class="d-flex flex-wrap justify-content-between gap-2 small mb-1">
+                    <span><strong>@row.ProjectCode</strong> <span class="text-muted">@row.ProjectName</span></span>
+                    <span><strong class="@(row.IsBudgetExceeded ? "text-danger" : "")">@row.BudgetUtilizationPercent.ToString("N1")%</strong> <span class="text-muted">@row.TotalCommittedAmount.ToString("N0") / @row.BoqBudgetAmount.ToString("N0")</span></span>
+                </div>
+                <div class="progress" style="height:12px" role="progressbar" aria-label="@row.ProjectName budget utilization" aria-valuenow="@utilizationWidthCss" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar @(row.IsBudgetExceeded ? "bg-danger" : row.BudgetUtilizationPercent >= 80 ? "bg-warning" : "bg-success")" style="width:@utilizationWidthCss%"></div>
+                </div>
+            </div>
+        }
+        @if (Model.Rows.Count == 0) { <div class="text-center text-muted py-3">No projects found.</div> }
     </div>
     <div class="table-responsive">
         <table class="table table-sm align-middle mb-0">
@@ -91,14 +285,14 @@
 
 <div class="card mb-4">
     <div class="card-header bg-white">
-        <strong>Month-wise PO, EWO, CPO and PIE</strong>
-        <span class="float-end text-muted">PIE = PO + EWO + CPO</span>
+        <strong>Monthly commitments</strong>
+        <span class="float-end text-muted">PO + EWO + Cash PO</span>
     </div>
     <div class="card-body">
         @if (Model.MonthlyCommitments.Count > 0)
         {
             <div style="position:relative; min-height:360px">
-                <canvas id="monthly-procurement-chart" aria-label="Month-wise procurement amount bar chart" role="img"></canvas>
+                <canvas id="monthly-procurement-chart" aria-label="Monthly stacked PO, EWO and Cash PO commitments" role="img"></canvas>
             </div>
         }
         else
@@ -137,23 +331,46 @@
                 pie = x.PieAmount
             })));
             const context = document.getElementById('monthly-procurement-chart');
+            const stackTotals = {
+                id: 'stackTotals',
+                afterDatasetsDraw(chart) {
+                    const { ctx } = chart;
+                    ctx.save();
+                    ctx.fillStyle = '#495057';
+                    ctx.font = '600 12px system-ui, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    months.forEach((month, index) => {
+                        const bars = chart.data.datasets
+                            .map((_, datasetIndex) => chart.getDatasetMeta(datasetIndex).data[index])
+                            .filter(Boolean);
+                        if (bars.length === 0) return;
+                        const top = Math.min(...bars.map(bar => bar.y));
+                        ctx.fillText(Number(month.pie).toLocaleString(), bars[0].x, top - 6);
+                    });
+                    ctx.restore();
+                }
+            };
             new Chart(context, {
                 type: 'bar',
                 data: {
                     labels: months.map(x => x.label),
                     datasets: [
-                        { label: 'PO', data: months.map(x => x.po), backgroundColor: '#198754' },
-                        { label: 'EWO', data: months.map(x => x.ewo), backgroundColor: '#ffc107' },
-                        { label: 'CPO', data: months.map(x => x.cpo), backgroundColor: '#dc3545' },
-                        { label: 'PIE (Total)', data: months.map(x => x.pie), backgroundColor: '#0d6efd' }
+                        { label: 'PO', data: months.map(x => x.po), backgroundColor: '#198754', stack: 'commitments' },
+                        { label: 'EWO', data: months.map(x => x.ewo), backgroundColor: '#ffc107', stack: 'commitments' },
+                        { label: 'Cash PO', data: months.map(x => x.cpo), backgroundColor: '#dc3545', stack: 'commitments' }
                     ]
                 },
+                plugins: [stackTotals],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
+                    layout: { padding: { top: 24 } },
                     scales: {
+                        x: { stacked: true },
                         y: {
+                            stacked: true,
                             beginAtZero: true,
                             ticks: { callback: value => Number(value).toLocaleString() },
                             title: { display: true, text: 'Amount' }
@@ -168,37 +385,7 @@
     </script>
 }
 
-<script>
-    (() => {
-        const projects = @Html.Raw(JsonSerializer.Serialize(Model.Rows.Select(x => new
-        {
-            label = x.ProjectCode,
-            boq = x.BoqBudgetAmount,
-            committed = x.TotalCommittedAmount,
-            exceeded = x.IsBudgetExceeded
-        })));
-        const context = document.getElementById('boq-commitment-chart');
-        new Chart(context, {
-            type: 'bar',
-            data: {
-                labels: projects.map(x => x.label),
-                datasets: [
-                    { label: 'BOQ Budget', data: projects.map(x => x.boq), backgroundColor: '#0d6efd' },
-                    { label: 'PO + EWO + CPO', data: projects.map(x => x.committed), backgroundColor: projects.map(x => x.exceeded ? '#dc3545' : '#198754') }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                scales: { y: { beginAtZero: true, ticks: { callback: value => Number(value).toLocaleString() }, title: { display: true, text: 'Amount' } } },
-                plugins: { tooltip: { callbacks: { label: item => `${item.dataset.label}: ${Number(item.raw).toLocaleString()}` } } }
-            }
-        });
-    })();
-</script>
-
-<div class="card">
+<div class="card" id="project-wise-report">
     <div class="card-header bg-white"><strong>Project-wise report</strong></div>
     <div class="table-responsive">
         <table class="table table-sm table-hover align-middle mb-0">
