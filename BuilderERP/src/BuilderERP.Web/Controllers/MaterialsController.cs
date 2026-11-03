@@ -2,6 +2,8 @@ using BuilderERP.Application.DTOs;
 using BuilderERP.Application.Features.ItemCategories;
 using BuilderERP.Application.Features.Materials;
 using BuilderERP.Application.Features.Projects;
+using BuilderERP.Application.Features.Reports;
+using BuilderERP.Application.Features.Reports.Export;
 using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using BuilderERP.Web.Extensions;
@@ -9,21 +11,37 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Globalization;
 
 namespace BuilderERP.Web.Controllers;
 
 [PermissionAuthorize(PermissionNames.MaterialView)]
 public class MaterialsController : Controller
 {
+    private static readonly IReadOnlyList<ReportColumn> ExcelColumns =
+    [
+        new("Code", "Code"),
+        new("Name", "Name"),
+        new("Category", "Category"),
+        new("UOM", "UOM"),
+        new("ReorderLevel", "Reorder Level")
+    ];
+
     private readonly IMediator _mediator;
     private readonly IValidator<CreateMaterialDto> _createValidator;
     private readonly IValidator<UpdateMaterialDto> _updateValidator;
+    private readonly ExcelReportExporter _excelExporter;
 
-    public MaterialsController(IMediator mediator, IValidator<CreateMaterialDto> createValidator, IValidator<UpdateMaterialDto> updateValidator)
+    public MaterialsController(
+        IMediator mediator,
+        IValidator<CreateMaterialDto> createValidator,
+        IValidator<UpdateMaterialDto> updateValidator,
+        ExcelReportExporter excelExporter)
     {
         _mediator = mediator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _excelExporter = excelExporter;
     }
 
     public async Task<IActionResult> Index(long? projectId, int page = 1, int pageSize = 25, string? search = null, long? categoryId = null, bool? isActive = null)
@@ -45,6 +63,33 @@ public class MaterialsController : Controller
         var projects = await _mediator.Send(new GetAllProjectsQuery(PageSize: int.MaxValue));
         ViewBag.Projects = new SelectList(projects.Items, "Id", "Name", projectId);
         return View(materials);
+    }
+
+    public async Task<IActionResult> ExportExcel(
+        long? projectId,
+        string? search = null,
+        long? categoryId = null,
+        bool? isActive = null,
+        CancellationToken cancellationToken = default)
+    {
+        var materials = await _mediator.Send(
+            new GetAllMaterialsQuery(projectId, PageSize: int.MaxValue, SearchTerm: search, CategoryId: categoryId, IsActive: isActive),
+            cancellationToken);
+
+        var rows = materials.Items.Select(material => new ReportRow(new Dictionary<string, string?>
+        {
+            ["Code"] = material.MaterialCode,
+            ["Name"] = material.Name,
+            ["Category"] = material.CategoryName,
+            ["UOM"] = material.UnitOfMeasure.ToString(),
+            ["ReorderLevel"] = material.ReorderLevel.ToString("0.##", CultureInfo.InvariantCulture)
+        })).ToList();
+
+        var bytes = _excelExporter.Export("Materials", ExcelColumns, rows);
+        return File(
+            bytes,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "materials.xlsx");
     }
 
     [PermissionAuthorize(PermissionNames.MaterialManage)]

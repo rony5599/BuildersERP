@@ -10,6 +10,17 @@
     var hasFilters = !string.IsNullOrWhiteSpace(search) || categoryId.HasValue || isActive.HasValue;
 }
 
+<div class="d-flex justify-content-end mb-2">
+    <a asp-action="ExportExcel"
+       asp-route-projectId="@ViewBag.SelectedProjectId"
+       asp-route-search="@search"
+       asp-route-categoryId="@categoryId"
+       asp-route-isActive="@isActive"
+       class="btn btn-outline-success">
+        <i class="bi bi-file-earmark-excel me-1"></i>Download Excel
+    </a>
+</div>
+
 <div class="card mb-3">
     <div class="card-body">
         <form asp-action="Index" method="get" class="row gy-3 gx-4 align-items-end grid-search-form">
