@@ -47,6 +47,12 @@
     font-size: .84rem;
 }
 
+/* Keep row action menus inside the responsive table's scroll viewport.
+   Without this space, the horizontal scrollbar clips the expanded menu. */
+.ewo-table-responsive:has(.ewo-actions-menu.show) {
+    padding-bottom: 21rem;
+}
+
 .ewo-table { margin: 0; }
 .ewo-table thead th {
     background: #f8fafc;
