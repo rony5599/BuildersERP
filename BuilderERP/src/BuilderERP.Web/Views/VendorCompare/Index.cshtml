@@ -1,0 +1,166 @@
+@model VendorCompareViewModel
+@using BuilderERP.Domain.Enums
+@using BuilderERP.Shared.Authorization
+@using BuilderERP.Shared.Constants
+@{
+    ViewData["Title"] = "Compare Vendor Quotations";
+    var canManage = User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.VendorQuotationManage);
+    var lowestTotal = Model.Quotations.Count > 0 ? Model.Quotations.Min(q => q.QuotedAmount) : 0m;
+}
+
+<style>
+    .compare-page { font-size: .875rem; }
+    .compare-filter, .vendor-card, .comparison-wrap { background: #fff; border: 1px solid #dee2e6; border-radius: .65rem; }
+    .compare-label { color: #667085; font-size: .72rem; font-weight: 600; text-transform: uppercase; }
+    .vendor-card { min-width: 245px; max-width: 300px; flex: 1; }
+    .vendor-card.best { border-color: #20c997; box-shadow: inset 0 3px #20c997; }
+    .vendor-total { font-size: 1.25rem; font-weight: 700; }
+    .comparison-wrap { overflow-x: auto; }
+    .comparison-table { min-width: 900px; margin-bottom: 0; }
+    .comparison-table th { white-space: nowrap; font-size: .72rem; text-transform: uppercase; color: #667085; }
+    .comparison-table td { vertical-align: middle; }
+    .price-cell { min-width: 135px; }
+    .lowest-cell { background: #eaf9f0 !important; color: #087f3e; font-weight: 700; }
+    .not-quoted { color: #98a2b3; font-style: italic; }
+    .metric-row td { background: #fafafa; padding-top: .45rem; padding-bottom: .45rem; }
+    @@media print {
+        .no-print, header, nav, footer { display: none !important; }
+        .comparison-wrap { overflow: visible; border: 0; }
+        .compare-page { font-size: 10px; }
+    }
+</style>
+
+<div class="compare-page">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Compare Vendor Quotations</h1>
+        <a asp-controller="VendorQuotations" asp-action="Index" class="btn btn-outline-secondary no-print">Back</a>
+    </div>
+
+    <form method="get" class="compare-filter p-3 mb-4 no-print" id="rfqForm">
+        <div class="row g-3 align-items-end">
+            <div class="col-lg-4">
+                <label class="form-label compare-label" for="rfqId">RFQ / Requisition</label>
+                <select class="form-select" id="rfqId" name="rfqId" onchange="this.form.submit()">
+                    @if (!Model.Rfqs.Any()) { <option>No RFQs available</option> }
+                    @foreach (var rfq in Model.Rfqs)
+                    {
+                        <option value="@rfq.Id" selected="@(rfq.Id == Model.SelectedRfqId)">@rfq.RfqNumber - @rfq.RequisitionNumber</option>
+                    }
+                </select>
+            </div>
+            <div class="col-sm-4 col-lg-2">
+                <label class="form-label compare-label">RFQ Date</label>
+                <input class="form-control" value="@(Model.Rfq?.IssueDate.ToString("dd MMM yyyy") ?? "-")" readonly />
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <label class="form-label compare-label">Quotations Received</label>
+                <input class="form-control" value="@Model.Quotations.Count vendor(s)" readonly />
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <label class="form-label compare-label">Items</label>
+                <input class="form-control" value="@(Model.Rfq?.Details.Count ?? 0) material(s)" readonly />
+            </div>
+        </div>
+    </form>
+
+    @if (Model.Rfq is null)
+    {
+        <div class="alert alert-info">No RFQ is available for comparison.</div>
+    }
+    else if (!Model.Quotations.Any())
+    {
+        <div class="alert alert-info">No active vendor quotations have been received for this RFQ.</div>
+    }
+    else
+    {
+        <h2 class="h6 mb-2">Vendor Summary</h2>
+        <div class="d-flex gap-3 overflow-auto pb-3 mb-3">
+            @foreach (var quote in Model.Quotations)
+            {
+                var isBest = quote.QuotedAmount == lowestTotal;
+                <section class="vendor-card p-3 @(isBest ? "best" : "")">
+                    <div class="d-flex justify-content-between gap-2">
+                        <div><strong>@quote.SupplierName</strong><div class="text-muted small">@quote.QuotationNumber</div></div>
+                        @if (isBest) { <span class="badge bg-success align-self-start">L1</span> }
+                    </div>
+                    <div class="vendor-total mt-3">BDT @quote.QuotedAmount.ToString("N2")</div>
+                    <div class="small @(isBest ? "text-success" : "text-muted")">@(isBest ? "Lowest complete quotation" : $"+{quote.QuotedAmount - lowestTotal:N2} vs L1")</div>
+                    <div class="row g-2 mt-2 small">
+                        <div class="col-6"><span class="text-muted">Quotation Date</span><br />@quote.QuotationDate.ToString("dd MMM yyyy")</div>
+                        <div class="col-6"><span class="text-muted">Delivery</span><br />@quote.DeliveryDays days</div>
+                        <div class="col-6"><span class="text-muted">Items Quoted</span><br />@quote.Details.Count / @Model.Rfq.Details.Count</div>
+                        <div class="col-6"><span class="text-muted">Status</span><br /><span class="badge @(quote.Status == VendorQuotationStatus.Selected ? "bg-success" : "bg-info text-dark")">@quote.Status</span></div>
+                    </div>
+                    @if (canManage && quote.Status != VendorQuotationStatus.Selected)
+                    {
+                        <form asp-action="SelectWinner" method="post" class="mt-3 no-print">
+                            <input type="hidden" name="id" value="@quote.Id" />
+                            <input type="hidden" name="rfqId" value="@Model.SelectedRfqId" />
+                            <button class="btn btn-sm btn-outline-primary w-100" onclick="return confirm('Award this quotation and reject the other quotations?')">Award all quoted items</button>
+                        </form>
+                    }
+                </section>
+            }
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+            <h2 class="h6 mb-0">Item-wise Comparison</h2>
+            <div class="d-flex align-items-center gap-3 no-print">
+                <label><input type="checkbox" id="showDifference" checked /> Show % above lowest</label>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">Print</button>
+            </div>
+        </div>
+
+        <div class="comparison-wrap">
+            <table class="table table-bordered comparison-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Material</th><th rowspan="2" class="text-end">Qty</th><th rowspan="2">Unit</th>
+                        @foreach (var quote in Model.Quotations) { <th colspan="2" class="text-center">@quote.SupplierName<br /><span class="fw-normal">@quote.QuotationNumber</span></th> }
+                    </tr>
+                    <tr>@foreach (var quote in Model.Quotations) { <th class="text-end">Unit Price</th><th class="text-end">Line Total</th> }</tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Rfq.Details)
+                    {
+                        var offered = Model.Quotations.Select(q => q.Details.FirstOrDefault(d => d.MaterialId == item.MaterialId)).Where(d => d is not null).ToList();
+                        var lowest = offered.Count > 0 ? offered.Min(d => d!.UnitPrice) : 0m;
+                        <tr>
+                            <td><strong>@item.MaterialName</strong>@if (!string.IsNullOrWhiteSpace(item.Specification)) { <div class="small text-muted">@item.Specification</div> }</td>
+                            <td class="text-end">@item.Quantity.ToString("N3")</td><td>@item.UnitOfMeasure</td>
+                            @foreach (var quote in Model.Quotations)
+                            {
+                                var line = quote.Details.FirstOrDefault(d => d.MaterialId == item.MaterialId);
+                                if (line is null)
+                                {
+                                    <td colspan="2" class="text-center not-quoted">Not quoted</td>
+                                }
+                                else
+                                {
+                                    var isLowest = line.UnitPrice == lowest;
+                                    var difference = lowest > 0 ? ((line.UnitPrice - lowest) / lowest) * 100 : 0;
+                                    <td class="text-end price-cell @(isLowest ? "lowest-cell" : "")">@line.UnitPrice.ToString("N2")</td>
+                                    <td class="text-end price-cell @(isLowest ? "lowest-cell" : "")">
+                                        @line.NetAmount.ToString("N2")
+                                        <div class="small @(isLowest ? "text-success" : "text-danger")">@(isLowest ? "Lowest" : $"+{difference:N1}%")</div>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                    <tr class="metric-row"><td colspan="3"><strong>Grand Total</strong></td>@foreach (var q in Model.Quotations) { <td colspan="2" class="text-end fw-bold @(q.QuotedAmount == lowestTotal ? "text-success" : "")">BDT @q.QuotedAmount.ToString("N2")</td> }</tr>
+                    <tr class="metric-row"><td colspan="3">Delivery</td>@foreach (var q in Model.Quotations) { <td colspan="2" class="text-end">@q.DeliveryDays days</td> }</tr>
+                    <tr class="metric-row"><td colspan="3">Items Quoted</td>@foreach (var q in Model.Quotations) { <td colspan="2" class="text-end">@q.Details.Count / @Model.Rfq.Details.Count</td> }</tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById('showDifference')?.addEventListener('change', function () {
+        document.querySelectorAll('.price-cell .small').forEach(x => x.classList.toggle('d-none', !this.checked));
+    });
+</script>
+}
