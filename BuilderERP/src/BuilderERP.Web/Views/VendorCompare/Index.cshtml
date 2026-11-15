@@ -8,6 +8,10 @@
     var lowestTotal = Model.Quotations.Count > 0 ? Model.Quotations.Min(q => q.QuotedAmount) : 0m;
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/multicolumn-dropdown.css" asp-append-version="true" />
+}
+
 <style>
     .compare-page { font-size: .875rem; }
     .compare-filter, .vendor-card, .comparison-wrap { background: #fff; border: 1px solid #dee2e6; border-radius: .65rem; }
@@ -20,6 +24,8 @@
     .comparison-table th { white-space: nowrap; font-size: .72rem; text-transform: uppercase; color: #667085; }
     .comparison-table td { vertical-align: middle; }
     .price-cell { min-width: 135px; }
+    #rfqId-container .multicolumn-dropdown-column:first-child { flex: 0 0 160px; }
+    #rfqId-container .multicolumn-dropdown-column:nth-child(2) { flex: 1; }
     .lowest-cell { background: #eaf9f0 !important; color: #087f3e; font-weight: 700; }
     .not-quoted { color: #98a2b3; font-style: italic; }
     .metric-row td { background: #fafafa; padding-top: .45rem; padding-bottom: .45rem; }
@@ -40,13 +46,35 @@
         <div class="row g-3 align-items-end">
             <div class="col-lg-4">
                 <label class="form-label compare-label" for="rfqId">RFQ / Requisition</label>
-                <select class="form-select" id="rfqId" name="rfqId" onchange="this.form.submit()">
-                    @if (!Model.Rfqs.Any()) { <option>No RFQs available</option> }
-                    @foreach (var rfq in Model.Rfqs)
-                    {
-                        <option value="@rfq.Id" selected="@(rfq.Id == Model.SelectedRfqId)">@rfq.RfqNumber - @rfq.RequisitionNumber</option>
-                    }
-                </select>
+                <div class="multicolumn-dropdown-wrapper">
+                    <div class="multicolumn-dropdown-container" id="rfqId-container">
+                        <input type="hidden" id="rfqId" name="rfqId" value="@Model.SelectedRfqId" />
+                        <div class="multicolumn-dropdown-trigger">
+                            <input type="text"
+                                   class="multicolumn-dropdown-filter form-control"
+                                   placeholder="@(Model.Rfqs.Any() ? "Search RFQ or requisition..." : "No RFQs available")"
+                                   autocomplete="off"
+                                   id="rfqId-filter"
+                                   disabled="@(!Model.Rfqs.Any())" />
+                            <span class="multicolumn-dropdown-icon"><i class="bi bi-chevron-down"></i></span>
+                        </div>
+                        <div class="multicolumn-dropdown-menu" id="rfqId-menu" style="display: none;">
+                            <div class="multicolumn-dropdown-header">
+                                <div class="multicolumn-dropdown-column">RFQ</div>
+                                <div class="multicolumn-dropdown-column">Purchase Requisition</div>
+                            </div>
+                            <div class="multicolumn-dropdown-items">
+                                @foreach (var rfq in Model.Rfqs)
+                                {
+                                    <div class="multicolumn-dropdown-item" data-value="@rfq.Id" tabindex="0">
+                                        <div class="multicolumn-dropdown-column">@rfq.RfqNumber</div>
+                                        <div class="multicolumn-dropdown-column">@rfq.RequisitionNumber</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-sm-4 col-lg-2">
                 <label class="form-label compare-label">RFQ Date</label>
@@ -158,7 +186,15 @@
 </div>
 
 @section Scripts {
+<script src="~/js/multicolumn-dropdown.js" asp-append-version="true"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new MultiColumnDropdown('rfqId-container');
+        document.getElementById('rfqId')?.addEventListener('change', function () {
+            this.form.submit();
+        });
+    });
+
     document.getElementById('showDifference')?.addEventListener('change', function () {
         document.querySelectorAll('.price-cell .small').forEach(x => x.classList.toggle('d-none', !this.checked));
     });
