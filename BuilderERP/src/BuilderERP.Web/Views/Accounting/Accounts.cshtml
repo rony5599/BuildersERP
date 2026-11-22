@@ -1,0 +1,6 @@
+@model IReadOnlyList<BuilderERP.Domain.Entities.LedgerAccount>
+@{ ViewData["Title"] = "Chart of Accounts"; }
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3">Chart of Accounts</h1><a asp-action="Account" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New account</a></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Code</th><th>Account</th><th>Type</th><th>Posting</th><th>Status</th><th></th></tr></thead><tbody>
+@foreach (var a in Model) { <tr><td class="fw-semibold">@a.Code</td><td>@a.Name</td><td>@a.AccountType</td><td>@(a.AllowPosting ? "Yes" : "Group")</td><td>@(a.IsActive ? "Active" : "Inactive")</td><td><a asp-action="Account" asp-route-id="@a.Id" class="btn btn-sm btn-outline-secondary">Edit</a></td></tr> }
+</tbody></table></div></div>

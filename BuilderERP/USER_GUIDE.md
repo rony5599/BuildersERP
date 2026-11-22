@@ -97,6 +97,10 @@ Steps 2–4 don't have to happen in a fixed order relative to each other — cas
 ### Construction Project Management
 **Work Breakdown (WBS) / Gantt Chart → Milestones → BOQ → Daily Progress → Site Photos → Delay Analysis → Budget Lines / Budget vs Actual.** Plan and track construction execution: break the project into WBS tasks (viewable as a Gantt chart), track milestones, manage the Bill of Quantities, log daily site progress with photos, analyze delays, and monitor budget vs. actual spend.
 
+### Accounting
+
+**Chart of Accounts → Journal Vouchers → Trial Balance.** Create posting and group accounts, enter balanced manual vouchers, then post them to the ledger. Draft vouchers do not affect reports. Posting revalidates the complete voucher inside a database transaction. Posted vouchers cannot be edited or deleted; use **Reverse** to create a new, opposite posted entry with a mandatory reason. The Trial Balance reads posted and reversed history through the accounting reporting procedure and can be limited by date.
+
 ### Engineering
 **Drawings → Revisions → Approvals.** Manage design drawings, their revision history, and the approval workflow before they're released for construction use.
 

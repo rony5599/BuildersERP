@@ -428,6 +428,17 @@
                     </ul>
                     </div>
                 }
+                @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingView))
+                {
+                    <div class="nav-section">
+                        <button type="button" class="nav-section-title">Accounting<i class="bi bi-chevron-down nav-section-caret"></i></button>
+                        <ul class="nav flex-column mb-0 nav-section-body">
+                            <li class="nav-item"><a asp-controller="Accounting" asp-action="Accounts" class="@NavClass("Accounting")"><i class="bi bi-diagram-3"></i> Chart of Accounts</a></li>
+                            <li class="nav-item"><a asp-controller="Accounting" asp-action="Journals" class="@NavClass("Accounting")"><i class="bi bi-journal-bookmark"></i> Journal Vouchers</a></li>
+                            <li class="nav-item"><a asp-controller="Accounting" asp-action="TrialBalance" class="@NavClass("Accounting")"><i class="bi bi-balance-scale"></i> Trial Balance</a></li>
+                        </ul>
+                    </div>
+                }
                 @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.WbsTaskView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.MilestoneView)
                     || User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.BoqItemView)

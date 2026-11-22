@@ -41,6 +41,7 @@ The application covers the end-to-end construction/real-estate ERP lifecycle:
 | Procurement | Purchase Orders/Requisitions/Returns, RFQs, Vendor Quotations, Rate Contracts |
 | Inventory | Stocks, Stock Adjustments/Issues/Returns/Transfers, Warehouses |
 | Construction / Project Management | Projects, Milestones, WBS Tasks, Daily Progress, BOQ Items, Budget Lines |
+| Accounting | Chart of Accounts, Journal Vouchers, procedure-based posting and reversal, Trial Balance |
 | Engineering | Drawings, Drawing Approvals/Revisions |
 | Contractor Management | Contractors, Contractor Ledgers, Running Bills |
 | Labor | Workers, Attendance, Overtime, Salaries |

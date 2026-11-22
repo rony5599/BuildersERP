@@ -334,6 +334,10 @@ public static class PermissionNames
     public const string DesignationView = "Designation.View";
     public const string DesignationManage = "Designation.Manage";
 
+    public const string AccountingView = "Accounting.View";
+    public const string AccountingManage = "Accounting.Manage";
+    public const string AccountingPost = "Accounting.Post";
+
     public static readonly IReadOnlyList<(string Name, string Module)> All = new[]
     {
         (CompanyView, "Company"), (CompanyManage, "Company"),
@@ -456,6 +460,7 @@ public static class PermissionNames
         (DeviceApprovalView, "DeviceApproval"), (DeviceApprovalManage, "DeviceApproval"),
         (EmployeeView, "Employee"), (EmployeeManage, "Employee"),
         (DesignationView, "Designation"), (DesignationManage, "Designation"),
+        (AccountingView, "Accounting"), (AccountingManage, "Accounting"), (AccountingPost, "Accounting"),
     };
 
     public static readonly IReadOnlyList<string> AdminGrants = new[]
@@ -580,5 +585,6 @@ public static class PermissionNames
         DeviceApprovalView, DeviceApprovalManage,
         EmployeeView, EmployeeManage,
         DesignationView, DesignationManage,
+        AccountingView, AccountingManage, AccountingPost,
     };
 }

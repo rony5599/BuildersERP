@@ -4626,6 +4626,153 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.ToTable("ItemPriceHistories");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.JournalVoucher", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("CostCenterId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Narration")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("PostedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PostedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ReversalVoucherId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SourceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SourceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("VoucherDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VoucherNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CostCenterId");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ReversalVoucherId");
+
+                    b.HasIndex("VoucherNumber")
+                        .IsUnique();
+
+                    b.HasIndex("SourceType", "SourceId");
+
+                    b.ToTable("JournalVouchers");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.JournalVoucherLine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Credit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Debit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("JournalVoucherId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LedgerAccountId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("LedgerAccountId");
+
+                    b.HasIndex("JournalVoucherId", "LineNumber")
+                        .IsUnique();
+
+                    b.ToTable("JournalVoucherLines", t =>
+                        {
+                            t.HasCheckConstraint("CK_JournalVoucherLine_OneSide", "([Debit] > 0 AND [Credit] = 0) OR ([Credit] > 0 AND [Debit] = 0)");
+                        });
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.LandDocument", b =>
                 {
                     b.Property<long>("Id")
@@ -4890,6 +5037,67 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Leads");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.LedgerAccount", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("AllowPosting")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("LedgerAccounts");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LegalAgreement", b =>
@@ -10769,6 +10977,49 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.JournalVoucher", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.CostCenter", "CostCenter")
+                        .WithMany()
+                        .HasForeignKey("CostCenterId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BuilderERP.Domain.Entities.JournalVoucher", "ReversalVoucher")
+                        .WithMany()
+                        .HasForeignKey("ReversalVoucherId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CostCenter");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("ReversalVoucher");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.JournalVoucherLine", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.JournalVoucher", "JournalVoucher")
+                        .WithMany("Lines")
+                        .HasForeignKey("JournalVoucherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BuilderERP.Domain.Entities.LedgerAccount", "LedgerAccount")
+                        .WithMany()
+                        .HasForeignKey("LedgerAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("JournalVoucher");
+
+                    b.Navigation("LedgerAccount");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.LandDocument", b =>
                 {
                     b.HasOne("BuilderERP.Domain.Entities.Project", "Project")
@@ -10810,6 +11061,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AssignedToUser");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.LedgerAccount", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.LedgerAccount", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.LegalAgreement", b =>
@@ -11991,6 +12252,16 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BuilderERP.Domain.Entities.InstallmentPlan", b =>
                 {
                     b.Navigation("Installments");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.JournalVoucher", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.LedgerAccount", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.Permission", b =>

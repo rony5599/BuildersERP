@@ -155,6 +155,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<ParkingSlot> ParkingSlots => Set<ParkingSlot>();
     public DbSet<CommonAreaBooking> CommonAreaBookings => Set<CommonAreaBooking>();
     public DbSet<UserDevice> UserDevices => Set<UserDevice>();
+    public DbSet<LedgerAccount> LedgerAccounts => Set<LedgerAccount>();
+    public DbSet<JournalVoucher> JournalVouchers => Set<JournalVoucher>();
+    public DbSet<JournalVoucherLine> JournalVoucherLines => Set<JournalVoucherLine>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -181,6 +184,39 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<LedgerAccount>(entity =>
+        {
+            entity.Property(a => a.Code).HasMaxLength(30).IsRequired();
+            entity.Property(a => a.Name).HasMaxLength(200).IsRequired();
+            entity.Property(a => a.AccountType).HasConversion<int>();
+            entity.HasIndex(a => a.Code).IsUnique();
+            entity.HasOne(a => a.Parent).WithMany(a => a.Children).HasForeignKey(a => a.ParentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<JournalVoucher>(entity =>
+        {
+            entity.Property(v => v.VoucherNumber).HasMaxLength(50).IsRequired();
+            entity.Property(v => v.Narration).HasMaxLength(500).IsRequired();
+            entity.Property(v => v.SourceType).HasMaxLength(50).IsRequired();
+            entity.Property(v => v.Status).HasConversion<int>();
+            entity.HasIndex(v => v.VoucherNumber).IsUnique();
+            entity.HasIndex(v => new { v.SourceType, v.SourceId });
+            entity.HasOne(v => v.Project).WithMany().HasForeignKey(v => v.ProjectId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(v => v.CostCenter).WithMany().HasForeignKey(v => v.CostCenterId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(v => v.ReversalVoucher).WithMany().HasForeignKey(v => v.ReversalVoucherId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<JournalVoucherLine>(entity =>
+        {
+            entity.Property(l => l.Debit).HasPrecision(18, 2);
+            entity.Property(l => l.Credit).HasPrecision(18, 2);
+            entity.Property(l => l.Description).HasMaxLength(300);
+            entity.HasIndex(l => new { l.JournalVoucherId, l.LineNumber }).IsUnique();
+            entity.HasOne(l => l.JournalVoucher).WithMany(v => v.Lines).HasForeignKey(l => l.JournalVoucherId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(l => l.LedgerAccount).WithMany().HasForeignKey(l => l.LedgerAccountId).OnDelete(DeleteBehavior.Restrict);
+            entity.ToTable(t => t.HasCheckConstraint("CK_JournalVoucherLine_OneSide", "([Debit] > 0 AND [Credit] = 0) OR ([Credit] > 0 AND [Debit] = 0)"));
         });
 
         builder.Entity<PurchaseOrderActionAssignment>(entity =>

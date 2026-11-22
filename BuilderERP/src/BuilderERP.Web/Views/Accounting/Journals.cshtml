@@ -1,0 +1,6 @@
+@model IReadOnlyList<BuilderERP.Application.Features.Accounting.JournalVoucherListItem>
+@{ ViewData["Title"] = "Journal Vouchers"; }
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3">Journal Vouchers</h1><a asp-action="CreateJournal" class="btn btn-primary">New journal</a></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Date</th><th>Voucher</th><th>Narration</th><th>Status</th><th class="text-end">Debit</th><th class="text-end">Credit</th></tr></thead><tbody>
+@foreach (var v in Model) { <tr><td>@v.VoucherDate.ToString("dd-MMM-yyyy")</td><td><a asp-action="Journal" asp-route-id="@v.Id">@v.VoucherNumber</a></td><td>@v.Narration</td><td>@v.Status</td><td class="text-end">@v.Debit.ToString("N2")</td><td class="text-end">@v.Credit.ToString("N2")</td></tr> }
+</tbody></table></div></div>
