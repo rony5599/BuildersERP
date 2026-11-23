@@ -15,6 +15,7 @@
     var hasFilters = !string.IsNullOrWhiteSpace(billNumber) || !string.IsNullOrWhiteSpace(supplier) || status.HasValue || dateFrom.HasValue || dateTo.HasValue;
     var canPay = User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierPaymentManage);
     var assignment = ViewBag.ActionAssignment as EwoBillActionAssignment;
+    var accountingPostedIds = ViewBag.AccountingPostedIds as HashSet<long> ?? new HashSet<long>();
 }
 
 <div class="card ewo-card ewo-filter-card mb-3">
@@ -116,6 +117,16 @@
                         <span class="ewo-secondary">@(bill.IsActive ? "Outstanding" : "Inactive")</span>
                     </td>
                     <td class="text-end text-nowrap">
+                        @if (accountingPostedIds.Contains(bill.Id))
+                        {
+                            <span class="badge bg-success me-1"><i class="bi bi-check2-circle"></i> Posted</span>
+                        }
+                        else if (bill.IsActive && bill.Status == PoBillStatus.Approved && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingPost))
+                        {
+                            <form asp-action="PostToAccounting" asp-route-id="@bill.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-primary me-1" onclick="return confirm('Post EWO Bill @bill.BillNumber to accounting? This cannot be edited afterward.');"><i class="bi bi-journal-check"></i> Post to Accounting</button>
+                            </form>
+                        }
                         @if (canPay && bill.IsActive && bill.Status == PoBillStatus.Approved && bill.Outstanding > 0)
                         {
                             <a asp-controller="SupplierPayments" asp-action="Create" asp-route-ewoBillId="@bill.Id" class="btn btn-sm btn-success me-1"><i class="bi bi-credit-card me-1"></i>Pay</a>

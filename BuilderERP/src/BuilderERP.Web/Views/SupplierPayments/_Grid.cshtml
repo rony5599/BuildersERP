@@ -11,6 +11,7 @@
     if (!string.IsNullOrWhiteSpace(search)) routeValues["search"] = search;
     if (dateFrom.HasValue) routeValues["dateFrom"] = dateFrom.Value.ToString("yyyy-MM-dd");
     if (dateTo.HasValue) routeValues["dateTo"] = dateTo.Value.ToString("yyyy-MM-dd");
+    var accountingPostedIds = ViewBag.AccountingPostedIds as HashSet<long> ?? new HashSet<long>();
 }
 
 <div class="card mb-3">
@@ -73,6 +74,16 @@
                         </span>
                     </td>
                     <td class="text-end">
+                        @if (accountingPostedIds.Contains(p.Id))
+                        {
+                            <span class="badge bg-success me-1"><i class="bi bi-check2-circle"></i> Posted</span>
+                        }
+                        else if (p.IsActive && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingPost))
+                        {
+                            <form asp-action="PostToAccounting" asp-route-id="@p.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-primary me-1" onclick="return confirm('Post payment @p.PaymentNumber to accounting?');"><i class="bi bi-journal-check"></i> Post to Accounting</button>
+                            </form>
+                        }
                         @if (User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.SupplierPaymentManage))
                         {
                             <form asp-action="ToggleActive" asp-route-id="@p.Id" asp-route-isActive="@p.IsActive" method="post" class="d-inline">

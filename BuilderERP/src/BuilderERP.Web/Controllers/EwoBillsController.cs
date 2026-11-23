@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using BuilderERP.Application.Features.Accounting;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -21,18 +22,25 @@ public class EwoBillsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<SaveEwoBillDto> _validator;
     private readonly AppDbContext _db;
+    private readonly IAccountingService _accounting;
 
-    public EwoBillsController(IMediator mediator, IValidator<SaveEwoBillDto> validator, AppDbContext db)
+    public EwoBillsController(IMediator mediator, IValidator<SaveEwoBillDto> validator, AppDbContext db, IAccountingService accounting)
     {
         _mediator = mediator;
         _validator = validator;
         _db = db;
+        _accounting = accounting;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? billNumber = null, string? supplier = null, PoBillStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
         ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var bills = await _mediator.Send(new GetAllEwoBillsQuery(page, pageSize, billNumber, supplier, status, dateFrom, dateTo));
+        var pageIds = bills.Items.Select(b => b.Id).ToList();
+        ViewBag.AccountingPostedIds = (await _db.JournalVouchers.AsNoTracking()
+            .Where(v => v.SourceType == "EwoBill" && v.SourceId.HasValue && pageIds.Contains(v.SourceId.Value)
+                && v.Status == JournalVoucherStatus.Posted && !v.IsDeleted)
+            .Select(v => v.SourceId!.Value).ToListAsync()).ToHashSet();
 
         ViewBag.BillNumber = billNumber;
         ViewBag.Supplier = supplier;
@@ -165,6 +173,11 @@ public class EwoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
+        if (isActive && await HasAccountingHistoryAsync(id))
+        {
+            TempData["Error"] = "This EWO Bill has already been posted to accounting and cannot be deactivated.";
+            return RedirectToAction(nameof(Index));
+        }
         var result = await _mediator.Send(new SetEwoBillActiveCommand(id, !isActive));
         var error = result switch
         {
@@ -178,6 +191,20 @@ public class EwoBillsController : Controller
             TempData["Error"] = error;
         }
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.AccountingPost)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PostToAccounting(long id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _accounting.PostSourceAsync("EwoBill", id, User.Identity?.Name ?? "system", cancellationToken);
+            TempData["StatusMessage"] = "EWO Bill posted to accounting.";
+        }
+        catch (Exception ex) { TempData["Error"] = ex.InnerException?.Message ?? ex.Message; }
         return RedirectToAction(nameof(Index));
     }
 
@@ -196,6 +223,7 @@ public class EwoBillsController : Controller
         if (action == "reject" && string.IsNullOrWhiteSpace(rejectionReason)) { TempData["ErrorMessage"] = "A rejection reason is required."; return RedirectToAction(nameof(Index)); }
         if (rejectionReason?.Length > 1000) { TempData["ErrorMessage"] = "The rejection reason cannot exceed 1,000 characters."; return RedirectToAction(nameof(Index)); }
         if (action == "reject" && bill.Status == PoBillStatus.Approved && await _db.SupplierPayments.AnyAsync(p => p.EwoBillId == id && p.IsActive)) { TempData["ErrorMessage"] = "This approved EWO Bill has active payments and cannot be returned to Draft."; return RedirectToAction(nameof(Index)); }
+        if (action == "reject" && bill.Status == PoBillStatus.Approved && await HasAccountingHistoryAsync(bill.Id)) { TempData["ErrorMessage"] = "This EWO Bill has been posted to accounting and cannot be returned to Draft."; return RedirectToAction(nameof(Index)); }
         var transition = action switch
         {
             "submit" => (From: PoBillStatus.Draft, To: PoBillStatus.Submitted),
@@ -321,4 +349,6 @@ public class EwoBillsController : Controller
         var assignment = await GetCurrentAssignmentAsync();
         return assignment is not null && predicate(assignment);
     }
+    private Task<bool> HasAccountingHistoryAsync(long id) => _db.JournalVouchers.AsNoTracking()
+        .AnyAsync(v => v.SourceType == "EwoBill" && v.SourceId == id && !v.IsDeleted);
 }

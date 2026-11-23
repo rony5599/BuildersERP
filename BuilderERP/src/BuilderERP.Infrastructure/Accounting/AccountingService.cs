@@ -96,6 +96,29 @@ public sealed class AccountingService(AppDbContext db) : IAccountingService
         return Convert.ToInt64(output.Value);
     }
 
+    public async Task PostSourceAsync(string sourceType, long sourceId, string userName, CancellationToken ct)
+    {
+        if (sourceId <= 0) throw new ArgumentOutOfRangeException(nameof(sourceId));
+        if (sourceType is not ("PoBill" or "EwoBill" or "SupplierPayment"))
+            throw new ArgumentException("Unsupported accounting source type.", nameof(sourceType));
+
+        await db.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.usp_Accounting_PostSource @SourceType, @SourceId, @PostedBy",
+            [new SqlParameter("@SourceType", sourceType), new SqlParameter("@SourceId", sourceId),
+             new SqlParameter("@PostedBy", userName)], ct);
+        db.ChangeTracker.Clear();
+    }
+
+    public async Task AutoReverseSourceAsync(string sourceType, long sourceId, DateTime reversalDate, string reason, string userName, CancellationToken ct)
+    {
+        await db.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.usp_Accounting_AutoReverseSource @SourceType, @SourceId, @ReversalDate, @Reason, @ReversedBy",
+            [new SqlParameter("@SourceType", sourceType), new SqlParameter("@SourceId", sourceId),
+             new SqlParameter("@ReversalDate", reversalDate.Date), new SqlParameter("@Reason", reason),
+             new SqlParameter("@ReversedBy", userName)], ct);
+        db.ChangeTracker.Clear();
+    }
+
     public async Task<IReadOnlyList<TrialBalanceRow>> GetTrialBalanceAsync(DateTime fromDate, DateTime toDate,
         long? projectId, long? costCenterId, CancellationToken ct)
     {

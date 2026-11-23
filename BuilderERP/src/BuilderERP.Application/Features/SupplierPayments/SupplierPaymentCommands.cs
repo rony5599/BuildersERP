@@ -5,6 +5,7 @@ using BuilderERP.Domain.Enums;
 using BuilderERP.Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using BuilderERP.Application.Features.Accounting;
 
 namespace BuilderERP.Application.Features.SupplierPayments;
 
@@ -15,7 +16,7 @@ public enum CreateSupplierPaymentResult
     ExceedsOutstanding
 }
 
-public record CreateSupplierPaymentCommand(CreateSupplierPaymentDto Dto) : IRequest<CreateSupplierPaymentResult>, IInvalidatesFeatures
+public record CreateSupplierPaymentCommand(CreateSupplierPaymentDto Dto, string? CreatedBy = null) : IRequest<CreateSupplierPaymentResult>, IInvalidatesFeatures
 {
     // EWO bill grid and statement show the paid amount of each bill.
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["EwoBills"];
@@ -74,7 +75,8 @@ public class CreateSupplierPaymentCommandHandler : IRequestHandler<CreateSupplie
             Remarks = dto.Remarks,
             PoBillId = dto.EwoBillId > 0 ? null : dto.PoBillId,
             EwoBillId = dto.EwoBillId > 0 ? dto.EwoBillId : null,
-            SupplierId = bill.SupplierId
+            SupplierId = bill.SupplierId,
+            CreatedBy = request.CreatedBy
         };
 
         await _unitOfWork.Repository<SupplierPayment>().AddAsync(payment);
@@ -83,7 +85,7 @@ public class CreateSupplierPaymentCommandHandler : IRequestHandler<CreateSupplie
     }
 }
 
-public record SetSupplierPaymentActiveCommand(long Id, bool IsActive) : IRequest<bool>, IInvalidatesFeatures
+public record SetSupplierPaymentActiveCommand(long Id, bool IsActive, string? ModifiedBy = null) : IRequest<bool>, IInvalidatesFeatures
 {
     public IReadOnlyCollection<string> AdditionalFeatures { get; } = ["EwoBills"];
 }
@@ -91,10 +93,12 @@ public record SetSupplierPaymentActiveCommand(long Id, bool IsActive) : IRequest
 public class SetSupplierPaymentActiveCommandHandler : IRequestHandler<SetSupplierPaymentActiveCommand, bool>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAccountingService _accounting;
 
-    public SetSupplierPaymentActiveCommandHandler(IUnitOfWork unitOfWork)
+    public SetSupplierPaymentActiveCommandHandler(IUnitOfWork unitOfWork, IAccountingService accounting)
     {
         _unitOfWork = unitOfWork;
+        _accounting = accounting;
     }
 
     public async Task<bool> Handle(SetSupplierPaymentActiveCommand request, CancellationToken cancellationToken)
@@ -107,8 +111,19 @@ public class SetSupplierPaymentActiveCommandHandler : IRequestHandler<SetSupplie
         }
 
         payment.IsActive = request.IsActive;
+        payment.ModifiedAt = DateTime.UtcNow;
+        payment.ModifiedBy = request.ModifiedBy;
         repository.Update(payment);
-        await _unitOfWork.SaveChangesAsync();
+        var hasPostedJournal = await _unitOfWork.Repository<JournalVoucher>().Query().AnyAsync(v =>
+            v.SourceId == payment.Id && v.Status == JournalVoucherStatus.Posted &&
+            (v.SourceType == "SupplierPayment" || v.SourceType.StartsWith("SupplierPayment.Repost.")), cancellationToken);
+        await _unitOfWork.ExecuteInTransactionAsync(async ct =>
+        {
+            await _unitOfWork.SaveChangesAsync();
+            if (!request.IsActive && hasPostedJournal)
+                await _accounting.AutoReverseSourceAsync("SupplierPayment", payment.Id, DateTime.Today,
+                    "Supplier payment deactivated", request.ModifiedBy ?? "system", ct);
+        }, cancellationToken);
         return true;
     }
 }

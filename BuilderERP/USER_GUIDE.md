@@ -101,6 +101,8 @@ Steps 2–4 don't have to happen in a fixed order relative to each other — cas
 
 **Chart of Accounts → Journal Vouchers → Trial Balance.** Create posting and group accounts, enter balanced manual vouchers, then post them to the ledger. Draft vouchers do not affect reports. Posting revalidates the complete voucher inside a database transaction. Posted vouchers cannot be edited or deleted; use **Reverse** to create a new, opposite posted entry with a mandatory reason. The Trial Balance reads posted and reversed history through the accounting reporting procedure and can be limited by date.
 
+When a **PO Bill** or **EWO Bill** is approved, its grid shows **Post to Accounting** to authorized users. PO bills debit Construction Cost and credit Supplier Payable; EWO bills debit Construction Cost and credit Contractor Payable. Active **Supplier Payments** have the same manual posting action, which debits the corresponding payable account and credits Cash and Bank. A posted document shows a **Posted** badge instead of the button. Posted bills cannot be returned to Draft or deactivated. Voiding a posted supplier payment creates its reversal; restoring it makes the manual posting button available again. Posting is safe to retry without producing duplicate journals.
+
 ### Engineering
 **Drawings → Revisions → Approvals.** Manage design drawings, their revision history, and the approval workflow before they're released for construction use.
 

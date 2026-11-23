@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using BuilderERP.Application.Features.Accounting;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -21,18 +22,25 @@ public class PoBillsController : Controller
     private readonly IMediator _mediator;
     private readonly IValidator<SavePoBillDto> _validator;
     private readonly AppDbContext _db;
+    private readonly IAccountingService _accounting;
 
-    public PoBillsController(IMediator mediator, IValidator<SavePoBillDto> validator, AppDbContext db)
+    public PoBillsController(IMediator mediator, IValidator<SavePoBillDto> validator, AppDbContext db, IAccountingService accounting)
     {
         _mediator = mediator;
         _validator = validator;
         _db = db;
+        _accounting = accounting;
     }
 
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? billNumber = null, string? supplier = null, PoBillStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
         ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
         var bills = await _mediator.Send(new GetAllPoBillsQuery(page, pageSize, billNumber, supplier, status, dateFrom, dateTo));
+        var pageIds = bills.Items.Select(b => b.Id).ToList();
+        ViewBag.AccountingPostedIds = (await _db.JournalVouchers.AsNoTracking()
+            .Where(v => v.SourceType == "PoBill" && v.SourceId.HasValue && pageIds.Contains(v.SourceId.Value)
+                && v.Status == JournalVoucherStatus.Posted && !v.IsDeleted)
+            .Select(v => v.SourceId!.Value).ToListAsync()).ToHashSet();
 
         ViewBag.BillNumber = billNumber;
         ViewBag.Supplier = supplier;
@@ -159,7 +167,26 @@ public class PoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleActive(long id, bool isActive)
     {
+        if (isActive && await HasAccountingHistoryAsync(id))
+        {
+            TempData["ErrorMessage"] = "This PO Bill has already been posted to accounting and cannot be deactivated.";
+            return RedirectToAction(nameof(Index));
+        }
         await _mediator.Send(new SetPoBillActiveCommand(id, !isActive));
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [PermissionAuthorize(PermissionNames.AccountingPost)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PostToAccounting(long id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _accounting.PostSourceAsync("PoBill", id, User.Identity?.Name ?? "system", cancellationToken);
+            TempData["StatusMessage"] = "PO Bill posted to accounting.";
+        }
+        catch (Exception ex) { TempData["ErrorMessage"] = ex.InnerException?.Message ?? ex.Message; }
         return RedirectToAction(nameof(Index));
     }
 
@@ -180,6 +207,11 @@ public class PoBillsController : Controller
         if (action == "reject" && bill.Status == PoBillStatus.Approved && await _db.SupplierPayments.AnyAsync(p => p.PoBillId == bill.Id && p.IsActive))
         {
             TempData["ErrorMessage"] = "This approved PO Bill has active payments and cannot be returned to Draft. Void its payments first.";
+            return RedirectToAction(nameof(Index));
+        }
+        if (action == "reject" && bill.Status == PoBillStatus.Approved && await HasAccountingHistoryAsync(bill.Id))
+        {
+            TempData["ErrorMessage"] = "This PO Bill has been posted to accounting and cannot be returned to Draft.";
             return RedirectToAction(nameof(Index));
         }
         var transition = action switch
@@ -266,4 +298,6 @@ public class PoBillsController : Controller
         var assignment = await GetCurrentAssignmentAsync();
         return assignment is not null && predicate(assignment);
     }
+    private Task<bool> HasAccountingHistoryAsync(long id) => _db.JournalVouchers.AsNoTracking()
+        .AnyAsync(v => v.SourceType == "PoBill" && v.SourceId == id && !v.IsDeleted);
 }

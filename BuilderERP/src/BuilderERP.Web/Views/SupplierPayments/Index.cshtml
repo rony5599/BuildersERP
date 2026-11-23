@@ -13,6 +13,8 @@
         <a asp-action="Create" class="btn btn-primary">New Payment</a>
     }
 </div>
+@if (TempData["StatusMessage"] is string statusMessage) { <div class="alert alert-success">@statusMessage</div> }
+@if (TempData["ErrorMessage"] is string errorMessage) { <div class="alert alert-danger">@errorMessage</div> }
 
 <div data-grid-container>
     <partial name="_Grid" model="Model" />
