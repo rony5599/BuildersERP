@@ -4,11 +4,14 @@ using BuilderERP.Shared.Authorization;
 using BuilderERP.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using BuilderERP.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
 [PermissionAuthorize(PermissionNames.AccountingView)]
-public sealed class AccountingController(IAccountingService accounting) : Controller
+public sealed class AccountingController(IAccountingService accounting, AppDbContext db) : Controller
 {
     public async Task<IActionResult> Accounts(CancellationToken ct) => View(await accounting.GetAccountsAsync(false, ct));
 
@@ -65,12 +68,16 @@ public sealed class AccountingController(IAccountingService accounting) : Contro
     public async Task<IActionResult> Journal(long id, CancellationToken ct)
     {
         var voucher = await accounting.GetVoucherAsync(id, ct);
+        var assignment = await GetPostingAssignmentAsync(ct);
+        ViewBag.CanPostManualJournal = assignment?.CanPostManualJournal == true;
+        ViewBag.CanReverse = assignment?.CanReverse == true;
         return voucher is null ? NotFound() : View(voucher);
     }
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize(PermissionNames.AccountingPost)]
     public async Task<IActionResult> Post(long id, CancellationToken ct)
     {
+        if ((await GetPostingAssignmentAsync(ct))?.CanPostManualJournal != true) return Forbid();
         try { await accounting.PostAsync(id, User.Identity?.Name ?? "system", ct); TempData["Success"] = "Voucher posted."; }
         catch (Exception ex) { TempData["Error"] = ex.InnerException?.Message ?? ex.Message; }
         return RedirectToAction(nameof(Journal), new { id });
@@ -79,6 +86,7 @@ public sealed class AccountingController(IAccountingService accounting) : Contro
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize(PermissionNames.AccountingPost)]
     public async Task<IActionResult> Reverse(long id, DateTime reversalDate, string reason, CancellationToken ct)
     {
+        if ((await GetPostingAssignmentAsync(ct))?.CanReverse != true) return Forbid();
         try
         {
             var reversalId = await accounting.ReverseAsync(id, reversalDate, reason, User.Identity?.Name ?? "system", ct);
@@ -98,4 +106,12 @@ public sealed class AccountingController(IAccountingService accounting) : Contro
 
     private async Task PopulateAccounts(CancellationToken ct) =>
         ViewBag.Accounts = new SelectList((await accounting.GetAccountsAsync(true, ct)).Select(a => new { a.Id, Name = $"{a.Code} - {a.Name}" }), "Id", "Name");
+
+    private async Task<AccountingPostingAssignment?> GetPostingAssignmentAsync(CancellationToken ct)
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId)
+            ? await db.AccountingPostingAssignments.AsNoTracking().FirstOrDefaultAsync(a => a.UserId == userId, ct)
+            : null;
+    }
 }

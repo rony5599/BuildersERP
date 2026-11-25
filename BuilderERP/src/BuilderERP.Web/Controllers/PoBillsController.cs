@@ -35,6 +35,7 @@ public class PoBillsController : Controller
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? billNumber = null, string? supplier = null, PoBillStatus? status = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
         ViewBag.ActionAssignment = await GetCurrentAssignmentAsync();
+        ViewBag.CanPostAccounting = await CanPostAccountingAsync();
         var bills = await _mediator.Send(new GetAllPoBillsQuery(page, pageSize, billNumber, supplier, status, dateFrom, dateTo));
         var pageIds = bills.Items.Select(b => b.Id).ToList();
         ViewBag.AccountingPostedIds = (await _db.JournalVouchers.AsNoTracking()
@@ -181,6 +182,7 @@ public class PoBillsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PostToAccounting(long id, CancellationToken cancellationToken)
     {
+        if (!await CanPostAccountingAsync()) return Forbid();
         try
         {
             await _accounting.PostSourceAsync("PoBill", id, User.Identity?.Name ?? "system", cancellationToken);
@@ -300,4 +302,10 @@ public class PoBillsController : Controller
     }
     private Task<bool> HasAccountingHistoryAsync(long id) => _db.JournalVouchers.AsNoTracking()
         .AnyAsync(v => v.SourceType == "PoBill" && v.SourceId == id && !v.IsDeleted);
+    private async Task<bool> CanPostAccountingAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId) && await _db.AccountingPostingAssignments.AsNoTracking()
+            .AnyAsync(a => a.UserId == userId && a.CanPostPoBill);
+    }
 }

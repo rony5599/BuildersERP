@@ -22,6 +22,64 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BuilderERP.Domain.Entities.AccountingPostingAssignment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("CanPostCustomerReceipt")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanPostEwoBill")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanPostManualJournal")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanPostPoBill")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanPostSupplierPayment")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanReverse")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("AccountingPostingAssignments");
+                });
+
             modelBuilder.Entity("BuilderERP.Domain.Entities.ApartmentMaintenance", b =>
                 {
                     b.Property<long>("Id")
@@ -9928,6 +9986,17 @@ namespace BuilderERP.Infrastructure.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("BuilderERP.Domain.Entities.AccountingPostingAssignment", b =>
+                {
+                    b.HasOne("BuilderERP.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BuilderERP.Domain.Entities.ApartmentMaintenance", b =>

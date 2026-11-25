@@ -10,6 +10,7 @@ using BuilderERP.Application.Features.Accounting;
 using BuilderERP.Domain.Entities;
 using BuilderERP.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BuilderERP.Web.Controllers;
 
@@ -32,6 +33,7 @@ public class SupplierPaymentsController : Controller
     public async Task<IActionResult> Index(int page = 1, int pageSize = 25, string? search = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
         var payments = await _mediator.Send(new GetAllSupplierPaymentsQuery(page, pageSize, search, dateFrom, dateTo));
+        ViewBag.CanPostAccounting = await CanPostAccountingAsync();
         var pageIds = payments.Items.Select(p => p.Id).ToList();
         ViewBag.AccountingPostedIds = (await _db.JournalVouchers.AsNoTracking()
             .Where(v => v.SourceId.HasValue && pageIds.Contains(v.SourceId.Value)
@@ -98,6 +100,7 @@ public class SupplierPaymentsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PostToAccounting(long id, CancellationToken cancellationToken)
     {
+        if (!await CanPostAccountingAsync()) return Forbid();
         try
         {
             await _accounting.PostSourceAsync("SupplierPayment", id, User.Identity?.Name ?? "system", cancellationToken);
@@ -110,5 +113,11 @@ public class SupplierPaymentsController : Controller
     private async Task PopulateAsync()
     {
         ViewBag.PayableBills = await _mediator.Send(new GetPayableBillsQuery());
+    }
+    private async Task<bool> CanPostAccountingAsync()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(idValue, out var userId) && await _db.AccountingPostingAssignments.AsNoTracking()
+            .AnyAsync(a => a.UserId == userId && a.CanPostSupplierPayment);
     }
 }

@@ -78,7 +78,7 @@
                         {
                             <span class="badge bg-success me-1"><i class="bi bi-check2-circle"></i> Posted</span>
                         }
-                        else if (p.IsActive && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingPost))
+                        else if (p.IsActive && ViewBag.CanPostAccounting == true && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingPost))
                         {
                             <form asp-action="PostToAccounting" asp-route-id="@p.Id" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-primary me-1" onclick="return confirm('Post payment @p.PaymentNumber to accounting?');"><i class="bi bi-journal-check"></i> Post to Accounting</button>

@@ -103,6 +103,8 @@ Steps 2–4 don't have to happen in a fixed order relative to each other — cas
 
 When a **PO Bill** or **EWO Bill** is approved, its grid shows **Post to Accounting** to authorized users. PO bills debit Construction Cost and credit Supplier Payable; EWO bills debit Construction Cost and credit Contractor Payable. Active **Supplier Payments** have the same manual posting action, which debits the corresponding payable account and credits Cash and Bank. A posted document shows a **Posted** badge instead of the button. Posted bills cannot be returned to Draft or deactivated. Voiding a posted supplier payment creates its reversal; restoring it makes the manual posting button available again. Posting is safe to retry without producing duplicate journals.
 
+Administrators assign posting responsibilities from **Administration → Approval Workflow → Accounting Posting Assignment**. The matrix separately controls PO Bill, EWO Bill, Supplier Payment, Customer Receipt, Manual Journal and Reversal rights. A user needs both the `Accounting.Post` role permission and the matching user assignment; removing either one hides the action and blocks direct requests on the server.
+
 ### Engineering
 **Drawings → Revisions → Approvals.** Manage design drawings, their revision history, and the approval workflow before they're released for construction use.
 

@@ -121,7 +121,7 @@
                         {
                             <span class="badge bg-success me-1"><i class="bi bi-check2-circle"></i> Posted</span>
                         }
-                        else if (bill.IsActive && bill.Status == PoBillStatus.Approved && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingPost))
+                        else if (bill.IsActive && bill.Status == PoBillStatus.Approved && ViewBag.CanPostAccounting == true && User.HasClaim(PermissionClaimTypes.Permission, PermissionNames.AccountingPost))
                         {
                             <form asp-action="PostToAccounting" asp-route-id="@bill.Id" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-primary me-1" onclick="return confirm('Post EWO Bill @bill.BillNumber to accounting? This cannot be edited afterward.');"><i class="bi bi-journal-check"></i> Post to Accounting</button>

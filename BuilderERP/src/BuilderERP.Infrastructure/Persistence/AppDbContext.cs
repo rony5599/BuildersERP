@@ -158,6 +158,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<LedgerAccount> LedgerAccounts => Set<LedgerAccount>();
     public DbSet<JournalVoucher> JournalVouchers => Set<JournalVoucher>();
     public DbSet<JournalVoucherLine> JournalVoucherLines => Set<JournalVoucherLine>();
+    public DbSet<AccountingPostingAssignment> AccountingPostingAssignments => Set<AccountingPostingAssignment>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -217,6 +218,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.HasOne(l => l.JournalVoucher).WithMany(v => v.Lines).HasForeignKey(l => l.JournalVoucherId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(l => l.LedgerAccount).WithMany().HasForeignKey(l => l.LedgerAccountId).OnDelete(DeleteBehavior.Restrict);
             entity.ToTable(t => t.HasCheckConstraint("CK_JournalVoucherLine_OneSide", "([Debit] > 0 AND [Credit] = 0) OR ([Credit] > 0 AND [Debit] = 0)"));
+        });
+
+        builder.Entity<AccountingPostingAssignment>(entity =>
+        {
+            entity.HasIndex(a => a.UserId).IsUnique();
+            entity.HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<PurchaseOrderActionAssignment>(entity =>
